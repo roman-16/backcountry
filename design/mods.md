@@ -13,7 +13,7 @@ Every mod in the pack and why, and what was left out. "His" marks a mod in one o
 | Lithostitched (his) | Tectonic's library |
 | Project: Vibrant Journeys (his) | Shelf fungus, twigs, rocks, fallen logs, pinecones |
 | Better Foliage Renewed (his) | Bushy leaves, reeds; its last 1.21.1 build is from 22.08.2024, so it leaves if it breaks with Sodium or Iris |
-| Ecliptic Seasons | The year's look: day length, gradual snow, falling leaves, lake ice (`systems.md` S2) |
+| Ecliptic Seasons | The year's look: day length, gradual snow on the ground, falling leaves, lake ice (`systems.md` S2); the sky and whether it rains or snows are the mod's weather (S3) |
 | Distant Horizons (his) | The far view |
 | Sodium, Iris, Complementary Unbound (his) | Drawing and the shader |
 | Panda's Falling Trees (his), with PandaLib 0.6.0 | Trees fall whole |

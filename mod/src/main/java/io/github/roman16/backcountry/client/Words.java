@@ -4,6 +4,10 @@ import java.util.Locale;
 import net.minecraft.network.chat.Component;
 
 final class Words {
+    private static final String[] COMPASS = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
+    private static final int DAY_START_HOUR = 6;
+    private static final int HOURS = 24;
+
     private Words() {}
 
     static String kcal(double kcal) {
@@ -16,6 +20,18 @@ final class Words {
 
     static String grams(double grams) {
         return Math.abs(grams - Math.round(grams)) < 0.05 ? Long.toString(Math.round(grams)) : one(grams);
+    }
+
+    static String degrees(double celsius) {
+        return Math.round(celsius) + " °C";
+    }
+
+    static String clock(int hoursIntoDay) {
+        return String.format(Locale.ROOT, "%02d:00", (hoursIntoDay + DAY_START_HOUR) % HOURS);
+    }
+
+    static String compass(int from) {
+        return COMPASS[Math.floorMod(from, COMPASS.length)];
     }
 
     static String percent(double share) {

@@ -2,6 +2,7 @@ package io.github.roman16.backcountry.body;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.weather.Weather;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,7 +23,10 @@ public final class Warmth {
         body.sheltered = roofed(level, feet, warmth.roofBlocks());
         double heat = heat(level, feet, warmth.heatReachBlocks());
         body.fire = heat > 0;
-        body.effectiveC = Climate.airC(level, feet, day) + (body.sheltered ? warmth.shelterC() : 0) + heat;
+        double air = Climate.airC(level, feet, day);
+        double wind = Weather.day(level, day).windKmh();
+        body.windy = !body.sheltered && wind > Climate.CALM_KMH;
+        body.effectiveC = (body.sheltered ? air + warmth.shelterC() : Climate.feelsC(air, wind)) + heat;
         double clothing = 0;
         for (EquipmentSlot slot : new EquipmentSlot[] {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
             clothing += Balance.get().insulation().getOrDefault(BuiltInRegistries.ITEM.getKey(player.getItemBySlot(slot).getItem()).toString(), 0.0);
@@ -78,7 +82,7 @@ public final class Warmth {
         }
         double change = -warmth.dryPerHour();
         if (EclipticSeasonsApi.getInstance().isRainOrSnowAt(player.level(), head) && player.level().canSeeSky(head)) {
-            change = warmth.rainWetPerHour();
+            change = warmth.rainWetPerHour() * Weather.wetShare(Weather.day(player.level(), Calendar.day(player.level())));
         } else {
             if (body.fire) {
                 change -= warmth.fireDryPerHour();

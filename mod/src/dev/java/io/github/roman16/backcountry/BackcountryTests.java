@@ -3,8 +3,10 @@ package io.github.roman16.backcountry;
 import com.mojang.authlib.GameProfile;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import io.github.roman16.backcountry.body.Alerts;
 import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Calendar;
+import io.github.roman16.backcountry.body.Climate;
 import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Nutrition;
@@ -17,6 +19,23 @@ import io.github.roman16.backcountry.gear.WaterVesselItem;
 import io.github.roman16.backcountry.survivor.Arrival;
 import io.github.roman16.backcountry.survivor.Summary;
 import io.github.roman16.backcountry.survivor.Team;
+import io.github.roman16.backcountry.weather.Day;
+import io.github.roman16.backcountry.weather.Kind;
+import io.github.roman16.backcountry.weather.Sky;
+import io.github.roman16.backcountry.weather.Weather;
+import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import java.time.LocalDate;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.animal.horse.SkeletonHorse;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.phys.Vec2;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -292,6 +311,192 @@ public final class BackcountryTests {
         ServerPlayer player = survivor(helper);
         player.setRespawnPosition(helper.getLevel().dimension(), helper.absolutePos(new BlockPos(1, 1, 1)), 0, false, true);
         check(helper, player.getRespawnPosition() == null, "a bed set where the survivor arrives");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void theWeatherIsTheSameForTheSameDay(GameTestHelper helper) {
+        check(helper, Weather.drawn(1, 100).equals(Weather.drawn(1, 100)), "seed 1 drew day 100 twice differently");
+        check(helper, !Weather.drawn(1, 100).equals(Weather.drawn(2, 100)), "seeds 1 and 2 drew the same day 100");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aYearOfWeatherIsAnchorages(GameTestHelper helper) {
+        Balance.Weather rules = Balance.get().weather();
+        var biomes = helper.getLevel().registryAccess().registryOrThrow(Registries.BIOME);
+        Biome taiga = biomes.getOrThrow(Biomes.TAIGA);
+        BlockPos sea = new BlockPos(0, Balance.get().climate().seaLevel(), 0);
+        int years = 64;
+        int[] days = new int[12];
+        int[] wet = new int[12];
+        int blizzards = 0;
+        int thunderstorms = 0;
+        double coldest = Double.MAX_VALUE;
+        for (int day = 0; day < years * Balance.get().year().days(); day++) {
+            Day weather = Weather.drawn(1, day);
+            LocalDate date = Calendar.date(day);
+            int month = date.getMonthValue() - 1;
+            days[month]++;
+            wet[month] += weather.wet() ? 1 : 0;
+            for (int hour = 0; hour <= Weather.HOURS; hour++) {
+                coldest = Math.min(coldest, Climate.airC(taiga, sea, day, hour, weather.driftC(), weather.cloud()));
+            }
+            if (weather.thunder()) {
+                thunderstorms++;
+                check(helper, date.getMonthValue() >= rules.stormFirstMonth() && date.getMonthValue() <= rules.stormLastMonth(), "a thunderstorm on " + date);
+            }
+            double middle = (weather.fromHour() + weather.toHour()) / 2.0;
+            if (weather.wet() && weather.windKmh() >= rules.blizzardWindKmh()
+                    && Climate.airC(taiga, sea, day, middle, weather.driftC(), weather.cloud()) <= rules.snowBelowC()) {
+                blizzards++;
+            }
+        }
+        for (int month = 0; month < 12; month++) {
+            double share = wet[month] / (double) days[month];
+            double anchorage = rules.precipitationDays().get(month) / LocalDate.of(2001, month + 1, 1).lengthOfMonth();
+            check(helper, Math.abs(share - anchorage) <= anchorage / 4, "month " + (month + 1) + " was wet on " + share + " of its days, Anchorage on " + anchorage);
+        }
+        check(helper, coldest <= -28 && coldest >= -40, "the coldest sea-level taiga air in " + years + " years was " + coldest + " °C");
+        double blizzardsAYear = blizzards / (double) years;
+        double thunderstormsAYear = thunderstorms / (double) years;
+        check(helper, blizzardsAYear >= 0.5 && blizzardsAYear <= 4, blizzardsAYear + " blizzards a year");
+        check(helper, thunderstormsAYear >= 0.5 && thunderstormsAYear <= 4, thunderstormsAYear + " thunderstorms a year");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void theSkyFollowsTheForecast(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        int day = Calendar.day(level);
+        BlockPos at = helper.absolutePos(new BlockPos(1, 2, 1));
+        Biome biome = level.getBiome(at).value();
+        double air = Climate.airC(level, at, day);
+        double snow = Balance.get().weather().snowBelowC();
+        Day cold = new Day(day, (float) (Weather.day(level, day).driftC() + 2 * (snow - 16 - air)), 1, 0, 0, Day.MODERATE, 0, Weather.HOURS, false);
+        Day warm = new Day(day, (float) (Weather.day(level, day).driftC() + 2 * (snow + 16 - air)), 1, 0, 0, Day.MODERATE, 0, Weather.HOURS, false);
+        Weather.set(cold);
+        helper.startSequence().thenExecuteAfter(2, () -> {
+            check(helper, level.getLevelData().isRaining(), "a day of snow left the sky dry");
+            check(helper, WeatherManager.getPrecipitationAt(level, biome, at) == Biome.Precipitation.SNOW, "air well below freezing did not snow");
+            Weather.set(warm);
+        }).thenExecuteAfter(2, () -> {
+            check(helper, WeatherManager.getPrecipitationAt(level, biome, at) == Biome.Precipitation.RAIN, "air well above freezing did not rain");
+            Weather.set(Day.calm(day));
+        }).thenExecuteAfter(2, () -> {
+            Weather.unset(day);
+            check(helper, !level.getLevelData().isRaining(), "a dry day left the sky raining");
+            Sky.drive(level, day);
+        }).thenSucceed();
+    }
+
+    @GameTest(template = "empty")
+    public static void windChillsOnlyTheOpen(GameTestHelper helper) {
+        ServerPlayer player = survivor(helper);
+        Body body = Metabolism.body(player);
+        int winter = 4096 * Balance.get().year().days() + 30;
+        Weather.set(new Day(winter, -8, 0, 32, 0, Day.DRY, 0, 0, false));
+        Warmth.sense(player, body, winter);
+        double air = Climate.airC(helper.getLevel(), player.blockPosition(), winter);
+        check(helper, body.windy && body.effectiveC < air - 4, "32 km/h of wind at " + air + " °C felt like " + body.effectiveC + " °C in the open");
+        helper.setBlock(new BlockPos(1, 4, 1), Blocks.SPRUCE_PLANKS);
+        Warmth.sense(player, body, winter);
+        Weather.unset(winter);
+        check(helper, !body.windy && Math.abs(body.effectiveC - air - Balance.get().warmth().shelterC()) < 0.01, "a roof did not take the wind off");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void theWeatherCommandIsRefused(GameTestHelper helper) {
+        List<Component> heard = new ArrayList<>();
+        CommandSource listener = new CommandSource() {
+            @Override
+            public void sendSystemMessage(Component message) {
+                heard.add(message);
+            }
+
+            @Override
+            public boolean acceptsSuccess() {
+                return true;
+            }
+
+            @Override
+            public boolean acceptsFailure() {
+                return true;
+            }
+
+            @Override
+            public boolean shouldInformAdmins() {
+                return false;
+            }
+        };
+        ServerLevel level = helper.getLevel();
+        CommandSourceStack source = new CommandSourceStack(listener, Vec3.ZERO, Vec2.ZERO, level, 4, "test", Component.literal("test"), level.getServer(), null);
+        level.getServer().getCommands().performPrefixedCommand(source, "weather rain");
+        String refusal = Component.translatable("message.backcountry.weather_follows_forecast").getString();
+        check(helper, heard.stream().anyMatch(message -> message.getString().equals(refusal)), "/weather answered " + heard.stream().map(Component::getString).toList());
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void frostAlertsOnlyAfterAThaw(GameTestHelper helper) {
+        check(helper, Alerts.frost(-1, 2), "a frost after a thaw did not alert");
+        check(helper, !Alerts.frost(-1, -3), "a frost after a frost alerted");
+        check(helper, !Alerts.frost(1, 3), "a night above freezing alerted");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void weightAlertsEveryTwoKilograms(GameTestHelper helper) {
+        Body body = new Body();
+        body.reset(0, 1);
+        double arrived = body.weightKg;
+        double step = Balance.get().alerts().weightStepKg();
+        body.weightKg = arrived - step / 2;
+        check(helper, !Alerts.weighed(body), "half a step down alerted");
+        body.weightKg = arrived - step;
+        check(helper, Alerts.weighed(body), "a step down did not alert");
+        body.weightKg = arrived - step * 1.5;
+        check(helper, !Alerts.weighed(body), "half a step further alerted");
+        body.weightKg = arrived + 1;
+        check(helper, !Alerts.weighed(body), "gaining weight alerted");
+        body.weightKg = arrived + 1 - step;
+        check(helper, Alerts.weighed(body), "a step below the regained weight did not alert");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void lightningSetsNoFire(GameTestHelper helper) {
+        helper.getLevel().getServer().setDifficulty(Difficulty.NORMAL, true);
+        helper.setBlock(new BlockPos(3, 1, 3), Blocks.GRASS_BLOCK);
+        LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(helper.getLevel());
+        Vec3 at = helper.absoluteVec(new Vec3(3.5, 2, 3.5));
+        bolt.moveTo(at.x, at.y, at.z);
+        helper.getLevel().addFreshEntity(bolt);
+        helper.runAfterDelay(4, () -> {
+            for (BlockPos near : BlockPos.betweenClosed(new BlockPos(2, 1, 2), new BlockPos(4, 3, 4))) {
+                check(helper, !helper.getBlockState(near).is(Blocks.FIRE), "lightning set fire at " + near);
+            }
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = "empty")
+    public static void lightningBringsNoRider(GameTestHelper helper) {
+        SkeletonHorse horse = EntityType.SKELETON_HORSE.create(helper.getLevel());
+        horse.setTrap(true);
+        Vec3 at = helper.absoluteVec(new Vec3(1.5, 1, 1.5));
+        horse.moveTo(at.x, at.y, at.z);
+        check(helper, !helper.getLevel().addFreshEntity(horse), "a lightning trap's skeleton horse joined the world");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void theForecastKnowsSnowFromRain(GameTestHelper helper) {
+        check(helper, Kind.falling(Balance.get().weather().snowBelowC(), 0, false) == Kind.SNOW, "air at the snow line did not snow");
+        check(helper, Kind.falling(Balance.get().weather().snowBelowC() - 4, Balance.get().weather().blizzardWindKmh(), false) == Kind.BLIZZARD,
+                "snow in a gale was no blizzard");
+        check(helper, Kind.falling(Balance.get().weather().snowBelowC() + 4, 0, true) == Kind.THUNDERSTORM, "warm thunder was no thunderstorm");
         helper.succeed();
     }
 }

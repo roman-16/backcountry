@@ -14,9 +14,12 @@ base {
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 def heapGigabytes = (providers.fileContents(layout.projectDirectory.file('../balance.toml')).asText.get() =~ /(?ms)^\[heap\]\s*^gigabytes = (\d+)$/)[0][1]
-def ecliptic = providers.fileContents(layout.projectDirectory.file('../pack/mods/ecliptic-seasons.pw.toml')).asText.map { text ->
-    "maven.modrinth:${(text =~ /(?m)^mod-id = "(.+)"$/)[0][1]}:${(text =~ /(?m)^version = "(.+)"$/)[0][1]}".toString()
+static Provider<String> modrinth(Provider<String> packEntry) {
+    packEntry.map { text -> "maven.modrinth:${(text =~ /(?m)^mod-id = "(.+)"$/)[0][1]}:${(text =~ /(?m)^version = "(.+)"$/)[0][1]}".toString() }
 }
+
+def ecliptic = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/ecliptic-seasons.pw.toml')).asText)
+def farView = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/distanthorizons.pw.toml')).asText)
 
 sourceSets {
     dev {
@@ -116,6 +119,7 @@ tasks.matching { it.name == 'runServer' }.configureEach {
 }
 
 dependencies {
+    compileOnly farView
     implementation ecliptic
     hotswapAgent "org.hotswapagent:hotswap-agent-core:${hotswap_agent_version}"
     vineflower "org.vineflower:vineflower:${vineflower_version}"

@@ -20,10 +20,11 @@ The `finish` skill comes first, so this list keeps only what play alone shows. P
 | Cold | A May night in base clothes is cold but survivable; a winter night without fire, roof or hide clothing brings frostnip; a fire undoes it |
 | Energy | A day of chopping drains the bolts; "Too tired to sprint" below a fifth; a night's sleep refills them |
 | Inventory | Three dark rows saying "Needs a hide pack"; the Hide Pack in the back slot opens one; its items stay in it when it comes off |
-| Messenger | Right-click opens four pages that match what you feel in the world |
+| Messenger | Right-click opens six pages that match what you feel in the world; a new alert beeps and lights the Messenger's icon until you open it |
+| Weather | Rain, snow and dry spells come when the Weather page says; snow falls where the air is at freezing, rain where it is warmer; the forecast is mostly right for tomorrow and less so three days out; out in the wind you cool faster than under a roof; a blizzard closes the view in |
 | End | At BMI 17 the screen fades, the summary shows the weight curve, and Arrive brings a fresh survivor to the drop-off; your left pack stands where you were |
 | Team | A teammate sees your extraction in chat and can open your left pack; on 3 May the year's summary names everyone |
-| Balance | Whether a week of game days felt hungry but fair, and whether cold, water and energy each mattered without nagging |
+| Balance | Whether a week of game days felt hungry but fair, whether cold, water and energy each mattered without nagging, and whether the weather's swings, the wind and the alerts felt like Alaska without nagging |
 
 ## Bring the results back
 

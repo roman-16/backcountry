@@ -1,6 +1,11 @@
 [heap]
 gigabytes = 8
 
+[alerts]
+chance = 0.5
+wasting_bmi = 18.5
+weight_step_kg = 2.0
+
 [bear_spray]
 blind_seconds = 4
 bursts = 8
@@ -166,6 +171,46 @@ place_kcal = 2
 sprint_kcal_per_block = 0.125
 swim_kcal_per_block = 0.25
 walk_kcal_per_block = 0.0625
+
+[weather]
+blizzard_fog_blocks = 32
+blizzard_wind_kmh = 56
+clear_below = 0.25
+cloudy_above = 0.5
+cloudy_swing = 0.5
+drift_carried = 0.5
+drift_summer_c = 2
+drift_winter_c = 8
+dry_wind_kmh = 12
+forecast_chance_noise = 0.25
+forecast_error_c_per_day = 2
+forecast_skill_lost_per_day = 0.25
+forecast_wind_error_kmh_per_day = 4
+highest_wind_kmh = 96
+intensity_shares = [0.5, 0.375, 0.125]
+longest_spell_hours = 16
+overcast = 0.75
+precipitation_days = [
+  8.1,
+  7.9,
+  6.0,
+  4.9,
+  6.5,
+  8.6,
+  11.7,
+  14.4,
+  14.9,
+  11.5,
+  9.8,
+  10.8,
+]
+shortest_spell_hours = 2
+snow_below_c = 1
+storm_first_month = 6
+storm_last_month = 8
+storm_share = 0.25
+wet_shares = [0.5, 1.0, 2.0]
+wet_wind_kmh = 40
 
 [world]
 across_blocks = 6144

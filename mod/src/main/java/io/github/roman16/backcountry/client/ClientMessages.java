@@ -2,16 +2,25 @@ package io.github.roman16.backcountry.client;
 
 import io.github.roman16.backcountry.body.BodyView;
 import io.github.roman16.backcountry.survivor.Summary;
+import io.github.roman16.backcountry.weather.Day;
+import io.github.roman16.backcountry.weather.Weather;
+import io.github.roman16.backcountry.weather.WeatherView;
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.DeathScreen;
 
 public final class ClientMessages {
     private ClientMessages() {}
 
-    public static void view(BodyView view) {
-        ClientState.view = view;
+    public static void view(BodyView view, WeatherView weather) {
+        ClientState.received(view);
+        ClientState.weather = weather;
         ClientState.viewed = true;
         ClientState.blackout = view.blackout();
+    }
+
+    public static void sky(List<Day> days) {
+        Weather.share(days);
     }
 
     public static void summary(Summary summary) {

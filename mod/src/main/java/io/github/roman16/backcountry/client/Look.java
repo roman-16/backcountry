@@ -4,6 +4,7 @@ final class Look {
     static final int AXIS = 0xFF5A5A5A;
     static final int BEZEL = 0xFF2A1A10;
     static final int BLACKOUT = 0x000000;
+    static final int BLIZZARD = 0xFFB0B8C0;
     static final int CASE = 0xFFD8742C;
     static final int CASE_DARK = 0xFFA4521A;
     static final int CASE_EDGE = 0xFF4A2208;
@@ -35,6 +36,8 @@ final class Look {
     static final int LCD_WARN = 0xFFFFB040;
     static final int LCD_WARN_DIM = 0xFF5C4422;
     static final int LCD_WATER = 0xFF5AB0FF;
+    static final int LIGHT = 0xFFFFB040;
+    static final int LIGHT_EDGE = 0xFF3C1E00;
     static final int LOCKED = 0xB0202020;
     static final int PLATE = 0x80000000;
     static final int TEXT = 0xFFFFFFFF;

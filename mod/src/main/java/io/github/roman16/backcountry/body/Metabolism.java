@@ -157,6 +157,7 @@ public final class Metabolism {
             player.displayClientMessage(Component.translatable("message.backcountry.pack_too_full"), true);
         }
         Team.get(player.server).note(player, body);
+        Alerts.check(player, body, day);
         if (player.isAlive() && body.bmi() <= balance.body().extractionBmi()) {
             Ending.extract(player);
         }

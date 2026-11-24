@@ -11,3 +11,6 @@
 
 [Temperature]
 	HeatStroke = false
+
+[Weather]
+	UseSolarWeather = false

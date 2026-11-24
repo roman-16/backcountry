@@ -19,6 +19,8 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
 
 public final class Body implements INBTSerializable<CompoundTag> {
+    public final EnumMap<Alert, Long> alerts = new EnumMap<>(Alert.class);
+    public int alertsDay;
     public boolean arrived;
     public int arrivedDay;
     public double arrivedKg;
@@ -49,10 +51,12 @@ public final class Body implements INBTSerializable<CompoundTag> {
     public double stomachVitaminC;
     public int stumbleTicks;
     public double thirstSeconds;
+    public boolean unread;
     public double vitaminCMg;
     public double warmHours;
     public double waterL;
     public double weightKg;
+    public double weightMarkKg;
     public final List<Float> weights = new ArrayList<>();
     public double wetBlocks;
     public double wetness;
@@ -67,6 +71,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
     public transient double loadKg;
     public transient int loadWarnedAt;
     public transient boolean sheltered;
+    public transient boolean windy;
     public transient double workKcal;
 
     public static final class Affliction {
@@ -81,6 +86,8 @@ public final class Body implements INBTSerializable<CompoundTag> {
 
     public void reset(int day, int year) {
         Balance balance = Balance.get();
+        alerts.clear();
+        alertsDay = day;
         arrived = true;
         arrivedDay = day;
         arrivedKg = balance.body().arrivalKg();
@@ -104,10 +111,12 @@ public final class Body implements INBTSerializable<CompoundTag> {
         stomachVitaminC = 0;
         stumbleTicks = 0;
         thirstSeconds = 0;
+        unread = false;
         vitaminCMg = balance.body().vitaminCMgDay() * balance.body().vitaminCStoreDays();
         warmHours = 0;
         waterL = balance.water().needLDay();
         weightKg = arrivedKg;
+        weightMarkKg = arrivedKg;
         weights.clear();
         weights.add((float) weightKg);
         wetBlocks = 0;
@@ -148,6 +157,10 @@ public final class Body implements INBTSerializable<CompoundTag> {
     @Override
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
+        CompoundTag raised = new CompoundTag();
+        alerts.forEach((alert, at) -> raised.putLong(alert.id(), at));
+        tag.put("alerts", raised);
+        tag.putInt("alerts_day", alertsDay);
         tag.putBoolean("arrived", arrived);
         tag.putInt("arrived_day", arrivedDay);
         tag.putDouble("arrived_kg", arrivedKg);
@@ -189,10 +202,12 @@ public final class Body implements INBTSerializable<CompoundTag> {
         tag.putDouble("stomach_protein", stomachProtein);
         tag.putDouble("stomach_vitamin_c", stomachVitaminC);
         tag.putDouble("thirst_seconds", thirstSeconds);
+        tag.putBoolean("unread", unread);
         tag.putDouble("vitamin_c_mg", vitaminCMg);
         tag.putDouble("warm_hours", warmHours);
         tag.putDouble("water_l", waterL);
         tag.putDouble("weight_kg", weightKg);
+        tag.putDouble("weight_mark_kg", weightMarkKg);
         ListTag curve = new ListTag();
         weights.forEach(weight -> curve.add(FloatTag.valueOf(weight)));
         tag.put("weights", curve);
@@ -204,6 +219,14 @@ public final class Body implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+        alerts.clear();
+        CompoundTag raised = tag.getCompound("alerts");
+        for (Alert alert : Alert.values()) {
+            if (raised.contains(alert.id())) {
+                alerts.put(alert, raised.getLong(alert.id()));
+            }
+        }
+        alertsDay = tag.getInt("alerts_day");
         arrived = tag.getBoolean("arrived");
         arrivedDay = tag.getInt("arrived_day");
         arrivedKg = tag.getDouble("arrived_kg");
@@ -242,10 +265,12 @@ public final class Body implements INBTSerializable<CompoundTag> {
         stomachProtein = tag.getDouble("stomach_protein");
         stomachVitaminC = tag.getDouble("stomach_vitamin_c");
         thirstSeconds = tag.getDouble("thirst_seconds");
+        unread = tag.getBoolean("unread");
         vitaminCMg = tag.getDouble("vitamin_c_mg");
         warmHours = tag.getDouble("warm_hours");
         waterL = tag.getDouble("water_l");
         weightKg = tag.getDouble("weight_kg");
+        weightMarkKg = tag.getDouble("weight_mark_kg");
         weights.clear();
         tag.getList("weights", Tag.TAG_FLOAT).forEach(entry -> weights.add(((FloatTag) entry).getAsFloat()));
         wetBlocks = tag.getDouble("wet_blocks");

@@ -10,8 +10,11 @@
     "DailyOrderMixin",
     "InventoryMenuMixin",
     "InventoryMixin",
+    "LightningBoltMixin",
+    "PrecipitationMixin",
     "SplineCoordinateMixin",
-    "StructuresMixin"
+    "StructuresMixin",
+    "WeatherEffectMixin"
   ],
   "package": "io.github.roman16.backcountry.mixin",
   "required": true

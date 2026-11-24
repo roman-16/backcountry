@@ -19,18 +19,24 @@ Everything the pack draws wears vanilla's own look: its panels, buttons, slots a
 
 ### I2 The Satellite Messenger
 
-Right-click opens it, drawn as the device itself: an orange handheld with a green-on-dark screen, the only screen with a skin of its own, as vanilla's book has its page. Its pages are tabs, switched by a click, the arrow keys, 1 to 4 or the ◀ ▶ keys on the case. Every value has its icon and a meter; the core temperature sits on a gauge banded freezing, cold, comfortable and hot, and the weight on a BMI gauge with extraction marked at 17; warnings turn amber or red. M2 builds the Warmth, Body, Nutrition and Vitals pages.
+Right-click opens it, drawn as the device itself: an orange handheld with a green-on-dark screen, the only screen with a skin of its own, as vanilla's book has its page. Its pages are tabs: the shown page's tab carries its icon and name, the others their icon alone (hovering names them), switched by a click, the arrow keys, 1 to 6 or the ◀ ▶ keys on the case. Every value has its icon and a meter; the air sits on a gauge from -40 to +30 °C banded at freezing and at -15 °C, the wind on a meter with the blizzard mark at 56 km/h, the core temperature on a gauge banded freezing, cold, comfortable and hot, and the weight on a BMI gauge with extraction marked at 17; warnings turn amber or red. A strip of alerts sits under every page, two lines at most, "and N more" past them, "No alerts" when there are none.
 
 ```text
-┌ Satellite Messenger ──────────────── Day 9 · 2 Jul ┐
-│ Weather  Forecast  Warmth  Body  Nutrition  ...     │
-│ Now 11 °C, feels like 7 °C · light rain             │
-│ Wind 18 km/h NW · cloud 80% · high 14 °C, low 4 °C  │
-├ Alerts ─────────────────────────────────────────────┤
-│ Snowfall tomorrow · Freezing overnight              │
-│ Bears are feeding heavily · Body weight dropped     │
-└─────────────────────────────────────────────────────┘
+┌ SATELLITE MESSENGER ────────────────────────────┐
+│ Day 31 · 17 Dec                         SAT ▮▮▮ │
+│ [☁ Weather]  📅   🔥   🌡   🍖   ♥              │
+│ 🌡 Air            -6 °C · feels like -13 °C     │
+│ ❄ Precipitation       Light snow until 18:00    │
+│ ≋ Wind                            18 km/h NW    │
+│ ☁ Cloud                                  80%    │
+│ 📅 Today              High -3 °C · low -11 °C   │
+├─────────────────────────────────────────────────┤
+│ ⚠ Snow tomorrow  ⚠ Frost tonight                │
+│ ⚠ Weight dropped                                │
+└─────────────────────────────────────────────────┘
 ```
+
+The Forecast page gives each of the next three days two lines: its sky (the icon of the rain or snow when it is likely, else of the cloud), the day and date, the chance ("Snow 80%"), and below it the high, the low and the wind. A new alert beeps once and lights a small amber light on the Messenger's icon in the hotbar until the Messenger is opened.
 
 ### I3 Food
 

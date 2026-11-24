@@ -7,9 +7,10 @@ import net.minecraft.network.codec.StreamCodec;
 
 public record BodyView(float energy, float water, float waterL, float needL, List<Condition> conditions, float weightKg, float coreC, int comfort, int trend, float wetness,
         float awakeHours, float kcalEaten, float kcalBurned, float protein, float carbs, float fat, float stomach, float loadKg, float capacityKg, int day, int blackout,
-        boolean fire, boolean sheltered, float clo) {
-    public static final BodyView NONE = new BodyView(1, 1, 0, 0, List.of(), 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0);
+        boolean fire, boolean sheltered, boolean windy, float clo, List<Alert> alerts, boolean unread) {
+    public static final BodyView NONE = new BodyView(1, 1, 0, 0, List.of(), 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, 0, List.of(), false);
     public static final StreamCodec<RegistryFriendlyByteBuf, BodyView> STREAM_CODEC = StreamCodec.of(BodyView::write, BodyView::read);
+    private static final int FLOATS = 17;
 
     public float bmi(double heightM) {
         return (float) (weightKg / (heightM * heightM));
@@ -28,10 +29,14 @@ public record BodyView(float energy, float water, float waterL, float needL, Lis
         buffer.writeVarInt(view.blackout);
         buffer.writeBoolean(view.fire);
         buffer.writeBoolean(view.sheltered);
+        buffer.writeBoolean(view.windy);
+        buffer.writeVarInt(view.alerts.size());
+        view.alerts.forEach(alert -> buffer.writeVarInt(alert.ordinal()));
+        buffer.writeBoolean(view.unread);
     }
 
     private static BodyView read(RegistryFriendlyByteBuf buffer) {
-        float[] n = new float[17];
+        float[] n = new float[FLOATS];
         for (int i = 0; i < n.length; i++) {
             n[i] = buffer.readFloat();
         }
@@ -46,7 +51,14 @@ public record BodyView(float energy, float water, float waterL, float needL, Lis
         int blackout = buffer.readVarInt();
         boolean fire = buffer.readBoolean();
         boolean sheltered = buffer.readBoolean();
+        boolean windy = buffer.readBoolean();
+        int raised = buffer.readVarInt();
+        List<Alert> alerts = new ArrayList<>();
+        for (int i = 0; i < raised; i++) {
+            alerts.add(Alert.values()[buffer.readVarInt()]);
+        }
+        boolean unread = buffer.readBoolean();
         return new BodyView(n[0], n[1], n[2], n[3], List.copyOf(conditions), n[4], n[5], comfort, trend, n[6], n[7], n[8], n[9], n[10], n[11], n[12], n[13], n[14], n[15],
-                day, blackout, fire, sheltered, n[16]);
+                day, blackout, fire, sheltered, windy, n[16], List.copyOf(alerts), unread);
     }
 }

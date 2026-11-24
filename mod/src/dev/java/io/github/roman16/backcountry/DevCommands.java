@@ -8,15 +8,23 @@ import com.mojang.brigadier.context.CommandContext;
 import com.teamtea.eclipticseasons.common.core.solar.SolarDataManager;
 import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Calendar;
+import io.github.roman16.backcountry.body.Climate;
 import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.net.Messages;
+import io.github.roman16.backcountry.weather.Day;
+import io.github.roman16.backcountry.weather.Kind;
+import io.github.roman16.backcountry.weather.Sky;
+import io.github.roman16.backcountry.weather.Weather;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -26,6 +34,8 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 public final class DevCommands {
     public static final String MARK = "driver mark ";
     private static final int OWNER = 2;
+    private static final String[] WEATHERS = {"clear", "rain", "snow", "thunderstorm", "blizzard"};
+    private static final double MARGIN_C = 8;
 
     private DevCommands() {}
 
@@ -48,6 +58,10 @@ public final class DevCommands {
                                 .executes(DevCommands::condition)))
                 .then(Commands.literal("day").requires(source -> source.hasPermission(OWNER))
                         .then(Commands.argument("day", IntegerArgumentType.integer(1)).executes(DevCommands::day)))
+                .then(Commands.literal("weather").requires(source -> source.hasPermission(OWNER))
+                        .then(Commands.argument("kind", StringArgumentType.word())
+                                .suggests((context, builder) -> SharedSuggestionProvider.suggest(WEATHERS, builder))
+                                .executes(DevCommands::weather)))
                 .then(Commands.literal("pretend").requires(source -> source.hasPermission(OWNER))
                         .then(Commands.literal("join").then(Commands.argument("name", StringArgumentType.word())
                                 .executes(context -> Pretend.join(context.getSource(), StringArgumentType.getString(context, "name")))))
@@ -101,6 +115,37 @@ public final class DevCommands {
         solar.setSolarTermsDay(Calendar.firstSolarDay() + day - 1);
         solar.sendAndUpdate(level);
         context.getSource().sendSuccess(() -> Component.literal("it is " + Calendar.label(Calendar.day(level)).getString()), false);
+        return 1;
+    }
+
+    private static int weather(CommandContext<CommandSourceStack> context) {
+        String kind = StringArgumentType.getString(context, "kind");
+        if (!List.of(WEATHERS).contains(kind)) {
+            context.getSource().sendFailure(Component.literal("weather failed: no weather " + kind));
+            return 0;
+        }
+        ServerLevel level = context.getSource().getServer().overworld();
+        int day = Calendar.day(level);
+        double hour = Climate.hour(level);
+        Day today = Weather.day(level, day);
+        BlockPos at = BlockPos.containing(context.getSource().getPosition());
+        boolean cold = kind.equals("snow") || kind.equals("blizzard");
+        double drift = today.driftC();
+        if (!kind.equals("clear")) {
+            double air = Climate.airC(level, at, day);
+            double target = cold ? Balance.get().weather().snowBelowC() - MARGIN_C : Balance.get().weather().snowBelowC() + MARGIN_C;
+            double weight = 1 - Math.abs(hour - Weather.EVENING) / Weather.HOURS;
+            drift += (target - air) / weight;
+        }
+        Balance.Weather rules = Balance.get().weather();
+        double wind = kind.equals("blizzard") ? rules.blizzardWindKmh() + rules.dryWindKmh() : Math.min(today.windKmh(), rules.blizzardWindKmh() / 2);
+        Day set = kind.equals("clear") ? new Day(day, (float) drift, 0, (float) wind, today.windFrom(), Day.DRY, 0, 0, false)
+                : new Day(day, (float) drift, 1, (float) wind, today.windFrom(), Day.MODERATE, (int) hour, Weather.HOURS, kind.equals("thunderstorm"));
+        Weather.set(set);
+        Sky.drive(level, day);
+        Sky.share(level);
+        Kind shown = kind.equals("clear") ? Kind.CLEAR : Kind.valueOf(kind.toUpperCase(Locale.ROOT));
+        context.getSource().sendSuccess(() -> Component.literal("weather is " + shown.id() + (set.wet() ? " until 06:00" : "")), false);
         return 1;
     }
 }

@@ -47,26 +47,33 @@ The mod owns the survivor's whole body, so every number is in kcal, °C, kg and 
 
 ### S3 Weather and the forecast
 
-- The mod's own weather: temperatures that drift day to day around S5's climate curve, rain, snow and blizzards, lows down to about -35 °C. It drives vanilla's weather, and Ecliptic's weather is held to it (spike: whether Ecliptic lets it).
-- The forecast covers tomorrow, +2 and +3 days, less sure the further it looks.
-- Animals react: fewer about in rain, and fishing changes with the weather.
+- **The mod's own weather**, one sky for the whole world. Each game day is drawn from the world seed and the day: how far it drifts from S5's climate curve (by about 8 °C in winter and 2 °C in summer, half of it carried into the next day, so cold snaps bring lows to about -35 °C in the coldest places), its cloud, its wind and its direction, and at most one spell of rain or snow, 2 to 16 hours long, light, moderate or heavy. Wet days come as often as Anchorage's days with precipitation (NOAA 1991-2020: 5 in 30 in April, 15 in September). A thunderstorm is a rain day from June to August, one in four.
+- **Rain or snow follows the air** where it falls: snow at +1 °C and colder, so it can rain at the beach while it snows in the grove above. Ecliptic's snow on the ground builds up while snow falls near sea level and melts on days above freezing.
+- **A blizzard** is snow with wind of 56 km/h or more (the US weather service's threshold): outdoors the fog closes in to about 32 blocks and the light turns grey, and Distant Horizons' far view is fogged with it. Under the Complementary shader the blizzard wears the shader's own snow fog.
+- **Wind chills the body** in the open (the wind-chill formula of Environment Canada and the US weather service, above 4.8 km/h and at 10 °C and colder); a roof within 4 blocks, dense canopy included, takes the wind off (S5).
+- **Lightning** flashes, thunders and hurts what it hits, but sets no fire and brings no skeleton riders.
+- **The forecast** covers tomorrow, +2 and +3 days, issued each morning at 06:00 when the day turns: the real coming day with an error that grows each day further (2 °C more per day), a chance of rain or snow that drifts towards the season's usual chance, and the high and low where the survivor stands.
+- **How it is held:** rain and thunder are vanilla's two world switches, which Ecliptic only reads; its own seasonal rain is off (`UseSolarWeather`), and the mod sets the switches each tick to its day. Ecliptic's rain-or-snow choice and its weather effects are answered by mixins from the mod's air.
+- **Edge cases:** sleeping through a spell, `/time set` and `/backcountry day` give whatever that day and hour has; an empty server holds nothing; `doWeatherCycle` off leaves the mod's weather going and stops Ecliptic's snow on the ground changing; `/weather` is refused ("The weather follows the forecast") and a command block's the same; every survivor sees one sky, but the temperature, rain or snow and the alerts are each one's own spot.
+- Animals react (fewer about in rain) with the spawn director in M6, and fishing changes with the weather in M7.
 
 ### S4 The Satellite Messenger
 
 - A hand-held device with seven pages:
-  - Weather: temperature, feels like, precipitation, wind, cloud, date, high and low.
-  - Forecast: tomorrow, +2 and +3 days.
-  - Warmth: fire, shelter (open or roofed), wetness, clothing.
+  - Weather: the air and how it feels in the wind, precipitation now or later today with its hours, wind and direction, cloud, today's high and low here.
+  - Forecast: tomorrow, +2 and +3 days, each with its chance of rain or snow, high, low and wind.
+  - Warmth: fire, shelter (open, open in the wind, or roofed), wetness, clothing.
   - Body: core temperature, comfort, wetness, trend, fatigue.
   - Nutrition: protein, carbs, fat, energy.
   - Rations: fullness, the team's ration.
   - Vitals: weight, energy, BMI, the team's food stores in days, water.
-- Alerts: thunderstorms or snowfall tomorrow, freezing overnight, bears feeding heavily, moose rut begun, body weight dropped, body wasting.
-- **Edge cases:** a messenger lost or broken comes again from the Supply Crate at the drop-off, which stands there from the world's first day and cannot be broken: a survivor carrying no messenger right-clicks it and takes a new one ("You already carry a Satellite Messenger" otherwise).
+- **Alerts**, each survivor's own: snow, a blizzard or a thunderstorm tomorrow (a chance of 50% or more here), frost tonight (tonight freezes here after a night above 0 °C), weight dropped (2 kg below where it last alerted; weight regained raises the mark), body wasting (BMI below 18.5, the WHO's underweight line). The weather alerts last until 06:00, weight dropped a day, body wasting until the BMI is back above it at a new day. Bears feeding heavily and moose rut begun come with M6's seasonal events.
+- **A new alert** beeps once while the survivor carries a Messenger, and an amber light shows on its icon until it is opened.
+- **Edge cases:** a messenger lost or broken comes again from the Supply Crate at the drop-off, which stands there from the world's first day and cannot be broken: a survivor carrying no messenger right-clicks it and takes a new one ("You already carry a Satellite Messenger" otherwise). Unread alerts wait for a messenger carried again; alerts missed while offline do not beep; an extracted or dead survivor's alerts go with them; a teammate's messenger shows its carrier's alerts.
 
 ### S5 Temperature and clothing
 
-- Ambient temperature follows a climate curve, Anchorage's monthly normal highs and lows through the year and the day, shifted by the biome and by height; S3's weather drifts from it. Shelter (a roof within 4 blocks), wetness, fire heat and clothing insulation set the core temperature.
+- Ambient temperature follows a climate curve, Anchorage's monthly normal highs and lows through the year and the day, shifted by the biome and by height; S3's weather drifts from it and cloud narrows the swing between day and night. Shelter (a roof within 4 blocks), wind in the open, wetness, fire heat and clothing insulation set the core temperature; rain and snow wet the survivor by their intensity.
 - The survivor arrives in clothes of their own; hide clothing adds insulation: the Hide Hat, the Hide Poncho (the lighter chest piece, worn instead of the coat), the Hide Coat and the Hide Pants.
 - Rawhide snowshoes for deep snow; walking deep snow without them frostbites the feet.
 

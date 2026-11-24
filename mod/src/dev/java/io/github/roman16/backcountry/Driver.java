@@ -4,11 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.InputConstants;
+import io.github.roman16.backcountry.body.Alert;
 import io.github.roman16.backcountry.body.BodyView;
 import io.github.roman16.backcountry.body.Calendar;
+import io.github.roman16.backcountry.body.Climate;
 import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.client.ClientState;
 import io.github.roman16.backcountry.mixin.dev.GuiAccessor;
+import io.github.roman16.backcountry.weather.Outlook;
+import io.github.roman16.backcountry.weather.WeatherView;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
@@ -32,6 +36,7 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.resolver.ServerAddress;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.item.ItemStack;
@@ -53,6 +58,8 @@ import org.lwjgl.glfw.GLFW;
 public final class Driver {
     private static final Gson GSON = new Gson();
     private static final int STEP_TICKS = 1200;
+    private static final int DAY_START_HOUR = 6;
+    private static final int HOURS = 24;
     private static final String FRESH = "play";
     private static final Map<String, Integer> KEYS = Map.of("enter", GLFW.GLFW_KEY_ENTER, "escape", GLFW.GLFW_KEY_ESCAPE, "left", GLFW.GLFW_KEY_LEFT, "right",
             GLFW.GLFW_KEY_RIGHT, "tab", GLFW.GLFW_KEY_TAB);
@@ -279,6 +286,27 @@ public final class Driver {
         seen.addProperty("wetness", Math.round(view.wetness() * 100) + "%");
         seen.addProperty("stomach", Math.round(view.stomach() * 100) + "%");
         seen.addProperty("load", "%.1f of %.0f kg".formatted(view.loadKg(), view.capacityKg()));
+        WeatherView weather = ClientState.weather;
+        String falling = weather.falling().map(kind -> ", " + kind.title(weather.intensity()).getString().toLowerCase(Locale.ROOT) + (weather.now() ? " until " : " from ")
+                + clock(weather.now() ? weather.toHour() : weather.fromHour())).orElse(", none");
+        seen.addProperty("weather", "%d °C, feels like %d °C%s, wind %d km/h, cloud %d%%, high %d °C, low %d °C".formatted(Math.round(weather.airC()),
+                Math.round(weather.feelsC()), falling, Math.round(weather.windKmh()), Math.round(weather.cloud() * 100), Math.round(weather.highC()),
+                Math.round(weather.lowC())));
+        JsonArray forecast = new JsonArray();
+        for (Outlook outlook : weather.outlooks()) {
+            forecast.add("%s: %s %d%%, %s, %d / %d °C, %d km/h".formatted(Calendar.label(outlook.day()).getString(), outlook.falling().id(), outlook.chance(),
+                    outlook.sky().id(), Math.round(outlook.highC()), Math.round(outlook.lowC()), Math.round(outlook.windKmh())));
+        }
+        seen.add("forecast", forecast);
+        BlockPos at = minecraft.player.blockPosition();
+        seen.addProperty("sky", "%s at %d °C".formatted(minecraft.level.getBiome(at).value().getPrecipitationAt(at).getSerializedName(),
+                Math.round(Climate.airC(minecraft.level, at, Calendar.day(minecraft.level)))));
+        JsonArray alerts = new JsonArray();
+        for (Alert alert : view.alerts()) {
+            alerts.add(alert.title().getString());
+        }
+        seen.add("alerts", alerts);
+        seen.addProperty("unread", view.unread());
         seen.addProperty("date", Calendar.label(view.day()).getString());
         seen.addProperty("time", minecraft.level.getDayTime() % 24000);
         GuiAccessor gui = (GuiAccessor) minecraft.gui;
@@ -294,6 +322,10 @@ public final class Driver {
         seen.addProperty("mode", minecraft.gameMode.getPlayerMode().getName());
         seen.addProperty("screen", minecraft.screen == null ? "" : minecraft.screen.getClass().getSimpleName() + " \"" + minecraft.screen.getTitle().getString() + "\"");
         return seen;
+    }
+
+    private static String clock(int hoursIntoDay) {
+        return "%02d:00".formatted((hoursIntoDay + DAY_START_HOUR) % HOURS);
     }
 
     private static JsonObject screen(Minecraft minecraft) {

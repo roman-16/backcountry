@@ -14,7 +14,7 @@ hash = "2c235c6311331bc9ff838e15382023c3ea139fd53c03635a6760fe0c04538970"
 
 [[files]]
 file = "config/eclipticseasons-common.toml"
-hash = "6ff5dc850f5bebeaf21e04ee873f1e3b6790850ee0f3b77c2ec600575c556fd2"
+hash = "66bbbbb4d8dbcfb9d46aeb36fc94a671e52c3e28d36c31f0f2db02715a1c274e"
 
 [[files]]
 file = "config/streamsreflowing.properties"

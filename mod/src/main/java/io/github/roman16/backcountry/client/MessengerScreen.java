@@ -2,9 +2,14 @@ package io.github.roman16.backcountry.client;
 
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.body.Alert;
 import io.github.roman16.backcountry.body.BodyView;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Condition;
+import io.github.roman16.backcountry.net.Messages;
+import io.github.roman16.backcountry.weather.Kind;
+import io.github.roman16.backcountry.weather.Outlook;
+import io.github.roman16.backcountry.weather.WeatherView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -25,29 +30,42 @@ public class MessengerScreen extends Screen {
     private static final ResourceLocation LOAD = Backcountry.id("hud/load");
     private static final ResourceLocation ENERGY = Backcountry.id("hud/energy_full");
     private static final ResourceLocation AWAKE = Backcountry.id("hud/exhausted");
+    private static final ResourceLocation WIND = Backcountry.id("hud/wind");
+    private static final ResourceLocation FORECAST = Backcountry.id("hud/forecast");
+    private static final ResourceLocation ALERT = Backcountry.id("hud/alert");
     private static final ResourceLocation CLOTHING = ResourceLocation.withDefaultNamespace("hud/armor_full");
     private static final ResourceLocation FOOD = ResourceLocation.withDefaultNamespace("hud/food_full");
     private static final ResourceLocation HEART = ResourceLocation.withDefaultNamespace("hud/heart/full");
-    private static final String[] PAGES = {"warmth", "body", "nutrition", "vitals"};
+    private static final String[] PAGES = {"weather", "forecast", "warmth", "body", "nutrition", "vitals"};
+    private static final ResourceLocation[] PAGE_ICONS = {Kind.PARTLY_CLOUDY.icon(), FORECAST, FIRE, TEMPERATURE, FOOD, HEART};
     private static final int WIDTH = 232;
-    private static final int HEIGHT = 174;
+    private static final int HEIGHT = 214;
     private static final int LCD_X = 12;
     private static final int LCD_Y = 24;
     private static final int LCD_WIDTH = 208;
-    private static final int LCD_HEIGHT = 124;
+    private static final int LCD_HEIGHT = 164;
     private static final int PAD = 6;
     private static final int ICON = 9;
+    private static final int ICON_GAP = 3;
     private static final int METER = 3;
     private static final int ROW = 20;
     private static final int LINE = 11;
+    private static final int DAY_GAP = 6;
+    private static final int ALERT_GAP = 8;
+    private static final int ALERT_LINES = 2;
     private static final int KEY_WIDTH = 22;
     private static final int KEY_HEIGHT = 12;
     private static final int ANTENNA_WIDTH = 8;
     private static final int ANTENNA_HEIGHT = 16;
     private static final int TABS_Y = 15;
+    private static final int TAB_PAD = 4;
     private static final int CONTENT_Y = 32;
     private static final float CORE_LOW = 33;
     private static final float CORE_HIGH = 39;
+    private static final float AIR_LOW = -40;
+    private static final float AIR_HIGH = 30;
+    private static final float FREEZING = 0;
+    private static final float WIND_FULL = 64;
     private static final float BMI_LOW = 15;
     private static final float BMI_HIGH = 25;
     private static final float CLOTHING_FULL = 6;
@@ -65,6 +83,10 @@ public class MessengerScreen extends Screen {
     protected void init() {
         left = (width - WIDTH) / 2;
         top = (height - HEIGHT) / 2;
+        if (ClientState.unread()) {
+            ClientState.read();
+            Messages.read();
+        }
     }
 
     private void show(int index) {
@@ -90,10 +112,8 @@ public class MessengerScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double x, double y, int button) {
-        int tabWidth = LCD_WIDTH / PAGES.length;
         for (int i = 0; i < PAGES.length; i++) {
-            int tabLeft = left + LCD_X + i * tabWidth;
-            if (inside(x, y, tabLeft, top + LCD_Y + TABS_Y - 2, tabWidth, LINE + 1)) {
+            if (inside(x, y, tabLeft(i), tabsTop() - 2, tabWidth(i), LINE + 1)) {
                 show(i);
                 return true;
             }
@@ -121,6 +141,30 @@ public class MessengerScreen extends Screen {
         return top + LCD_Y + LCD_HEIGHT + (HEIGHT - LCD_Y - LCD_HEIGHT - KEY_HEIGHT) / 2;
     }
 
+    private int tabsTop() {
+        return top + LCD_Y + TABS_Y;
+    }
+
+    private int shownTabWidth() {
+        return TAB_PAD + ICON + ICON_GAP + font.width(pageName(page)) + TAB_PAD;
+    }
+
+    private int tabWidth(int index) {
+        return index == page ? shownTabWidth() : (LCD_WIDTH - shownTabWidth()) / (PAGES.length - 1);
+    }
+
+    private int tabLeft(int index) {
+        int x = left + LCD_X;
+        for (int i = 0; i < index; i++) {
+            x += tabWidth(i);
+        }
+        return x;
+    }
+
+    private static Component pageName(int index) {
+        return Component.translatable("messenger.backcountry.page." + PAGES[index]);
+    }
+
     @Override
     public boolean isPauseScreen() {
         return false;
@@ -136,13 +180,19 @@ public class MessengerScreen extends Screen {
         graphics.drawString(font, Calendar.label(view.day()), x + PAD, y + 3, Look.LCD_DIM, false);
         Component signal = Component.translatable("messenger.backcountry.signal");
         graphics.drawString(font, signal, x + LCD_WIDTH - PAD - font.width(signal), y + 3, Look.LCD_DIM, false);
-        tabs(graphics, x, y + TABS_Y, mouseX, mouseY);
+        int hovered = tabs(graphics, x, mouseX, mouseY);
         int row = y + CONTENT_Y;
         switch (PAGES[page]) {
+            case "weather" -> weather(graphics, x, row, ClientState.weather);
+            case "forecast" -> forecast(graphics, x, row, ClientState.weather);
             case "warmth" -> warmth(graphics, x, row, view);
             case "body" -> body(graphics, x, row, view);
             case "nutrition" -> nutrition(graphics, x, row, view);
             default -> vitals(graphics, x, row, view);
+        }
+        alerts(graphics, x, view.alerts());
+        if (hovered >= 0) {
+            graphics.renderTooltip(font, pageName(hovered), mouseX, mouseY);
         }
     }
 
@@ -173,19 +223,81 @@ public class MessengerScreen extends Screen {
         }
     }
 
-    private void tabs(GuiGraphics graphics, int x, int y, int mouseX, int mouseY) {
-        int tabWidth = LCD_WIDTH / PAGES.length;
+    private int tabs(GuiGraphics graphics, int x, int mouseX, int mouseY) {
+        int y = tabsTop();
+        int hovered = -1;
         for (int i = 0; i < PAGES.length; i++) {
-            Component name = Component.translatable("messenger.backcountry.page." + PAGES[i]);
-            int tabLeft = x + i * tabWidth;
-            boolean shown = i == page;
-            boolean hovered = inside(mouseX, mouseY, tabLeft, y - 2, tabWidth, LINE + 1);
-            if (shown) {
+            int tabLeft = tabLeft(i);
+            int tabWidth = tabWidth(i);
+            if (i == page) {
                 graphics.fill(tabLeft + 1, y - 2, tabLeft + tabWidth - 1, y + LINE - 1, Look.LCD_TEXT);
+                graphics.blitSprite(PAGE_ICONS[i], tabLeft + TAB_PAD, y - 1, ICON, ICON);
+                graphics.drawString(font, pageName(i), tabLeft + TAB_PAD + ICON + ICON_GAP, y, Look.LCD, false);
+                continue;
             }
-            graphics.drawString(font, name, tabLeft + (tabWidth - font.width(name)) / 2, y, shown ? Look.LCD : hovered ? Look.LCD_TEXT : Look.LCD_DIM, false);
+            if (inside(mouseX, mouseY, tabLeft, y - 2, tabWidth, LINE + 1)) {
+                graphics.fill(tabLeft + 1, y - 2, tabLeft + tabWidth - 1, y + LINE - 1, Look.LCD_TRACK);
+                hovered = i;
+            }
+            graphics.blitSprite(PAGE_ICONS[i], tabLeft + (tabWidth - ICON) / 2, y - 1, ICON, ICON);
         }
         graphics.fill(x + PAD, y + LINE + 1, x + LCD_WIDTH - PAD, y + LINE + 2, Look.LCD_TRACK);
+        return hovered;
+    }
+
+    private void alerts(GuiGraphics graphics, int x, List<Alert> alerts) {
+        int start = x + PAD;
+        int right = x + LCD_WIDTH - PAD;
+        int y = top + LCD_Y + LCD_HEIGHT - PAD - ALERT_LINES * LINE - 3;
+        graphics.fill(start, y, right, y + 1, Look.LCD_TRACK);
+        y += 4;
+        if (alerts.isEmpty()) {
+            graphics.drawString(font, Component.translatable("messenger.backcountry.alerts.none"), start, y + 1, Look.LCD_DIM, false);
+            return;
+        }
+        int cx = start;
+        int line = 0;
+        for (int i = 0; i < alerts.size(); i++) {
+            int width = alertWidth(alerts.get(i));
+            if (cx > start && cx + width > right) {
+                if (line == ALERT_LINES - 1) {
+                    more(graphics, cx, y + line * LINE, alerts.size() - i);
+                    return;
+                }
+                line++;
+                cx = start;
+            }
+            int rest = alerts.size() - i - 1;
+            if (line == ALERT_LINES - 1 && rest > 0 && cx + restWidth(alerts, i) > right
+                    && cx + width + ALERT_GAP + font.width(moreText(rest)) > right) {
+                more(graphics, cx, y + line * LINE, rest + 1);
+                return;
+            }
+            Alert alert = alerts.get(i);
+            graphics.blitSprite(ALERT, cx, y + line * LINE, ICON, ICON);
+            graphics.drawString(font, alert.title(), cx + ICON + ICON_GAP, y + line * LINE + 1, alert.danger() ? Look.LCD_DANGER : Look.LCD_WARN, false);
+            cx += width + ALERT_GAP;
+        }
+    }
+
+    private int alertWidth(Alert alert) {
+        return ICON + ICON_GAP + font.width(alert.title());
+    }
+
+    private int restWidth(List<Alert> alerts, int from) {
+        int width = -ALERT_GAP;
+        for (int i = from; i < alerts.size(); i++) {
+            width += alertWidth(alerts.get(i)) + ALERT_GAP;
+        }
+        return width;
+    }
+
+    private static Component moreText(int count) {
+        return Component.translatable("messenger.backcountry.alerts.more", count);
+    }
+
+    private void more(GuiGraphics graphics, int x, int y, int count) {
+        graphics.drawString(font, moreText(count), x, y + 1, Look.LCD_WARN, false);
     }
 
     private int row(GuiGraphics graphics, int x, int y, ResourceLocation icon, Component label, Component value, int valueColour) {
@@ -206,6 +318,11 @@ public class MessengerScreen extends Screen {
         }
     }
 
+    private void mark(GuiGraphics graphics, int x, int y, float low, float high, float at) {
+        int position = position(x + PAD + ICON + 4, x + LCD_WIDTH - PAD, low, high, at);
+        graphics.fill(position, y - 2, position + 1, y + METER + 2, Look.LCD_DANGER);
+    }
+
     private void gauge(GuiGraphics graphics, int x, int y, float low, float high, float value, float[] zones, int[] colours, float mark) {
         int from = x + PAD + ICON + 4;
         int to = x + LCD_WIDTH - PAD;
@@ -216,8 +333,7 @@ public class MessengerScreen extends Screen {
             start = end;
         }
         if (mark > low) {
-            int at = position(from, to, low, high, mark);
-            graphics.fill(at, y - 2, at + 1, y + METER + 2, Look.LCD_DANGER);
+            mark(graphics, x, y, low, high, mark);
         }
         int at = position(from, to, low, high, Mth.clamp(value, low, high));
         graphics.fill(at - 1, y - 2, at + 2, y + METER + 2, Look.LCD_TEXT);
@@ -227,13 +343,66 @@ public class MessengerScreen extends Screen {
         return from + Math.round((to - from) * (value - low) / (high - low));
     }
 
+    private static int temperatureColour(float celsius) {
+        return celsius <= Balance.get().conditions().bareSkinC() ? Look.LCD_DANGER : celsius <= FREEZING ? Look.LCD_COLD : Look.LCD_TEXT;
+    }
+
+    private static Component wind(float windKmh, int from) {
+        return Component.translatable("messenger.backcountry.wind_value", Math.round(windKmh), Words.compass(from));
+    }
+
+    private void weather(GuiGraphics graphics, int x, int y, WeatherView weather) {
+        Balance.Weather rules = Balance.get().weather();
+        y = row(graphics, x, y, TEMPERATURE, Component.translatable("messenger.backcountry.air"),
+                Component.translatable("messenger.backcountry.air_value", Words.degrees(weather.airC()), Words.degrees(weather.feelsC())), temperatureColour(weather.feelsC()));
+        gauge(graphics, x, y, AIR_LOW, AIR_HIGH, weather.airC(), new float[] {(float) Balance.get().conditions().bareSkinC(), FREEZING},
+                new int[] {Look.LCD_DANGER_DIM, Look.LCD_COLD_DIM, Look.LCD_TRACK}, AIR_LOW);
+        y += ROW - LINE;
+        Component falling = weather.falling().map(kind -> (Component) Component.translatable(weather.now() ? "messenger.backcountry.falling.until" : "messenger.backcountry.falling.from",
+                kind.title(weather.intensity()), Words.clock(weather.now() ? weather.toHour() : weather.fromHour()))).orElse(Component.translatable("messenger.backcountry.falling.none"));
+        ResourceLocation fallingIcon = weather.falling().map(Kind::icon).orElse(Kind.sky(weather.cloud()).icon());
+        y = row(graphics, x, y, fallingIcon, Component.translatable("messenger.backcountry.precipitation"), falling,
+                weather.falling().isPresent() ? Look.LCD_TEXT : Look.LCD_DIM);
+        y += ROW - LINE;
+        boolean blizzard = weather.windKmh() >= rules.blizzardWindKmh();
+        y = row(graphics, x, y, WIND, Component.translatable("messenger.backcountry.wind"), wind(weather.windKmh(), weather.windFrom()), blizzard ? Look.LCD_WARN : Look.LCD_TEXT);
+        meter(graphics, x, y, weather.windKmh() / WIND_FULL, blizzard ? Look.LCD_WARN : Look.LCD_TEXT);
+        mark(graphics, x, y, 0, WIND_FULL, (float) rules.blizzardWindKmh());
+        y += ROW - LINE;
+        y = row(graphics, x, y, Kind.CLOUDY.icon(), Component.translatable("messenger.backcountry.cloud"), Component.literal(Words.percent(weather.cloud())), Look.LCD_TEXT);
+        meter(graphics, x, y, weather.cloud(), Look.LCD_TEXT);
+        y += ROW - LINE;
+        row(graphics, x, y, FORECAST, Component.translatable("messenger.backcountry.today_range"),
+                Component.translatable("messenger.backcountry.high_low", Words.degrees(weather.highC()), Words.degrees(weather.lowC())), Look.LCD_TEXT);
+    }
+
+    private void forecast(GuiGraphics graphics, int x, int y, WeatherView weather) {
+        double likely = Balance.get().alerts().chance();
+        for (int i = 0; i < weather.outlooks().size(); i++) {
+            Outlook outlook = weather.outlooks().get(i);
+            boolean wet = outlook.likely(likely);
+            graphics.blitSprite(wet ? outlook.falling().icon() : outlook.sky().icon(), x + PAD, y, ICON, ICON);
+            Component date = i == 0 ? Component.translatable("messenger.backcountry.tomorrow", Calendar.dateText(outlook.day()))
+                    : Component.translatable("calendar.backcountry.day", Calendar.dayOfYear(outlook.day()), Calendar.dateText(outlook.day()));
+            graphics.drawString(font, date, x + PAD + ICON + 4, y + 1, Look.LCD_DIM, false);
+            Component chance = Component.translatable("messenger.backcountry.chance", outlook.falling().title(), outlook.chance() + "%");
+            graphics.drawString(font, chance, x + LCD_WIDTH - PAD - font.width(chance), y + 1, wet ? Look.LCD_TEXT : Look.LCD_DIM, false);
+            y += LINE;
+            Component temperatures = Component.translatable("messenger.backcountry.high_low", Words.degrees(outlook.highC()), Words.degrees(outlook.lowC()));
+            graphics.drawString(font, temperatures, x + PAD + ICON + 4, y + 1, temperatureColour(outlook.lowC()), false);
+            Component wind = wind(outlook.windKmh(), outlook.windFrom());
+            graphics.drawString(font, wind, x + LCD_WIDTH - PAD - font.width(wind), y + 1, Look.LCD_DIM, false);
+            y += LINE + DAY_GAP;
+        }
+    }
+
     private void warmth(GuiGraphics graphics, int x, int y, BodyView view) {
         y = row(graphics, x, y, FIRE, Component.translatable("messenger.backcountry.fire"),
                 Component.translatable(view.fire() ? "messenger.backcountry.fire.near" : "messenger.backcountry.fire.none"), view.fire() ? Look.LCD_TEXT : Look.LCD_DIM);
         y += ROW - LINE;
-        y = row(graphics, x, y, SHELTER, Component.translatable("messenger.backcountry.shelter"),
-                Component.translatable(view.sheltered() ? "messenger.backcountry.shelter.roofed" : "messenger.backcountry.shelter.open"),
-                view.sheltered() ? Look.LCD_TEXT : Look.LCD_DIM);
+        String shelter = view.sheltered() ? "messenger.backcountry.shelter.roofed" : view.windy() ? "messenger.backcountry.shelter.windy" : "messenger.backcountry.shelter.open";
+        y = row(graphics, x, y, SHELTER, Component.translatable("messenger.backcountry.shelter"), Component.translatable(shelter),
+                view.sheltered() ? Look.LCD_TEXT : view.windy() ? Look.LCD_COLD : Look.LCD_DIM);
         y += ROW - LINE;
         y = row(graphics, x, y, WET, Component.translatable("messenger.backcountry.wet"), Component.literal(Words.percent(view.wetness())), Look.LCD_TEXT);
         meter(graphics, x, y, view.wetness(), Look.LCD_WATER);

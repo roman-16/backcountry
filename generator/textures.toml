@@ -272,6 +272,46 @@ rows = [".....bbb.", "....bwwb.", "...bwbbb.", "..bwb....", ".bwb.bbb.", ".bwbbw
 palette = { b = "000000", o = "f0a030", O = "c07010", w = "ffe0a0" }
 rows = [".........", "...bbb...", "..booob..", ".bowowOb.", ".booooOb.", ".bowowOb.", "..bOOOb..", "...bbb...", "........."]
 
+[hud.clear]
+palette = { b = "000000", w = "fff3a0", y = "ffd23f", o = "e09a1a" }
+rows = ["....o....", ".o.bbb.o.", "..bwyyb..", ".bwyyyob.", "obyyyyobo", ".byyyoob.", "..booob..", ".o.bbb.o.", "....o...."]
+
+[hud.partly_cloudy]
+palette = { b = "000000", w = "fff3a0", y = "ffd23f", o = "e09a1a", c = "f4f4f4", g = "b8c0c8", G = "8a949e" }
+rows = [".bbb.o...", "bwyyb.o..", "byybbb...", "bybcccbb.", ".bccccccb", "bccccccgb", "bcccccggb", "bggggggGb", ".bbbbbbb."]
+
+[hud.cloudy]
+palette = { b = "000000", c = "f4f4f4", g = "b8c0c8", G = "8a949e" }
+rows = [".........", "...bbb...", "..bcccbb.", ".bccccccb", "bccccccgb", "bcccccggb", "bggggggGb", ".bbbbbbb.", "........."]
+
+[hud.rain]
+palette = { b = "000000", c = "d8dde2", g = "a0a8b0", G = "707a84", d = "5ab0ff" }
+rows = ["...bbb...", "..bcccbb.", ".bccccccb", "bccccccgb", "bggggggGb", ".bbbbbbb.", ".d..d..d.", "d..d..d..", "........."]
+
+[hud.snow]
+palette = { b = "000000", c = "f4f4f4", g = "b8c0c8", G = "8a949e", s = "e8f4ff" }
+rows = ["...bbb...", "..bcccbb.", ".bccccccb", "bccccccgb", "bggggggGb", ".bbbbbbb.", ".s..s..s.", ".........", "s..s..s.."]
+
+[hud.thunderstorm]
+palette = { b = "000000", c = "9aa2aa", g = "6e7680", G = "4a525c", y = "ffd23f" }
+rows = ["...bbb...", "..bcccbb.", ".bccccccb", "bccccccgb", "bgggyggGb", ".bbbyybb.", "....yy...", "...yy....", "...y....."]
+
+[hud.blizzard]
+palette = { b = "000000", c = "f4f4f4", g = "b8c0c8", G = "8a949e", s = "e8f4ff" }
+rows = ["...bbb...", "..bcccbb.", ".bccccccb", "bggggggGb", ".bbbbbbb.", "ss.sssss.", "...s...s.", ".sssss.ss", "........."]
+
+[hud.wind]
+palette = { w = "e8f0f4", g = "a8b4bc" }
+rows = [".........", ".wwwww...", "......w..", "wwwwwwg..", ".........", "wwwwwwww.", "........g", ".gwwwwww.", "........."]
+
+[hud.forecast]
+palette = { b = "000000", r = "d0302a", R = "8e1e1a", w = "f4f4f4", g = "a8b0b8" }
+rows = ["..b...b..", "bbrbbbrbb", "brrrrrrRb", "bwwwwwwgb", "bwgwgwggb", "bwwwwwwgb", "bwgwgwggb", "bwwwwwwgb", "bbbbbbbbb"]
+
+[hud.alert]
+palette = { b = "000000", a = "ffb040", A = "c07010", k = "3c1e00" }
+rows = ["....b....", "...bab...", "...bab...", "..bakab..", "..bakAb..", ".baakaAb.", ".baaaaAb.", "baaakaaAb", "bbbbbbbbb"]
+
 [sprites.water_bar_progress]
 base = "gui/sprites/hud/experience_bar_progress"
 colour = "1d5fbf,c4ecff"

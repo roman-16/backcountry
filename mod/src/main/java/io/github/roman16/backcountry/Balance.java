@@ -17,10 +17,13 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public record Balance(BearSpray bearSpray, Body body, Climate climate, Conditions conditions, DropOff dropOff, Energy energy, Healing healing, Map<String, Double> heat,
-        Map<String, Double> insulation, Kit kit, Load load, Mining mining, PlantFibre plantFibre, Survivor survivor, Warmth warmth, Water water, Work work, World world, Year year) {
+public record Balance(Alerts alerts, BearSpray bearSpray, Body body, Climate climate, Conditions conditions, DropOff dropOff, Energy energy, Healing healing,
+        Map<String, Double> heat, Map<String, Double> insulation, Kit kit, Load load, Mining mining, PlantFibre plantFibre, Survivor survivor, Warmth warmth, Water water,
+        Weather weather, Work work, World world, Year year) {
     private static final Pattern WORD_START = Pattern.compile("([A-Z])");
     private static final Balance LOADED = read();
+
+    public record Alerts(double chance, double wastingBmi, double weightStepKg) {}
 
     public record BearSpray(int blindSeconds, int bursts, double coneDegrees, int fleeSeconds, double pointBlankBlocks, double reachBlocks) {}
 
@@ -57,6 +60,12 @@ public record Balance(BearSpray bearSpray, Body body, Climate climate, Condition
             double sweatCoreC, double sweatLPerHour, double sweatWetPerHour, double warmCPerClo, double wetInsulationLoss) {}
 
     public record Water(int boilSeconds, double bottleL, int knockoutSeconds, double needLDay, double potL, double sipL, float thirstDamage) {}
+
+    public record Weather(int blizzardFogBlocks, double blizzardWindKmh, double clearBelow, double cloudyAbove, double cloudySwing, double driftCarried,
+            double driftSummerC, double driftWinterC, double dryWindKmh, double forecastChanceNoise, double forecastErrorCPerDay, double forecastSkillLostPerDay,
+            double forecastWindErrorKmhPerDay, double highestWindKmh, List<Double> intensityShares, int longestSpellHours, double overcast,
+            List<Double> precipitationDays, int shortestSpellHours, double snowBelowC, int stormFirstMonth, int stormLastMonth, double stormShare,
+            List<Double> wetShares, double wetWindKmh) {}
 
     public record Work(double attackKcal, double chopKcal, double digKcal, double jumpKcal, double mineKcal, double overloadKcalPerKgHour, double placeKcal,
             double sprintKcalPerBlock, double swimKcalPerBlock, double walkKcalPerBlock) {}
