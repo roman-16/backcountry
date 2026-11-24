@@ -65,7 +65,7 @@ public final class TrapTests {
         BlockPos at = helper.absolutePos(pos);
         var server = helper.getLevel().getServer();
         server.getCommands().performPrefixedCommand(server.createCommandSourceStack().withSuppressedOutput().withLevel(helper.getLevel()),
-                "fillbiome %d %d %d %d %d %d minecraft:taiga".formatted(at.getX(), at.getY() - 1, at.getZ(), at.getX(), at.getY() + 1, at.getZ()));
+                "fillbiome %d %d %d %d %d %d minecraft:taiga".formatted(at.getX() - 4, at.getY() - 4, at.getZ() - 4, at.getX() + 4, at.getY() + 4, at.getZ() + 4));
         TrapEntity snare = trap(helper, pos);
         snare.watch(helper.getLevel(), LONG_WAIT_HOURS);
         check(helper, snare.caught().is(Things.CARCASS_ITEM.get()), "a snare set for " + LONG_WAIT_HOURS + " h in " + helper.getLevel().getBiome(helper.absolutePos(pos))
