@@ -1,0 +1,13 @@
+name = "[Let's Do] WilderNature"
+filename = "letsdo-wildernature-neoforge-1.1.9.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/AAiRU4aQ/versions/H3PXg2EV/letsdo-wildernature-neoforge-1.1.9.jar"
+hash-format = "sha512"
+hash = "626a7894873c7ec332feefc587155aeeee522f93f977d4651fa392a8d1261f242427fae3c46860643bc384ebb3f3e18d2e85192b58917a9234ab53941a900122"
+
+[update]
+[update.modrinth]
+mod-id = "AAiRU4aQ"
+version = "H3PXg2EV"

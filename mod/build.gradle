@@ -1,0 +1,117 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.148'
+}
+
+var released = providers.fileContents(layout.projectDirectory.file('../CHANGELOG.md')).asText.get() =~ /(?m)^## \[(\d+\.\d+\.\d+)\] - \d{4}-\d{2}-\d{2}$/
+version = released.find() ? released.group(1) : '0.0.0'
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+def heapGigabytes = (providers.fileContents(layout.projectDirectory.file('../balance.toml')).asText.get() =~ /(?ms)^\[heap\]\s*^gigabytes = (\d+)$/)[0][1]
+
+sourceSets {
+    dev {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+configurations {
+    devCompileOnly.extendsFrom compileOnly
+    devImplementation.extendsFrom implementation
+}
+
+neoForge {
+    version = neo_version
+    addModdingDependenciesTo sourceSets.dev
+
+    parchment {
+        mappingsVersion = parchment_mappings_version
+        minecraftVersion = parchment_minecraft_version
+    }
+
+    runs {
+        configureEach {
+            systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+        }
+        play {
+            client()
+            gameDirectory = file(providers.environmentVariable('BACKCOUNTRY_GAME_DIRECTORY').orElse('../build/client').get())
+            jvmArgument "-Xmx${heapGigabytes}G"
+            programArguments.addAll '--height', '720', '--username', 'Survivor', '--width', '1280'
+            sourceSet = sourceSets.dev
+            ['DISPLAY', 'XDG_SESSION_TYPE'].each { variable ->
+                String value = providers.environmentVariable(variable).orNull
+                if (value != null) {
+                    environment.put(variable, value)
+                }
+            }
+        }
+        server {
+            server()
+            gameDirectory = file(providers.environmentVariable('BACKCOUNTRY_GAME_DIRECTORY').orElse('../build/devserver').get())
+            jvmArgument "-Xmx${heapGigabytes}G"
+            programArguments.add '--nogui'
+            sourceSet = sourceSets.dev
+            systemProperty "${mod_id}.shape", providers.environmentVariable('BACKCOUNTRY_SHAPE').orElse('').get()
+        }
+        gameTestServer {
+            type = 'gameTestServer'
+            sourceSet = sourceSets.dev
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+            sourceSet(sourceSets.dev)
+        }
+    }
+}
+
+tasks.matching { it.name == 'runServer' }.configureEach {
+    standardInput = System.in
+}
+
+var freshGameTestWorld = tasks.register('freshGameTestWorld', Delete) {
+    delete 'run/world'
+}
+
+tasks.matching { it.name == 'runGameTestServer' }.configureEach {
+    dependsOn freshGameTestWorld
+}
+
+var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    var replaceProperties = [
+            loader_version_range   : loader_version_range,
+            minecraft_version_range: minecraft_version_range,
+            mod_id                 : mod_id,
+            mod_license            : mod_license,
+            mod_name               : mod_name,
+            neo_version            : neo_version,
+            version                : version,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from 'src/main/templates'
+    into 'build/generated/sources/modMetadata'
+}
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+processResources {
+    from(rootProject.file('../balance.toml')) {
+        into 'backcountry'
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xlint:all' << '-Xlint:-classfile' << '-Werror'
+}

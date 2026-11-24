@@ -1,0 +1,13 @@
+name = "River Fishing"
+filename = "riverfishing-neoforge-1.0.0+1.21.1.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/5acJO3EU/versions/Yx2ULbgf/riverfishing-neoforge-1.0.0%2B1.21.1.jar"
+hash-format = "sha512"
+hash = "fba9b424de279b3988ae936319c8057c1102a5c2a60391aee5ecbda81de078540c7d001cf0232699064345c8d407b265974fa42ad61174960f4c2d7635e130b8"
+
+[update]
+[update.modrinth]
+mod-id = "5acJO3EU"
+version = "Yx2ULbgf"

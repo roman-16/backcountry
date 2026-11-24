@@ -1,0 +1,30 @@
+[heap]
+gigabytes = 8
+
+[world]
+across_blocks = 6144
+detail_share = 0.375
+detail_wavelength_blocks = 384
+dry_share = 0.875
+edge_blocks = 6144
+highest = 2.0
+inner_share = 0.5
+land_continentalness = -0.125
+lift = 0.8125
+outer_share = 1.875
+sea_floor = -0.5
+sink = 1.1875
+warp_share = 0.75
+warp_wavelength_blocks = 6144
+
+[drop_off]
+highest_lake_y = 128
+inland_blocks = 512
+lake_cells = 16
+search_blocks = 3072
+shore_rise_blocks = 8
+step_blocks = 32
+
+[mining]
+open_blocks = 3
+speed = 0.05

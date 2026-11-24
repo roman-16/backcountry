@@ -1,0 +1,12 @@
+name = "Backcountry"
+author = "roman-16"
+pack-format = "packwiz:1.1.0"
+
+[index]
+file = "index.toml"
+hash-format = "sha256"
+hash = "5977b692e72bc94ce5ef96079cfb5f68585b0bf347dc104b9be36ba141f174a3"
+
+[versions]
+minecraft = "1.21.1"
+neoforge = "21.1.267"

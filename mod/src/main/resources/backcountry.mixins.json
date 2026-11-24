@@ -1,0 +1,11 @@
+{
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "mixins": [
+    "ContinentsMixin",
+    "SplineCoordinateMixin",
+    "StructuresMixin"
+  ],
+  "package": "io.github.roman16.backcountry.mixin",
+  "required": true
+}
