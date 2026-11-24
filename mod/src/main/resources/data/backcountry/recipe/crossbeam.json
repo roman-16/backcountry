@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:stick"
+    },
+    {
+      "item": "minecraft:stick"
+    },
+    {
+      "item": "minecraft:stick"
+    },
+    {
+      "item": "backcountry:cordage"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:crossbeam"
+  }
+}

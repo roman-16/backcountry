@@ -71,6 +71,8 @@ public final class Body implements INBTSerializable<CompoundTag> {
     public transient double loadKg;
     public transient int loadWarnedAt;
     public transient boolean sheltered;
+    public transient double snowBlocks;
+    public transient Vec3 snowFrom;
     public transient boolean windy;
     public transient double workKcal;
 

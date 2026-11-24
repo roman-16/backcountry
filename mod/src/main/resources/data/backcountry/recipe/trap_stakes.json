@@ -1,0 +1,18 @@
+{
+  "type": "backcountry:tool",
+  "ingredients": [
+    {
+      "item": "minecraft:stick"
+    },
+    {
+      "item": "minecraft:stick"
+    }
+  ],
+  "tool": {
+    "tag": "backcountry:knives"
+  },
+  "result": {
+    "count": 2,
+    "id": "backcountry:trap_stakes"
+  }
+}

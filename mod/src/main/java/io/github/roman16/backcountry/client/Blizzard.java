@@ -1,5 +1,7 @@
 package io.github.roman16.backcountry.client;
 
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.gui.GuiGraphics;
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.body.Calendar;
@@ -28,7 +30,9 @@ public final class Blizzard {
     private static final float GREEN_SHARE = 0.587F;
     private static final float BLUE_SHARE = 0.114F;
     private static final float CHANNEL = 255;
+    private static final String IRIS_API = "net.irisshaders.iris.api.v0.IrisApi";
     private static float strength;
+    private static java.util.function.BooleanSupplier shaderCheck;
 
     private Blizzard() {}
 
@@ -41,6 +45,33 @@ public final class Blizzard {
 
     static float strength() {
         return strength;
+    }
+
+    static boolean shaded() {
+        if (shaderCheck == null) {
+            try {
+                Object iris = Class.forName(IRIS_API).getMethod("getInstance").invoke(null);
+                java.lang.reflect.Method inUse = iris.getClass().getMethod("isShaderPackInUse");
+                shaderCheck = () -> {
+                    try {
+                        return (Boolean) inUse.invoke(iris);
+                    } catch (ReflectiveOperationException exception) {
+                        return false;
+                    }
+                };
+            } catch (ReflectiveOperationException | LinkageError exception) {
+                shaderCheck = () -> false;
+            }
+        }
+        return shaderCheck.getAsBoolean();
+    }
+
+    static void whiteout(GuiGraphics graphics, DeltaTracker delta) {
+        if (strength <= 0 || !shaded()) {
+            return;
+        }
+        int alpha = (int) (strength * Balance.get().weather().blizzardWhiteout() * CHANNEL);
+        graphics.fill(0, 0, graphics.guiWidth(), graphics.guiHeight(), alpha << 24 | Look.BLIZZARD & 0xFFFFFF);
     }
 
     private static boolean raging(Minecraft minecraft) {

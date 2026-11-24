@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "misc",
+  "cookingtime": 6000,
+  "experience": 0,
+  "ingredient": {
+    "item": "backcountry:bow_stave"
+  },
+  "result": {
+    "count": 1,
+    "id": "backcountry:seasoned_bow_stave"
+  }
+}

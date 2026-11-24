@@ -1,0 +1,81 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "wood": "minecraft:block/stripped_spruce_log",
+    "wire": "minecraft:block/iron_bars",
+    "fur": "minecraft:block/brown_wool",
+    "stone": "minecraft:block/cobblestone",
+    "plank": "minecraft:block/oak_planks",
+    "net": "minecraft:block/cobweb",
+    "scales": "minecraft:block/light_gray_wool",
+    "flag": "minecraft:block/red_wool",
+    "particle": "minecraft:block/stripped_spruce_log"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        7.5
+      ],
+      "to": [
+        16,
+        14,
+        8.5
+      ],
+      "faces": {
+        "down": {
+          "texture": "#net"
+        },
+        "east": {
+          "texture": "#net"
+        },
+        "north": {
+          "texture": "#net"
+        },
+        "south": {
+          "texture": "#net"
+        },
+        "up": {
+          "texture": "#net"
+        },
+        "west": {
+          "texture": "#net"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        4,
+        6
+      ],
+      "to": [
+        11,
+        8,
+        10
+      ],
+      "faces": {
+        "down": {
+          "texture": "#scales"
+        },
+        "east": {
+          "texture": "#scales"
+        },
+        "north": {
+          "texture": "#scales"
+        },
+        "south": {
+          "texture": "#scales"
+        },
+        "up": {
+          "texture": "#scales"
+        },
+        "west": {
+          "texture": "#scales"
+        }
+      }
+    }
+  ]
+}

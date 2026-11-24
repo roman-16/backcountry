@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "backcountry:scraped_hide"
+    },
+    {
+      "item": "backcountry:rendered_fat"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:cured_hide"
+  }
+}

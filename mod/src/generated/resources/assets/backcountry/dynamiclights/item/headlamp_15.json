@@ -1,0 +1,9 @@
+{
+  "match": {
+    "items": "backcountry:headlamp",
+    "components": {
+      "backcountry:light": 15
+    }
+  },
+  "luminance": 15
+}

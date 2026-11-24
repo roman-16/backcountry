@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "R": {
+      "item": "backcountry:rawhide_strips"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "S S",
+    "RSR",
+    "S S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:snowshoes"
+  }
+}

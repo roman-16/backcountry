@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "backcountry:birch_bark"
+    },
+    {
+      "item": "backcountry:rawhide_strips"
+    },
+    {
+      "item": "backcountry:cordage"
+    },
+    {
+      "item": "minecraft:stick"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:moose_call"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "type": "backcountry:stewing",
+  "ingredients": [
+    {
+      "item": "minecraft:cooked_rabbit"
+    },
+    {
+      "item": "minecraft:carrot"
+    },
+    {
+      "item": "minecraft:baked_potato"
+    },
+    [
+      {
+        "item": "minecraft:brown_mushroom"
+      },
+      {
+        "item": "minecraft:red_mushroom"
+      }
+    ]
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:rabbit_stew"
+  }
+}

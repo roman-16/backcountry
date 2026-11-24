@@ -1,0 +1,15 @@
+{
+  "type": "backcountry:tool",
+  "ingredients": [
+    {
+      "item": "backcountry:pelt"
+    }
+  ],
+  "tool": {
+    "tag": "backcountry:knives"
+  },
+  "result": {
+    "count": 1,
+    "id": "backcountry:scraped_hide"
+  }
+}

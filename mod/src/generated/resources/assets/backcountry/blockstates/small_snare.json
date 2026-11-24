@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "sprung=false": {
+      "model": "backcountry:block/small_snare"
+    },
+    "sprung=true": {
+      "model": "backcountry:block/small_snare_sprung"
+    }
+  }
+}

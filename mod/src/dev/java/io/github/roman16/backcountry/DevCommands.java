@@ -56,6 +56,7 @@ public final class DevCommands {
                         .then(Commands.argument("condition", StringArgumentType.word())
                                 .suggests((context, builder) -> SharedSuggestionProvider.suggest(Arrays.stream(Condition.values()).map(Condition::id), builder))
                                 .executes(DevCommands::condition)))
+                .then(Playthrough.command())
                 .then(Commands.literal("day").requires(source -> source.hasPermission(OWNER))
                         .then(Commands.argument("day", IntegerArgumentType.integer(1)).executes(DevCommands::day)))
                 .then(Commands.literal("weather").requires(source -> source.hasPermission(OWNER))

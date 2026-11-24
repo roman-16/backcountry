@@ -1,7 +1,10 @@
 package io.github.roman16.backcountry.client;
 
+import java.util.ArrayList;
+import java.util.List;
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.food.Spoilage;
 import io.github.roman16.backcountry.body.Nutrition;
 import io.github.roman16.backcountry.gear.Hotbar;
 import net.minecraft.ChatFormatting;
@@ -12,6 +15,7 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -69,8 +73,28 @@ public final class ClientEvents {
 
     @SubscribeEvent
     static void tooltip(ItemTooltipEvent event) {
-        Nutrition.of(event.getItemStack()).ifPresent(food -> event.getToolTip().add(Math.min(1, event.getToolTip().size()),
-                Component.translatable("tooltip.backcountry.food", Words.kcal(food.kcal()), Words.grams(food.fat())).withStyle(ChatFormatting.GRAY)));
+        ItemStack stack = event.getItemStack();
+        Nutrition.of(stack).ifPresent(food -> {
+            List<Component> lines = new ArrayList<>();
+            lines.add(Component.translatable("tooltip.backcountry.food", Words.kcal(food.kcal()), Words.grams(food.fat())).withStyle(ChatFormatting.GRAY));
+            double air = ClientState.weather.airC();
+            if (Spoilage.spoiled(stack)) {
+                lines.add(Component.translatable("tooltip.backcountry.spoiled").withStyle(ChatFormatting.RED));
+            } else {
+                Spoilage.daysLeft(stack, air).ifPresent(days -> lines.add(Component.translatable("tooltip.backcountry.spoils", Words.days(days), Words.degrees(air))
+                        .withStyle(ChatFormatting.GRAY)));
+            }
+            if (stack.has(Things.SMOKED.get())) {
+                lines.add(Component.translatable("tooltip.backcountry.smoked").withStyle(ChatFormatting.GRAY));
+            }
+            if (stack.has(Things.CONTAMINATED.get())) {
+                lines.add(Component.translatable("tooltip.backcountry.contaminated").withStyle(ChatFormatting.RED));
+            }
+            if (stack.has(Things.SPAWNED_OUT.get())) {
+                lines.add(Component.translatable("tooltip.backcountry.spawned_out").withStyle(ChatFormatting.RED));
+            }
+            event.getToolTip().addAll(Math.min(1, event.getToolTip().size()), lines);
+        });
     }
 
     @SubscribeEvent

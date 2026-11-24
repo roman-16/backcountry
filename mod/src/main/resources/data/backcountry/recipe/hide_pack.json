@@ -3,10 +3,10 @@
   "category": "equipment",
   "key": {
     "L": {
-      "item": "minecraft:leather"
+      "item": "backcountry:cured_hide"
     },
     "S": {
-      "item": "minecraft:string"
+      "item": "backcountry:cured_hide"
     }
   },
   "pattern": [

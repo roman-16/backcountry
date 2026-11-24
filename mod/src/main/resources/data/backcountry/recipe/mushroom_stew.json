@@ -1,0 +1,15 @@
+{
+  "type": "backcountry:stewing",
+  "ingredients": [
+    {
+      "item": "minecraft:brown_mushroom"
+    },
+    {
+      "item": "minecraft:red_mushroom"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:mushroom_stew"
+  }
+}

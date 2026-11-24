@@ -9,6 +9,9 @@ public enum Alert {
     THUNDERSTORM_TOMORROW(true),
     FROST_TONIGHT(true),
     WEIGHT_DROPPED(false),
+    MICE_IN_CACHE(false),
+    MOOSE_RUT(false),
+    BEARS_FEEDING(false),
     BODY_WASTING(false);
 
     private final boolean daily;
@@ -19,6 +22,10 @@ public enum Alert {
 
     public boolean daily() {
         return daily;
+    }
+
+    public boolean dayLong() {
+        return this == WEIGHT_DROPPED || this == MICE_IN_CACHE || this == MOOSE_RUT || this == BEARS_FEEDING;
     }
 
     public boolean danger() {

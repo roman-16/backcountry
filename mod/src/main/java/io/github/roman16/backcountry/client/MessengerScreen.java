@@ -4,6 +4,7 @@ import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.body.Alert;
 import io.github.roman16.backcountry.body.BodyView;
+import io.github.roman16.backcountry.food.Ration;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.net.Messages;
@@ -36,8 +37,9 @@ public class MessengerScreen extends Screen {
     private static final ResourceLocation CLOTHING = ResourceLocation.withDefaultNamespace("hud/armor_full");
     private static final ResourceLocation FOOD = ResourceLocation.withDefaultNamespace("hud/food_full");
     private static final ResourceLocation HEART = ResourceLocation.withDefaultNamespace("hud/heart/full");
-    private static final String[] PAGES = {"weather", "forecast", "warmth", "body", "nutrition", "vitals"};
-    private static final ResourceLocation[] PAGE_ICONS = {Kind.PARTLY_CLOUDY.icon(), FORECAST, FIRE, TEMPERATURE, FOOD, HEART};
+    private static final ResourceLocation RATION = Backcountry.id("hud/ration");
+    private static final String[] PAGES = {"weather", "forecast", "warmth", "body", "nutrition", "rations", "vitals"};
+    private static final ResourceLocation[] PAGE_ICONS = {Kind.PARTLY_CLOUDY.icon(), FORECAST, FIRE, TEMPERATURE, FOOD, RATION, HEART};
     private static final int WIDTH = 232;
     private static final int HEIGHT = 214;
     private static final int LCD_X = 12;
@@ -188,6 +190,7 @@ public class MessengerScreen extends Screen {
             case "warmth" -> warmth(graphics, x, row, view);
             case "body" -> body(graphics, x, row, view);
             case "nutrition" -> nutrition(graphics, x, row, view);
+            case "rations" -> rations(graphics, x, row, view);
             default -> vitals(graphics, x, row, view);
         }
         alerts(graphics, x, view.alerts());
@@ -456,6 +459,24 @@ public class MessengerScreen extends Screen {
         y = row(graphics, x, y, FOOD, Component.translatable("messenger.backcountry.stomach"),
                 Component.translatable("messenger.backcountry.full", Words.percent(view.stomach())), Look.LCD_TEXT);
         meter(graphics, x, y, view.stomach(), Look.LCD_TEXT);
+    }
+
+    private void rations(GuiGraphics graphics, int x, int y, BodyView view) {
+        Ration ration = Ration.values()[view.ration()];
+        y = row(graphics, x, y, FOOD, Component.translatable("messenger.backcountry.stomach"),
+                Component.translatable("messenger.backcountry.full", Words.percent(view.stomach())), Look.LCD_TEXT);
+        meter(graphics, x, y, view.stomach(), Look.LCD_TEXT);
+        y += ROW - LINE;
+        y = row(graphics, x, y, RATION, Component.translatable("messenger.backcountry.ration"),
+                Component.translatable("messenger.backcountry.ration_value", ration.title(), Words.kcal(ration.mealKcal())), Look.LCD_TEXT);
+        Balance.Rations rules = Balance.get().rations();
+        int hour = (int) ((minecraft.level.getDayTime() / 1000 + 6) % 24);
+        boolean dawn = hour < rules.dawnHour() || hour >= rules.duskHour();
+        y = row(graphics, x, y, FORECAST, Component.translatable("messenger.backcountry.next_meal"),
+                Component.translatable(dawn ? "messenger.backcountry.dawn_at" : "messenger.backcountry.dusk_at", Words.clockHour(dawn ? rules.dawnHour() : rules.duskHour())),
+                Look.LCD_TEXT);
+        row(graphics, x, y, LOAD, Component.translatable("messenger.backcountry.stores"), Component.translatable("messenger.backcountry.days", Words.one(view.storesDays())),
+                view.storesDays() < 2 ? Look.LCD_WARN : Look.LCD_TEXT);
     }
 
     private void vitals(GuiGraphics graphics, int x, int y, BodyView view) {

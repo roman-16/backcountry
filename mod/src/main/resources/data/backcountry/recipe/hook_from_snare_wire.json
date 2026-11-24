@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "backcountry:snare_wire"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "id": "riverfishing:hook_10"
+  }
+}

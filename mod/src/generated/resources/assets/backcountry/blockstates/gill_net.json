@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "sprung=false": {
+      "model": "backcountry:block/gill_net"
+    },
+    "sprung=true": {
+      "model": "backcountry:block/gill_net_sprung"
+    }
+  }
+}

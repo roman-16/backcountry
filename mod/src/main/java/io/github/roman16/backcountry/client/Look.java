@@ -1,7 +1,8 @@
 package io.github.roman16.backcountry.client;
 
-final class Look {
+public final class Look {
     static final int AXIS = 0xFF5A5A5A;
+    static final int BAND = 0xFF5A4A20;
     static final int BEZEL = 0xFF2A1A10;
     static final int BLACKOUT = 0x000000;
     static final int BLIZZARD = 0xFFB0B8C0;
@@ -20,6 +21,8 @@ final class Look {
     static final int ENDED_BOTTOM = 0xA0101010;
     static final int ENDED_TOP = 0x60000000;
     static final int FREEZING = 0xFF5AAEFF;
+    static final int GOOD = 0xFF80E060;
+    public static final int GREEN_WOOD = 0x55FF55;
     static final int GRID = 0xFF303030;
     static final int HOT = 0xFFFFAA44;
     static final int KEY = 0xFF6A3412;
@@ -40,8 +43,10 @@ final class Look {
     static final int LIGHT_EDGE = 0xFF3C1E00;
     static final int LOCKED = 0xB0202020;
     static final int PLATE = 0x80000000;
+    public static final int SEASONED = 0xFFAA00;
     static final int TEXT = 0xFFFFFFFF;
     static final int TEXT_QUIET = 0xFFA0A0A0;
+    static final int TRACK = 0xFF1E1E1E;
 
     private Look() {}
 }

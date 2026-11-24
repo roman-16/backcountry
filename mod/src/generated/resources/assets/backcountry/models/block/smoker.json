@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "front": "minecraft:block/spruce_door_bottom",
+    "side": "minecraft:block/spruce_planks",
+    "top": "minecraft:block/spruce_trapdoor"
+  }
+}

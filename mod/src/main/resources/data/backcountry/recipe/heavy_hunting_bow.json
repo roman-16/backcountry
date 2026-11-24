@@ -1,0 +1,27 @@
+{
+  "type": "backcountry:tool",
+  "ingredients": [
+    {
+      "item": "backcountry:seasoned_bow_stave"
+    },
+    {
+      "item": "backcountry:seasoned_bow_stave"
+    },
+    {
+      "item": "backcountry:rawhide_strips"
+    },
+    {
+      "item": "backcountry:rawhide_strips"
+    },
+    {
+      "item": "backcountry:bowstring"
+    }
+  ],
+  "tool": {
+    "tag": "backcountry:knives"
+  },
+  "result": {
+    "count": 1,
+    "id": "backcountry:heavy_hunting_bow"
+  }
+}

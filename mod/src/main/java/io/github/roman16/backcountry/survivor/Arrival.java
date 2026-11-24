@@ -105,6 +105,7 @@ public final class Arrival {
         inventory.setItem(3, bottle);
         inventory.setItem(4, new ItemStack(Things.PILOT_BREAD.get(), Balance.get().kit().pilotBread()));
         inventory.setItem(5, new ItemStack(Things.CAMP_POT.get()));
+        inventory.setItem(6, new ItemStack(Things.HEADLAMP.get()));
         player.setHealth(player.getMaxHealth());
         player.removeAllEffects();
         player.clearFire();

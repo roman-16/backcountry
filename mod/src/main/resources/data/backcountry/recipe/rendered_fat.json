@@ -1,0 +1,15 @@
+{
+  "type": "backcountry:stewing",
+  "ingredients": [
+    {
+      "item": "backcountry:animal_fat"
+    },
+    {
+      "item": "backcountry:animal_fat"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:rendered_fat"
+  }
+}

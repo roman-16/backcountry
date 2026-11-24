@@ -2,12 +2,15 @@ package io.github.roman16.backcountry.body;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.fire.Fire;
+import io.github.roman16.backcountry.fire.FireBlock;
 import io.github.roman16.backcountry.weather.Weather;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
@@ -111,8 +114,9 @@ public final class Warmth {
         double best = 0;
         for (BlockPos at : BlockPos.betweenClosed(feet.offset(-reach, -VERTICAL_REACH, -reach), feet.offset(reach, VERTICAL_REACH, reach))) {
             BlockState state = level.getBlockState(at);
-            Double heat = Balance.get().heat().get(BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString());
-            if (heat == null || state.hasProperty(BlockStateProperties.LIT) && !state.getValue(BlockStateProperties.LIT)) {
+            Double heat = state.getBlock() instanceof FireBlock && level.getBlockEntity(at) instanceof CampfireBlockEntity campfire ? Fire.of(campfire).heatC()
+                    : Balance.get().heat().get(BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString());
+            if (heat == null || heat <= 0 || !(state.getBlock() instanceof FireBlock) && state.hasProperty(BlockStateProperties.LIT) && !state.getValue(BlockStateProperties.LIT)) {
                 continue;
             }
             double distance = Math.sqrt(at.distSqr(feet));

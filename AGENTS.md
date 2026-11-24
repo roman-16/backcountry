@@ -7,6 +7,7 @@ A modpack about a year alone in the Alaskan wilderness, counted in calories, for
 - **The design decides.** `design/` holds what the pack is, and `design/README.md` says which milestone is under way. Build only what is Settled there; a gap found while building goes back to Open in its document, never decided in code. Design work runs through the `design` skill.
 - **The body is the mod's.** Every food, every hour of work and every degree of cold counts in the mod's one kcal model (`design/systems.md` S1), so no public survival mod goes in beside it: no temperature, thirst, nutrition, spoilage, stamina, weight or inventory mod. Ecliptic Seasons' heat stroke stays off for the same reason.
 - **The weather is the mod's.** One sky drawn from the world seed and the day (`design/systems.md` S3) is what the forecast reads, so Ecliptic's own rain stays off (`UseSolarWeather`), mixins answer its rain-or-snow choice and its weather effects from the mod's air, `/weather` is refused, and no weather mod goes in beside it.
+- **The fire is the mod's.** The pack's campfire (`backcountry:campfire`, `design/systems.md` S6) burns only the wood queued in it, so vanilla's campfire, which burns forever, has its recipe switched off.
 - **Vanilla's hunger is never read.** The body holds the food level at 17 (no vanilla healing, no starving) and drops it to 6 while the survivor is too tired, blistered or frostbitten, so vanilla's own check stops sprinting.
 - **Every food has its numbers.** Every food of every jar has an entry in `mod/src/main/resources/data/backcountry/data_maps/item/food.json`, and an item without one cannot be eaten; `just test` fails on a food without an entry, so a mod added to the pack gets its foods' entries with it.
 - **The spawn director owns every animal.** Natural spawns of anything not on its list are cancelled, so a creature mod adds nothing until the list names its animals.
@@ -37,6 +38,7 @@ Never wait by guessing: every driver step returns the moment its effect is done 
 $ python3 scripts/client.py start --fresh        # a fresh world in survival; --seed <n>, --world <save>, nothing for the title; --visible to use the user's screen
 $ python3 scripts/client.py run seen '/backcountry body weight 55' 'shot extracted'
 $ python3 scripts/client.py swap                 # compile and swap changed code into the running client
+$ python3 scripts/client.py checkpoint <name>       # save the open world and keep a copy; restore <name> opens it again
 $ python3 scripts/client.py stop
 $ python3 scripts/server.py start --fresh        # the dev server, which prints its port; run '<command>' answers through RCON
 ```
@@ -56,8 +58,10 @@ Each π session drives games of its own in `build/clients/<n>/` and `build/devse
 | `use`, `slot <n>`, `face <yaw> <pitch>`, `close` | A right-click, a hotbar slot, a facing, back to the world |
 | `join <address>` | Leaves the world and joins a server |
 | `pos`, `log`, `gui on\|off`, `wait <ticks>`, `quit` | Where the player stands, warnings and errors since the last `log`, the HUD, a watch, quitting |
+| `walk <x> <z>` | Walks to the column, jumping when blocked, and returns on arrival |
+| `bench <seconds>` | Turns the camera once around and returns the average and lowest frames a second |
 
-Dev runs have `/backcountry body <field> <value>` (core, energy, stomach, water, weight, wetness), `/backcountry condition <condition>`, `/backcountry day <day>` (moves Ecliptic's calendar), `/backcountry weather clear|rain|snow|thunderstorm|blizzard` (today's weather from now to 06:00, warm or cold enough where the command runs), `/backcountry pretend join|leave <name>` and `/backcountry registries <folder>` (`just registries`).
+Dev runs have `/backcountry body <field> <value>` (core, energy, stomach, water, weight, wetness), `/backcountry condition <condition>`, `/backcountry day <day>` (moves Ecliptic's calendar), `/backcountry weather clear|rain|snow|thunderstorm|blizzard` (today's weather from now to 06:00, warm or cold enough where the command runs), `/backcountry pretend join|leave <name>`, `/backcountry registries <folder>` (`just registries`) and `/backcountry playthrough <name> <first_day> <days> <kcal_a_day> <work_kcal_a_day>`, which lives a survivor through game days where it runs (the `playthrough` skill).
 
 ## Mods
 

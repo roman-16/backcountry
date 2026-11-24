@@ -66,6 +66,7 @@ public final class Hud {
         });
         event.registerAbove(VanillaGuiLayers.HOTBAR, Backcountry.id("body"), Hud::body);
         event.registerBelow(VanillaGuiLayers.CHAT, Backcountry.id("blackout"), Hud::blackout);
+        event.registerBelowAll(Backcountry.id("whiteout"), Blizzard::whiteout);
     }
 
     static boolean shows() {

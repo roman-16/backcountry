@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:stick"
+    },
+    {
+      "item": "minecraft:stick"
+    },
+    {
+      "item": "backcountry:cordage"
+    },
+    {
+      "item": "backcountry:softwood"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:bow_drill"
+  }
+}

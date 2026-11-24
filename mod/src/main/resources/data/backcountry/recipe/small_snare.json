@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "backcountry:snare_wire"
+    },
+    {
+      "item": "backcountry:trap_stakes"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:small_snare"
+  }
+}

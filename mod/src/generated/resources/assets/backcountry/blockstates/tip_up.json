@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "sprung=false": {
+      "model": "backcountry:block/tip_up"
+    },
+    "sprung=true": {
+      "model": "backcountry:block/tip_up_sprung"
+    }
+  }
+}

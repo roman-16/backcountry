@@ -7,8 +7,8 @@ import net.minecraft.network.codec.StreamCodec;
 
 public record BodyView(float energy, float water, float waterL, float needL, List<Condition> conditions, float weightKg, float coreC, int comfort, int trend, float wetness,
         float awakeHours, float kcalEaten, float kcalBurned, float protein, float carbs, float fat, float stomach, float loadKg, float capacityKg, int day, int blackout,
-        boolean fire, boolean sheltered, boolean windy, float clo, List<Alert> alerts, boolean unread) {
-    public static final BodyView NONE = new BodyView(1, 1, 0, 0, List.of(), 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, 0, List.of(), false);
+        boolean fire, boolean sheltered, boolean windy, float clo, List<Alert> alerts, boolean unread, int ration, float storesDays) {
+    public static final BodyView NONE = new BodyView(1, 1, 0, 0, List.of(), 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, 0, List.of(), false, 1, 0);
     public static final StreamCodec<RegistryFriendlyByteBuf, BodyView> STREAM_CODEC = StreamCodec.of(BodyView::write, BodyView::read);
     private static final int FLOATS = 17;
 
@@ -33,6 +33,8 @@ public record BodyView(float energy, float water, float waterL, float needL, Lis
         buffer.writeVarInt(view.alerts.size());
         view.alerts.forEach(alert -> buffer.writeVarInt(alert.ordinal()));
         buffer.writeBoolean(view.unread);
+        buffer.writeVarInt(view.ration);
+        buffer.writeFloat(view.storesDays);
     }
 
     private static BodyView read(RegistryFriendlyByteBuf buffer) {
@@ -58,7 +60,9 @@ public record BodyView(float energy, float water, float waterL, float needL, Lis
             alerts.add(Alert.values()[buffer.readVarInt()]);
         }
         boolean unread = buffer.readBoolean();
+        int ration = buffer.readVarInt();
+        float storesDays = buffer.readFloat();
         return new BodyView(n[0], n[1], n[2], n[3], List.copyOf(conditions), n[4], n[5], comfort, trend, n[6], n[7], n[8], n[9], n[10], n[11], n[12], n[13], n[14], n[15],
-                day, blackout, fire, sheltered, windy, n[16], List.copyOf(alerts), unread);
+                day, blackout, fire, sheltered, windy, n[16], List.copyOf(alerts), unread, ration, storesDays);
     }
 }

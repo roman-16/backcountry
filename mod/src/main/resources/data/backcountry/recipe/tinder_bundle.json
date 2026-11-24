@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "backcountry:birch_bark"
+    },
+    {
+      "item": "backcountry:birch_bark"
+    },
+    {
+      "item": "backcountry:plant_fibre"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:tinder_bundle"
+  }
+}

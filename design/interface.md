@@ -46,25 +46,60 @@ Raw Moose Meat
 Spoils in 2.3 days here (9 °C)
 ```
 
+A spoiled food reads "Spoiled" in red instead, a smoked one adds "Smoked", and one the mice reached adds "Contaminated by mice" in red.
+
 ### I4 The campfire
 
 ```text
 ┌ Campfire ─────────────────────────────────────────┐
-│ Fuel queue  [Spruce 64%] [Birch 81%] [   ] [   ]  │
+│ Fuel queue  [Softwood] [Hardwood] [   ] [   ]     │
+│               64%        81%                      │
 │ Heat ███████░░░   Low · [Steady] · Hot           │
-│ Burning 1 h 20 min · queued 3 h 10 min           │
+│ Burning 1 h 20 min · queued 3 h                  │
+│ Coals 2 h 30 min                                  │
 │ ✓ Firewood queued  ✓ Coals banked                 │
 │ ✗ Out of the rain  · Cook raw food on it          │
 └───────────────────────────────────────────────────┘
 ```
 
+It stands on vanilla's panel above the survivor's inventory, its locked rows dark. Each queued piece shows its seasoning under its slot, and the shown setting is the pressed button. Settled to coals, the time line reads "Coals 2 h 30 min · queued 1 h"; cold, "Cold: light it with a bow drill"; packed too full, a red line "Packed too full: sparks may catch" joins the checklist. Out of the rain is ticked under a roof.
+
+The bow-drill game is a small panel over the world, the friction bar first and then the ember's glow with its band and the flame growing beside it:
+
+```text
+┌ Bow Drill ──────────────────────┐   ┌ Bow Drill ──────────────────────┐
+│ Friction ██████░░░░░░            │   │ Glow  ░░░░[██░]░░   Flame ███░░ │
+│ Saw with ◀ and ▶ in turn         │   │ Blow with Space: keep it in the band │
+└──────────────────────────────────┘   └──────────────────────────────────┘
+```
+
 ### I5 The smoker and the food cache
 
-The smoker: hanging slots and firewood slots, a 12-hour batch, a smoke level from cold to rising. The food cache: usable kcal, days at the team's ration, the ration (Lean, Normal, Feast), fat reserve, the spoilage multiplier, and its scent ("Scent attracts scavengers").
+Both stand on vanilla's panel above the survivor's inventory.
+
+```text
+┌ Smoker ───────────────────────────┐
+│ Hanging   [  ][  ][  ][  ]        │
+│ Firewood      [  ][  ]            │
+│ Smoke: Rising · 3 h 10 min of wood│
+│ Batch ██████░░░░░░░░░░            │
+│ 5 h of 12 h                       │
+└───────────────────────────────────┘
+┌ Food Cache ───────────────────────┐
+│ Food 12,400 kcal · 6.1 days on Normal │
+│ Fat reserve 169,400 kcal          │
+│ Spoils ×0.5 here (3 °C)           │
+│ Scent attracts scavengers         │
+│ [ Lean ] [Normal] [ Feast ]       │
+│ [ 18 slots ]                      │
+└───────────────────────────────────┘
+```
+
+The shown ration is the pressed button; the scent line is red and shows only with 1,024 kcal of meat or fish.
 
 ### I6 Hunting
 
-A hit to a major organ drops the animal; any other hit: "Wounded, it fled", and a blood trail. "Sneak + empty-hand click to carry. Set it down and use your knife to dress it."; dressing shows a progress bar; without a knife: "Skinning knife required".
+A hit to a major organ drops the animal; any other hit: "Wounded, it fled" on the action bar, and a trail of blood on the ground. A carcass on the ground: "Sneak + empty-hand click to carry. Set it down and use your knife to dress it."; dressing fills a bar on the action bar, "Dressing the Moose ▮▮▮▯▯▯▯▯▯▯"; without a knife: "Skinning knife required". A carried carcass is an item named for its animal ("Moose Carcass"). The bows draw as vanilla's bow does, in their own wood colours.
 
 ### I7 The end of a survivor and of a year
 

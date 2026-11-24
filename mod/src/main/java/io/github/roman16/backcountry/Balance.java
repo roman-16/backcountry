@@ -17,18 +17,32 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public record Balance(Alerts alerts, BearSpray bearSpray, Body body, Climate climate, Conditions conditions, DropOff dropOff, Energy energy, Healing healing,
-        Map<String, Double> heat, Map<String, Double> insulation, Kit kit, Load load, Mining mining, PlantFibre plantFibre, Survivor survivor, Warmth warmth, Water water,
-        Weather weather, Work work, World world, Year year) {
+public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpray, Berries berries, Body body, BowDrill bowDrill, Cache cache, Climate climate,
+        Conditions conditions, Cooking cooking, Director director, DropOff dropOff, Energy energy, Farming farming, Fire fire, Firewood firewood, Fish fish,
+        Headlamp headlamp, Healing healing, Map<String, Double> heat, Hunting hunting, Ice ice, Map<String, Double> insulation, Kit kit, Load load, Mice mice,
+        Mining mining, Mosquitoes mosquitoes, PlantFibre plantFibre, Raft raft, Rations rations, Seasons seasons, Smoker smoker, Snow snow, Spoilage spoilage,
+        Survivor survivor, Traps traps, Warmth warmth, Water water, Weather weather, Work work, World world, Year year) {
     private static final Pattern WORD_START = Pattern.compile("([A-Z])");
     private static final Balance LOADED = read();
 
     public record Alerts(double chance, double wastingBmi, double weightStepKg) {}
 
+    public record Arrows(double bluntAnimals, double bluntBlocks, double bluntDamage, double boneAnimals, double boneBlocks, double boneDamage, double broadheadAnimals,
+            double broadheadBlocks, double broadheadDamage) {}
+
+    public record Bait(double cricketChance, List<Double> cricketMonths, double wormChance, double wormHours) {}
+
     public record BearSpray(int blindSeconds, int bursts, double coneDegrees, int fleeSeconds, double pointBlankBlocks, double reachBlocks) {}
+
+    public record Berries(List<Double> blueberryMonths, List<Double> lingonberryMonths) {}
 
     public record Body(double arrivalKg, double digestKcalPerHour, double extractionBmi, double heightM, double kcalPerKg, double restingKcalPerKgDay, double stomachKcal,
             double vitaminCMgDay, double vitaminCStoreDays) {}
+
+    public record BowDrill(double blowGlow, double coolingPerSecond, double flamePerSecond, double glowBand, double glowLossPerSecond, double strokeHeat,
+            double strokeKcal, int uses, double wetCooling) {}
+
+    public record Cache(double scentKcal) {}
 
     public record Climate(double biomeCPerTemperature, double biomeReferenceTemperature, double coldestHour, List<Double> highsC, double lapseCPerBlock, List<Double> lowsC,
             int seaLevel) {}
@@ -37,23 +51,64 @@ public record Balance(Alerts alerts, BearSpray bearSpray, Body body, Climate cli
             double exhaustedEnergy, double feverBurn, double frostCoreC, double frostStageHours, double gutAbsorb, double gutDays, double gutInfectionChance, double gutWater,
             double infectionChance, double infectionDays, double parasitesAbsorb, double parasitesChance, double poisoningDays, double scurvyBurn, double vomitL) {}
 
+    public record Cooking(double potL, double servingL, double stewHours) {}
+
+    public record Director(int checkSeconds, int countBlocks, double eventShare, int farBlocks, int nearBlocks, double rainShare, double scentShare, int tries,
+            List<Double> whiteMonths) {}
+
     public record DropOff(int highestLakeY, int inlandBlocks, int lakeCells, int searchBlocks, int shoreRiseBlocks, int stepBlocks) {}
 
     public record Energy(double awakeHoursToEmpty, int blackoutSeconds, double digestKcalToFull, double sleepHoursToFull, double slowBelow, double slowSpeed, double sprintBelow,
             double stumbleBelow, int stumbleSeconds, double stumbleShare, double wakeEnergy, double workKcalToEmpty) {}
 
+    public record Farming(int firstMonth, double germination, double growthShare, int lastMonth, double warmC) {}
+
+    public record Fire(double bankedHours, double coalsC, double hardwoodHeat, double hardwoodHours, double hotBurn, double hotC, double kindlingHeat,
+            double kindlingHours, int kindlingSticks, double lowBurn, double lowC, double mostCoalsHours, double rainBurn, double softwoodHours, int sparkBlocks,
+            double sparkChance, double steadyC) {}
+
+    public record Firewood(double catches, double dryPerDay, double freshHardwood, double freshSoftwood, double frozenDrying, int pilePieces) {}
+
+    public record Fish(double cookedDays, double fatGPerKg, double kcalPerKg, double proteinGPerKg, double rawDays, List<Double> spawnedOutMonths,
+            double vitaminCMgPerKg) {}
+
+    public record Headlamp(double chargeHours, double crankHoursPerSecond, double crankKcalPerSecond, double dimFromC, double dimmestC, double dimmestShare, int light) {}
+
     public record Healing(double above, double asleepFactor, double hoursPerHeart, double scurvyFactor) {}
+
+    public record Hunting(double bleedHours, double bloodChance, double bloodDays, double carryKg, double dressClicksPerKg, double dressKcalPerClick, double heavyPower,
+            double organKg, double strongBmi, double strongEnergy, double woundShare) {}
+
+    public record Ice(double freezeBelowC, double thawAboveC) {}
 
     public record Kit(int pilotBread) {}
 
-    public record Load(double blockKg, double capacityKg, double clothingKg, double foodKgPerKcal, double itemKg, double logKg, int packRows, double stoneKg, double toolKg,
+    public record Load(double blockKg, double capacityKg, double clothingKg, double firewoodKg, double foodKgPerKcal, double itemKg, double logKg, int packRows, double stoneKg, double toolKg,
             int warnSeconds) {}
+
+    public record Mice(double chance, double kcal) {}
 
     public record Mining(int openBlocks, double speed) {}
 
+    public record Mosquitoes(double calmKmh, double energyPerHour, int firstHour, int lastHour, List<Double> months, double sleepShare, int waterBlocks) {}
+
     public record PlantFibre(double chance) {}
 
+    public record Raft(double calmKmh, double fallChance) {}
+
+    public record Rations(int dawnHour, int duskHour, double feastKcal, double leanKcal, double normalKcal, int reachBlocks) {}
+
+    public record Seasons(List<Double> feedingMonths, List<Double> rutMonths) {}
+
+    public record Smoker(double batchHours, double burnRate, double risingHours) {}
+
+    public record Snow(int deepLayers, double frostbiteBlocks, double slowShare) {}
+
+    public record Spoilage(double doublingC, double frozenBelowC, double frozenShare, double referenceC, double smokedLife) {}
+
     public record Survivor(int quietSeconds) {}
+
+    public record Traps(double baitShare, double fishPerDay, double fishShare, int miceBlocks, double share) {}
 
     public record Warmth(double baseClo, double comfortC, double comfortSpanC, double coolingShare, double coreC, double coreCPerHour, double dryPerHour, double fireDryPerHour,
             int heatReachBlocks, double rainWetPerHour, int roofBlocks, double shelterC, double shelterDryPerHour, double shiverCoreC, double shiverKcalPerHourC,
@@ -61,7 +116,7 @@ public record Balance(Alerts alerts, BearSpray bearSpray, Body body, Climate cli
 
     public record Water(int boilSeconds, double bottleL, int knockoutSeconds, double needLDay, double potL, double sipL, float thirstDamage) {}
 
-    public record Weather(int blizzardFogBlocks, double blizzardWindKmh, double clearBelow, double cloudyAbove, double cloudySwing, double driftCarried,
+    public record Weather(int blizzardFogBlocks, double blizzardWhiteout, double blizzardWindKmh, double clearBelow, double cloudyAbove, double cloudySwing, double driftCarried,
             double driftSummerC, double driftWinterC, double dryWindKmh, double forecastChanceNoise, double forecastErrorCPerDay, double forecastSkillLostPerDay,
             double forecastWindErrorKmhPerDay, double highestWindKmh, List<Double> intensityShares, int longestSpellHours, double overcast,
             List<Double> precipitationDays, int shortestSpellHours, double snowBelowC, int stormFirstMonth, int stormLastMonth, double stormShare,

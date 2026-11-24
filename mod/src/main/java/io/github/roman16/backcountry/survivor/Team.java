@@ -5,6 +5,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.body.Body;
+import io.github.roman16.backcountry.food.Fish;
+import io.github.roman16.backcountry.food.Ration;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.net.Messages;
@@ -38,6 +40,9 @@ public final class Team extends SavedData {
     private final Map<String, Integer> animalsThisYear = new TreeMap<>();
     private boolean begun;
     private Optional<BlockPos> crate = Optional.empty();
+    private final Map<Long, Double> caches = new TreeMap<>();
+    private final Map<String, Integer> lastTaken = new TreeMap<>();
+    private Ration ration = Ration.NORMAL;
     private double kcalThisYear;
     private int year = 1;
 
@@ -86,6 +91,13 @@ public final class Team extends SavedData {
         Run.CODEC.listOf().parse(ops, tag.get("runs")).result().ifPresent(team.runs::addAll);
         CompoundTag years = tag.getCompound("years");
         years.getAllKeys().forEach(key -> Summary.CODEC.parse(ops, years.get(key)).result().ifPresent(summary -> team.years.put(Integer.parseInt(key), summary)));
+        if (tag.contains("ration")) {
+            team.ration = Ration.valueOf(tag.getString("ration"));
+        }
+        CompoundTag taken = tag.getCompound("last_taken");
+        taken.getAllKeys().forEach(key -> team.lastTaken.put(key, taken.getInt(key)));
+        CompoundTag caches = tag.getCompound("caches");
+        caches.getAllKeys().forEach(key -> team.caches.put(Long.parseLong(key), caches.getDouble(key)));
         if (tag.contains("crate")) {
             team.crate = Optional.of(BlockPos.of(tag.getLong("crate")));
         }
@@ -106,6 +118,13 @@ public final class Team extends SavedData {
         years.forEach((number, summary) -> Summary.CODEC.encodeStart(ops, summary).ifSuccess(encoded -> kept.put(Integer.toString(number), encoded)));
         tag.put("years", kept);
         crate.ifPresent(pos -> tag.putLong("crate", pos.asLong()));
+        tag.putString("ration", ration.name());
+        CompoundTag stocked = new CompoundTag();
+        caches.forEach((pos, kcal) -> stocked.putDouble(Long.toString(pos), kcal));
+        tag.put("caches", stocked);
+        CompoundTag taken = new CompoundTag();
+        lastTaken.forEach(taken::putInt);
+        tag.put("last_taken", taken);
         return tag;
     }
 
@@ -125,6 +144,41 @@ public final class Team extends SavedData {
     public void crate(BlockPos pos) {
         crate = Optional.of(pos);
         setDirty();
+    }
+
+    public Ration ration() {
+        return ration;
+    }
+
+    public void ration(Ration chosen) {
+        ration = chosen;
+        setDirty();
+    }
+
+    public void stocked(BlockPos pos, double kcal) {
+        Double before = caches.put(pos.asLong(), kcal);
+        if (before == null || before != kcal) {
+            setDirty();
+        }
+    }
+
+    public void emptied(BlockPos pos) {
+        if (caches.remove(pos.asLong()) != null) {
+            setDirty();
+        }
+    }
+
+    public List<BlockPos> caches() {
+        return caches.keySet().stream().map(BlockPos::of).toList();
+    }
+
+    public static int living(MinecraftServer server) {
+        return (int) server.getPlayerList().getPlayers().stream().filter(Metabolism::lives).count();
+    }
+
+    public double storesDays(int survivors) {
+        double stored = caches.values().stream().mapToDouble(Double::doubleValue).sum();
+        return stored / (ration.dayKcal() * Math.max(1, survivors));
     }
 
     public void arrived(ServerPlayer player, Body body) {
@@ -151,9 +205,19 @@ public final class Team extends SavedData {
         setDirty();
     }
 
-    public void took(String entity) {
+    public void took(String entity, int day) {
         animalsThisYear.merge(entity, 1, Integer::sum);
+        lastTaken.put(entity, day);
         setDirty();
+    }
+
+    public void caught(int fish) {
+        animalsThisYear.merge(Fish.CAUGHT, fish, Integer::sum);
+        setDirty();
+    }
+
+    public int lastTaken(String entity) {
+        return lastTaken.getOrDefault(entity, Integer.MIN_VALUE / 2);
     }
 
     public Optional<Summary> year(int number) {

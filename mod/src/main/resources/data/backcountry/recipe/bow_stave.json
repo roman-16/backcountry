@@ -1,0 +1,15 @@
+{
+  "type": "backcountry:tool",
+  "ingredients": [
+    {
+      "tag": "backcountry:hardwood_logs"
+    }
+  ],
+  "tool": {
+    "tag": "backcountry:knives"
+  },
+  "result": {
+    "count": 1,
+    "id": "backcountry:bow_stave"
+  }
+}

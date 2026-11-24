@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "backcountry:rope"
+    },
+    {
+      "item": "backcountry:cordage"
+    },
+    {
+      "item": "backcountry:cordage"
+    },
+    {
+      "item": "backcountry:cordage"
+    },
+    {
+      "item": "backcountry:cordage"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:gill_net"
+  }
+}

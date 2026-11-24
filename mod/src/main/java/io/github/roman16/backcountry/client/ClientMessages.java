@@ -7,6 +7,7 @@ import io.github.roman16.backcountry.weather.Weather;
 import io.github.roman16.backcountry.weather.WeatherView;
 import java.util.List;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.client.gui.screens.DeathScreen;
 
 public final class ClientMessages {
@@ -17,6 +18,10 @@ public final class ClientMessages {
         ClientState.weather = weather;
         ClientState.viewed = true;
         ClientState.blackout = view.blackout();
+    }
+
+    public static void bowDrill(BlockPos fire, boolean wet) {
+        Minecraft.getInstance().setScreen(new BowDrillScreen(fire, wet));
     }
 
     public static void sky(List<Day> days) {

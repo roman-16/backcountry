@@ -3,7 +3,7 @@
   "category": "equipment",
   "key": {
     "R": {
-      "item": "minecraft:rabbit_hide"
+      "item": "backcountry:cured_hide"
     }
   },
   "pattern": [

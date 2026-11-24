@@ -3,10 +3,11 @@ package io.github.roman16.backcountry.body;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.food.Fish;
 import java.util.Optional;
 import net.minecraft.world.item.ItemStack;
 
-public record Nutrition(double kcal, double fat, double protein, double carbs, double vitaminC, boolean raw, double poisoning) {
+public record Nutrition(double kcal, double fat, double protein, double carbs, double vitaminC, boolean raw, double poisoning, Optional<Double> days, double water) {
     public static final Codec<Nutrition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.DOUBLE.fieldOf("kcal").forGetter(Nutrition::kcal),
             Codec.DOUBLE.fieldOf("fat").forGetter(Nutrition::fat),
@@ -14,10 +15,15 @@ public record Nutrition(double kcal, double fat, double protein, double carbs, d
             Codec.DOUBLE.fieldOf("carbs").forGetter(Nutrition::carbs),
             Codec.DOUBLE.optionalFieldOf("vitamin_c", 0.0).forGetter(Nutrition::vitaminC),
             Codec.BOOL.optionalFieldOf("raw", false).forGetter(Nutrition::raw),
-            Codec.DOUBLE.optionalFieldOf("poisoning", 0.0).forGetter(Nutrition::poisoning))
+            Codec.DOUBLE.optionalFieldOf("poisoning", 0.0).forGetter(Nutrition::poisoning),
+            Codec.DOUBLE.optionalFieldOf("days").forGetter(Nutrition::days),
+            Codec.DOUBLE.optionalFieldOf("water", 0.0).forGetter(Nutrition::water))
             .apply(instance, Nutrition::new));
 
     public static Optional<Nutrition> of(ItemStack stack) {
+        if (Fish.is(stack.getItem())) {
+            return Fish.nutrition(stack);
+        }
         return Optional.ofNullable(stack.getItemHolder().getData(Things.FOOD));
     }
 }

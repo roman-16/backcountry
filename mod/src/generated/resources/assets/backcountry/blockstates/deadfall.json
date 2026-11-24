@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "sprung=false": {
+      "model": "backcountry:block/deadfall"
+    },
+    "sprung=true": {
+      "model": "backcountry:block/deadfall_sprung"
+    }
+  }
+}

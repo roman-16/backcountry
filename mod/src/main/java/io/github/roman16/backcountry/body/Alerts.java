@@ -1,6 +1,8 @@
 package io.github.roman16.backcountry.body;
 
 import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.hunt.Animal;
+import io.github.roman16.backcountry.hunt.Hunting;
 import io.github.roman16.backcountry.gear.SupplyCrateBlock;
 import io.github.roman16.backcountry.weather.Forecast;
 import io.github.roman16.backcountry.weather.Outlook;
@@ -31,10 +33,7 @@ public final class Alerts {
             }
             body.alertsDay = day;
         }
-        Long dropped = body.alerts.get(Alert.WEIGHT_DROPPED);
-        if (dropped != null && now - dropped >= TICKS_A_DAY) {
-            body.alerts.remove(Alert.WEIGHT_DROPPED);
-        }
+        body.alerts.entrySet().removeIf(raised -> raised.getKey().dayLong() && now - raised.getValue() >= TICKS_A_DAY);
         ServerLevel level = player.serverLevel();
         BlockPos pos = player.blockPosition();
         boolean raised = false;
@@ -50,6 +49,12 @@ public final class Alerts {
         if (frost(nightLowC(level, pos, day), nightLowC(level, pos, day - 1))) {
             raised |= raise(body, Alert.FROST_TONIGHT, now);
         }
+        if (Hunting.begins(day, Animal.Season.RUT)) {
+            raised |= raise(body, Alert.MOOSE_RUT, now);
+        }
+        if (Hunting.begins(day, Animal.Season.FEEDING)) {
+            raised |= raise(body, Alert.BEARS_FEEDING, now);
+        }
         if (weighed(body)) {
             body.alerts.put(Alert.WEIGHT_DROPPED, now);
             raised = true;
@@ -58,10 +63,20 @@ public final class Alerts {
             raised |= raise(body, Alert.BODY_WASTING, now);
         }
         if (raised) {
-            body.unread = true;
-            if (SupplyCrateBlock.carriesMessenger(player)) {
-                player.playNotifySound(SoundEvents.NOTE_BLOCK_BIT.value(), SoundSource.PLAYERS, BEEP_VOLUME, BEEP_PITCH);
-            }
+            beep(player, body);
+        }
+    }
+
+    public static void announce(ServerPlayer player, Alert alert) {
+        Body body = Metabolism.body(player);
+        body.alerts.put(alert, player.level().getGameTime());
+        beep(player, body);
+    }
+
+    private static void beep(ServerPlayer player, Body body) {
+        body.unread = true;
+        if (SupplyCrateBlock.carriesMessenger(player)) {
+            player.playNotifySound(SoundEvents.NOTE_BLOCK_BIT.value(), SoundSource.PLAYERS, BEEP_VOLUME, BEEP_PITCH);
         }
     }
 

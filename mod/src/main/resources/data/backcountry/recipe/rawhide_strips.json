@@ -1,0 +1,15 @@
+{
+  "type": "backcountry:tool",
+  "ingredients": [
+    {
+      "item": "backcountry:scraped_hide"
+    }
+  ],
+  "tool": {
+    "tag": "backcountry:knives"
+  },
+  "result": {
+    "count": 4,
+    "id": "backcountry:rawhide_strips"
+  }
+}

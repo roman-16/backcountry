@@ -1,6 +1,7 @@
 package io.github.roman16.backcountry.client;
 
 import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.food.Fish;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.net.Messages;
 import io.github.roman16.backcountry.survivor.Summary;
@@ -141,6 +142,10 @@ public class SummaryScreen extends Screen {
         }
         for (int i = 0; i < Math.min(SHOWN_ANIMALS, summary.animals().size()); i++) {
             Summary.Taken taken = summary.animals().get(i);
+            if (taken.entity().equals(Fish.CAUGHT)) {
+                y = stat(graphics, x, y, new ItemStack(Items.COD), Component.translatable("summary.backcountry.fish", taken.count()));
+                continue;
+            }
             EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(taken.entity()));
             SpawnEggItem egg = SpawnEggItem.byId(type);
             y = stat(graphics, x, y, egg == null ? new ItemStack(Items.BONE) : new ItemStack(egg),

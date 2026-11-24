@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import io.github.roman16.backcountry.body.Alerts;
+import io.github.roman16.backcountry.food.Fish;
 import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Climate;
@@ -54,7 +55,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.Direction;
@@ -89,7 +89,7 @@ public final class BackcountryTests {
     }
 
     private static void warm(GameTestHelper helper, ServerPlayer player) {
-        helper.setBlock(new BlockPos(3, 1, 1), Blocks.CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true));
+        FireTests.burning(helper, new BlockPos(3, 1, 1));
         player.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Things.HIDE_HAT.get()));
         player.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Things.HIDE_COAT.get()));
         player.setItemSlot(EquipmentSlot.LEGS, new ItemStack(Things.HIDE_PANTS.get()));
@@ -99,7 +99,7 @@ public final class BackcountryTests {
     public static void everyFoodHasItsData(GameTestHelper helper) {
         List<String> missing = new ArrayList<>();
         for (Item item : BuiltInRegistries.ITEM) {
-            if (item.components().get(DataComponents.FOOD) != null && Nutrition.of(new ItemStack(item)).isEmpty()) {
+            if (item.components().get(DataComponents.FOOD) != null && !Fish.is(item) && Nutrition.of(new ItemStack(item)).isEmpty()) {
                 missing.add(BuiltInRegistries.ITEM.getKey(item).toString());
             }
         }
@@ -127,7 +127,7 @@ public final class BackcountryTests {
         Nutrition bread = Nutrition.of(new ItemStack(Things.PILOT_BREAD.get())).orElseThrow();
         check(helper, bread.kcal() == 100 && bread.fat() == 2.5, "Pilot Bread is " + bread);
         int eaten = 0;
-        while (Metabolism.eat(player, bread)) {
+        while (Metabolism.eat(player, new ItemStack(Things.PILOT_BREAD.get()))) {
             eaten++;
         }
         check(helper, eaten == (int) (Balance.get().body().stomachKcal() / bread.kcal()), "a stomach took " + eaten + " Pilot Bread");
@@ -174,7 +174,7 @@ public final class BackcountryTests {
     @GameTest(template = "empty")
     public static void theCampPotBoilsOnALitFire(GameTestHelper helper) {
         BlockPos fire = new BlockPos(2, 1, 2);
-        helper.setBlock(fire, Blocks.CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true));
+        FireTests.burning(helper, fire);
         helper.setBlock(fire.above(), Things.CAMP_POT_BLOCK.get().defaultBlockState());
         BlockPos at = helper.absolutePos(fire.above());
         if (!(helper.getLevel().getBlockEntity(at) instanceof CampPotEntity pot)) {

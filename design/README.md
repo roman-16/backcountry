@@ -4,7 +4,7 @@ What Backcountry is, decided before anything is built. Each document keeps its *
 
 ## Now
 
-**M1 Repo, tooling, world**, **M2 Body** and **M3 Satellite Messenger** are built. M2 and M3 wait for the user's first play (`just play`, the `playtest` skill's rows). **M4 Fire and wood** is next.
+**M1 Repo, tooling, world**, **M2 Body**, **M3 Satellite Messenger**, **M4 Fire and wood**, **M5 Food**, **M6 Hunting**, **M7 Traps, fishing, water** and **M8 The year** are built, balanced by automated playthroughs (`playthrough` skill). M2 to M8 wait for the user's first play (`just play`, the `playtest` skill's rows).
 
 ## Milestones
 

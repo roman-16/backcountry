@@ -182,6 +182,34 @@ def stop(arguments):
         print("the client has stopped")
 
 
+def checkpoint(arguments):
+    world = json.loads(LAUNCHED.read_text())["world"] if running(GAME) and LAUNCHED.exists() else ""
+    if not world:
+        raise Failure("checkpoint failed: no world is open")
+    arguments.steps = ["/save-all flush"]
+    arguments.timeout = RUN_SECONDS
+    run(arguments)
+    target = CLIENT / "checkpoints" / arguments.name
+    shutil.rmtree(target, ignore_errors=True)
+    shutil.copytree(CLIENT / "saves" / world, target, ignore=shutil.ignore_patterns("session.lock"))
+    print(f"checkpoint {arguments.name} keeps {world} ({target.relative_to(ROOT)})")
+
+
+def restore(arguments):
+    source = CLIENT / "checkpoints" / arguments.name
+    if not source.exists():
+        raise Failure(f"restore failed: no checkpoint {arguments.name}")
+    if running(GAME):
+        stop(None)
+    target = CLIENT / "saves" / arguments.name
+    shutil.rmtree(target, ignore_errors=True)
+    shutil.copytree(source, target)
+    arguments.fresh = False
+    arguments.seed = None
+    arguments.world = arguments.name
+    start(arguments)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Drive the dev client: start it, run steps in it, stop it")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -197,10 +225,20 @@ def main():
     run_parser.add_argument("steps", nargs="*")
     run_parser.add_argument("--timeout", type=int, default=RUN_SECONDS)
     commands.add_parser("swap", help="compile and swap changed code into the running client")
+    checkpoint_parser = commands.add_parser("checkpoint", help="save the open world and keep a copy of it under a name")
+    checkpoint_parser.add_argument("name")
+    restore_parser = commands.add_parser("restore", help="open a kept copy of a world as the save of the same name")
+    restore_parser.add_argument("name")
+    restore_parser.add_argument("--mode", choices=["full", "lean", "shipped"], default="full")
+    restore_parser.add_argument(
+        "--visible", action="store_true", help="draw on the user's screen instead of a hidden one"
+    )
     commands.add_parser("stop", help="quit the client; returns once it has exited")
     arguments = parser.parse_args()
     try:
-        {"run": run, "start": start, "stop": stop, "swap": swap}[arguments.command](arguments)
+        {"checkpoint": checkpoint, "restore": restore, "run": run, "start": start, "stop": stop, "swap": swap}[
+            arguments.command
+        ](arguments)
     except Failure as failure:
         sys.exit(str(failure))
 

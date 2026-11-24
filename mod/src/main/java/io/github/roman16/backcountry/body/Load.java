@@ -3,6 +3,7 @@ package io.github.roman16.backcountry.body;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.gear.Water;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.fire.FirewoodItem;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -34,6 +35,8 @@ public final class Load {
         var nutrition = Nutrition.of(stack);
         if (nutrition.isPresent()) {
             each = nutrition.get().kcal() * load.foodKgPerKcal();
+        } else if (stack.getItem() instanceof FirewoodItem) {
+            each = load.firewoodKg();
         } else if (stack.is(ItemTags.LOGS)) {
             each = load.logKg();
         } else if (stack.getItem() instanceof BlockItem block && (block.getBlock().defaultBlockState().is(BlockTags.BASE_STONE_OVERWORLD)

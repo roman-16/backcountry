@@ -9,14 +9,17 @@ import io.github.roman16.backcountry.body.Alerts;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Warmth;
 import io.github.roman16.backcountry.client.ClientMessages;
+import io.github.roman16.backcountry.fire.Lighting;
 import io.github.roman16.backcountry.survivor.Arrival;
 import io.github.roman16.backcountry.survivor.Summary;
+import io.github.roman16.backcountry.survivor.Team;
 import io.github.roman16.backcountry.weather.Day;
 import io.github.roman16.backcountry.weather.Forecast;
 import io.github.roman16.backcountry.weather.WeatherView;
 import java.util.Collection;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -82,10 +85,38 @@ public final class Messages {
         }
     }
 
+    public record BowDrill(BlockPos fire, boolean wet) implements CustomPacketPayload {
+        public static final Type<BowDrill> TYPE = new Type<>(Backcountry.id("bow_drill"));
+        static final StreamCodec<ByteBuf, BowDrill> STREAM_CODEC = StreamCodec.composite(BlockPos.STREAM_CODEC, BowDrill::fire, ByteBufCodecs.BOOL, BowDrill::wet,
+                BowDrill::new);
+
+        @Override
+        public Type<BowDrill> type() {
+            return TYPE;
+        }
+    }
+
+    public record Drilled(BlockPos fire, int strokes, boolean lit) implements CustomPacketPayload {
+        public static final Type<Drilled> TYPE = new Type<>(Backcountry.id("drilled"));
+        static final StreamCodec<ByteBuf, Drilled> STREAM_CODEC = StreamCodec.composite(BlockPos.STREAM_CODEC, Drilled::fire, ByteBufCodecs.VAR_INT, Drilled::strokes,
+                ByteBufCodecs.BOOL, Drilled::lit, Drilled::new);
+
+        @Override
+        public Type<Drilled> type() {
+            return TYPE;
+        }
+    }
+
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("1");
         registrar.playToClient(View.TYPE, View.STREAM_CODEC, (payload, context) -> ClientMessages.view(payload.body(), payload.weather()));
         registrar.playToClient(Sky.TYPE, Sky.STREAM_CODEC, (payload, context) -> ClientMessages.sky(payload.days()));
+        registrar.playToClient(BowDrill.TYPE, BowDrill.STREAM_CODEC, (payload, context) -> ClientMessages.bowDrill(payload.fire(), payload.wet()));
+        registrar.playToServer(Drilled.TYPE, Drilled.STREAM_CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player) {
+                Lighting.drilled(player, payload.fire(), payload.strokes(), payload.lit());
+            }
+        });
         registrar.playToClient(Shown.TYPE, Shown.STREAM_CODEC, (payload, context) -> ClientMessages.summary(payload.summary()));
         registrar.playToServer(Arrive.TYPE, Arrive.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player) {
@@ -110,11 +141,13 @@ public final class Messages {
 
     public static void view(ServerPlayer player, Body body) {
         Balance balance = Balance.get();
+        Team team = Team.get(player.server);
         BodyView view = new BodyView((float) body.energy, (float) body.waterShare(), (float) body.waterL, (float) balance.water().needLDay(), Metabolism.shown(body),
                 (float) body.weightKg, (float) body.coreC, Warmth.comfort(body), Double.compare(Math.round(body.coreC * 100), Math.round(body.lastCoreC * 100)),
                 (float) body.wetness, body.awakeTicks / 1000F, (float) body.kcalEatenToday, (float) body.kcalBurnedToday, (float) body.proteinToday, (float) body.carbsToday,
                 (float) body.fatToday, (float) body.stomachShare(), (float) body.loadKg, (float) balance.load().capacityKg(), Calendar.day(player.level()), body.blackoutTicks,
-                body.fire, body.sheltered, body.windy, (float) body.clo, Alerts.shown(body), body.unread);
+                body.fire, body.sheltered, body.windy, (float) body.clo, Alerts.shown(body), body.unread, team.ration().ordinal(),
+                (float) team.storesDays(Team.living(player.server)));
         if (!(player instanceof FakePlayer) && player.connection.hasChannel(View.TYPE)) {
             PacketDistributor.sendToPlayer(player, new View(view, Forecast.view(player, body)));
         }
@@ -132,6 +165,16 @@ public final class Messages {
                 PacketDistributor.sendToPlayer(player, new Sky(days));
             }
         }
+    }
+
+    public static void bowDrill(ServerPlayer player, BlockPos fire, boolean wet) {
+        if (!(player instanceof FakePlayer) && player.connection.hasChannel(BowDrill.TYPE)) {
+            PacketDistributor.sendToPlayer(player, new BowDrill(fire, wet));
+        }
+    }
+
+    public static void drilled(BlockPos fire, int strokes, boolean lit) {
+        PacketDistributor.sendToServer(new Drilled(fire, strokes, lit));
     }
 
     public static void read() {

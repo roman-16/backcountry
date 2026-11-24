@@ -3,12 +3,14 @@ package io.github.roman16.backcountry.body;
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.food.Spoilage;
 import io.github.roman16.backcountry.net.Messages;
 import io.github.roman16.backcountry.survivor.Ending;
 import io.github.roman16.backcountry.survivor.Team;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -28,6 +30,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
@@ -131,11 +134,15 @@ public final class Metabolism {
         body.vitaminCMg = Math.max(0, body.vitaminCMg - balance.body().vitaminCMgDay() * days);
         Balance.Energy energy = balance.energy();
         body.energy -= work / energy.workKcalToEmpty();
+        boolean bitten = Mosquitoes.biting(player, body);
+        if (bitten) {
+            Mosquitoes.swarm(player);
+        }
         if (asleep) {
-            body.energy += hours / energy.sleepHoursToFull();
+            body.energy += hours / energy.sleepHoursToFull() * (bitten ? balance.mosquitoes().sleepShare() : 1);
             body.awakeTicks = 0;
         } else {
-            body.energy -= hours / energy.awakeHoursToEmpty();
+            body.energy -= hours / energy.awakeHoursToEmpty() + (bitten ? hours * balance.mosquitoes().energyPerHour() : 0);
             body.awakeTicks += ticks;
         }
         body.energy += absorbed / energy.digestKcalToFull();
@@ -302,7 +309,21 @@ public final class Metabolism {
         }
     }
 
-    public static boolean eat(ServerPlayer player, Nutrition food) {
+    public static boolean eat(ServerPlayer player, ItemStack stack) {
+        Optional<Nutrition> food = Nutrition.of(stack);
+        if (food.isEmpty() || !eat(player, food.get())) {
+            return false;
+        }
+        if (Spoilage.spoiled(stack) || stack.has(Things.CONTAMINATED.get())) {
+            poison(body(player));
+        }
+        if (food.get().water() > 0) {
+            drink(player, food.get().water(), true);
+        }
+        return true;
+    }
+
+    private static boolean eat(ServerPlayer player, Nutrition food) {
         Body body = body(player);
         Balance balance = Balance.get();
         if (body.stomachKcal + food.kcal() > balance.body().stomachKcal() && body.stomachKcal > 0) {
@@ -351,7 +372,7 @@ public final class Metabolism {
         }
     }
 
-    private static void work(Player player, double kcal) {
+    public static void work(Player player, double kcal) {
         if (player instanceof ServerPlayer server && lives(server)) {
             body(server).workKcal += kcal;
         }
@@ -410,7 +431,7 @@ public final class Metabolism {
                 && event.getEntity().getType().getCategory() != MobCategory.MONSTER && event.getEntity().getType().getCategory() != MobCategory.MISC) {
             String key = BuiltInRegistries.ENTITY_TYPE.getKey(event.getEntity().getType()).toString();
             body(hunter).animals.merge(key, 1, Integer::sum);
-            Team.get(hunter.server).took(key);
+            Team.get(hunter.server).took(key, Calendar.day(hunter.level()));
         }
     }
 
@@ -442,7 +463,7 @@ public final class Metabolism {
             drink(player, Balance.get().water().sipL(), false);
             return;
         }
-        Nutrition.of(event.getItem()).ifPresent(food -> eat(player, food));
+        eat(player, event.getItem());
         hold(player, body(player));
     }
 

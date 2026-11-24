@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.function.BooleanSupplier;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.ConfirmScreen;
@@ -62,7 +63,10 @@ public final class Driver {
     private static final int HOURS = 24;
     private static final String FRESH = "play";
     private static final Map<String, Integer> KEYS = Map.of("enter", GLFW.GLFW_KEY_ENTER, "escape", GLFW.GLFW_KEY_ESCAPE, "left", GLFW.GLFW_KEY_LEFT, "right",
-            GLFW.GLFW_KEY_RIGHT, "tab", GLFW.GLFW_KEY_TAB);
+            GLFW.GLFW_KEY_RIGHT, "space", GLFW.GLFW_KEY_SPACE, "tab", GLFW.GLFW_KEY_TAB);
+    private static final double ARRIVED_BLOCKS = 1.5;
+    private static final float FULL_TURN = 360;
+    private static final int TICKS_A_SECOND = 20;
     private static final Deque<String> STEPS = new ArrayDeque<>();
     private static final List<String> HEARD = new ArrayList<>();
     private static boolean opened;
@@ -231,6 +235,8 @@ public final class Driver {
             case "click" -> click(minecraft, argument.split(" "));
             case "key" -> key(minecraft, argument);
             case "hold" -> hold(minecraft, argument.split(" "));
+            case "walk" -> walk(minecraft, argument.split(" "));
+            case "bench" -> bench(minecraft, Integer.parseInt(argument));
             case "use" -> {
                 KeyMapping.click(minecraft.options.keyUse.getKey());
                 until = () -> ticks >= 1;
@@ -430,6 +436,48 @@ public final class Driver {
             return false;
         };
         mapping.setDown(true);
+    }
+
+    private static void walk(Minecraft minecraft, String[] target) {
+        double x = Double.parseDouble(target[0]);
+        double z = Double.parseDouble(target[1]);
+        KeyMapping forward = minecraft.options.keyUp;
+        KeyMapping jump = minecraft.options.keyJump;
+        each = () -> {
+            LocalPlayer player = minecraft.player;
+            player.setYRot((float) Math.toDegrees(Math.atan2(-(x - player.getX()), z - player.getZ())));
+            forward.setDown(true);
+            jump.setDown(player.horizontalCollision || player.isInWater());
+        };
+        until = () -> {
+            LocalPlayer player = minecraft.player;
+            if (Math.hypot(x - player.getX(), z - player.getZ()) > ARRIVED_BLOCKS) {
+                return false;
+            }
+            forward.setDown(false);
+            jump.setDown(false);
+            result.addProperty("arrived", "%.1f %.1f %.1f".formatted(player.getX(), player.getY(), player.getZ()));
+            return true;
+        };
+    }
+
+    private static void bench(Minecraft minecraft, int seconds) {
+        List<Integer> samples = new ArrayList<>();
+        float startYaw = minecraft.player.getYRot();
+        each = () -> {
+            minecraft.player.setYRot(startYaw + FULL_TURN * ticks / (seconds * TICKS_A_SECOND));
+            if (ticks > 0 && ticks % TICKS_A_SECOND == 0) {
+                samples.add(minecraft.getFps());
+            }
+        };
+        until = () -> {
+            if (ticks < seconds * TICKS_A_SECOND) {
+                return false;
+            }
+            result.addProperty("fps", "average %.0f, lowest %d over %d s".formatted(samples.stream().mapToInt(Integer::intValue).average().orElse(0),
+                    samples.stream().mapToInt(Integer::intValue).min().orElse(0), seconds));
+            return true;
+        };
     }
 
     private static JsonArray log(Minecraft minecraft) {

@@ -6,6 +6,23 @@ chance = 0.5
 wasting_bmi = 18.5
 weight_step_kg = 2.0
 
+[arrows]
+blunt_animals = 1.0
+blunt_blocks = 1.0
+blunt_damage = 1.5
+bone_animals = 0.48
+bone_blocks = 0.7
+bone_damage = 2.25
+broadhead_animals = 0.58
+broadhead_blocks = 0.78
+broadhead_damage = 2.5
+
+[bait]
+cricket_chance = 0.125
+cricket_months = [6, 8]
+worm_chance = 0.5
+worm_hours = 12
+
 [bear_spray]
 blind_seconds = 4
 bursts = 8
@@ -13,6 +30,10 @@ cone_degrees = 32
 flee_seconds = 30
 point_blank_blocks = 1.5
 reach_blocks = 4
+
+[berries]
+blueberry_months = [7, 8]
+lingonberry_months = [8, 9]
 
 [body]
 arrival_kg = 77.0
@@ -24,6 +45,20 @@ stomach_kcal = 1536
 digest_kcal_per_hour = 256
 vitamin_c_mg_day = 75
 vitamin_c_store_days = 8
+
+[bow_drill]
+blow_glow = 0.25
+cooling_per_second = 0.25
+flame_per_second = 0.25
+glow_band = 0.5
+glow_loss_per_second = 0.25
+stroke_heat = 0.125
+stroke_kcal = 0.5
+uses = 16
+wet_cooling = 2
+
+[cache]
+scent_kcal = 1024
 
 [climate]
 biome_c_per_temperature = 8
@@ -57,6 +92,22 @@ poisoning_days = 1
 scurvy_burn = 0.2
 vomit_l = 1.0
 
+[cooking]
+pot_l = 2.0
+serving_l = 0.25
+stew_hours = 1
+
+[director]
+check_seconds = 30
+count_blocks = 128
+event_share = 2
+far_blocks = 64
+near_blocks = 32
+rain_share = 0.5
+scent_share = 2
+tries = 16
+white_months = [11, 4]
+
 [drop_off]
 highest_lake_y = 128
 inland_blocks = 512
@@ -79,6 +130,58 @@ stumble_share = 0.125
 wake_energy = 0.125
 work_kcal_to_empty = 2048
 
+[farming]
+first_month = 5
+germination = 0.75
+growth_share = 0.125
+last_month = 8
+warm_c = 8
+
+[fire]
+banked_hours = 2
+coals_c = 4
+hardwood_heat = 1.25
+hardwood_hours = 2
+hot_burn = 2
+hot_c = 24
+kindling_heat = 0.5
+kindling_hours = 0.25
+kindling_sticks = 2
+low_burn = 0.5
+low_c = 8
+most_coals_hours = 8
+rain_burn = 2
+softwood_hours = 1
+spark_blocks = 2
+spark_chance = 0.5
+steady_c = 16
+
+[firewood]
+catches = 0.5
+dry_per_day = 0.125
+fresh_hardwood = 0.25
+fresh_softwood = 0.5
+frozen_drying = 0.5
+pile_pieces = 8
+
+[fish]
+cooked_days = 4
+fat_g_per_kg = 50
+kcal_per_kg = 482
+protein_g_per_kg = 200
+raw_days = 2.5
+spawned_out_months = [9, 10]
+vitamin_c_mg_per_kg = 20
+
+[headlamp]
+charge_hours = 8
+crank_hours_per_second = 0.25
+crank_kcal_per_second = 2
+dim_from_c = -20
+dimmest_c = -40
+dimmest_share = 0.25
+light = 12
+
 [healing]
 above = 0.25
 asleep_factor = 2
@@ -87,12 +190,27 @@ scurvy_factor = 0.5
 
 [heat]
 "minecraft:blast_furnace" = 4
-"minecraft:campfire" = 16
 "minecraft:fire" = 12
 "minecraft:furnace" = 4
 "minecraft:lava" = 16
 "minecraft:smoker" = 4
-"minecraft:soul_campfire" = 8
+
+[hunting]
+bleed_hours = 2
+blood_chance = 0.5
+blood_days = 1
+carry_kg = 64
+dress_clicks_per_kg = 0.125
+dress_kcal_per_click = 0.5
+heavy_power = 1.25
+organ_kg = 16
+strong_bmi = 21
+strong_energy = 0.5
+wound_share = 0.5
+
+[ice]
+freeze_below_c = -4
+thaw_above_c = 1
 
 [insulation]
 "backcountry:hide_coat" = 1.5
@@ -111,6 +229,7 @@ pilot_bread = 38
 block_kg = 1.0
 capacity_kg = 16
 clothing_kg = 1.0
+firewood_kg = 1.0
 food_kg_per_kcal = 0.0005
 item_kg = 0.25
 log_kg = 2.0
@@ -119,15 +238,68 @@ stone_kg = 2.0
 tool_kg = 1.0
 warn_seconds = 4
 
+[mice]
+chance = 0.25
+kcal = 256
+
 [mining]
 open_blocks = 3
 speed = 0.05
 
+[mosquitoes]
+calm_kmh = 12
+energy_per_hour = 0.03125
+first_hour = 20
+last_hour = 5
+months = [6, 8]
+sleep_share = 0.5
+water_blocks = 8
+
 [plant_fibre]
 chance = 0.25
 
+[raft]
+calm_kmh = 24
+fall_chance = 0.0625
+
+[rations]
+dawn_hour = 6
+dusk_hour = 18
+feast_kcal = 1536
+lean_kcal = 512
+normal_kcal = 1024
+reach_blocks = 64
+
+[seasons]
+feeding_months = [8, 9]
+rut_months = [9, 9]
+
+[smoker]
+batch_hours = 12
+burn_rate = 0.25
+rising_hours = 1
+
+[snow]
+deep_layers = 4
+frostbite_blocks = 256
+slow_share = 0.5
+
+[spoilage]
+doubling_c = 10
+frozen_below_c = 0
+frozen_share = 0.03125
+reference_c = 10
+smoked_life = 64
+
 [survivor]
 quiet_seconds = 8
+
+[traps]
+bait_share = 2
+fish_per_day = 4
+fish_share = 0.5
+mice_blocks = 8
+share = 0.5
 
 [warmth]
 base_clo = 2.0
@@ -160,20 +332,9 @@ pot_l = 2.0
 sip_l = 0.25
 thirst_damage = 2
 
-[work]
-attack_kcal = 2
-chop_kcal = 8
-dig_kcal = 2
-jump_kcal = 0.25
-mine_kcal = 8
-overload_kcal_per_kg_hour = 4
-place_kcal = 2
-sprint_kcal_per_block = 0.125
-swim_kcal_per_block = 0.25
-walk_kcal_per_block = 0.0625
-
 [weather]
 blizzard_fog_blocks = 32
+blizzard_whiteout = 0.75
 blizzard_wind_kmh = 56
 clear_below = 0.25
 cloudy_above = 0.5
@@ -212,11 +373,23 @@ storm_share = 0.25
 wet_shares = [0.5, 1.0, 2.0]
 wet_wind_kmh = 40
 
+[work]
+attack_kcal = 2
+chop_kcal = 8
+dig_kcal = 2
+jump_kcal = 0.25
+mine_kcal = 8
+overload_kcal_per_kg_hour = 4
+place_kcal = 2
+sprint_kcal_per_block = 0.125
+swim_kcal_per_block = 0.25
+walk_kcal_per_block = 0.0625
+
 [world]
 across_blocks = 6144
 detail_share = 0.375
 detail_wavelength_blocks = 384
-dry_share = 0.875
+dry_share = 0.9375
 edge_blocks = 6144
 highest = 2.0
 inner_share = 0.5
