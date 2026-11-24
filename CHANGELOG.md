@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-24
+
+### Highlights
+
+- **A year counted in calories** - Every survivor's body burns what a real day burns, shown by the energy bolts, the water bar and the conditions beside the hotbar, until extraction at BMI 17 ends the run with its summary.
+- **Alaska's own weather** - Days, rain, snow and blizzards follow Anchorage's year, and the Satellite Messenger forecasts them three days ahead and alerts what is coming.
+- **Living off the land** - Fires lit with a bow drill, food that spoils unless it is cached or smoked, bows, carcasses and hides, and traps and nets that work while you are away.
+
 ### Added
 
 - The body counts every kcal: energy bolts take the hunger bar's place, a water bar sits above the XP bar, and conditions show their names right of the hotbar.
