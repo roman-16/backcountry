@@ -37,6 +37,119 @@
         }
       }
     },
+    "ffmpeg@latest": {
+      "last_modified": "2026-11-22T18:15:35Z",
+      "resolved": "github:NixOS/nixpkgs/619c39f6eac5d1ed6b8f073a9414baf7034b2356#ffmpeg",
+      "source": "devbox-search",
+      "version": "9.0.2",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "bin",
+              "path": "/nix/store/mc6p16b1iy626jhzi9n5hn17cnqr4mxk-ffmpeg-9.0.2-bin",
+              "default": true
+            },
+            {
+              "name": "man",
+              "path": "/nix/store/jx1jp7iqxhpf1ga6fyd7awj022rgbka0-ffmpeg-9.0.2-man",
+              "default": true
+            },
+            {
+              "name": "data",
+              "path": "/nix/store/65jh4j4zl4hrp95i2mwknqdyymyx6i2q-ffmpeg-9.0.2-data"
+            },
+            {
+              "name": "dev",
+              "path": "/nix/store/5lh24znxnxjfax9vjhrx2xyw9bvh6d0x-ffmpeg-9.0.2-dev"
+            },
+            {
+              "name": "doc",
+              "path": "/nix/store/yj9d76jmxdd3pvnscxxwq7r4y1iqadyv-ffmpeg-9.0.2-doc"
+            },
+            {
+              "name": "lib",
+              "path": "/nix/store/i4x1qcjzi187zv8d0q80mndwi75pcfyx-ffmpeg-9.0.2-lib"
+            },
+            {
+              "name": "out",
+              "path": "/nix/store/988001iq6lw4nnrnmpx5kd6nzs2nj1r4-ffmpeg-9.0.2"
+            }
+          ],
+          "store_path": "/nix/store/mc6p16b1iy626jhzi9n5hn17cnqr4mxk-ffmpeg-9.0.2-bin"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "bin",
+              "path": "/nix/store/7pv3ml721nz6iz5k2z42r1c13rhrx4sb-ffmpeg-9.0.2-bin",
+              "default": true
+            },
+            {
+              "name": "man",
+              "path": "/nix/store/ds2j4sb5m6cj5mpdlhqp844nc32ikycz-ffmpeg-9.0.2-man",
+              "default": true
+            },
+            {
+              "name": "data",
+              "path": "/nix/store/vrx68vm8gkf2zq1g330sll3fdagvnk5p-ffmpeg-9.0.2-data"
+            },
+            {
+              "name": "dev",
+              "path": "/nix/store/hfap4q031ch20bgbqkm6nymfd8b3y5qx-ffmpeg-9.0.2-dev"
+            },
+            {
+              "name": "doc",
+              "path": "/nix/store/rd84z5zryl0ngslf56f2nrjks4hvbn67-ffmpeg-9.0.2-doc"
+            },
+            {
+              "name": "lib",
+              "path": "/nix/store/jighxa15z3gcs3ymmxlcjkpjc75hnx0h-ffmpeg-9.0.2-lib"
+            },
+            {
+              "name": "out",
+              "path": "/nix/store/ql4gdqlzl3f99c25cipyay3ymqg89bgi-ffmpeg-9.0.2"
+            }
+          ],
+          "store_path": "/nix/store/7pv3ml721nz6iz5k2z42r1c13rhrx4sb-ffmpeg-9.0.2-bin"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "bin",
+              "path": "/nix/store/g02x8w554zwgflvm6fdnafqzzkrhh3rp-ffmpeg-9.0.2-bin",
+              "default": true
+            },
+            {
+              "name": "man",
+              "path": "/nix/store/bmivsbg5nf71wzgivj1rmlvi92vrrx4x-ffmpeg-9.0.2-man",
+              "default": true
+            },
+            {
+              "name": "data",
+              "path": "/nix/store/5cpr1dhjyh1y4r9m37cdjzll9j82s6r7-ffmpeg-9.0.2-data"
+            },
+            {
+              "name": "dev",
+              "path": "/nix/store/vk02ppbw7cr79jly511y91hczgl52p5i-ffmpeg-9.0.2-dev"
+            },
+            {
+              "name": "doc",
+              "path": "/nix/store/p6p70znx1rzs38xhw7hv92c93rgwnq0f-ffmpeg-9.0.2-doc"
+            },
+            {
+              "name": "lib",
+              "path": "/nix/store/kx01y8p8mk38z9i66hf4kxb7l5wl45dv-ffmpeg-9.0.2-lib"
+            },
+            {
+              "name": "out",
+              "path": "/nix/store/2c3k1dzg9ha79gfrjbx4d8q2zqmzma5s-ffmpeg-9.0.2"
+            }
+          ],
+          "store_path": "/nix/store/g02x8w554zwgflvm6fdnafqzzkrhh3rp-ffmpeg-9.0.2-bin"
+        }
+      }
+    },
     "github:NixOS/nixpkgs/nixpkgs-unstable": {
       "last_modified": "2026-11-12T14:50:34Z",
       "resolved": "github:NixOS/nixpkgs/2074cc672349f14240fb7ea90d509e0b643e9dd4?lastModified=1794495034&narHash=sha256-E0hYoioqUtM2XmPPvYYpJgdADF5AW9oOoPSEiM9dTHQ%3D"

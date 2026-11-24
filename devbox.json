@@ -2,6 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.22.0/.schema/devbox.schema.json",
   "packages": {
     "alsa-lib": "latest",
+    "ffmpeg": "latest",
     "imagemagick": "latest",
     "jetbrains.jdk-no-jcef": "21.0.9-b1163.86",
     "just": "latest",
