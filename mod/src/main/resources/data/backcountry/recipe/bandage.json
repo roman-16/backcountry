@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "backcountry:plant_fibre"
+    },
+    {
+      "item": "backcountry:plant_fibre"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:bandage"
+  }
+}

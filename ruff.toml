@@ -1,5 +1,5 @@
 line-length = 120
-src = ["scripts"]
+src = ["generator", "scripts"]
 
 [lint]
 ignore = ["E501"]

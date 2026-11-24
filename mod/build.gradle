@@ -14,6 +14,9 @@ base {
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 def heapGigabytes = (providers.fileContents(layout.projectDirectory.file('../balance.toml')).asText.get() =~ /(?ms)^\[heap\]\s*^gigabytes = (\d+)$/)[0][1]
+def ecliptic = providers.fileContents(layout.projectDirectory.file('../pack/mods/ecliptic-seasons.pw.toml')).asText.map { text ->
+    "maven.modrinth:${(text =~ /(?m)^mod-id = "(.+)"$/)[0][1]}:${(text =~ /(?m)^version = "(.+)"$/)[0][1]}".toString()
+}
 
 sourceSets {
     dev {
@@ -25,7 +28,31 @@ sourceSets {
 configurations {
     devCompileOnly.extendsFrom compileOnly
     devImplementation.extendsFrom implementation
+    hotswapAgent {
+        transitive = false
+    }
+    vineflower
 }
+
+repositories {
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
+    mavenCentral {
+        content {
+            includeGroup 'org.hotswapagent'
+            includeGroup 'org.vineflower'
+        }
+    }
+}
+
+static List<String> swappable(String port) {
+    ['-XX:+AllowEnhancedClassRedefinition', '-XX:HotswapAgent=external', "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=127.0.0.1:${port}".toString()]
+}
+
+Provider<String> hotswapAgentArgument = configurations.hotswapAgent.elements.map { files -> "-javaagent:${files.first().asFile}".toString() }
 
 neoForge {
     version = neo_version
@@ -44,8 +71,12 @@ neoForge {
             client()
             gameDirectory = file(providers.environmentVariable('BACKCOUNTRY_GAME_DIRECTORY').orElse('../build/client').get())
             jvmArgument "-Xmx${heapGigabytes}G"
-            programArguments.addAll '--height', '720', '--username', 'Survivor', '--width', '1280'
+            jvmArguments.addAll swappable(providers.environmentVariable('BACKCOUNTRY_SWAP_PORT').orElse(client_swap_port).get())
+            jvmArguments.add hotswapAgentArgument
+            programArguments.addAll '--fml.mixinConfig', "${mod_id}.dev.mixins.json", '--height', '720', '--username', 'Survivor', '--width', '1280'
             sourceSet = sourceSets.dev
+            systemProperty "${mod_id}.world", providers.environmentVariable('BACKCOUNTRY_WORLD').orElse('').get()
+            systemProperty "${mod_id}.seed", providers.environmentVariable('BACKCOUNTRY_SEED').orElse('').get()
             ['DISPLAY', 'XDG_SESSION_TYPE'].each { variable ->
                 String value = providers.environmentVariable(variable).orNull
                 if (value != null) {
@@ -57,12 +88,17 @@ neoForge {
             server()
             gameDirectory = file(providers.environmentVariable('BACKCOUNTRY_GAME_DIRECTORY').orElse('../build/devserver').get())
             jvmArgument "-Xmx${heapGigabytes}G"
-            programArguments.add '--nogui'
+            jvmArguments.addAll swappable(providers.environmentVariable('BACKCOUNTRY_SWAP_PORT').orElse(server_swap_port).get())
+            jvmArguments.add hotswapAgentArgument
+            programArguments.addAll '--nogui', '--fml.mixinConfig', "${mod_id}.dev.mixins.json"
             sourceSet = sourceSets.dev
             systemProperty "${mod_id}.shape", providers.environmentVariable('BACKCOUNTRY_SHAPE').orElse('').get()
         }
         gameTestServer {
             type = 'gameTestServer'
+            gameDirectory = file('../build/gametest')
+            jvmArgument "-Xmx${heapGigabytes}G"
+            programArguments.addAll '--fml.mixinConfig', "${mod_id}.dev.mixins.json"
             sourceSet = sourceSets.dev
         }
     }
@@ -79,8 +115,27 @@ tasks.matching { it.name == 'runServer' }.configureEach {
     standardInput = System.in
 }
 
+dependencies {
+    implementation ecliptic
+    hotswapAgent "org.hotswapagent:hotswap-agent-core:${hotswap_agent_version}"
+    vineflower "org.vineflower:vineflower:${vineflower_version}"
+}
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
+
+sourceSets.dev.resources {
+    srcDir 'src/generated/dev'
+}
+
 var freshGameTestWorld = tasks.register('freshGameTestWorld', Delete) {
-    delete 'run/world'
+    delete '../build/gametest/world'
+}
+
+tasks.register('vineflower', Sync) {
+    from configurations.vineflower
+    into layout.buildDirectory.dir('vineflower')
 }
 
 tasks.matching { it.name == 'runGameTestServer' }.configureEach {

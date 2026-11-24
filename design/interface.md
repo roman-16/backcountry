@@ -6,15 +6,20 @@ Everything read off the screen outside the world. Units are metric: °C, kg, km/
 
 ### I1 The HUD
 
-The hearts stay, the energy bolts take the hunger bar's place, water is a thin bar under them, and conditions show as small icons above.
+The hearts stay and the energy bolts, drawn like vanilla's hunger icons over empty slots, take the hunger bar's place; they shake while the survivor is too tired to sprint. Water is a blue bar drawn like vanilla's XP bar, across the hotbar's width just above it, and it blinks below a quarter; the hearts, the bolts and the XP level lift to make room. Right of the hotbar, each line on a dark plate with its icon, the body panel shows the core temperature and how it feels (blue when cold, orange when hot), the wetness while wet, and above them the conditions by name.
 
 ```text
- ♥♥♥♥♥♥♥♥♥♥                 ⚡⚡⚡⚡⚡⚡░░░░
- ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬░░░░░░  (water)
- [ ][ ][ ][ ][ ][ ][ ][ ][ ]          ❄ frostnip  ✚ infected wound
+ ♥♥♥♥♥♥♥♥♥♥       12       ⚡⚡⚡⚡⚡⚡░░░░    ❄ Frostnip
+ ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬░░░░░░░░░░░░░   ✚ Infected wound
+ ══════════════════════════════════════════   💧 Wet 37%
+ [ ][ ][ ][ ][ ][ ][ ][ ][ ]                   🌡 35.6 °C · very cold
 ```
 
+Everything the pack draws wears vanilla's own look: its panels, buttons, slots and font.
+
 ### I2 The Satellite Messenger
+
+Right-click opens it, drawn as the device itself: an orange handheld with a green-on-dark screen, the only screen with a skin of its own, as vanilla's book has its page. Its pages are tabs, switched by a click, the arrow keys, 1 to 4 or the ◀ ▶ keys on the case. Every value has its icon and a meter; the core temperature sits on a gauge banded freezing, cold, comfortable and hot, and the weight on a BMI gauge with extraction marked at 17; warnings turn amber or red. M2 builds the Warmth, Body, Nutrition and Vitals pages.
 
 ```text
 ┌ Satellite Messenger ──────────────── Day 9 · 2 Jul ┐
@@ -58,13 +63,28 @@ A hit to a major organ drops the animal; any other hit: "Wounded, it fled", and 
 ### I7 The end of a survivor and of a year
 
 ```text
-Extracted · Day 31 · 10 Dec
-BMI 17.0 · 55.1 kg (arrived at 77.0 kg)
-31 days · 61,200 kcal eaten · 1 moose, 3 beaver, 14 hare, 22 fish
+Extracted · Day 31 · 17 Dec
+BMI 17.0 · 55.0 kg (arrived at 77.0 kg)
+ 77 ┤▀▀▄▄▄
+    │     ▀▀▀▄▄▄
+ 55 ┤           ▀▀▄
+    └ Day 1 ──── Day 31
+31 days · 61,200 kcal eaten · 1 moose · 3 beaver · 14 hare · 22 fish
 [ Arrive as a new survivor ]
+[ Title Screen ]
 ```
 
-On 3 May the same summary shows for the team's year, and "Year 2" begins.
+It stands on vanilla's dark panel: the weight curve is a chart with 5 kg grid lines, the first and the last day, and a dashed red line where extraction comes; beside it the days, the kcal and each animal taken, each with its icon (the animal's spawn egg), three at most and "and N more". A death reads "Died" over vanilla's red. On 3 May the team's year shows, each survivor with their weight from start to end and when they arrived, died or were extracted, and "Year 2" begins:
+
+```text
+Year 1 · 3 May
+Roman 77.0 → 68.4 kg
+Mo 77.0 → 71.2 kg (arrived Day 12)
+48 days · 412,000 kcal eaten · 2 moose · 5 beaver · 31 hare
+[ Go on into Year 2 ]
+```
+
+The inventory shows its locked rows dark ("Needs a hide pack") and the back slot beside the armour.
 
 ## Open
 

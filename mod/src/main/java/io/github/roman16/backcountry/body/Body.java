@@ -1,0 +1,255 @@
+package io.github.roman16.backcountry.body;
+
+import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.survivor.Summary;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.FloatTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.Nullable;
+
+public final class Body implements INBTSerializable<CompoundTag> {
+    public boolean arrived;
+    public int arrivedDay;
+    public double arrivedKg;
+    public long awakeTicks;
+    public int blackoutTicks;
+    public double carbsToday;
+    public final EnumMap<Condition, Affliction> conditions = new EnumMap<>(Condition.class);
+    public double coreC;
+    public double energy;
+    @Nullable
+    public Summary ended;
+    public double fatToday;
+    public double frostHours;
+    public int gameModeBeforeEnd;
+    public double healHours;
+    public double kcalBurnedToday;
+    public double kcalEaten;
+    public double kcalEatenToday;
+    public final Map<String, Integer> animals = new TreeMap<>();
+    public int lastDay;
+    public long lastHurt;
+    public ItemStack pack = ItemStack.EMPTY;
+    public double proteinToday;
+    public double stomachCarbs;
+    public double stomachFat;
+    public double stomachKcal;
+    public double stomachProtein;
+    public double stomachVitaminC;
+    public int stumbleTicks;
+    public double thirstSeconds;
+    public double vitaminCMg;
+    public double warmHours;
+    public double waterL;
+    public double weightKg;
+    public final List<Float> weights = new ArrayList<>();
+    public double wetBlocks;
+    public double wetness;
+    public int yearSeen;
+
+    public transient double clo;
+    public transient double effectiveC;
+    public transient boolean fire;
+    public transient double lastCoreC;
+    @Nullable
+    public transient Vec3 lastPosition;
+    public transient double loadKg;
+    public transient int loadWarnedAt;
+    public transient boolean sheltered;
+    public transient double workKcal;
+
+    public static final class Affliction {
+        public boolean bandaged;
+        public double days;
+
+        public Affliction(double days, boolean bandaged) {
+            this.days = days;
+            this.bandaged = bandaged;
+        }
+    }
+
+    public void reset(int day, int year) {
+        Balance balance = Balance.get();
+        arrived = true;
+        arrivedDay = day;
+        arrivedKg = balance.body().arrivalKg();
+        awakeTicks = 0;
+        blackoutTicks = 0;
+        conditions.clear();
+        coreC = balance.warmth().coreC();
+        lastCoreC = coreC;
+        energy = 1;
+        ended = null;
+        frostHours = 0;
+        healHours = 0;
+        kcalEaten = 0;
+        animals.clear();
+        lastDay = day;
+        pack = ItemStack.EMPTY;
+        stomachCarbs = 0;
+        stomachFat = 0;
+        stomachKcal = 0;
+        stomachProtein = 0;
+        stomachVitaminC = 0;
+        stumbleTicks = 0;
+        thirstSeconds = 0;
+        vitaminCMg = balance.body().vitaminCMgDay() * balance.body().vitaminCStoreDays();
+        warmHours = 0;
+        waterL = balance.water().needLDay();
+        weightKg = arrivedKg;
+        weights.clear();
+        weights.add((float) weightKg);
+        wetBlocks = 0;
+        wetness = 0;
+        yearSeen = year;
+        newDay();
+    }
+
+    public void newDay() {
+        carbsToday = 0;
+        fatToday = 0;
+        kcalBurnedToday = 0;
+        kcalEatenToday = 0;
+        proteinToday = 0;
+    }
+
+    public double bmi() {
+        double height = Balance.get().body().heightM();
+        return weightKg / (height * height);
+    }
+
+    public boolean has(Condition condition) {
+        return conditions.containsKey(condition);
+    }
+
+    public void afflict(Condition condition) {
+        conditions.putIfAbsent(condition, new Affliction(0, false));
+    }
+
+    public double stomachShare() {
+        return stomachKcal / Balance.get().body().stomachKcal();
+    }
+
+    public double waterShare() {
+        return waterL / Balance.get().water().needLDay();
+    }
+
+    @Override
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+        CompoundTag tag = new CompoundTag();
+        tag.putBoolean("arrived", arrived);
+        tag.putInt("arrived_day", arrivedDay);
+        tag.putDouble("arrived_kg", arrivedKg);
+        tag.putLong("awake_ticks", awakeTicks);
+        tag.putInt("blackout_ticks", blackoutTicks);
+        tag.putDouble("carbs_today", carbsToday);
+        CompoundTag afflictions = new CompoundTag();
+        conditions.forEach((condition, affliction) -> {
+            CompoundTag entry = new CompoundTag();
+            entry.putDouble("days", affliction.days);
+            entry.putBoolean("bandaged", affliction.bandaged);
+            afflictions.put(condition.id(), entry);
+        });
+        tag.put("conditions", afflictions);
+        tag.putDouble("core_c", coreC);
+        tag.putDouble("energy", energy);
+        if (ended != null) {
+            Summary.CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), ended).ifSuccess(encoded -> tag.put("ended", encoded));
+        }
+        tag.putDouble("fat_today", fatToday);
+        tag.putDouble("frost_hours", frostHours);
+        tag.putInt("game_mode_before_end", gameModeBeforeEnd);
+        tag.putDouble("heal_hours", healHours);
+        tag.putDouble("kcal_burned_today", kcalBurnedToday);
+        tag.putDouble("kcal_eaten", kcalEaten);
+        tag.putDouble("kcal_eaten_today", kcalEatenToday);
+        CompoundTag taken = new CompoundTag();
+        animals.forEach(taken::putInt);
+        tag.put("animals", taken);
+        tag.putInt("last_day", lastDay);
+        tag.putLong("last_hurt", lastHurt);
+        if (!pack.isEmpty()) {
+            tag.put("pack", pack.save(provider));
+        }
+        tag.putDouble("protein_today", proteinToday);
+        tag.putDouble("stomach_carbs", stomachCarbs);
+        tag.putDouble("stomach_fat", stomachFat);
+        tag.putDouble("stomach_kcal", stomachKcal);
+        tag.putDouble("stomach_protein", stomachProtein);
+        tag.putDouble("stomach_vitamin_c", stomachVitaminC);
+        tag.putDouble("thirst_seconds", thirstSeconds);
+        tag.putDouble("vitamin_c_mg", vitaminCMg);
+        tag.putDouble("warm_hours", warmHours);
+        tag.putDouble("water_l", waterL);
+        tag.putDouble("weight_kg", weightKg);
+        ListTag curve = new ListTag();
+        weights.forEach(weight -> curve.add(FloatTag.valueOf(weight)));
+        tag.put("weights", curve);
+        tag.putDouble("wet_blocks", wetBlocks);
+        tag.putDouble("wetness", wetness);
+        tag.putInt("year_seen", yearSeen);
+        return tag;
+    }
+
+    @Override
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+        arrived = tag.getBoolean("arrived");
+        arrivedDay = tag.getInt("arrived_day");
+        arrivedKg = tag.getDouble("arrived_kg");
+        awakeTicks = tag.getLong("awake_ticks");
+        blackoutTicks = tag.getInt("blackout_ticks");
+        carbsToday = tag.getDouble("carbs_today");
+        conditions.clear();
+        CompoundTag afflictions = tag.getCompound("conditions");
+        for (Condition condition : Condition.values()) {
+            if (afflictions.contains(condition.id())) {
+                CompoundTag entry = afflictions.getCompound(condition.id());
+                conditions.put(condition, new Affliction(entry.getDouble("days"), entry.getBoolean("bandaged")));
+            }
+        }
+        coreC = tag.getDouble("core_c");
+        lastCoreC = coreC;
+        energy = tag.getDouble("energy");
+        ended = tag.contains("ended") ? Summary.CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag.get("ended")).result().orElse(null) : null;
+        fatToday = tag.getDouble("fat_today");
+        frostHours = tag.getDouble("frost_hours");
+        gameModeBeforeEnd = tag.getInt("game_mode_before_end");
+        healHours = tag.getDouble("heal_hours");
+        kcalBurnedToday = tag.getDouble("kcal_burned_today");
+        kcalEaten = tag.getDouble("kcal_eaten");
+        kcalEatenToday = tag.getDouble("kcal_eaten_today");
+        animals.clear();
+        CompoundTag taken = tag.getCompound("animals");
+        taken.getAllKeys().forEach(key -> animals.put(key, taken.getInt(key)));
+        lastDay = tag.getInt("last_day");
+        lastHurt = tag.getLong("last_hurt");
+        pack = tag.contains("pack") ? ItemStack.parseOptional(provider, tag.getCompound("pack")) : ItemStack.EMPTY;
+        proteinToday = tag.getDouble("protein_today");
+        stomachCarbs = tag.getDouble("stomach_carbs");
+        stomachFat = tag.getDouble("stomach_fat");
+        stomachKcal = tag.getDouble("stomach_kcal");
+        stomachProtein = tag.getDouble("stomach_protein");
+        stomachVitaminC = tag.getDouble("stomach_vitamin_c");
+        thirstSeconds = tag.getDouble("thirst_seconds");
+        vitaminCMg = tag.getDouble("vitamin_c_mg");
+        warmHours = tag.getDouble("warm_hours");
+        waterL = tag.getDouble("water_l");
+        weightKg = tag.getDouble("weight_kg");
+        weights.clear();
+        tag.getList("weights", Tag.TAG_FLOAT).forEach(entry -> weights.add(((FloatTag) entry).getAsFloat()));
+        wetBlocks = tag.getDouble("wet_blocks");
+        wetness = tag.getDouble("wetness");
+        yearSeen = tag.getInt("year_seen");
+    }
+}

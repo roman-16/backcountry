@@ -1,0 +1,13 @@
+[Season]
+	LastingDaysOfEachTerm = 2
+	InitialSolarTermIndex = 6
+	EnableInform = false
+	EnableInformIcon = false
+	DynamicDaylightDuration = true
+	SpringDayTimes = [8480, 9880, 11425, 12892, 14366, 15824]
+	SummerDayTimes = [17214, 18487, 19240, 19291, 18619, 17389]
+	AutumnDayTimes = [16015, 14562, 13089, 11620, 10072, 8662]
+	WinterDayTimes = [7351, 6257, 5576, 5528, 6137, 7189]
+
+[Temperature]
+	HeatStroke = false

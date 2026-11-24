@@ -1,8 +1,24 @@
 hash-format = "sha256"
 
 [[files]]
+file = "config/alexsmobs-common.toml"
+hash = "f9a64727415a252b7c5609e9d4918958c1bb907192e98d1601022a1e150ce008"
+
+[[files]]
 file = "config/biome_replacer.properties"
 hash = "8c8ee0098a0a72f811d514c37743f0765975486c02dcdb9297a9263847e88afd"
+
+[[files]]
+file = "config/crittersncrawlers-common.toml"
+hash = "2c235c6311331bc9ff838e15382023c3ea139fd53c03635a6760fe0c04538970"
+
+[[files]]
+file = "config/eclipticseasons-common.toml"
+hash = "6ff5dc850f5bebeaf21e04ee873f1e3b6790850ee0f3b77c2ec600575c556fd2"
+
+[[files]]
+file = "config/streamsreflowing.properties"
+hash = "b9097915efd78d7bf9d12e9f43e23102c9facb08455fdd9b9eac84f646eedf78"
 
 [[files]]
 file = "config/tectonic.json"

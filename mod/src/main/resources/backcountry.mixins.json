@@ -1,8 +1,15 @@
 {
+  "client": [
+    "ToastComponentMixin"
+  ],
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "mixins": [
+    "AbstractContainerMenuMixin",
     "ContinentsMixin",
+    "DailyOrderMixin",
+    "InventoryMenuMixin",
+    "InventoryMixin",
     "SplineCoordinateMixin",
     "StructuresMixin"
   ],

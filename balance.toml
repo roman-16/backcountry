@@ -1,6 +1,172 @@
 [heap]
 gigabytes = 8
 
+[bear_spray]
+blind_seconds = 4
+bursts = 8
+cone_degrees = 32
+flee_seconds = 30
+point_blank_blocks = 1.5
+reach_blocks = 4
+
+[body]
+arrival_kg = 77.0
+extraction_bmi = 17.0
+height_m = 1.8
+kcal_per_kg = 7700
+resting_kcal_per_kg_day = 24
+stomach_kcal = 1536
+digest_kcal_per_hour = 256
+vitamin_c_mg_day = 75
+vitamin_c_store_days = 8
+
+[climate]
+biome_c_per_temperature = 8
+biome_reference_temperature = 0.25
+coldest_hour = 5
+highs_c = [-3.5, -2.0, 1.4, 7.4, 13.6, 17.6, 19.0, 17.9, 13.4, 5.6, -0.9, -3.0]
+lapse_c_per_block = 0.0065
+lows_c = [-10.4, -9.5, -6.6, -0.6, 4.9, 9.6, 12.1, 11.0, 6.3, -0.4, -7.0, -9.6]
+sea_level = 63
+
+[conditions]
+bare_skin_c = -15
+blisters_wet_blocks = 1024
+blisters_wetness = 0.5
+burns_days = 2
+dry_wetness = 0.25
+exhausted_awake_days = 2
+exhausted_energy = 0.5
+fever_burn = 0.1
+frost_core_c = 35
+frost_stage_hours = 2
+gut_absorb = 0.5
+gut_days = 2
+gut_infection_chance = 0.4
+gut_water = 2.0
+infection_chance = 0.15
+infection_days = 2
+parasites_absorb = 0.75
+parasites_chance = 0.6
+poisoning_days = 1
+scurvy_burn = 0.2
+vomit_l = 1.0
+
+[drop_off]
+highest_lake_y = 128
+inland_blocks = 512
+lake_cells = 16
+search_blocks = 3072
+shore_rise_blocks = 8
+step_blocks = 32
+
+[energy]
+awake_hours_to_empty = 32
+blackout_seconds = 8
+digest_kcal_to_full = 4096
+sleep_hours_to_full = 8
+slow_below = 0.3
+slow_speed = 0.5
+sprint_below = 0.2
+stumble_below = 0.1
+stumble_seconds = 2
+stumble_share = 0.125
+wake_energy = 0.125
+work_kcal_to_empty = 2048
+
+[healing]
+above = 0.25
+asleep_factor = 2
+hours_per_heart = 2
+scurvy_factor = 0.5
+
+[heat]
+"minecraft:blast_furnace" = 4
+"minecraft:campfire" = 16
+"minecraft:fire" = 12
+"minecraft:furnace" = 4
+"minecraft:lava" = 16
+"minecraft:smoker" = 4
+"minecraft:soul_campfire" = 8
+
+[insulation]
+"backcountry:hide_coat" = 1.5
+"backcountry:hide_hat" = 0.25
+"backcountry:hide_pants" = 0.75
+"backcountry:hide_poncho" = 0.75
+"minecraft:leather_boots" = 0.25
+"minecraft:leather_chestplate" = 1.0
+"minecraft:leather_helmet" = 0.25
+"minecraft:leather_leggings" = 0.5
+
+[kit]
+pilot_bread = 38
+
+[load]
+block_kg = 1.0
+capacity_kg = 16
+clothing_kg = 1.0
+food_kg_per_kcal = 0.0005
+item_kg = 0.25
+log_kg = 2.0
+pack_rows = 1
+stone_kg = 2.0
+tool_kg = 1.0
+warn_seconds = 4
+
+[mining]
+open_blocks = 3
+speed = 0.05
+
+[plant_fibre]
+chance = 0.25
+
+[survivor]
+quiet_seconds = 8
+
+[warmth]
+base_clo = 2.0
+comfort_c = 28
+comfort_span_c = 12
+core_c = 37.0
+core_c_per_hour = 1.0
+cooling_share = 0.125
+fire_dry_per_hour = 1.0
+heat_reach_blocks = 6
+rain_wet_per_hour = 0.5
+roof_blocks = 4
+shelter_c = 4
+shelter_dry_per_hour = 0.25
+shiver_core_c = 36.5
+shiver_kcal_per_hour_c = 64
+sweat_core_c = 37.5
+sweat_l_per_hour = 0.25
+sweat_wet_per_hour = 0.25
+warm_c_per_clo = 8
+dry_per_hour = 0.125
+wet_insulation_loss = 0.6667
+
+[water]
+boil_seconds = 240
+bottle_l = 1.0
+knockout_seconds = 60
+need_l_day = 3.0
+pot_l = 2.0
+sip_l = 0.25
+thirst_damage = 2
+
+[work]
+attack_kcal = 2
+chop_kcal = 8
+dig_kcal = 2
+jump_kcal = 0.25
+mine_kcal = 8
+overload_kcal_per_kg_hour = 4
+place_kcal = 2
+sprint_kcal_per_block = 0.125
+swim_kcal_per_block = 0.25
+walk_kcal_per_block = 0.0625
+
 [world]
 across_blocks = 6144
 detail_share = 0.375
@@ -17,14 +183,10 @@ sink = 1.1875
 warp_share = 0.75
 warp_wavelength_blocks = 6144
 
-[drop_off]
-highest_lake_y = 128
-inland_blocks = 512
-lake_cells = 16
-search_blocks = 3072
-shore_rise_blocks = 8
-step_blocks = 32
-
-[mining]
-open_blocks = 3
-speed = 0.05
+[year]
+days = 48
+first_day_in_term = 2
+first_term = 6
+start_day = 3
+start_month = 5
+term_days = 2

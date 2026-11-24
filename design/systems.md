@@ -8,35 +8,46 @@ Every mechanic of Backcountry, what it does for the player, and its edge cases. 
 
 The mod owns the survivor's whole body, so every number is in kcal, °C, kg and days, and the HUD and the Satellite Messenger read one model. No public survival mod goes in beside it.
 
-- **Food** is counted in kcal, fat, protein, carbs and vitamin C, read from data in the mod for every food of every jar in the pack (`data/backcountry/food/`). An item with no entry is not food.
-- **A game day burns what a real day does:** a resting rate from body weight, plus work (chopping, running, carrying, building, mining), plus cold, plus illness (scurvy burns more). Building costs calories.
+- **Food** is counted in kcal, fat, protein, carbs and vitamin C, read from data in the mod for every food of every jar in the pack (`data/backcountry/data_maps/item/food.json`). An item with no entry is not food. Eating fills the stomach, which digests a few hundred kcal an hour; a full stomach refuses more ("Too full to eat").
+- **A game day burns what a real day does:** a resting rate from body weight, plus work (chopping, running, carrying, building, mining), plus cold (shivering), plus illness (scurvy burns more). Building costs calories.
 - **Weight follows the balance:** the day's surplus or deficit moves the fat reserve, 7,700 kcal to the kilogram. A survivor arrives at 77 kg and 1.80 m (BMI 23.8); at BMI 17 they are extracted (S10). Forge Labs went from 170 lb to 147.6 lb over his year.
-- **Energy replaces hunger**: lightning bolts where the hunger bar was. Work drains it, sleep restores it, food, cold and the pack's load change it. Low energy slows chopping, stops sprinting, makes the survivor stumble and fall, black out, and drown when swimming in deep water.
+- **Energy replaces hunger**: lightning bolts where the hunger bar was. Work drains it, sleep restores it, food, cold and the pack's load change it. Low energy slows chopping, stops sprinting ("Too tired to sprint"), makes the survivor stumble and fall, black out, and drown when swimming in deep water.
 - **Strength** follows body weight and energy: it decides whether a heavy bow draws fully.
-- **Water:** drunk from the water bottle and the camp pot; dirty water has to be boiled. Dehydration knocks the survivor out.
-- **Conditions and their cures:**
-  - Wound infection, 15% a hit as in Forge Labs' earlier mod, and blisters from walking wet: bandages from plant fibre, the med kit.
-  - Frostbite, which kills when severe: rest by the fire.
-  - Burns.
-  - Scurvy: berries or raw fish; cooking destroys vitamin C.
-  - Food poisoning, gut infection (40% from dirty water) and parasites (60% from raw meat).
-  - Too long without sleep.
-- **Inventory:** the hotbar only, plus a hide pack that adds slots; what is carried weighs, and carrying too much drains energy and shows "Pack too full".
+- **Water:** about 3 L a day, drunk from the Water Bottle (1 L) and the Camp Pot (2 L), which both fill at any water. The Camp Pot set on a lit campfire boils its water in about 4 minutes, and the bottle fills from it; unboiled water gives a gut infection 40% of the time. Dehydration knocks the survivor out, a heart lost each time until they drink.
+- **Health** comes back a heart every 2 game hours while energy and water are above a quarter and no infected wound or burn is open, twice as fast asleep.
+- **Conditions,** durations in game days:
+
+  | Condition | From | Does | Ends |
+  |---|---|---|---|
+  | Infected wound | 15% of hits that hurt, as in Forge Labs' earlier mod | Fever: +10% kcal burn, no healing; after 2 days health drains | A bandage halts it and it heals 2 days later; the Med Kit at once |
+  | Blisters | Walking with wet feet | No sprinting | 1 dry day, a bandage or the Med Kit |
+  | Frostnip, frostbite, severe frostbite | Core below 35 °C, or a bare head at -15 °C and colder | Frostbite: slower, no sprinting; severe: health drains until death | Each stage falls back after 2 hours by a fire |
+  | Burns | Fire, lava, a campfire | No healing | 2 days, halved by a bandage; the Med Kit at once |
+  | Scurvy | 8 days without vitamin C | +20% kcal burn, wounds heal at half speed | Berries or raw fish; cooking destroys vitamin C |
+  | Food poisoning | Foods the data marks, spoiled food | Vomiting: the stomach's food and 1 L of water are lost | 1 day; the Med Kit at once |
+  | Gut infection | 40% of unboiled drinks | Water loss doubled, half the kcal absorbed | 2 days; the Med Kit at once |
+  | Parasites | 60% of raw meat eaten | A quarter fewer kcal absorbed | Only the Med Kit |
+  | Exhausted | 2 days awake | Energy can't rise above half | Sleep |
+
+  Too warm (core above 37.5 °C) is no condition: the survivor sweats, losing water and getting wet. A bandage is two plant fibre, which grass and ferns drop; the Med Kit holds 4 uses, each curing every condition it cures at once.
+- **Inventory:** the hotbar only. A Hide Pack worn in a back slot beside the armour opens one row of 9 above the hotbar, the rows it does not open stay dark ("Needs a hide pack"), and its items stay in it when it comes off or is dropped. What is carried weighs; above 16 kg energy drains faster and the action bar shows "Pack too full".
 - **Edge cases:**
-  - A player offline: their body stands still until they return.
+  - A player offline, in creative or in spectator: their body stands still until they return to survival.
+  - A night slept through: every skipped hour counts as sleep, burning and drinking at rest.
   - Two players eating from one cache: each eats their own ration from it.
-  - `/time set`: the calendar follows Ecliptic Seasons' day count, never the clock.
+  - `/time set`: the calendar follows Ecliptic Seasons' day count, never the clock, and the body lives only the ticks that pass.
 
 ### S2 The year
 
 - **48 days** of Ecliptic Seasons, 2 days to each of its 24 solar terms; a game day is 20 minutes, so a year is about 16 hours. Day 1 is 3 May, the last day of Grain Rain; one game day stands for about 7.6 calendar days, and dates are shown as dates (Day 9 · 2 Jul).
 - Every duration (spoilage, seasoning, healing) counts game days.
-- Daylight is long in summer (light at 9 pm) and short in winter, through Ecliptic's day length.
-- On 3 May the year's summary shows for the team, and play goes on into year 2; nothing ends with the year.
+- A date is 3 May plus (day - 1) × 365/48 days, rounded down: Day 9 · 2 Jul, Day 31 · 17 Dec. From Year 2 on, dates carry the year (Year 2 · Day 31 · 17 Dec).
+- Daylight follows Anchorage, 61° N, through Ecliptic's day length per solar term: about 19.4 h of light at midsummer (16 minutes of a game day) and 5.5 h at midwinter (4.6 minutes).
+- On 3 May the year's summary shows for the team, and play goes on into year 2; nothing ends with the year. It opens at each survivor's first quiet moment (on the ground, out of water, not hurt for 8 s, no screen open); someone offline sees it when they next join.
 
 ### S3 Weather and the forecast
 
-- The mod's own weather: an Alaska climate curve through the year, temperatures that drift day to day, rain, snow and blizzards, lows down to about -35 °C. It drives vanilla's weather, and Ecliptic's weather is held to it (spike: whether Ecliptic lets it).
+- The mod's own weather: temperatures that drift day to day around S5's climate curve, rain, snow and blizzards, lows down to about -35 °C. It drives vanilla's weather, and Ecliptic's weather is held to it (spike: whether Ecliptic lets it).
 - The forecast covers tomorrow, +2 and +3 days, less sure the further it looks.
 - Animals react: fewer about in rain, and fishing changes with the weather.
 
@@ -51,14 +62,13 @@ The mod owns the survivor's whole body, so every number is in kcal, °C, kg and 
   - Rations: fullness, the team's ration.
   - Vitals: weight, energy, BMI, the team's food stores in days, water.
 - Alerts: thunderstorms or snowfall tomorrow, freezing overnight, bears feeding heavily, moose rut begun, body weight dropped, body wasting.
-- **Edge cases:** a messenger lost or broken is crafted again from the supply crate at the drop-off.
+- **Edge cases:** a messenger lost or broken comes again from the Supply Crate at the drop-off, which stands there from the world's first day and cannot be broken: a survivor carrying no messenger right-clicks it and takes a new one ("You already carry a Satellite Messenger" otherwise).
 
 ### S5 Temperature and clothing
 
-- Ambient temperature from S3, the biome and height; shelter (a roof within 4 blocks), wetness, fire heat and clothing insulation set the core temperature.
-- Hide clothing with insulation: poncho, hide coat, hide pants, hat.
+- Ambient temperature follows a climate curve, Anchorage's monthly normal highs and lows through the year and the day, shifted by the biome and by height; S3's weather drifts from it. Shelter (a roof within 4 blocks), wetness, fire heat and clothing insulation set the core temperature.
+- The survivor arrives in clothes of their own; hide clothing adds insulation: the Hide Hat, the Hide Poncho (the lighter chest piece, worn instead of the coat), the Hide Coat and the Hide Pants.
 - Rawhide snowshoes for deep snow; walking deep snow without them frostbites the feet.
-- A headlamp that dims in extreme cold, lit through LambDynamicLights (spike: a light worn on the head).
 
 ### S6 Fire and wood
 
@@ -86,7 +96,7 @@ The mod owns the survivor's whole body, so every number is in kcal, °C, kg and 
 - **The spawn director** spawns every animal: it rations "animal opportunities" per species, area and season for the team (after a beaver, no new beaver comes for a while), puts them out of sight in their habitat, and keeps game trails. Natural spawns of anything not on its list are cancelled, which keeps out monsters and the mods' exotic animals. Traps draw on the same rations.
 - **Seasonal events:** moose rut, bears feeding heavily before winter, salmon running up waterfalls, spawned-out salmon unfit to eat.
 - **Animals:** moose and grizzly (Alex's Mobs), wolves in packs that attack a door, wolverine, beaver with dams that grow, territorial and diving, caribou, mouse, black bear (Critters n' Crawlers), squirrels that climb trees (Wilder Nature), snowshoe hares (vanilla rabbits, white in winter), raven, chickadee, Canada goose, gulls, mallard, hawk (Fowl Play), bald eagle, seal, orca (Alex's Mobs), and the mod's own grouse, ptarmigan, loon (feathers, its call at dusk) and summer mosquito swarms near water that bite and cost sleep.
-- **Weapons:** thrown rocks, axe, knife, spear, bear spray.
+- **Weapons:** thrown rocks, axe, knife, spear, bear spray. Held right-click sprays the Bear Spray in a cone 4 blocks long, 8 bursts a can; a creature caught in it can't attack and flees for 30 s, and a survivor spraying point-blank is blinded for 4 s.
 - **Bows**: the Light and the Heavy Hunting Bow (60 lb draw); weakness reduces draw power; built from bow staves seasoned over the campfire (300 s), a tillered bow and a bowstring.
 - **Arrows,** one per craft: blunt arrows for small game, made with game feathers; broadheads for wolf, moose and bear (recovered 78% from blocks, 58% from animals); bone arrows (70% and 48%). Arrows that pass through drop nearby; embedded arrows stay in the animal.
 - **A hit has to reach a major organ;** otherwise the animal flees wounded, leaves a blood trail and has to be tracked.
@@ -109,9 +119,9 @@ The mod owns the survivor's whole body, so every number is in kcal, °C, kg and 
 
 - Everyone in a world is one team; in singleplayer it is a team of one. Caches, rations, food stores in days and the spawn director's rations are the team's; the body, the messenger and the kit are each survivor's.
 - Every survivor arrives at the drop-off: a lake on the main island picked when the world is made, with the starting kit: Satellite Messenger, Bear Spray, Med Kit, Water Bottle, Pilot Bread ×38 (100 kcal, 2.5 g fat each), Camp Pot.
-- At BMI 17 the survivor is extracted; at death they die. Either way the player sees the run's summary (days, weight curve, kcal eaten, animals taken) and arrives again at the drop-off as a new survivor, in the same world with its seasons and camps.
-- **Edge cases:** an extracted or dead survivor's pack stays where they were, a container the team can open; a world with no fitting lake puts the drop-off on the bank of the first water found from the centre (`world.md` W4).
+- At BMI 17 the survivor is extracted: their screen fades, they leave the world, and everyone reads "Roman was extracted at BMI 17.0". At death they die. Either way the player sees the run's summary (days, weight curve, kcal eaten, animals taken) and arrives again at the drop-off as a new survivor, in the same world with its seasons and camps. Beds and sleeping bags never move where a survivor arrives.
+- **Edge cases:** an extracted or dead survivor's pack stays where they were, a container the team can open ("Roman's pack"), on the nearest ground within 8 blocks or the sea floor beneath; a survivor ending with nothing carried leaves none; leaving the game on the summary brings it back on the next join; a world with no fitting lake puts the drop-off on the bank of the first water found from the centre (`world.md` W4).
 
 ## Open
 
-None.
+- **O1 The headlamp.** S5 wants a headlamp that dims in extreme cold, lit through LambDynamicLights (spike: a light worn on the head), but not where it comes from or what powers it.

@@ -18,15 +18,21 @@ IRIS = "iris.properties"
 CLIENT_CONFIGS = {IRIS: {"enableShaders": "false"}}
 CLIENT_OPTIONS = {
     "fullscreen": "false",
+    "onboardAccessibility": "false",
     "pauseOnLostFocus": "false",
     "renderDistance": "8",
     "simulationDistance": "8",
+    "skipMultiplayerWarning": "true",
     "soundCategory_master": "0.5",
+    "tutorialStep": "none",
 }
 SETTINGS = ("config",)
 FAR_VIEW = {"mods/distanthorizons.pw.toml"}
+DEV_CLASSPATH = {"mods/ecliptic-seasons.pw.toml"}
 SIDES = {"client": {"both", "client"}, "server": {"both", "server"}}
 DEV_SERVER_PORT = 25566
+RCON_PORT = 25567
+RCON_PASSWORD = "backcountry"
 SERVER_PROPERTIES = {
     "difficulty": "normal",
     "enable-command-block": "false",
@@ -137,7 +143,7 @@ def client(target, mode):
         target,
         "client",
         {"resourcepacks", "shaderpacks"} if mode == "lean" else {"mods", "resourcepacks", "shaderpacks"},
-        frozenset() if mode == "shipped" else FAR_VIEW,
+        DEV_CLASSPATH | (frozenset() if mode == "shipped" else FAR_VIEW),
     )
     settings(target)
     if mode != "shipped":
@@ -164,20 +170,36 @@ def server(target, jar):
     (target / "user_jvm_args.txt").write_text(f"-Xmx{tomllib.loads(BALANCE.read_text())['heap']['gigabytes']}G\n")
 
 
-def dev_server(target, mode):
+def dev_server(target, mode, port=DEV_SERVER_PORT, rcon_port=RCON_PORT):
     shutil.rmtree(target / "mods", ignore_errors=True)
     (target / "mods").mkdir(parents=True)
     if mode != "lean":
-        files(target, "server", {"mods"}, FAR_VIEW)
+        files(target, "server", {"mods"}, FAR_VIEW | DEV_CLASSPATH)
     settings(target)
     world = {"level-name": "world-lean"} if mode == "lean" else {}
     if os.environ.get("BACKCOUNTRY_SEED"):
         world["level-seed"] = os.environ["BACKCOUNTRY_SEED"]
     properties(
         target,
-        {"max-tick-time": "-1", "online-mode": "false", "server-port": DEV_SERVER_PORT} | world,
+        {
+            "enable-rcon": "true",
+            "max-tick-time": "-1",
+            "online-mode": "false",
+            "rcon.password": RCON_PASSWORD,
+            "rcon.port": rcon_port,
+            "server-port": port,
+        }
+        | world,
     )
     (target / "eula.txt").write_text("eula=true\n")
+
+
+def game_test(target):
+    shutil.rmtree(target / "mods", ignore_errors=True)
+    (target / "mods").mkdir(parents=True)
+    files(target, "server", {"mods"}, FAR_VIEW | DEV_CLASSPATH)
+    settings(target)
+    properties(target, {})
 
 
 def main():
@@ -200,6 +222,10 @@ def main():
     )
     devserver_parser.add_argument("target", type=Path)
     devserver_parser.add_argument("--mode", choices=["full", "lean"], default="full")
+    devserver_parser.add_argument("--port", type=int, default=DEV_SERVER_PORT)
+    devserver_parser.add_argument("--rcon-port", type=int, default=RCON_PORT)
+    gametest_parser = sides.add_parser("gametest", help="the pack's server mods and configs for the game test server")
+    gametest_parser.add_argument("target", type=Path)
     server_parser = sides.add_parser("server", help="a complete dedicated server, rebuilt from nothing")
     server_parser.add_argument("target", type=Path)
     server_parser.add_argument("jar", type=Path)
@@ -207,7 +233,9 @@ def main():
     if arguments.side == "client":
         client(arguments.target.resolve(), arguments.mode)
     elif arguments.side == "devserver":
-        dev_server(arguments.target.resolve(), arguments.mode)
+        dev_server(arguments.target.resolve(), arguments.mode, arguments.port, arguments.rcon_port)
+    elif arguments.side == "gametest":
+        game_test(arguments.target.resolve())
     else:
         server(arguments.target.resolve(), arguments.jar.resolve())
 

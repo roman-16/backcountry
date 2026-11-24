@@ -1,0 +1,55 @@
+package io.github.roman16.backcountry.body;
+
+import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.gear.Water;
+import io.github.roman16.backcountry.Things;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.neoforged.neoforge.common.Tags;
+
+public final class Load {
+    private Load() {}
+
+    public static double kg(ServerPlayer player, Body body) {
+        double total = 0;
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            total += kg(player.getInventory().getItem(slot));
+        }
+        total += kg(body.pack);
+        return total;
+    }
+
+    public static double kg(ItemStack stack) {
+        if (stack.isEmpty()) {
+            return 0;
+        }
+        Balance.Load load = Balance.get().load();
+        double each = load.itemKg();
+        var nutrition = Nutrition.of(stack);
+        if (nutrition.isPresent()) {
+            each = nutrition.get().kcal() * load.foodKgPerKcal();
+        } else if (stack.is(ItemTags.LOGS)) {
+            each = load.logKg();
+        } else if (stack.getItem() instanceof BlockItem block && (block.getBlock().defaultBlockState().is(BlockTags.BASE_STONE_OVERWORLD)
+                || block.getBlock().defaultBlockState().is(Tags.Blocks.ORES) || block.getBlock().defaultBlockState().is(Tags.Blocks.COBBLESTONES))) {
+            each = load.stoneKg();
+        } else if (stack.getItem() instanceof BlockItem) {
+            each = load.blockKg();
+        } else if (stack.getItem() instanceof ArmorItem) {
+            each = load.clothingKg();
+        } else if (stack.getItem() instanceof TieredItem) {
+            each = load.toolKg();
+        }
+        double contents = stack.getOrDefault(Things.WATER.get(), Water.EMPTY).litres();
+        for (ItemStack inside : stack.getOrDefault(net.minecraft.core.component.DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyItems()) {
+            contents += kg(inside);
+        }
+        return each * stack.getCount() + contents;
+    }
+}

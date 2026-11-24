@@ -1,0 +1,11 @@
+{
+  "client": [
+    "CascadesCounterMixin",
+    "GuiAccessor"
+  ],
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "mixins": [],
+  "package": "io.github.roman16.backcountry.mixin.dev",
+  "required": true
+}

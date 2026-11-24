@@ -1,0 +1,74 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "hide": "minecraft:block/brown_wool",
+    "particle": "minecraft:block/brown_wool",
+    "strap": "minecraft:block/stripped_spruce_log"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        0,
+        4
+      ],
+      "to": [
+        13,
+        10,
+        12
+      ],
+      "faces": {
+        "down": {
+          "texture": "#hide"
+        },
+        "east": {
+          "texture": "#hide"
+        },
+        "north": {
+          "texture": "#hide"
+        },
+        "south": {
+          "texture": "#hide"
+        },
+        "up": {
+          "texture": "#hide"
+        },
+        "west": {
+          "texture": "#hide"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        6,
+        3
+      ],
+      "to": [
+        12,
+        9,
+        4
+      ],
+      "faces": {
+        "down": {
+          "texture": "#strap"
+        },
+        "east": {
+          "texture": "#strap"
+        },
+        "north": {
+          "texture": "#strap"
+        },
+        "south": {
+          "texture": "#strap"
+        },
+        "up": {
+          "texture": "#strap"
+        },
+        "west": {
+          "texture": "#strap"
+        }
+      }
+    }
+  ]
+}

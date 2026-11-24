@@ -10,7 +10,10 @@ build:
     cd mod && ./gradlew build
 
 [doc("Build the server pack and boot it headless: fails on a mod that does not load or a server that does not start")]
-boot: build
+boot: build boot-server
+
+[private]
+boot-server:
     python3 scripts/instance.py server build/server {{ jar }}
     python3 scripts/boot.py build/server
 
@@ -22,15 +25,25 @@ clean:
 compile:
     cd mod && ./gradlew --console=plain --quiet compileJava compileDevJava processResources processDevResources
 
-[doc("Run the dev server in the foreground with the whole pack but Distant Horizons, in build/devserver; `just devserver lean` loads only the Backcountry mod")]
+[doc("Run the dev server in the foreground with the whole pack but Distant Horizons, in build/devserver; `just devserver lean` loads only the Backcountry mod and what it needs")]
 devserver mode="full":
+    env --unset=PI_SESSION_ID python3 scripts/server.py stop > /dev/null
     python3 scripts/instance.py devserver build/devserver --mode {{ mode }}
     cd mod && ./gradlew --console=plain runServer
 
+[doc("Run the mod's game tests headless with the pack's server mods, with their log in build/gametest.log")]
+gametest:
+    python3 scripts/instance.py gametest build/gametest
+    cd mod && ./gradlew --console=plain runGameTestServer
+
+[doc("Draw the textures, sprites, models and the test room from generator/ into mod/src/generated/")]
+generate: compile
+    python3 generator/generate.py
+
 [doc("Fix and format everything fixable, then lint with no findings allowed")]
-lint: compile
-    ruff format scripts
-    ruff check --fix scripts
+lint: generate
+    ruff format generator scripts
+    ruff check --fix generator scripts
     taplo format balance.toml
     just --fmt --unstable
     cd pack && packwiz refresh
@@ -45,10 +58,18 @@ pack: build
     python3 scripts/instance.py server build/server {{ jar }}
     python3 -c 'import shutil, sys; shutil.make_archive(sys.argv[1], "zip", sys.argv[2])' "dist/Backcountry-{{ version }}-server" build/server
 
-[doc("Open the pack in a dev client: no shader, no far view, 8 chunks; `just play lean` loads only the Backcountry mod; `just play shipped` keeps the shader and the far view")]
+[doc("Open the pack in a dev client on a fresh world: no shader, no far view, 8 chunks; `just play lean` loads only the Backcountry mod and what it needs; `just play shipped` keeps the shader and the far view")]
 play mode="full":
+    env --unset=PI_SESSION_ID python3 scripts/client.py stop > /dev/null
     python3 scripts/instance.py client build/client --mode {{ mode }}
-    cd mod && LD_LIBRARY_PATH="$DEVBOX_PACKAGES_DIR/lib:/run/opengl-driver/lib" ./gradlew runPlay
+    rm --recursive --force build/client/saves/play
+    cd mod && BACKCOUNTRY_WORLD=play LD_LIBRARY_PATH="$DEVBOX_PACKAGES_DIR/lib:/run/opengl-driver/lib" ./gradlew runPlay
+
+[doc("Write everything the running pack holds into build/reports/: every registry's entries and every food; starts the dev server and stops it after")]
+registries:
+    python3 scripts/server.py start
+    python3 scripts/server.py run "backcountry registries {{ justfile_directory() }}/build/reports"
+    python3 scripts/server.py stop
 
 [doc("Run the pack's dedicated server locally")]
 server: build
@@ -60,12 +81,31 @@ shape +seeds:
     python3 scripts/instance.py devserver build/devserver
     cd mod && BACKCOUNTRY_SHAPE="{{ seeds }}" ./gradlew --console=plain runServer | grep --line-buffered --extended-regexp "shape [0-9-]+:|ERROR|FATAL"
 
-[doc("Unpack Minecraft's and NeoForge's code with Parchment names into the Gradle caches, for searching")]
+[doc("Unpack Minecraft's and NeoForge's code with Parchment names and every mod decompiled with Vineflower into build/sources/, for searching with rg; only what changed is redone")]
 sources:
-    cd mod && ./gradlew createMinecraftArtifacts
+    cd mod && ./gradlew --console=plain --quiet createMinecraftArtifacts vineflower
+    python3 scripts/sources.py
 
-[doc("Boot the whole pack headless")]
-test: boot
+[doc("Run the game tests beside the boot test, with the game tests' log in build/gametest.log; returns at once when nothing they load changed since their last pass")]
+test: build
+    #!/usr/bin/env bash
+    set -uo pipefail
+    mkdir --parents build
+    python3 scripts/passed.py check {{ jar }} && exit 0
+    python3 scripts/instance.py gametest build/gametest
+    (cd mod && ./gradlew --console=plain runGameTestServer) > build/gametest.log 2>&1 &
+    tests=$!
+    just boot-server
+    booted=$?
+    wait "$tests"
+    tested=$?
+    if ! grep --extended-regexp --only-matching "All [0-9]+ required tests passed" build/gametest.log; then
+        tested=1
+        grep --extended-regexp "[0-9]+ required tests? failed|failed at|Failed to start the minecraft server" build/gametest.log
+        tail --lines 40 build/gametest.log
+    fi
+    (( booted || tested )) && exit 1
+    python3 scripts/passed.py record {{ jar }}
 
 [doc("Move every mod, tool and dependency to its newest version, then prove the pack still holds")]
 update:
