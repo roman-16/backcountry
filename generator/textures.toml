@@ -947,3 +947,14 @@ colour = "2a1e14,c8a878"
 [tinted.sled]
 base = "item/spruce_chest_boat"
 colour = "2a1e14,c8a878"
+
+[recoloured.empty_lantern]
+base = "item/lantern"
+kind = "item"
+colours = { ffffd5 = "864e29", fdfd8b = "5f3315", f9c966 = "462c1b", f09149 = "311a11", c36322 = "311a11" }
+
+[recoloured.empty_lantern_block]
+base = "block/lantern"
+kind = "block"
+frame = 0
+colours = { ffffd5 = "864e29", fdfd8b = "5f3315", f8f87f = "5f3315", f9c966 = "462c1b", f6c562 = "462c1b", f3c059 = "462c1b", f09149 = "311a11", ef8447 = "311a11", ec8144 = "311a11", c36322 = "311a11", bd5f1f = "311a11", ba5c1c = "311a11" }

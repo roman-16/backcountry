@@ -19,8 +19,8 @@ import java.util.regex.Pattern;
 
 public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpray, Bears bears, Berries berries, Body body, BowDrill bowDrill, Cache cache, Climate climate,
         Conditions conditions, Cooking cooking, Director director, DropOff dropOff, Effort effort, Energy energy, Farming farming, Fire fire, Firewood firewood, Fish fish, Forage forage,
-        Headlamp headlamp, Healing healing, Map<String, Double> heat, Hunting hunting, Ice ice, Map<String, Double> insulation, Kit kit, Load load, Map<String, Double> met, Mice mice,
-        Mining mining, Mosquitoes mosquitoes, PlantFibre plantFibre, Raft raft, Rations rations, Seasons seasons, Skills skills, Sled sled, Smoker smoker, Snow snow, Spoilage spoilage,
+        Headlamp headlamp, Healing healing, Map<String, Double> heat, Hunting hunting, Ice ice, Map<String, Double> insulation, Kit kit, Lights lights, Load load, Map<String, Double> met, Mice mice,
+        Mining mining, Mosquitoes mosquitoes, PlantFibre plantFibre, Raft raft, Rations rations, Seasons seasons, Skills skills, Sky sky, Sled sled, Smoker smoker, Snow snow, Spoilage spoilage,
         Survivor survivor, Tasks tasks, Traps traps, Warmth warmth, Walking walking, Water water, Weather weather, World world, Year year) {
     private static final Pattern WORD_START = Pattern.compile("([A-Z])");
     private static final Balance LOADED = read();
@@ -93,6 +93,8 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
 
     public record Kit(int pilotBread) {}
 
+    public record Lights(double lanternHours, double torchHours) {}
+
     public record Load(double blockKg, double capacityKg, double clothingKg, double firewoodKg, double foodKgPerKcal, double itemKg, double logKg, int packRows, double stoneKg, double toolKg,
             int warnSeconds) {}
 
@@ -111,6 +113,8 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
     public record Seasons(List<Double> feedingMonths, List<Double> rutMonths) {}
 
     public record Skills(double levelShare, List<Double> usesToLevel) {}
+
+    public record Sky(int cloudHeight, double moonFull, double moonNew, double moonPartial) {}
 
     public record Sled(double groundDrag, double groundFriction, double selfKg, double snowDrag, double snowFriction) {}
 

@@ -1,5 +1,6 @@
 package io.github.roman16.backcountry;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Nutrition;
@@ -7,12 +8,12 @@ import io.github.roman16.backcountry.fire.Fire;
 import io.github.roman16.backcountry.fire.FireBlock;
 import io.github.roman16.backcountry.fire.FireMenu;
 import io.github.roman16.backcountry.fire.FirewoodItem;
+import io.github.roman16.backcountry.fire.Lights;
 import io.github.roman16.backcountry.fire.WoodpileBlock;
 import io.github.roman16.backcountry.fire.WoodpileEntity;
 import io.github.roman16.backcountry.food.Berry;
 import io.github.roman16.backcountry.food.BerryBushBlock;
 import io.github.roman16.backcountry.food.BirchTapBlock;
-import io.github.roman16.backcountry.gear.SpruceNeedlesModifier;
 import io.github.roman16.backcountry.food.CacheBlock;
 import io.github.roman16.backcountry.food.CacheEntity;
 import io.github.roman16.backcountry.food.CacheMenu;
@@ -28,7 +29,15 @@ import io.github.roman16.backcountry.gear.CampPotBlock;
 import io.github.roman16.backcountry.gear.CampPotEntity;
 import io.github.roman16.backcountry.gear.CampPotItem;
 import io.github.roman16.backcountry.gear.HeadlampItem;
+import io.github.roman16.backcountry.gear.LeftPackBlock;
+import io.github.roman16.backcountry.gear.LeftPackEntity;
+import io.github.roman16.backcountry.gear.MedKitItem;
+import io.github.roman16.backcountry.gear.PlantFibreModifier;
+import io.github.roman16.backcountry.gear.SpruceNeedlesModifier;
+import io.github.roman16.backcountry.gear.SupplyCrateBlock;
 import io.github.roman16.backcountry.gear.ToolRecipe;
+import io.github.roman16.backcountry.gear.Water;
+import io.github.roman16.backcountry.gear.WaterVesselItem;
 import io.github.roman16.backcountry.haul.Sled;
 import io.github.roman16.backcountry.haul.SledItem;
 import io.github.roman16.backcountry.hunt.Animal;
@@ -44,13 +53,6 @@ import io.github.roman16.backcountry.hunt.Wound;
 import io.github.roman16.backcountry.trap.Kind;
 import io.github.roman16.backcountry.trap.TrapBlock;
 import io.github.roman16.backcountry.trap.TrapEntity;
-import io.github.roman16.backcountry.gear.LeftPackBlock;
-import io.github.roman16.backcountry.gear.LeftPackEntity;
-import io.github.roman16.backcountry.gear.MedKitItem;
-import io.github.roman16.backcountry.gear.PlantFibreModifier;
-import io.github.roman16.backcountry.gear.SupplyCrateBlock;
-import io.github.roman16.backcountry.gear.Water;
-import io.github.roman16.backcountry.gear.WaterVesselItem;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.function.Supplier;
@@ -61,34 +63,35 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import com.mojang.serialization.Codec;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.Unit;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.util.Unit;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
@@ -132,6 +135,8 @@ public final class Things {
     public static final Supplier<AttachmentType<Long>> SPRAYED_UNTIL = ATTACHMENTS.register("sprayed_until", () -> AttachmentType.builder(() -> 0L).build());
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> AGE = COMPONENTS.registerComponentType("age",
+            builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> BURN = COMPONENTS.registerComponentType("burn",
             builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Unit>> CONTAMINATED = COMPONENTS.registerComponentType("contaminated",
             builder -> builder.persistent(Unit.CODEC).networkSynchronized(StreamCodec.unit(Unit.INSTANCE)));
@@ -198,6 +203,8 @@ public final class Things {
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(0.5F).sound(SoundType.WOOD).noOcclusion().randomTicks().pushReaction(PushReaction.DESTROY));
     public static final DeferredBlock<RotatedPillarBlock> DEAD_SPRUCE_LOG = BLOCKS.registerBlock("dead_spruce_log", RotatedPillarBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).ignitedByLava());
+    public static final DeferredBlock<LanternBlock> EMPTY_LANTERN = BLOCKS.registerBlock("empty_lantern", LanternBlock::new,
+            BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 0));
     public static final DeferredBlock<CacheBlock> FOOD_CACHE = BLOCKS.registerBlock("food_cache", CacheBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD).ignitedByLava());
     public static final DeferredBlock<CookingPotBlock> COOKING_POT_BLOCK = BLOCKS.registerBlock("cooking_pot", CookingPotBlock::new,
@@ -260,6 +267,7 @@ public final class Things {
     public static final DeferredItem<Item> CROSSBEAM = ITEMS.registerSimpleItem("crossbeam", new Item.Properties());
     public static final DeferredItem<Item> CURED_HIDE = ITEMS.registerSimpleItem("cured_hide", new Item.Properties());
     public static final DeferredItem<BlockItem> DEADFALL_ITEM = ITEMS.registerSimpleBlockItem(DEADFALL);
+    public static final DeferredItem<BlockItem> EMPTY_LANTERN_ITEM = ITEMS.registerSimpleBlockItem(EMPTY_LANTERN);
     public static final DeferredItem<BlockItem> FOOD_CACHE_ITEM = ITEMS.registerSimpleBlockItem(FOOD_CACHE);
     public static final DeferredItem<Item> GAME_GUTS = food("game_guts");
     public static final DeferredItem<BlockItem> GILL_NET_ITEM = ITEMS.registerSimpleBlockItem(GILL_NET);
@@ -332,6 +340,8 @@ public final class Things {
     public static final Supplier<RecipeSerializer<StewRecipe>> STEW = RECIPE_SERIALIZERS.register("stewing", StewRecipe.Serializer::new);
     public static final Supplier<RecipeSerializer<ToolRecipe>> TOOL_RECIPE = RECIPE_SERIALIZERS.register("tool", ToolRecipe.Serializer::new);
 
+    public static final Supplier<MapCodec<Cuts.Loot>> CUT_MODIFIER = LOOT_MODIFIERS.register("cut", () -> Cuts.Loot.CODEC);
+    public static final Supplier<MapCodec<Lights.Drop>> LIGHT_MODIFIER = LOOT_MODIFIERS.register("light", () -> Lights.Drop.CODEC);
     public static final Supplier<MapCodec<PlantFibreModifier>> PLANT_FIBRE_MODIFIER = LOOT_MODIFIERS.register("plant_fibre", () -> PlantFibreModifier.CODEC);
     public static final Supplier<MapCodec<SpruceNeedlesModifier>> SPRUCE_NEEDLES_MODIFIER = LOOT_MODIFIERS.register("spruce_needles", () -> SpruceNeedlesModifier.CODEC);
 

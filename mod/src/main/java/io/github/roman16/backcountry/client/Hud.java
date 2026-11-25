@@ -1,6 +1,5 @@
 package io.github.roman16.backcountry.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.body.BodyView;
@@ -38,9 +37,7 @@ public final class Hud {
     private static final int ICON = 9;
     private static final int ICONS = 10;
     private static final int ICON_STEP = 8;
-    private static final int WATER_FROM_BOTTOM = 35;
-    private static final int WATER_ROOM = 6;
-    private static final int LEVEL_LIFT = 8;
+    private static final int WATER_FROM_BOTTOM = 29;
     private static final int ROW = 10;
     private static final int PANEL_GAP = 8;
     private static final int OFFHAND_ROOM = 29;
@@ -55,15 +52,9 @@ public final class Hud {
 
     @SubscribeEvent
     static void layers(RegisterGuiLayersEvent event) {
-        event.registerAbove(VanillaGuiLayers.EXPERIENCE_BAR, Backcountry.id("water"), Hud::water);
+        event.replaceLayer(VanillaGuiLayers.EXPERIENCE_BAR, Hud::water);
+        event.replaceLayer(VanillaGuiLayers.EXPERIENCE_LEVEL, (graphics, delta) -> {});
         event.replaceLayer(VanillaGuiLayers.FOOD_LEVEL, Hud::energy);
-        event.wrapLayer(VanillaGuiLayers.EXPERIENCE_LEVEL, level -> (graphics, delta) -> {
-            PoseStack pose = graphics.pose();
-            pose.pushPose();
-            pose.translate(0, shows() ? -LEVEL_LIFT : 0, 0);
-            level.render(graphics, delta);
-            pose.popPose();
-        });
         event.registerAbove(VanillaGuiLayers.HOTBAR, Backcountry.id("body"), Hud::body);
         event.registerBelow(VanillaGuiLayers.CHAT, Backcountry.id("blackout"), Hud::blackout);
         event.registerBelowAll(Backcountry.id("whiteout"), Blizzard::whiteout);
@@ -89,8 +80,6 @@ public final class Hud {
         if (filled > 0 && !(low && minecraft.gui.getGuiTicks() / LOW_BLINK_TICKS % 2 == 0)) {
             graphics.blitSprite(WATER_PROGRESS, BAR_WIDTH, BAR_HEIGHT, 0, 0, left, top, filled, BAR_HEIGHT);
         }
-        minecraft.gui.leftHeight += WATER_ROOM;
-        minecraft.gui.rightHeight += WATER_ROOM;
     }
 
     private static void energy(GuiGraphics graphics, DeltaTracker delta) {

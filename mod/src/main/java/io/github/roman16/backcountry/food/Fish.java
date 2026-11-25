@@ -20,7 +20,7 @@ import net.minecraft.world.item.component.CustomData;
 
 public final class Fish {
     public static final String CAUGHT = "fish";
-    private static final String MOD = "riverfishing";
+    public static final String MOD = "riverfishing";
     private static final String KIND = "FishItem";
     private static final double GRAMS_A_KG = 1000;
 

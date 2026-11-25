@@ -48,7 +48,7 @@ generate: compile
 lint: generate
     ruff format generator scripts
     ruff check --fix generator scripts
-    taplo format balance.toml
+    taplo format balance.toml cuts.toml
     just --fmt --unstable
     cd pack && packwiz refresh
     python3 scripts/changelog.py --check

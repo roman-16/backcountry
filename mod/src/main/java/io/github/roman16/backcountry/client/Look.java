@@ -3,9 +3,11 @@ package io.github.roman16.backcountry.client;
 public final class Look {
     static final int AXIS = 0xFF5A5A5A;
     static final int BAND = 0xFF5A4A20;
+    static final int BAR_BACK = 0xFF000000;
     static final int BEZEL = 0xFF2A1A10;
     static final int BLACKOUT = 0x000000;
     static final int BLIZZARD = 0xFFB0B8C0;
+    static final int BURNING = 0xFFFFAA00;
     static final int CASE = 0xFFD8742C;
     static final int CASE_DARK = 0xFFA4521A;
     static final int CASE_EDGE = 0xFF4A2208;

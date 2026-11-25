@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.player.BonemealEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.block.CropGrowEvent;
 
@@ -72,6 +73,13 @@ public final class Seasons {
         }
         boolean season = within(level, farming.firstMonth(), farming.lastMonth()) && air >= farming.warmC();
         event.setResult(season && level.random.nextDouble() < farming.growthShare() ? CropGrowEvent.Pre.Result.DEFAULT : CropGrowEvent.Pre.Result.DO_NOT_GROW);
+    }
+
+    @SubscribeEvent
+    static void boneMeal(BonemealEvent event) {
+        if (event.isValidBonemealTarget()) {
+            event.setSuccessful(false);
+        }
     }
 
     @SubscribeEvent

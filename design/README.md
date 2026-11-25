@@ -4,7 +4,7 @@ What Backcountry is, decided before anything is built. Each document keeps its *
 
 ## Now
 
-**M1 Repo, tooling, world** to **M12 Bears and the sled** are built, balanced by automated playthroughs (`playthrough` skill). M2 to M12 wait for the user's first play (`just play`, the `playtest` skill's rows).
+**M1 Repo, tooling, world** to **M13 A survivalist's island** are built, M1 to M12 balanced by automated playthroughs (`playthrough` skill). M2 to M13 wait for the user's first play (`just play`, the `playtest` skill's rows).
 
 ## Milestones
 
@@ -24,6 +24,7 @@ Each milestone ends playable, with `just lint` and `just test` green.
 | M10 The body measured | Every activity's kcal by the game time it fills at real rates, with load, terrain and snow, slope, wind, cold, clothing, digestion and sleep; skills; the rations and the energy bar rescaled; the playthroughs run again (S1) |
 | M11 Forage | Spruce tea, salmonberries, highbush cranberries and baneberries, the mushroom stew, dead spruces, birch sap and syrup, frozen fish (S6, S7) |
 | M12 Bears and the sled | The grizzly's temper by season and surprise with its bluff charge, sows with cubs, bears at the salmon run, the timid black bear; the sled (S8) |
+| M13 A survivalist's island | What a survivalist in Alaska would not meet or do cut from vanilla and every mod: no caves or ore in the rock, no Nether, XP, magic, machines or exotic gear, Alaska's fish only, logs that need an axe, torches and lanterns that burn down, a locked Normal difficulty (S6, S12, `world.md` W3); Wayfarer's keys, first-launch settings, Ping Wheel's marks and dark nights (`interface.md` I8, `production.md`) |
 
 ## Documents
 

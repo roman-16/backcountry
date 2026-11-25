@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Torches and lanterns burn down: a torch lasts 30 minutes and a lantern an hour, in hand too, with a bar on the slot; charcoal tops up a torch, Rendered Fat a lantern, and a spent lantern hangs dark until refilled.
+- A search box in Controls, team marks on mouse button 5, and dark nights without the shader that step aside when it draws.
+- The compass is made from iron and a glass pane and points north; the clock is gold and a glass pane; the lead is made from rope, and black dye from charcoal.
+
+### Changed
+
+- The island is a survivalist's: no caves, no ore in the rock but surface iron and gold-flecked gravel in the birch forests, no wild pumpkins, surface lava, honeybees or hazelnuts.
+- River Fishing catches only Alaska's fish, with the stick rod in open water and the winter rod through the ice.
+- Logs need an axe; the first is the stone axe from loose rocks and twigs.
+- The water bar sits where the XP bar was.
+- The shader is on from the first launch, with Wayfarer's keys and settings: Shift sprints, Ctrl sneaks, FOV 80, GUI scale 3, Bright, full screen.
+- The difficulty stays Normal, and F3 shows no coordinates.
+
+### Removed
+
+- The Nether can no longer be reached, and dungeons, infested stone and every way to XP, enchanting, potions, redstone machines, swords, shields, metal armour, boats, breeding, taming and bone meal's growth are gone.
+- JEI lists only what the island gives: no Nether, End, structure or exotic mod items, no spawn eggs, no Ecliptic Seasons gadgets, no River Fishing electronics, ponds or contracts.
+- Advancements are hidden: L is unbound and the pause menu has no Advancements button.
+
 ## [1.0.0] - 2026-11-24
 
 ### Highlights

@@ -27,6 +27,11 @@ PIECE = 4
 PIECES_A_ROW = 4
 GAP = 0.5
 BRIGHTEST = 15
+FRAME = 16
+CLOUD_LAYERS_APART = 64
+IRIS = ROOT / "pack/config/iris.properties"
+SHADER_OPTIONS = ROOT / "generator/shader.toml"
+SHADERPACKS = ROOT / "pack/shaderpacks"
 
 
 def hex_colour(text):
@@ -81,10 +86,12 @@ def tint(jar, base, colour, target, scratch):
     subprocess.run([*command, "-strip", f"PNG32:{target}"], check=True)
 
 
-def recolour(jar, base, colours, target, scratch):
+def recolour(jar, base, colours, target, scratch, frame=None):
     source = scratch / (base.replace("/", "_") + ".png")
     source.write_bytes(jar.read(VANILLA + base + ".png"))
     command = ["magick", str(source)]
+    if frame is not None:
+        command += ["-crop", f"{FRAME}x{FRAME}+0+{FRAME * frame}", "+repage"]
     for old, new in colours.items():
         command += ["-fill", f"#{new}", "-opaque", f"#{old}"]
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -165,6 +172,23 @@ def blocks():
                     "faces": {face: {"texture": "#strap"} for face in ("down", "east", "north", "south", "up", "west")},
                 },
             ],
+        },
+    )
+    for hanging in ("", "_hanging"):
+        write_json(
+            ASSETS / f"models/block/empty_lantern{hanging}.json",
+            {
+                "parent": f"minecraft:block/template{hanging}_lantern",
+                "textures": {"lantern": "backcountry:block/empty_lantern_block"},
+            },
+        )
+    write_json(
+        ASSETS / "blockstates/empty_lantern.json",
+        {
+            "variants": {
+                "hanging=false": {"model": "backcountry:block/empty_lantern"},
+                "hanging=true": {"model": "backcountry:block/empty_lantern_hanging"},
+            }
         },
     )
     for name in ("camp_pot", "left_pack", "supply_crate"):
@@ -569,6 +593,20 @@ def lights():
         )
 
 
+def shaders():
+    shader = tomllib.loads((SHADERPACKS / "complementary-unbound.pw.toml").read_text())["filename"]
+    IRIS.write_text(f"disableUpdateMessage=true\nenableShaders=true\nshaderPack={shader}\n")
+    sky = tomllib.loads(BALANCE.read_text())["sky"]
+    options = tomllib.loads(SHADER_OPTIONS.read_text()) | {
+        "CLOUD_ALT1": str(sky["cloud_height"]),
+        "CLOUD_ALT2": str(sky["cloud_height"] + CLOUD_LAYERS_APART),
+        "MOON_PHASE_DARK": f"{sky['moon_new']:.2f}",
+        "MOON_PHASE_FULL": f"{sky['moon_full']:.2f}",
+        "MOON_PHASE_PARTIAL": f"{sky['moon_partial']:.2f}",
+    }
+    (SHADERPACKS / f"{shader}.txt").write_text("".join(f"{key}={value}\n" for key, value in sorted(options.items())))
+
+
 def test_room():
     blocks = [
         {"pos": [x, y, z], "state": 0} for x in range(TEST_ROOM) for y in range(TEST_ROOM) for z in range(TEST_ROOM)
@@ -622,7 +660,14 @@ def main():
                     scratch,
                 )
         for name, entry in source["recoloured"].items():
-            recolour(jar, entry["base"], entry["colours"], ASSETS / f"textures/{entry['kind']}/{name}.png", scratch)
+            recolour(
+                jar,
+                entry["base"],
+                entry["colours"],
+                ASSETS / f"textures/{entry['kind']}/{name}.png",
+                scratch,
+                entry.get("frame"),
+            )
             if entry["kind"] == "item":
                 item_model(name)
         campfire(jar)
@@ -633,6 +678,7 @@ def main():
     sounds()
     woodpile()
     lights()
+    shaders()
 
 
 main()

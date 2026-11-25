@@ -6,8 +6,8 @@
 
 - **The land** covers the area of a 6,144-block circle on every seed: a main island with a coast broken by bays, sounds and islets, and on some seeds big islands across open water. Past it, deep ocean to Minecraft's own world edge: no land lies more than 6,144 blocks from the centre.
 - **How it is made:** the mod wraps Tectonic's raw continents (`tectonic:noise/raw_continents`, `IslandShape`) where the game wires the noise. Over the middle it lifts the value by `lift`; from `inner_share` to `outer_share` of the radius it falls to `-sink`, the distance bent by two noises (`island_warp`, `island_detail`) so the coast is never round; past `outer_share`, and past `edge_blocks` from the centre, it is held at the sea floor, so nothing grows there. The first time a world is used, its land is measured on a 96-block grid and the shape scaled so the land covers the target area; since rivers, lakes and flats at sea level take part of what the continents count as land, the measure aims at the target divided by `dry_share`. The numbers live in `balance.toml` `[world]`.
-- **Tectonic** (`pack/config/tectonic.json`): `continents_scale` 0.5 (small continent features, so the coast breaks into bays, peninsulas and islets), islands off, the deep floor at `deep_ocean_depth` -0.75 (about 96 blocks down), his Amazon values for erosion (0.75), ridges (0.08, wider valleys) and flat ground (0.38), jungle pillars, river lanterns and lava tunnels off.
-- **The shape is measured, not guessed:** `just shape <seeds>` draws each seed's land from the game's own generator into `build/shape/<seed>.png` and logs its scale, land area, farthest land, drop-off and land biomes. Measured on seeds 1 to 6: 31.2 to 32.8 km² of land (a circle 6,300 to 6,460 blocks across), the farthest land 5,384 to 6,076 blocks out.
+- **Tectonic** (`pack/config/tectonic.json`): `continents_scale` 0.5 (small continent features, so the coast breaks into bays, peninsulas and islets), islands off, the deep floor at `deep_ocean_depth` -0.75 (about 96 blocks down), his Amazon values for erosion (0.75), ridges (0.08, wider valleys) and flat ground (0.38), jungle pillars, river lanterns and lava tunnels off, and every cave off: no carvers, cheese, noodle or spaghetti caves and no underground rivers (W3).
+- **The shape is measured, not guessed:** `just shape <seeds>` draws each seed's land from the game's own generator into `build/shape/<seed>.png` and logs its scale, land area, farthest land, drop-off and land biomes. Measured on seeds 1 to 6: 29.0 to 30.8 km² of land (a circle 6,074 to 6,258 blocks across), the farthest land 4,568 to 5,968 blocks out.
 - **Edge cases:** a world made before a change to `[world]` keeps its chunks, so the change needs a new world; Distant Horizons draws the far land from the same noise.
 
 ### W2 Cold land
@@ -17,8 +17,11 @@
 
 ### W3 Wilderness only
 
-- No structures: villages, ruins, outposts, portals and every mod's structures are cut. No monsters spawn (the spawn director, `systems.md` S8). The Nether stays unreachable.
-- Surface iron lies in stream beds and cliff faces; digging into solid rock with no open space within 3 blocks behind runs at 0.05× speed, so iron is found by exploring, not by digging down.
+- No structures: villages, ruins, outposts, portals and every mod's structures are cut. No monsters spawn (the spawn director, `systems.md` S8), and no dungeon with its spawner and chest generates. The Nether stays unreachable: an obsidian frame lit with flint and steel burns and opens no portal. The End has no portal frame to reach, since its strongholds are cut.
+- **No caves.** A survivalist in Alaska does not go underground: the rock under the island is solid, with no cave openings, ravines, lush or dripstone caves or underground rivers.
+- **No ore in the rock.** Coal, iron, copper, gold, redstone, lapis, diamond, emerald, amethyst geodes and infested stone never generate. Iron is found only on the surface: in stream beds and cliff faces, and as iron-flecked gravel in the birch forests' gravel pits (Project: Vibrant Journeys), whose gold-flecked gravel is the island's only gold. Digging into solid rock with no open space within 3 blocks behind runs at 0.05× speed.
+- **Nothing that Alaska lacks:** no wild pumpkins, no lava lakes or lava falls on the surface (lava lies only deep in the rock), no hazelnut bushes by the rivers (Wilder Nature's), no honeybees: the nests in the birches stand empty.
+- **Edge cases:** land a world generated before keeps its caves, ores and dungeons; new land comes without.
 
 ### W4 The drop-off
 

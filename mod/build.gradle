@@ -20,6 +20,8 @@ static Provider<String> modrinth(Provider<String> packEntry) {
 
 def ecliptic = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/ecliptic-seasons.pw.toml')).asText)
 def farView = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/distanthorizons.pw.toml')).asText)
+def recipeViewer = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/jei.pw.toml')).asText)
+def shaders = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/iris.pw.toml')).asText)
 
 sourceSets {
     dev {
@@ -120,6 +122,8 @@ tasks.matching { it.name == 'runServer' }.configureEach {
 
 dependencies {
     compileOnly farView
+    compileOnly recipeViewer
+    compileOnly shaders
     implementation ecliptic
     hotswapAgent "org.hotswapagent:hotswap-agent-core:${hotswap_agent_version}"
     vineflower "org.vineflower:vineflower:${vineflower_version}"
@@ -165,7 +169,7 @@ sourceSets.main.resources.srcDir generateModMetadata
 neoForge.ideSyncTask generateModMetadata
 
 processResources {
-    from(rootProject.file('../balance.toml')) {
+    from([rootProject.file('../balance.toml'), rootProject.file('../cuts.toml')]) {
         into 'backcountry'
     }
 }

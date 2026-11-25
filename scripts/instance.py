@@ -12,6 +12,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 BALANCE = ROOT / "balance.toml"
 PACK = ROOT / "pack"
+DEFAULT_OPTIONS = PACK / "config/defaultoptions/options.txt"
+DEFAULT_KEYS = PACK / "config/defaultoptions/keybindings.txt"
+SHADER_OPTIONS = "*.txt"
 DATA_VERSION = 3955
 CACHE = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "backcountry"
 IRIS = "iris.properties"
@@ -116,10 +119,16 @@ def neoforge(target):
 def options(target):
     path = target / "options.txt"
     lines = path.read_text().splitlines() if path.exists() else []
-    kept = [line for line in lines if line.split(":", 1)[0] not in CLIENT_OPTIONS]
+    shipped = {
+        key: value
+        for source in (DEFAULT_OPTIONS, DEFAULT_KEYS)
+        for key, value in (line.split(":", 1) for line in source.read_text().splitlines() if ":" in line)
+    }
+    overrides = shipped | CLIENT_OPTIONS
+    kept = [line for line in lines if line.split(":", 1)[0] not in overrides]
     if not any(line.startswith("version:") for line in kept):
         kept.insert(0, f"version:{DATA_VERSION}")
-    forced = [f"{key}:{value}" for key, value in sorted(CLIENT_OPTIONS.items())]
+    forced = [f"{key}:{value}" for key, value in sorted(overrides.items())]
     path.write_text("\n".join(kept + forced) + "\n")
 
 
@@ -148,6 +157,9 @@ def client(target, mode):
         DEV_CLASSPATH | (frozenset() if mode == "shipped" else FAR_VIEW),
     )
     settings(target)
+    for options_file in (PACK / "shaderpacks").glob(SHADER_OPTIONS):
+        (target / "shaderpacks").mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(options_file, target / "shaderpacks" / options_file.name)
     if mode != "shipped":
         for name, overrides in CLIENT_CONFIGS.items():
             (target / "config").mkdir(parents=True, exist_ok=True)

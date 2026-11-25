@@ -1,19 +1,24 @@
 package io.github.roman16.backcountry.client;
 
-import io.github.roman16.backcountry.food.Fish;
-import java.util.ArrayList;
-import java.util.List;
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Things;
-import io.github.roman16.backcountry.food.Spoilage;
 import io.github.roman16.backcountry.body.Nutrition;
+import io.github.roman16.backcountry.fire.Lights;
+import io.github.roman16.backcountry.food.Fish;
+import io.github.roman16.backcountry.food.Spoilage;
 import io.github.roman16.backcountry.gear.Hotbar;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.DeathScreen;
+import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -29,6 +34,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 @EventBusSubscriber(modid = Backcountry.MODID, value = Dist.CLIENT)
 public final class ClientEvents {
+    private static final String ADVANCEMENTS = "gui.advancements";
+    private static final String STATISTICS = "gui.stats";
     private static final ResourceLocation SLOT_SPRITE = ResourceLocation.withDefaultNamespace("container/slot");
     private static final int SLOT = 18;
     private static final int ITEM = 16;
@@ -69,6 +76,34 @@ public final class ClientEvents {
     static void messenger(PlayerInteractEvent.RightClickItem event) {
         if (event.getLevel().isClientSide && event.getItemStack().is(Things.SATELLITE_MESSENGER.get())) {
             Minecraft.getInstance().setScreen(new MessengerScreen());
+        }
+    }
+
+    @SubscribeEvent
+    static void paused(ScreenEvent.Init.Post event) {
+        if (!(event.getScreen() instanceof PauseScreen)) {
+            return;
+        }
+        button(event, ADVANCEMENTS).ifPresent(advancements -> button(event, STATISTICS).ifPresent(statistics -> {
+            event.removeListener(advancements);
+            statistics.setWidth(statistics.getRight() - advancements.getX());
+            statistics.setX(advancements.getX());
+        }));
+    }
+
+    private static Optional<Button> button(ScreenEvent.Init.Post event, String key) {
+        return event.getListenersList().stream()
+                .filter(listener -> listener instanceof Button button && button.getMessage().getContents() instanceof TranslatableContents contents && contents.getKey().equals(key))
+                .map(Button.class::cast)
+                .findFirst();
+    }
+
+    @SubscribeEvent
+    static void burning(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+        if (stack.has(Things.BURN.get())) {
+            event.getToolTip().add(Math.min(1, event.getToolTip().size()),
+                    Component.translatable("tooltip.backcountry.burning", (int) Math.ceil(Lights.left(stack))).withStyle(ChatFormatting.GRAY));
         }
     }
 

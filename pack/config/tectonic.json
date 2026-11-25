@@ -8,15 +8,15 @@
     "vegetation_scale": 0.25
   },
   "caves": {
-    "carvers_enabled": true,
+    "carvers_enabled": false,
     "cheese_additive": 0.27,
-    "cheese_enabled": true,
+    "cheese_enabled": false,
     "depth_cutoff_size": 0.1,
     "depth_cutoff_start": 0.1,
     "noodle_additive": -0.075,
-    "noodle_enabled": true,
+    "noodle_enabled": false,
     "ore_fix": false,
-    "spaghetti_enabled": true
+    "spaghetti_enabled": false
   },
   "continents": {
     "continents_scale": 0.5,
@@ -28,7 +28,7 @@
     "river_ice": true,
     "river_lanterns": false,
     "rolling_hills": true,
-    "underground_rivers": true
+    "underground_rivers": false
   },
   "experimental": {
     "alternate_continents_scaling": false,

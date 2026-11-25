@@ -17,8 +17,28 @@ file = "config/crittersncrawlers-common.toml"
 hash = "2c235c6311331bc9ff838e15382023c3ea139fd53c03635a6760fe0c04538970"
 
 [[files]]
+file = "config/defaultoptions/keybindings.txt"
+hash = "a5b956af725f5c5b9402341e5657a735095b5bc9e76e8fe409a3a67255a9bc94"
+
+[[files]]
+file = "config/defaultoptions/options.txt"
+hash = "13f59d5cd41d4e221b9bea6a9bd4a81cf6edfd3665f0583184062868701af4bc"
+
+[[files]]
 file = "config/eclipticseasons-common.toml"
 hash = "66bbbbb4d8dbcfb9d46aeb36fc94a671e52c3e28d36c31f0f2db02715a1c274e"
+
+[[files]]
+file = "config/iris.properties"
+hash = "a1eb0f8576afa9cebaae1c252747caa2d5ff66dd7d8ee6ccd18277d7f46562a5"
+
+[[files]]
+file = "config/more_darkness.json"
+hash = "86c99cb188defcf0fb73f06e7f2713a78a7a9e6dd23f0c2b604477b697386ddb"
+
+[[files]]
+file = "config/sodium-options.json"
+hash = "d8c6c5843af8a5ebd1f2ef3f853ba4045a1dde73a0648765e4d0b254122a3790"
 
 [[files]]
 file = "config/streamsreflowing.properties"
@@ -26,7 +46,7 @@ hash = "b9097915efd78d7bf9d12e9f43e23102c9facb08455fdd9b9eac84f646eedf78"
 
 [[files]]
 file = "config/tectonic.json"
-hash = "09cf7fe3138afb57881956e5fa031aa789a7a842ff9d4e4e7c7b942d9c42d989"
+hash = "99f856e754994d5f83d7c5c45c9f2094b18b8a32b5a0767810ae76a643641116"
 
 [[files]]
 file = "mods/alexs-mobs-1.21.1.pw.toml"
@@ -41,6 +61,11 @@ metafile = true
 [[files]]
 file = "mods/architectury-api.pw.toml"
 hash = "21347d7f9c96cebacb7238dbef2670e2906a11572606016c8184e9485947dacc"
+metafile = true
+
+[[files]]
+file = "mods/balm.pw.toml"
+hash = "9dc62dd203ebfd015be887fb2b90569c974942a9c2738e7a4314a65b770f9601"
 metafile = true
 
 [[files]]
@@ -59,6 +84,11 @@ hash = "80d7af83c244304212b8d95ab2e3525b3eeae02f31e41474c2cdec2f4d370723"
 metafile = true
 
 [[files]]
+file = "mods/controlling.pw.toml"
+hash = "65c8086d2ec3d39acc7bd36c7a0306ccc43b602b38fa07d13291bc478ef7dfff"
+metafile = true
+
+[[files]]
 file = "mods/creativecore.pw.toml"
 hash = "4e5da1d8f007eb0aa1f555129bbd674d36f2014d6bbdb5798b7588f514073449"
 metafile = true
@@ -71,6 +101,11 @@ metafile = true
 [[files]]
 file = "mods/critters-n-crawlers.pw.toml"
 hash = "115c44c46c06f4ed20e9eacfdc11624f823eb0d87c305a0496a81c55de1d2c32"
+metafile = true
+
+[[files]]
+file = "mods/default-options.pw.toml"
+hash = "a6967d761dde867ccc1af53dc9f4e530eb9917a9cb21d0fc15708e8cd2c0f2ba"
 metafile = true
 
 [[files]]
@@ -129,6 +164,11 @@ hash = "f1fecbcbee6806a14efb3bd38ccf10166b48004967fbe72b6c31224e5e9fc5ea"
 metafile = true
 
 [[files]]
+file = "mods/more-darkness.pw.toml"
+hash = "fb7931b3a4acb5f6cff55e1e84bff75074db84e71baec2130ba1dc941cf98ffd"
+metafile = true
+
+[[files]]
 file = "mods/pandalib.pw.toml"
 hash = "da224947e0addbcd8486a4addec2fc672b780566102b570295e41f3d4b315fdc"
 metafile = true
@@ -144,6 +184,11 @@ hash = "45d6f9ac203536d03136d75dff52c381daf72311af19bc12805a007b31c8f112"
 metafile = true
 
 [[files]]
+file = "mods/ping-wheel.pw.toml"
+hash = "650330109d21831664d2ff597c7a90200eda69a1efaca4e9b0b6b6297ac3c364"
+metafile = true
+
+[[files]]
 file = "mods/project-vibrant-journeys.pw.toml"
 hash = "359eedc9f0126af6e31c3f6f7843f8d25a8ff456d51638ff364f84f19bce26ff"
 metafile = true
@@ -151,6 +196,11 @@ metafile = true
 [[files]]
 file = "mods/river-fishing.pw.toml"
 hash = "c90b0406f5f9a57182a76b272ace2a25fefc051006108f4fe69518e2d3f9ee96"
+metafile = true
+
+[[files]]
+file = "mods/searchables.pw.toml"
+hash = "ce9ddada6ffd55a512149cc474c6a453281a997a5fdf1b7b4a2cc73f875e704a"
 metafile = true
 
 [[files]]
@@ -192,6 +242,10 @@ metafile = true
 file = "mods/yacl.pw.toml"
 hash = "539f362e9e192cf3b2813e0dfdfc51a5e6814129c6e82a9733842529beea6242"
 metafile = true
+
+[[files]]
+file = "shaderpacks/ComplementaryUnbound_r5.10.zip.txt"
+hash = "9d57c0881e0cdb5a54850f5929120086c2cf143145704b5c0550b1dbc00839c9"
 
 [[files]]
 file = "shaderpacks/complementary-unbound.pw.toml"

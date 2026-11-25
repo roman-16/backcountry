@@ -1,6 +1,8 @@
 {
   "replace": false,
   "entries": [
+    "backcountry:cut",
+    "backcountry:light",
     "backcountry:plant_fibre",
     "backcountry:spruce_needles"
   ]

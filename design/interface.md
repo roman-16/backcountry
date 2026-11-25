@@ -6,13 +6,13 @@ Everything read off the screen outside the world. Units are metric: °C, kg, km/
 
 ### I1 The HUD
 
-The hearts stay and the energy bolts, drawn like vanilla's hunger icons over empty slots, take the hunger bar's place; they shake while the survivor is too tired to sprint. Water is a blue bar drawn like vanilla's XP bar, across the hotbar's width just above it, and it blinks below a quarter; the hearts, the bolts and the XP level lift to make room. Right of the hotbar, each line on a dark plate with its icon, the body panel shows the core temperature and how it feels (blue when cold, orange when hot), the wetness while wet, and above them the conditions by name.
+The hearts stay and the energy bolts, drawn like vanilla's hunger icons over empty slots, take the hunger bar's place; they shake while the survivor is too tired to sprint. Water is a blue bar drawn like vanilla's XP bar, in the XP bar's own place across the hotbar's width, and it blinks below a quarter; there is no XP (`systems.md` S12), so neither bar nor level shows. Right of the hotbar, each line on a dark plate with its icon, the body panel shows the core temperature and how it feels (blue when cold, orange when hot), the wetness while wet, and above them the conditions by name.
 
 ```text
- ♥♥♥♥♥♥♥♥♥♥       12       ⚡⚡⚡⚡⚡⚡░░░░    ❄ Frostnip
+ ♥♥♥♥♥♥♥♥♥♥                 ⚡⚡⚡⚡⚡⚡░░░░    ❄ Frostnip
  ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬░░░░░░░░░░░░░   ✚ Infected wound
- ══════════════════════════════════════════   💧 Wet 37%
- [ ][ ][ ][ ][ ][ ][ ][ ][ ]                   🌡 35.6 °C · very cold
+ [ ][ ][ ][ ][ ][ ][ ][ ][ ]                   💧 Wet 37%
+                                               🌡 35.6 °C · very cold
 ```
 
 Everything the pack draws wears vanilla's own look: its panels, buttons, slots and font.
@@ -44,8 +44,8 @@ The Tasks page heads the stage (First days, Before snow, Winter, The year), with
 First days                                 1 of 9
 ■ Fill the Water Bottle
 □ Light a fire
-  Make tinder and a Bow Drill (JEI: R), then
-  drill a campfire.
+  Fell logs with a stone axe, light them with
+  a Bow Drill (JEI: R).
 □ Boil water and drink it
 □ Sleep under a roof
 □ Split a log
@@ -141,6 +141,17 @@ Mo 77.0 → 71.2 kg (arrived Day 12)
 ```
 
 The inventory shows its locked rows dark ("Needs a hide pack") and the back slot beside the armour.
+
+### I8 Controls and the first launch
+
+- **Keys** are Wayfarer's: Left Shift sprints and Left Ctrl sneaks; every mod's key is unbound unless a player needs it: River Fishing's fight keys on the arrows, Ping Wheel's mark on mouse button 5, JEI's keys inside its own screens (R recipes, U uses, A bookmark, Ctrl+F search). Iris's, Ecliptic Seasons' debug and Critters n' Crawlers' keys, JEI's cheat-to-inventory keys and L for advancements are unbound. Controls has a search box (Controlling). Controls' Reset Keys brings back the pack's keys.
+- **Team marks:** mouse button 5 marks a spot for the whole team for a few seconds, with who set it and how far it is (Ping Wheel).
+- **The first launch** (Default Options): FOV 80, GUI scale 3, full screen, VSync on, an unlimited frame rate, sensitivity 67%, Brightness Bright, no splash texts, no accessibility onboarding, no multiplayer warning; render distance stays vanilla's 12 chunks. Each player's own settings stay theirs after that.
+- **Nights** are dark: without the shader More Darkness makes a moonless night black beyond the fire and a full moon pale grey, the eyes adjusting over a few seconds; with Complementary Unbound on, as it is from the first launch, More Darkness steps aside and the shader's night settings give the same night (`production.md`).
+- **The pause menu** has Statistics across the whole row where Advancements and Statistics stood.
+- **F3** shows no coordinates, facing or biome.
+- **Sodium's donation prompt and Iris's update notice** never show.
+- **Edge cases:** a player who launched the pack before keeps their own settings and keys, Reset Keys giving them the pack's; a key a player rebinds stays theirs through updates.
 
 ## Open
 

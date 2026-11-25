@@ -13,19 +13,23 @@ Every mod in the pack and why, and what was left out. "His" marks a mod in one o
 | Lithostitched (his) | Tectonic's library |
 | Project: Vibrant Journeys (his) | Shelf fungus, twigs, rocks, fallen logs, pinecones |
 | Better Foliage Renewed (his) | Bushy leaves, reeds; its last 1.21.1 build is from 22.08.2024, so it leaves if it breaks with Sodium or Iris |
-| Ecliptic Seasons | The year's look: day length, gradual snow on the ground, falling leaves, lake ice (`systems.md` S2); the sky and whether it rains or snows are the mod's weather (S3) |
+| Ecliptic Seasons | The year's look: day length, gradual snow on the ground, falling leaves, lake ice (`systems.md` S2); the sky and whether it rains or snows are the mod's weather (S3); nothing it adds can be held (`systems.md` S12) |
 | Distant Horizons (his) | The far view |
 | Sodium, Iris, Complementary Unbound (his) | Drawing and the shader |
 | Panda's Falling Trees (his), with PandaLib 0.6.0 | Trees fall whole |
 | Particular Reforged | Falling leaves, waterfall spray |
 | Sound Physics Remastered (his), AmbientSounds | Sound |
 | LambDynamicLights | Light from what is held, and the headlamp |
-| JEI | Recipes |
-| Alex's Mobs (Unofficial Port) and Citadel (Unofficial Port) | Moose, grizzly, bald eagle, seal, orca |
-| Critters n' Crawlers (his) | Wolverine, beaver, caribou, mouse, black bear, timber wolf, goose |
-| [Let's Do] Wilder Nature (his) | Squirrel |
+| JEI | Recipes; it lists only what the island gives (`cuts.toml`) |
+| Controlling, with Searchables | A search box in Controls |
+| Default Options, with Balm | The first launch's settings and every key of the pack (`pack/config/defaultoptions/`) |
+| More Darkness | Dark nights without the shader, stepping aside while it draws (`production.md`) |
+| Ping Wheel | Team marks on mouse button 5 |
+| Alex's Mobs (Unofficial Port) and Citadel (Unofficial Port) | Moose, grizzly, bald eagle, seal, orca; of their items only moose ribs stay |
+| Critters n' Crawlers (his) | Wolverine, beaver, caribou, mouse, black bear, timber wolf, goose; of its items only the meats, stews and pemmican stay |
+| [Let's Do] Wilder Nature (his) | Squirrel; none of its items or hazelnut bushes |
 | Fowl Play | Raven, chickadee, Canada goose, gulls, mallard, hawk |
-| River Fishing | Fishing and its Alaskan species (`systems.md` S9) |
+| River Fishing | Fishing with Alaska's species and the tackle the island makes (`systems.md` S9) |
 | Sleeping Bags (his) | Sleeping out |
 
 Libraries they bring: Architectury, CreativeCore, GeckoLib, [Let's Do] Foundation, MezzConfig, SmartBrainLib, YetAnotherConfigLib.
@@ -35,7 +39,7 @@ Libraries they bring: Architectury, CreativeCore, GeckoLib, [Let's Do] Foundatio
 | Mod | Why |
 |---|---|
 | Legendary Survival Overhaul, Tough As Nails, Dynamic Nutrition, FFFoodSpoilageAndPreservation, Rot Timer, Stamina For Tweakers, FFItemWeight, TinyInv | The mod's body owns all of it (`systems.md` S1) |
-| No Tree Punching (Remastered), Butchery, Simply Traps, Carry On, Starter Kit | The mod builds them itself (S6, S8, S9, S10) |
+| No Tree Punching (Remastered), Butchery, Simply Traps, Carry On, Starter Kit | The mod builds them itself: logs need an axe (S6), carcasses and cuts (S8), traps (S9), the kit (S10) |
 | In Control!, Bad Mobs | The spawn director owns spawning (S8) |
 | KubeJS | Recipes, loot and rules live in the mod's data |
 | Snow! Real Magic!, Snow Under Trees | Ecliptic Seasons draws the snow |

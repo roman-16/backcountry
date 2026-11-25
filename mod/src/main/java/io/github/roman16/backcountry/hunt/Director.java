@@ -33,7 +33,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
@@ -50,14 +49,6 @@ public final class Director {
         MobSpawnType type = event.getSpawnType();
         if (type == MobSpawnType.NATURAL || type == MobSpawnType.CHUNK_GENERATION || type == MobSpawnType.PATROL || type == MobSpawnType.REINFORCEMENT) {
             event.setSpawnCancelled(true);
-        }
-    }
-
-    @SubscribeEvent
-    static void traders(EntityJoinLevelEvent event) {
-        EntityType<?> type = event.getEntity().getType();
-        if (type == EntityType.WANDERING_TRADER || type == EntityType.TRADER_LLAMA) {
-            event.setCanceled(true);
         }
     }
 

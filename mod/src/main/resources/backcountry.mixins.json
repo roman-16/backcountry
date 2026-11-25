@@ -1,11 +1,17 @@
 {
   "client": [
+    "CloudHeightMixin",
+    "MoreDarknessLightMixin",
+    "MoreDarknessMoonMixin",
+    "MoreDarknessPerceptionMixin",
+    "MoreDarknessReadbackMixin",
     "ToastComponentMixin"
   ],
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "mixins": [
     "AbstractContainerMenuMixin",
+    "BiteEngineMixin",
     "ContinentsMixin",
     "DailyOrderMixin",
     "IceThawMixin",
@@ -18,6 +24,7 @@
     "RiverPressureMixin",
     "SplineCoordinateMixin",
     "StructuresMixin",
+    "TamableAnimalMixin",
     "WeatherEffectMixin"
   ],
   "package": "io.github.roman16.backcountry.mixin",

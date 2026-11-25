@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "hanging=false": {
+      "model": "backcountry:block/empty_lantern"
+    },
+    "hanging=true": {
+      "model": "backcountry:block/empty_lantern_hanging"
+    }
+  }
+}

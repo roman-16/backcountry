@@ -7,11 +7,13 @@ A modpack about a year alone in the Alaskan wilderness, counted in calories, for
 - **The design decides.** `design/` holds what the pack is, and `design/README.md` says which milestone is under way. Build only what is Settled there; a gap found while building goes back to Open in its document, never decided in code. Design work runs through the `design` skill.
 - **The body is the mod's.** Every food, every hour of work and every degree of cold counts in the mod's one kcal model (`design/systems.md` S1), so no public survival mod goes in beside it: no temperature, thirst, nutrition, spoilage, stamina, weight or inventory mod. Ecliptic Seasons' heat stroke stays off for the same reason.
 - **The weather is the mod's.** One sky drawn from the world seed and the day (`design/systems.md` S3) is what the forecast reads, so Ecliptic's own rain stays off (`UseSolarWeather`), mixins answer its rain-or-snow choice and its weather effects from the mod's air, `/weather` is refused, and no weather mod goes in beside it.
-- **The fire is the mod's.** The pack's campfire (`backcountry:campfire`, `design/systems.md` S6) burns only the wood queued in it, so vanilla's campfire, which burns forever, has its recipe switched off.
-- **Vanilla's hunger is never read.** The body holds the food level at 17 (no vanilla healing, no starving) and drops it to 6 while the survivor is too tired, blistered or frostbitten, so vanilla's own check stops sprinting.
+- **The fire is the mod's.** The pack's campfire (`backcountry:campfire`, `design/systems.md` S6) burns only the wood queued in it, so vanilla's campfire, which burns forever, is cut; torches and lanterns burn down and are refilled (`fire/Lights`), and the furnace cooks no food.
+- **Vanilla's hunger is never read.** The body holds the food level at 17 (no vanilla healing, no starving) and drops it to 6 while the survivor is too tired, blistered or frostbitten, so vanilla's own check stops sprinting; the difficulty is locked at Normal, since Peaceful heals and feeds.
 - **Every food has its numbers.** Every food of every jar has an entry in `mod/src/main/resources/data/backcountry/data_maps/item/food.json`, and an item without one cannot be eaten; `just test` fails on a food without an entry, so a mod added to the pack gets its foods' entries with it.
-- **The spawn director owns every animal.** Natural spawns of anything not on its list are cancelled, so a creature mod adds nothing until the list names its animals.
-- **Wilderness only.** No structure generates (`StructuresMixin`) and the Nether stays unreachable: the island is the whole game.
+- **The spawn director owns every animal.** Natural spawns of anything not on its list are cancelled, so a creature mod adds nothing until the list names its animals; no animal breeds or is tamed.
+- **A survivalist's year.** The pack is what a survivalist alone in Alaska meets and does: a mechanic, item or place that one would not is cut, in `cuts.toml` or at its source (`design/systems.md` S12). No structure generates (`StructuresMixin`), no cave is carved (`pack/config/tectonic.json`), no ore lies in the rock but the surface iron and the birch forests' gold-flecked gravel, and no Nether portal lights: the island's surface is the whole game.
+- **What goes is in `cuts.toml`.** A cut item is hidden from JEI, every recipe that makes or needs it is dropped and every loot drops it no more; a cut creature never joins the world. A mod added to the pack has its items weighed there, a whole mod of exotic things under `[mods]` with the few it keeps; `just test` fails on a cut that names nothing, on a recipe that makes or needs a cut item, and on an item whose every recipe needed one, which is then cut or listed as `found` when the island gives it as it lies.
+- **Every key is the pack's.** Every key of every mod is entered in `pack/config/defaultoptions/keybindings.txt`, unbound unless a player needs it (River Fishing's fight keys, Ping Wheel's mark, JEI's keys inside its own screens).
 - **The world's shape is measured, not guessed.** A change to `balance.toml` `[world]` or `pack/config/tectonic.json` is measured with `just shape 1 2 3 4 5 6` before it is kept, and its pictures judged.
 - **Everyone in a world is one team.** Caches, rations and the director's rations are the team's; the body is each survivor's.
 - **Every number lives once,** in `balance.toml`, which the mod reads from its jar. A number that tunes something is a power of two or a sum of two such; a number that means something stays as it is: a value quoted in `design/` or taken from Forge Labs' configs, a fact about vanilla or a mod, or time people read.
@@ -26,7 +28,7 @@ The gates are `just lint`, then `just test` (the game tests beside the headless 
 
 ## Where things go
 
-- Textures, item and block models, blockstates and the game tests' room are written by `just generate` from `generator/textures.toml` into `mod/src/generated/`; change the source, never the output.
+- Textures, item and block models, blockstates and the game tests' room are written by `just generate` from `generator/textures.toml` into `mod/src/generated/`, and `pack/config/iris.properties` and the shader's options in `pack/shaderpacks/` from `generator/shader.toml` and `balance.toml` `[sky]`; change the source, never the output.
 - Ecliptic Seasons is on the dev classpath, fetched from Modrinth at the version `pack/mods/ecliptic-seasons.pw.toml` names, so `scripts/instance.py` leaves its jar out of the dev client's, dev server's and game tests' mods; the server pack and the shipped pack carry it as usual.
 - A mod's config in `pack/config` holds only the keys the pack changes; the mod fills in the rest itself.
 
@@ -53,7 +55,7 @@ Each π session drives games of its own in `build/clients/<n>/` and `build/devse
 | `shot <name>` | A screenshot of the next drawn frame into the game folder's `screenshots/` |
 | `press <text>` | Clicks the active button whose label holds the text |
 | `click <x> <y> [right]` | Clicks on the open screen at GUI coordinates |
-| `key <name>` | `inventory` in the world; `left`, `right`, `enter`, `escape`, `tab` or a letter on a screen |
+| `key <name>` | `inventory` or `escape` (the pause menu) in the world; `left`, `right`, `enter`, `escape`, `tab` or a letter on a screen |
 | `hold <key> <ticks>` | Holds `forward`, `back`, `left`, `right`, `jump`, `sneak`, `sprint`, `use` or `attack` |
 | `use`, `slot <n>`, `face <yaw> <pitch>`, `close` | A right-click, a hotbar slot, a facing, back to the world |
 | `join <address>` | Leaves the world and joins a server |

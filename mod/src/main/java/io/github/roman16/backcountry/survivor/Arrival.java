@@ -42,6 +42,7 @@ public final class Arrival {
         if (!team.begun()) {
             Calendar.begin(event.getServer().overworld());
             event.getServer().getGameRules().getRule(GameRules.RULE_ANNOUNCE_ADVANCEMENTS).set(false, event.getServer());
+            event.getServer().getGameRules().getRule(GameRules.RULE_REDUCEDDEBUGINFO).set(true, event.getServer());
             team.begin();
         }
     }

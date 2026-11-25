@@ -264,6 +264,10 @@ thaw_above_c = 1
 [kit]
 pilot_bread = 38
 
+[lights]
+lantern_hours = 72
+torch_hours = 36
+
 [load]
 block_kg = 1.0
 capacity_kg = 16
@@ -331,6 +335,12 @@ rut_months = [9, 9]
 [skills]
 level_share = 0.125
 uses_to_level = [8, 32, 128, 512]
+
+[sky]
+cloud_height = 384
+moon_full = 1.00
+moon_new = 0.01
+moon_partial = 0.10
 
 [sled]
 ground_drag = 1.0

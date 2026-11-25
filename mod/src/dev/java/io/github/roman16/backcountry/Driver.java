@@ -406,6 +406,11 @@ public final class Driver {
             until = () -> ticks >= 1;
             return;
         }
+        if (name.equals("escape") && minecraft.screen == null) {
+            minecraft.pauseGame(false);
+            until = () -> ticks >= 1;
+            return;
+        }
         int code = KEYS.getOrDefault(name, name.length() == 1 ? InputConstants.getKey("key.keyboard." + name).getValue() : -1);
         if (code < 0 || minecraft.screen == null) {
             throw new IllegalArgumentException("no key " + name + (minecraft.screen == null ? " outside a screen" : ""));
