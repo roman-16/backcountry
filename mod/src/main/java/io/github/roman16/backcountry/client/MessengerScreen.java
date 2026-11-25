@@ -4,9 +4,13 @@ import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.body.Alert;
 import io.github.roman16.backcountry.body.BodyView;
+import io.github.roman16.backcountry.body.Burn;
 import io.github.roman16.backcountry.food.Ration;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Condition;
+import io.github.roman16.backcountry.body.Skill;
+import io.github.roman16.backcountry.guide.GuideView;
+import io.github.roman16.backcountry.guide.Task;
 import io.github.roman16.backcountry.net.Messages;
 import io.github.roman16.backcountry.weather.Kind;
 import io.github.roman16.backcountry.weather.Outlook;
@@ -18,6 +22,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -38,8 +43,9 @@ public class MessengerScreen extends Screen {
     private static final ResourceLocation FOOD = ResourceLocation.withDefaultNamespace("hud/food_full");
     private static final ResourceLocation HEART = ResourceLocation.withDefaultNamespace("hud/heart/full");
     private static final ResourceLocation RATION = Backcountry.id("hud/ration");
-    private static final String[] PAGES = {"weather", "forecast", "warmth", "body", "nutrition", "rations", "vitals"};
-    private static final ResourceLocation[] PAGE_ICONS = {Kind.PARTLY_CLOUDY.icon(), FORECAST, FIRE, TEMPERATURE, FOOD, RATION, HEART};
+    private static final ResourceLocation TASKS = Backcountry.id("hud/tasks");
+    private static final String[] PAGES = {"tasks", "weather", "forecast", "warmth", "body", "nutrition", "rations", "vitals"};
+    private static final ResourceLocation[] PAGE_ICONS = {TASKS, Kind.PARTLY_CLOUDY.icon(), FORECAST, FIRE, TEMPERATURE, FOOD, RATION, HEART};
     private static final int WIDTH = 232;
     private static final int HEIGHT = 214;
     private static final int LCD_X = 12;
@@ -73,6 +79,12 @@ public class MessengerScreen extends Screen {
     private static final float CLOTHING_FULL = 6;
     private static final float AWAKE_FULL_HOURS = 48;
     private static final int SHOWN_CONDITIONS = 6;
+    private static final int TASK_LINES = 8;
+    private static final int HOW_LINES = 2;
+    private static final int BOX = 7;
+    private static final int BURN_LINES = 2;
+    private static final int SKILL_STEP = 4;
+    private static final int BURNS_A_LINE = 3;
     private static int page;
     private int left;
     private int top;
@@ -185,6 +197,7 @@ public class MessengerScreen extends Screen {
         int hovered = tabs(graphics, x, mouseX, mouseY);
         int row = y + CONTENT_Y;
         switch (PAGES[page]) {
+            case "tasks" -> tasks(graphics, x, row, ClientState.guide);
             case "weather" -> weather(graphics, x, row, ClientState.weather);
             case "forecast" -> forecast(graphics, x, row, ClientState.weather);
             case "warmth" -> warmth(graphics, x, row, view);
@@ -399,6 +412,44 @@ public class MessengerScreen extends Screen {
         }
     }
 
+    private void tasks(GuiGraphics graphics, int x, int y, GuideView guide) {
+        Component stage = guide.stage().title();
+        graphics.drawString(font, stage, x + PAD, y + 1, Look.LCD_DIM, false);
+        if (!guide.stage().team()) {
+            Component count = Component.translatable("messenger.backcountry.tasks.count", guide.done().size(), guide.tasks().size());
+            graphics.drawString(font, count, x + LCD_WIDTH - PAD - font.width(count), y + 1, Look.LCD_DIM, false);
+        }
+        y += LINE;
+        int width = LCD_WIDTH - 2 * PAD - BOX - ICON_GAP;
+        List<Task> open = guide.tasks().stream().filter(task -> !guide.done(task)).limit(Balance.get().tasks().shown()).toList();
+        List<FormattedCharSequence> how = open.isEmpty() ? List.of() : font.split(open.getFirst().how(), width);
+        int lines = open.size() + Math.min(HOW_LINES, how.size());
+        List<Task> done = guide.done();
+        List<Task> shownDone = done.subList(Math.max(0, done.size() - Math.max(0, TASK_LINES - 1 - lines)), done.size());
+        for (Task task : shownDone) {
+            y = task(graphics, x, y, task, true);
+        }
+        for (Task task : open) {
+            y = task(graphics, x, y, task, false);
+            if (task == open.getFirst()) {
+                for (FormattedCharSequence line : how.subList(0, Math.min(HOW_LINES, how.size()))) {
+                    graphics.drawString(font, line, x + PAD + BOX + ICON_GAP, y + 1, Look.LCD_DIM, false);
+                    y += LINE;
+                }
+            }
+        }
+    }
+
+    private int task(GuiGraphics graphics, int x, int y, Task task, boolean done) {
+        int left = x + PAD;
+        int boxTop = y + 1;
+        graphics.fill(left, boxTop, left + BOX, boxTop + BOX, done ? Look.LCD_DIM : Look.LCD_TEXT);
+        graphics.fill(left + 1, boxTop + 1, left + BOX - 1, boxTop + BOX - 1, done ? Look.LCD_DIM : Look.LCD);
+        String title = font.plainSubstrByWidth(task.title().getString(), LCD_WIDTH - 2 * PAD - BOX - ICON_GAP);
+        graphics.drawString(font, title, left + BOX + ICON_GAP, y + 1, done ? Look.LCD_DIM : Look.LCD_TEXT, false);
+        return y + LINE;
+    }
+
     private void warmth(GuiGraphics graphics, int x, int y, BodyView view) {
         y = row(graphics, x, y, FIRE, Component.translatable("messenger.backcountry.fire"),
                 Component.translatable(view.fire() ? "messenger.backcountry.fire.near" : "messenger.backcountry.fire.none"), view.fire() ? Look.LCD_TEXT : Look.LCD_DIM);
@@ -450,6 +501,17 @@ public class MessengerScreen extends Screen {
                 Component.translatable("messenger.backcountry.eaten_burned", Words.kcal(view.kcalEaten()), Words.kcal(view.kcalBurned())), Look.LCD_TEXT);
         meter(graphics, x, y, view.kcalBurned() <= 0 ? 0 : view.kcalEaten() / view.kcalBurned(), Look.LCD_TEXT);
         y += ROW - LINE;
+        if (view.burned().size() == Burn.values().length) {
+            for (int line = 0; line < BURN_LINES; line++) {
+                List<String> parts = new ArrayList<>();
+                for (int i = line * BURNS_A_LINE; i < (line + 1) * BURNS_A_LINE; i++) {
+                    parts.add(Burn.values()[i].title().getString() + " " + Words.kcal(view.burned().get(i)));
+                }
+                String shown = font.plainSubstrByWidth(String.join(" · ", parts), LCD_WIDTH - 2 * PAD - ICON - 4);
+                graphics.drawString(font, shown, x + PAD + ICON + 4, y + 1, Look.LCD_DIM, false);
+                y += LINE;
+            }
+        }
         Component nutrients = Component.translatable("messenger.backcountry.nutrients", Words.grams(view.protein()), Words.grams(view.carbs()), Words.grams(view.fat()));
         graphics.drawString(font, nutrients, x + PAD + ICON + 4, y + 1, Look.LCD_TEXT, false);
         y += ROW;
@@ -499,6 +561,19 @@ public class MessengerScreen extends Screen {
         y = row(graphics, x, y, LOAD, Component.translatable("messenger.backcountry.load"),
                 Component.translatable("messenger.backcountry.kilograms", Words.one(view.loadKg()), Words.one(view.capacityKg())), over ? Look.LCD_DANGER : Look.LCD_TEXT);
         meter(graphics, x, y, view.loadKg() / view.capacityKg(), over ? Look.LCD_DANGER : Look.LCD_TEXT);
+        y += ROW - LINE;
+        int column = (LCD_WIDTH - 2 * PAD) / 2;
+        for (Skill skill : Skill.values()) {
+            int level = view.skills().size() == Skill.values().length ? view.skills().get(skill.ordinal()) : 1;
+            int cx = x + PAD + (skill.ordinal() % 2) * column;
+            int cy = y + (skill.ordinal() / 2) * LINE;
+            graphics.drawString(font, skill.title(), cx, cy + 1, Look.LCD_DIM, false);
+            int barRight = cx + column - PAD;
+            int barLeft = barRight - Skill.HIGHEST * SKILL_STEP;
+            for (int step = 0; step < Skill.HIGHEST; step++) {
+                graphics.fill(barLeft + step * SKILL_STEP, cy + 2, barLeft + step * SKILL_STEP + SKILL_STEP - 1, cy + 2 + METER + 3, step < level ? Look.LCD_TEXT : Look.LCD_TRACK);
+            }
+        }
     }
 
     private Component clothing() {

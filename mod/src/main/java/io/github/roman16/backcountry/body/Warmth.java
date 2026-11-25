@@ -28,6 +28,7 @@ public final class Warmth {
         body.fire = heat > 0;
         double air = Climate.airC(level, feet, day);
         double wind = Weather.day(level, day).windKmh();
+        body.windKmh = wind;
         body.windy = !body.sheltered && wind > Climate.CALM_KMH;
         body.effectiveC = (body.sheltered ? air + warmth.shelterC() : Climate.feelsC(air, wind)) + heat;
         double clothing = 0;

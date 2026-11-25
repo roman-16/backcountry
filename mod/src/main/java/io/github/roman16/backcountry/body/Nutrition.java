@@ -21,9 +21,11 @@ public record Nutrition(double kcal, double fat, double protein, double carbs, d
             .apply(instance, Nutrition::new));
 
     public static Optional<Nutrition> of(ItemStack stack) {
-        if (Fish.is(stack.getItem())) {
-            return Fish.nutrition(stack);
-        }
-        return Optional.ofNullable(stack.getItemHolder().getData(Things.FOOD));
+        Optional<Nutrition> food = Fish.is(stack.getItem()) ? Fish.nutrition(stack) : Optional.ofNullable(stack.getItemHolder().getData(Things.FOOD));
+        return stack.has(Things.POISONED.get()) ? food.map(Nutrition::poisoned) : food;
+    }
+
+    public Nutrition poisoned() {
+        return new Nutrition(kcal, fat, protein, carbs, vitaminC, raw, 1, days, water);
     }
 }

@@ -7,15 +7,19 @@ import io.github.roman16.backcountry.body.BodyView;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Alerts;
 import io.github.roman16.backcountry.body.Metabolism;
+import io.github.roman16.backcountry.body.Skill;
 import io.github.roman16.backcountry.body.Warmth;
 import io.github.roman16.backcountry.client.ClientMessages;
 import io.github.roman16.backcountry.fire.Lighting;
+import io.github.roman16.backcountry.guide.Guide;
+import io.github.roman16.backcountry.guide.GuideView;
 import io.github.roman16.backcountry.survivor.Arrival;
 import io.github.roman16.backcountry.survivor.Summary;
 import io.github.roman16.backcountry.survivor.Team;
 import io.github.roman16.backcountry.weather.Day;
 import io.github.roman16.backcountry.weather.Forecast;
 import io.github.roman16.backcountry.weather.WeatherView;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
@@ -34,10 +38,10 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public final class Messages {
     private Messages() {}
 
-    public record View(BodyView body, WeatherView weather) implements CustomPacketPayload {
+    public record View(BodyView body, WeatherView weather, GuideView guide) implements CustomPacketPayload {
         public static final Type<View> TYPE = new Type<>(Backcountry.id("view"));
         static final StreamCodec<RegistryFriendlyByteBuf, View> STREAM_CODEC = StreamCodec.composite(BodyView.STREAM_CODEC, View::body, WeatherView.STREAM_CODEC,
-                View::weather, View::new);
+                View::weather, GuideView.STREAM_CODEC, View::guide, View::new);
 
         @Override
         public Type<View> type() {
@@ -109,7 +113,7 @@ public final class Messages {
 
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("1");
-        registrar.playToClient(View.TYPE, View.STREAM_CODEC, (payload, context) -> ClientMessages.view(payload.body(), payload.weather()));
+        registrar.playToClient(View.TYPE, View.STREAM_CODEC, (payload, context) -> ClientMessages.view(payload.body(), payload.weather(), payload.guide()));
         registrar.playToClient(Sky.TYPE, Sky.STREAM_CODEC, (payload, context) -> ClientMessages.sky(payload.days()));
         registrar.playToClient(BowDrill.TYPE, BowDrill.STREAM_CODEC, (payload, context) -> ClientMessages.bowDrill(payload.fire(), payload.wet()));
         registrar.playToServer(Drilled.TYPE, Drilled.STREAM_CODEC, (payload, context) -> {
@@ -147,9 +151,10 @@ public final class Messages {
                 (float) body.wetness, body.awakeTicks / 1000F, (float) body.kcalEatenToday, (float) body.kcalBurnedToday, (float) body.proteinToday, (float) body.carbsToday,
                 (float) body.fatToday, (float) body.stomachShare(), (float) body.loadKg, (float) balance.load().capacityKg(), Calendar.day(player.level()), body.blackoutTicks,
                 body.fire, body.sheltered, body.windy, (float) body.clo, Alerts.shown(body), body.unread, team.ration().ordinal(),
-                (float) team.storesDays(Team.living(player.server)));
+                (float) team.storesDays(Team.living(player.server)), Arrays.stream(body.burned).mapToObj(kcal -> (float) kcal).toList(),
+                Skill.levels(body));
         if (!(player instanceof FakePlayer) && player.connection.hasChannel(View.TYPE)) {
-            PacketDistributor.sendToPlayer(player, new View(view, Forecast.view(player, body)));
+            PacketDistributor.sendToPlayer(player, new View(view, Forecast.view(player, body), Guide.get(player.server).view(player)));
         }
     }
 

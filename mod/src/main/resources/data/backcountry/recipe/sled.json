@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "R": {
+      "item": "backcountry:rope"
+    },
+    "S": {
+      "item": "backcountry:rawhide_strips"
+    }
+  },
+  "pattern": [
+    " R ",
+    "SPS",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:sled"
+  }
+}

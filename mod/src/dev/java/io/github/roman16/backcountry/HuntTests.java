@@ -41,7 +41,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @GameTestHolder(Backcountry.MODID)
 @PrefixGameTestTemplate(false)
 public final class HuntTests {
-    private static final ResourceLocation MOOSE = ResourceLocation.fromNamespaceAndPath("alexsmobs", "moose");
+    static final ResourceLocation MOOSE = ResourceLocation.fromNamespaceAndPath("alexsmobs", "moose");
     private static final int ANIMALS = 16;
     private static final float ARROW_DAMAGE = 2;
 
@@ -126,7 +126,7 @@ public final class HuntTests {
         check(helper, helper.getBlockState(pos).is(Things.CARCASS.get()), "a stick dressed the carcass");
         ItemStack knife = new ItemStack(Things.KNIFE.get());
         player.setItemInHand(InteractionHand.MAIN_HAND, knife);
-        int clicks = CarcassBlock.clicks(carcass);
+        int clicks = CarcassBlock.clicks(carcass, Metabolism.body(player));
         for (int click = 0; click < clicks; click++) {
             helper.getLevel().getBlockState(at).useItemOn(knife, helper.getLevel(), player, InteractionHand.MAIN_HAND, hit);
         }

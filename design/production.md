@@ -3,10 +3,11 @@
 ## Settled
 
 - **Release:** private to friends: the repository is public, a Prism instance updates itself from GitHub Pages (`https://roman-16.github.io/backcountry/1/Backcountry.zip`), and the mod jar comes from the GitHub release. A version is its dated section in `CHANGELOG.md`, released when it reaches main.
-- **Performance:** the shipped pack draws with Complementary Unbound through Iris and Distant Horizons' far view. The frame rate bench (`bench <seconds>` in the dev client, the `playthrough` skill) turns the camera once around: on the user's desktop at 1920 by 1080 and 8 chunks it held 59 frames a second on average and 53 at its lowest; a lowest below 30 is a finding.
+- **Performance:** the shipped pack draws with Complementary Unbound through Iris and Distant Horizons' far view, 1,024 chunks out, which a server keeps up to date as far (`pack/config/DistantHorizons.toml`). The frame rate bench (`bench <seconds>` in the dev client, the `playthrough` skill) turns the camera once around: on the user's desktop at 1920 by 1080 and 8 chunks it held 60 frames a second on average and 59 at its lowest once the far land had loaded, and 41 at its lowest in a fresh world's first minute; a lowest below 30 is a finding.
+- **Server:** the team plays on an exaroton server. `just exaroton <server>` puts the tree's server pack on it while it is offline: NeoForge, launched by its server starter jar, the mods, the configs and the pack's server properties, uploading only what changed and removing what the pack no longer holds. The world, the whitelist and the operators stay; a running server is refused.
 
 - **Tooling:** game tests run headless with the pack's server mods; the dev client and the dev server are driven by `scripts/client.py` and `scripts/server.py`, with pretend players for a team. The client walks (`walk <x> <z>`) and keeps checkpoints of its world, and `/backcountry playthrough` lives a survivor through game days on the dev server for balance; the `playthrough` skill runs them.
-- **Balance** follows the playthroughs: in a camp with a roof, a fire and hide clothing, a Normal ration keeps a survivor near their weight through a year (77 to 76 kg), and a hard year of Lean rations and heavy work ends near the reference year's 67 kg.
+- **Balance** follows the playthroughs: in a camp with a roof, a fire and hide clothing, a Normal ration with 1,024 kcal of work a day keeps a survivor near their weight through a year (77 to 76.1 kg), and a hard year of Lean rations and 2,048 kcal of work a day ends at 66.1 kg, near the reference year's 67 kg.
 
 ## Open
 

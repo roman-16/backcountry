@@ -4,6 +4,9 @@ import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.food.Spoilage;
+import io.github.roman16.backcountry.gear.Water;
+import io.github.roman16.backcountry.guide.Guide;
+import io.github.roman16.backcountry.guide.Task;
 import io.github.roman16.backcountry.net.Messages;
 import io.github.roman16.backcountry.survivor.Ending;
 import io.github.roman16.backcountry.survivor.Team;
@@ -53,7 +56,9 @@ public final class Metabolism {
     public static final ResourceKey<DamageType> INFECTION = ResourceKey.create(Registries.DAMAGE_TYPE, Backcountry.id("infection"));
     public static final ResourceKey<DamageType> THIRST = ResourceKey.create(Registries.DAMAGE_TYPE, Backcountry.id("thirst"));
     public static final int STEP_TICKS = 20;
-    private static final double TICKS_AN_HOUR = 1000;
+    private static final double TICKS_AN_HOUR = Exertion.TICKS_AN_HOUR;
+    private static final double MINUTES_AN_HOUR = 60;
+    private static final double KCAL_A_GRAM_OF_CARBS = 4;
     private static final double TICKS_A_DAY = 24000;
     private static final int TICKS_A_SECOND = 20;
     private static final int TIRED_FOOD = 6;
@@ -105,7 +110,11 @@ public final class Metabolism {
         }
         for (ServerPlayer player : level.players()) {
             if (player.isSleeping() && lives(player)) {
-                step(player, body(player), skipped, true);
+                Body body = body(player);
+                step(player, body, skipped, true);
+                if (body.sheltered) {
+                    Guide.done(player, Task.SLEEP_ROOFED);
+                }
             }
         }
     }
@@ -122,18 +131,13 @@ public final class Metabolism {
         }
         Warmth.sense(player, body, day);
         body.loadKg = Load.kg(player, body);
-        double over = Math.max(0, body.loadKg - balance.load().capacityKg());
-        double shiver = body.coreC < balance.warmth().shiverCoreC() ? balance.warmth().shiverKcalPerHourC() * (balance.warmth().shiverCoreC() - body.coreC) * hours : 0;
-        double work = body.workKcal + over * balance.work().overloadKcalPerKgHour() * hours + shiver;
-        body.workKcal = 0;
-        double illness = (body.has(Condition.INFECTED_WOUND) ? balance.conditions().feverBurn() : 0) + (body.has(Condition.SCURVY) ? balance.conditions().scurvyBurn() : 0);
-        double burn = balance.body().restingKcalPerKgDay() * body.weightKg * days * (1 + illness) + work;
         double absorbed = digest(body, hours);
+        double burn = Exertion.burn(player, body, hours, asleep, absorbed);
         body.weightKg += (absorbed - burn) / balance.body().kcalPerKg();
         body.kcalBurnedToday += burn;
         body.vitaminCMg = Math.max(0, body.vitaminCMg - balance.body().vitaminCMgDay() * days);
         Balance.Energy energy = balance.energy();
-        body.energy -= work / energy.workKcalToEmpty();
+        body.energy -= body.exertedKcal / (body.weightKg * energy.workKcalPerKgToEmpty());
         boolean bitten = Mosquitoes.biting(player, body);
         if (bitten) {
             Mosquitoes.swarm(player);
@@ -243,14 +247,9 @@ public final class Metabolism {
         if (body.lastPosition != null) {
             double blocks = Math.sqrt(Math.pow(now.x - body.lastPosition.x, 2) + Math.pow(now.z - body.lastPosition.z, 2));
             if (blocks < TELEPORT_BLOCKS && player.getVehicle() == null) {
-                Balance.Work work = Balance.get().work();
-                if (player.isInWater()) {
-                    body.workKcal += blocks * work.swimKcalPerBlock();
-                } else if (player.onGround()) {
-                    body.workKcal += blocks * (player.isSprinting() ? work.sprintKcalPerBlock() : work.walkKcalPerBlock());
-                    if (body.wetness >= Balance.get().conditions().blistersWetness()) {
-                        body.wetBlocks += blocks;
-                    }
+                Exertion.stride(player, body, body.lastPosition, now);
+                if (player.onGround() && !player.isInWater() && body.wetness >= Balance.get().conditions().blistersWetness()) {
+                    body.wetBlocks += blocks;
                 }
             }
         }
@@ -318,7 +317,7 @@ public final class Metabolism {
             poison(body(player));
         }
         if (food.get().water() > 0) {
-            drink(player, food.get().water(), true);
+            drink(player, food.get().water(), Water.of(true, (float) food.get().water()));
         }
         return true;
     }
@@ -364,45 +363,63 @@ public final class Metabolism {
         return body.waterL < Balance.get().water().needLDay() - Balance.get().water().sipL() / 2;
     }
 
-    public static void drink(ServerPlayer player, double litres, boolean boiled) {
+    public static void drink(ServerPlayer player, double litres, Water drink) {
         Body body = body(player);
-        body.waterL = Math.min(Balance.get().water().needLDay(), body.waterL + litres);
-        if (!boiled && player.getRandom().nextDouble() < Balance.get().conditions().gutInfectionChance()) {
+        Balance balance = Balance.get();
+        body.waterL = Math.min(balance.water().needLDay(), body.waterL + litres);
+        switch (drink.drink()) {
+            case SPRUCE_TEA -> body.vitaminCMg = Math.min(balance.body().vitaminCMgDay() * balance.body().vitaminCStoreDays(),
+                    body.vitaminCMg + balance.forage().teaVitaminCMgPerL() * litres);
+            case BIRCH_SAP -> {
+                double kcal = balance.forage().sapKcalPerL() * litres;
+                body.stomachKcal += kcal;
+                body.stomachCarbs += kcal / KCAL_A_GRAM_OF_CARBS;
+                body.kcalEaten += kcal;
+                body.kcalEatenToday += kcal;
+                body.carbsToday += kcal / KCAL_A_GRAM_OF_CARBS;
+            }
+            case WATER -> {
+            }
+        }
+        if (drink.boiled()) {
+            Guide.done(player, Task.BOIL_WATER);
+        } else if (player.getRandom().nextDouble() < Balance.get().conditions().gutInfectionChance()) {
             body.afflict(Condition.GUT_INFECTION);
         }
     }
 
-    public static void work(Player player, double kcal) {
+    public static void effort(Player player, Activity activity, double hours) {
         if (player instanceof ServerPlayer server && lives(server)) {
-            body(server).workKcal += kcal;
+            Body body = body(server);
+            body.workKcal += Exertion.activityKcal(activity.met(), body.weightKg, hours);
         }
+    }
+
+    public static void effortMinutes(Player player, Activity activity, double minutes) {
+        effort(player, activity, minutes / MINUTES_AN_HOUR);
     }
 
     @SubscribeEvent
     static void broke(BlockEvent.BreakEvent event) {
-        Balance.Work work = Balance.get().work();
         var state = event.getState();
-        work(event.getPlayer(), state.is(BlockTags.LOGS) ? work.chopKcal()
-                : state.is(BlockTags.BASE_STONE_OVERWORLD) || state.is(Tags.Blocks.ORES) ? work.mineKcal() : work.digKcal());
+        Player player = event.getPlayer();
+        float progress = state.getDestroyProgress(player, event.getLevel(), event.getPos());
+        double ticks = progress > 0 ? Math.ceil(1 / progress) : 0;
+        Activity activity = state.is(BlockTags.LOGS) ? Activity.CHOP
+                : state.is(BlockTags.BASE_STONE_OVERWORLD) || state.is(Tags.Blocks.ORES) ? Activity.MINE : Activity.DIG;
+        effort(player, activity, ticks / Exertion.TICKS_AN_HOUR);
     }
 
     @SubscribeEvent
     static void placed(BlockEvent.EntityPlaceEvent event) {
         if (event.getEntity() instanceof Player player) {
-            work(player, Balance.get().work().placeKcal());
+            effortMinutes(player, Activity.BUILD, Balance.get().effort().buildMinutes());
         }
     }
 
     @SubscribeEvent
     static void attacked(AttackEntityEvent event) {
-        work(event.getEntity(), Balance.get().work().attackKcal());
-    }
-
-    @SubscribeEvent
-    static void jumped(LivingEvent.LivingJumpEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            work(player, Balance.get().work().jumpKcal());
-        }
+        effortMinutes(event.getEntity(), Activity.FIGHT, Balance.get().effort().attackMinutes());
     }
 
     @SubscribeEvent
@@ -460,7 +477,7 @@ public final class Metabolism {
             return;
         }
         if (event.getItem().is(Items.POTION) && event.getItem().getOrDefault(net.minecraft.core.component.DataComponents.POTION_CONTENTS, PotionContents.EMPTY).is(Potions.WATER)) {
-            drink(player, Balance.get().water().sipL(), false);
+            drink(player, Balance.get().water().sipL(), Water.of(false, (float) Balance.get().water().sipL()));
             return;
         }
         eat(player, event.getItem());

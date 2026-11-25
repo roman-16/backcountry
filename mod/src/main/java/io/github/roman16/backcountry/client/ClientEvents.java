@@ -1,5 +1,6 @@
 package io.github.roman16.backcountry.client;
 
+import io.github.roman16.backcountry.food.Fish;
 import java.util.ArrayList;
 import java.util.List;
 import io.github.roman16.backcountry.Backcountry;
@@ -92,6 +93,12 @@ public final class ClientEvents {
             }
             if (stack.has(Things.SPAWNED_OUT.get())) {
                 lines.add(Component.translatable("tooltip.backcountry.spawned_out").withStyle(ChatFormatting.RED));
+            }
+            if (stack.has(Things.POISONED.get())) {
+                lines.add(Component.translatable("tooltip.backcountry.poisoned").withStyle(ChatFormatting.RED));
+            }
+            if (Fish.frozenThrough(stack)) {
+                lines.add(Component.translatable("tooltip.backcountry.frozen_through").withStyle(ChatFormatting.AQUA));
             }
             event.getToolTip().addAll(Math.min(1, event.getToolTip().size()), lines);
         });

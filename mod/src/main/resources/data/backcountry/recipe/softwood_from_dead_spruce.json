@@ -1,0 +1,18 @@
+{
+  "type": "backcountry:tool",
+  "ingredients": [
+    {
+      "item": "backcountry:dead_spruce_log"
+    }
+  ],
+  "tool": {
+    "tag": "minecraft:axes"
+  },
+  "result": {
+    "components": {
+      "backcountry:seasoning": 100
+    },
+    "count": 2,
+    "id": "backcountry:softwood"
+  }
+}

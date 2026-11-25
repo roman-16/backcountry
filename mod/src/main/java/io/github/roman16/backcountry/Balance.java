@@ -17,11 +17,11 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpray, Berries berries, Body body, BowDrill bowDrill, Cache cache, Climate climate,
-        Conditions conditions, Cooking cooking, Director director, DropOff dropOff, Energy energy, Farming farming, Fire fire, Firewood firewood, Fish fish,
-        Headlamp headlamp, Healing healing, Map<String, Double> heat, Hunting hunting, Ice ice, Map<String, Double> insulation, Kit kit, Load load, Mice mice,
-        Mining mining, Mosquitoes mosquitoes, PlantFibre plantFibre, Raft raft, Rations rations, Seasons seasons, Smoker smoker, Snow snow, Spoilage spoilage,
-        Survivor survivor, Traps traps, Warmth warmth, Water water, Weather weather, Work work, World world, Year year) {
+public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpray, Bears bears, Berries berries, Body body, BowDrill bowDrill, Cache cache, Climate climate,
+        Conditions conditions, Cooking cooking, Director director, DropOff dropOff, Effort effort, Energy energy, Farming farming, Fire fire, Firewood firewood, Fish fish, Forage forage,
+        Headlamp headlamp, Healing healing, Map<String, Double> heat, Hunting hunting, Ice ice, Map<String, Double> insulation, Kit kit, Load load, Map<String, Double> met, Mice mice,
+        Mining mining, Mosquitoes mosquitoes, PlantFibre plantFibre, Raft raft, Rations rations, Seasons seasons, Skills skills, Sled sled, Smoker smoker, Snow snow, Spoilage spoilage,
+        Survivor survivor, Tasks tasks, Traps traps, Warmth warmth, Walking walking, Water water, Weather weather, World world, Year year) {
     private static final Pattern WORD_START = Pattern.compile("([A-Z])");
     private static final Balance LOADED = read();
 
@@ -34,13 +34,18 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
 
     public record BearSpray(int blindSeconds, int bursts, double coneDegrees, int fleeSeconds, double pointBlankBlocks, double reachBlocks) {}
 
-    public record Berries(List<Double> blueberryMonths, List<Double> lingonberryMonths) {}
+    public record Bears(double bluffShare, double bluffStopBlocks, double chargeBlocks, double chargeChance, double cubBlocks, double cubShare, double defendBlocks,
+            List<Double> fallMonths, double fleeBlocks, int leftoverGrams, double leftoverHours, int mostCubs, List<Double> salmonMonths, List<Double> springMonths,
+            double surpriseBlocks) {}
 
-    public record Body(double arrivalKg, double digestKcalPerHour, double extractionBmi, double heightM, double kcalPerKg, double restingKcalPerKgDay, double stomachKcal,
-            double vitaminCMgDay, double vitaminCStoreDays) {}
+    public record Berries(List<Double> baneberryMonths, List<Double> blueberryMonths, List<Double> highbushCranberryMonths, List<Double> lingonberryMonths,
+            List<Double> salmonberryMonths) {}
+
+    public record Body(double arrivalKg, double bmrKcalPerKgHour, double digestKcalPerHour, double extractionBmi, double heightM, double kcalPerKg, double sleepKcalPerKgHour,
+            double stomachKcal, double thermicShare, double vitaminCMgDay, double vitaminCStoreDays) {}
 
     public record BowDrill(double blowGlow, double coolingPerSecond, double flamePerSecond, double glowBand, double glowLossPerSecond, double strokeHeat,
-            double strokeKcal, int uses, double wetCooling) {}
+            int uses, double wetCooling) {}
 
     public record Cache(double scentKcal) {}
 
@@ -58,8 +63,10 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
 
     public record DropOff(int highestLakeY, int inlandBlocks, int lakeCells, int searchBlocks, int shoreRiseBlocks, int stepBlocks) {}
 
+    public record Effort(double attackMinutes, double buildMinutes, double dressMinutes, double scrapeMinutes, double splitMinutes, double strokeMinutes) {}
+
     public record Energy(double awakeHoursToEmpty, int blackoutSeconds, double digestKcalToFull, double sleepHoursToFull, double slowBelow, double slowSpeed, double sprintBelow,
-            double stumbleBelow, int stumbleSeconds, double stumbleShare, double wakeEnergy, double workKcalToEmpty) {}
+            double stumbleBelow, int stumbleSeconds, double stumbleShare, double wakeEnergy, double workKcalPerKgToEmpty) {}
 
     public record Farming(int firstMonth, double germination, double growthShare, int lastMonth, double warmC) {}
 
@@ -69,14 +76,17 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
 
     public record Firewood(double catches, double dryPerDay, double freshHardwood, double freshSoftwood, double frozenDrying, int pilePieces) {}
 
-    public record Fish(double cookedDays, double fatGPerKg, double kcalPerKg, double proteinGPerKg, double rawDays, List<Double> spawnedOutMonths,
-            double vitaminCMgPerKg) {}
+    public record Fish(double cookedDays, double fatGPerKg, double frozenC, double frozenDays, double kcalPerKg, double proteinGPerKg, double rawDays,
+            List<Double> spawnedOutMonths, double vitaminCMgPerKg) {}
 
-    public record Headlamp(double chargeHours, double crankHoursPerSecond, double crankKcalPerSecond, double dimFromC, double dimmestC, double dimmestShare, int light) {}
+    public record Forage(int needlesALeaf, double sapChance, double sapKcalPerL, double sapLPerStep, List<Double> sapMonths, double syrupL, int syrupSeconds,
+            double teaVitaminCMgPerL) {}
+
+    public record Headlamp(double chargeHours, double crankHoursPerSecond, double dimFromC, double dimmestC, double dimmestShare, int light) {}
 
     public record Healing(double above, double asleepFactor, double hoursPerHeart, double scurvyFactor) {}
 
-    public record Hunting(double bleedHours, double bloodChance, double bloodDays, double carryKg, double dressClicksPerKg, double dressKcalPerClick, double heavyPower,
+    public record Hunting(double bleedHours, double bloodChance, double bloodDays, double carryKg, double dressClicksPerKg, double heavyPower,
             double organKg, double strongBmi, double strongEnergy, double woundShare) {}
 
     public record Ice(double freezeBelowC, double thawAboveC) {}
@@ -100,6 +110,10 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
 
     public record Seasons(List<Double> feedingMonths, List<Double> rutMonths) {}
 
+    public record Skills(double levelShare, List<Double> usesToLevel) {}
+
+    public record Sled(double groundDrag, double groundFriction, double selfKg, double snowDrag, double snowFriction) {}
+
     public record Smoker(double batchHours, double burnRate, double risingHours) {}
 
     public record Snow(int deepLayers, double frostbiteBlocks, double slowShare) {}
@@ -108,11 +122,18 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
 
     public record Survivor(int quietSeconds) {}
 
+    public record Tasks(double dryFirewood, double foodDays, int shown) {}
+
     public record Traps(double baitShare, double fishPerDay, double fishShare, int miceBlocks, double share) {}
 
-    public record Warmth(double baseClo, double comfortC, double comfortSpanC, double coolingShare, double coreC, double coreCPerHour, double dryPerHour, double fireDryPerHour,
-            int heatReachBlocks, double rainWetPerHour, int roofBlocks, double shelterC, double shelterDryPerHour, double shiverCoreC, double shiverKcalPerHourC,
-            double sweatCoreC, double sweatLPerHour, double sweatWetPerHour, double warmCPerClo, double wetInsulationLoss) {}
+    public record Warmth(double baseClo, double coldShare, double comfortC, double comfortSpanC, double coolingShare, double coreC, double coreCPerHour, double dryPerHour,
+            double fireDryPerHour, int heatReachBlocks, double rainWetPerHour, int roofBlocks, double shelterC, double shelterDryPerHour, double shiverCoreC,
+            double shiverKcalPerHourC, double shiverMostBmr, double sweatCoreC, double sweatLPerHour, double sweatWetPerHour, double veryColdShare, double warmCPerClo,
+            double wetInsulationLoss) {}
+
+    public record Walking(double feetShare, double iceEta, double loadWPerKg, double motionWPerKg, double sneakBlocksPerTick, double sneakMS, double snowDeepestCm,
+            double snowEta, double snowEtaPerCm, double snowshoeSink, double sprintBlocksPerTick, double standingWPerKg, double steepestGrade, double swimBlocksPerTick,
+            double walkBlocksPerTick, double walkMS, double windKmhDoubled) {}
 
     public record Water(int boilSeconds, double bottleL, int knockoutSeconds, double needLDay, double potL, double sipL, float thirstDamage) {}
 
@@ -121,9 +142,6 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
             double forecastWindErrorKmhPerDay, double highestWindKmh, List<Double> intensityShares, int longestSpellHours, double overcast,
             List<Double> precipitationDays, int shortestSpellHours, double snowBelowC, int stormFirstMonth, int stormLastMonth, double stormShare,
             List<Double> wetShares, double wetWindKmh) {}
-
-    public record Work(double attackKcal, double chopKcal, double digKcal, double jumpKcal, double mineKcal, double overloadKcalPerKgHour, double placeKcal,
-            double sprintKcalPerBlock, double swimKcalPerBlock, double walkKcalPerBlock) {}
 
     public record World(int acrossBlocks, double detailShare, int detailWavelengthBlocks, double dryShare, int edgeBlocks, double highest, double innerShare,
             double landContinentalness, double lift, double outerShare, double seaFloor, double sink, double warpShare, int warpWavelengthBlocks) {}

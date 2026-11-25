@@ -31,6 +31,10 @@ devserver mode="full":
     python3 scripts/instance.py devserver build/devserver --mode {{ mode }}
     cd mod && ./gradlew --console=plain runServer
 
+[doc("Build the server pack and put it on the exaroton server while it is offline: NeoForge, the mods, the configs and the pack's server properties, uploading only what changed; the world stays. Needs EXAROTON_API_TOKEN in .env")]
+exaroton server="": pack
+    python3 scripts/exaroton.py {{ server }}
+
 [doc("Run the mod's game tests headless with the pack's server mods, with their log in build/gametest.log")]
 gametest:
     python3 scripts/instance.py gametest build/gametest

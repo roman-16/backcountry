@@ -22,6 +22,7 @@ TRANSPARENT = "."
 DATA_VERSION = 3955
 TEST_ROOM = 8
 FACINGS = {"north": 0, "east": 90, "south": 180, "west": 270}
+BUSHES = ("baneberry_bush", "blueberry_bush", "highbush_cranberry_bush", "salmonberry_bush")
 PIECE = 4
 PIECES_A_ROW = 4
 GAP = 0.5
@@ -319,23 +320,85 @@ def food():
                 }
             },
         )
-    for stage in range(4):
+    for bush in BUSHES:
+        for stage in range(4):
+            write_json(
+                ASSETS / f"models/block/{bush}_stage{stage}.json",
+                {
+                    "parent": "minecraft:block/cross",
+                    "render_type": "minecraft:cutout",
+                    "textures": {"cross": f"backcountry:block/{bush}_stage{stage}"},
+                },
+            )
         write_json(
-            ASSETS / f"models/block/blueberry_bush_stage{stage}.json",
-            {
-                "parent": "minecraft:block/cross",
-                "render_type": "minecraft:cutout",
-                "textures": {"cross": f"backcountry:block/blueberry_bush_stage{stage}"},
-            },
+            ASSETS / f"blockstates/{bush}.json",
+            {"variants": {f"age={stage}": {"model": f"backcountry:block/{bush}_stage{stage}"} for stage in range(4)}},
         )
     write_json(
-        ASSETS / "blockstates/blueberry_bush.json",
+        ASSETS / "models/block/birch_tap.json",
+        {
+            "parent": "minecraft:block/block",
+            "textures": {
+                "particle": "minecraft:block/stripped_birch_log",
+                "wood": "minecraft:block/stripped_birch_log",
+            },
+            "elements": [
+                {
+                    "from": [6, 6, 10],
+                    "to": [10, 10, 16],
+                    "faces": {
+                        face: {
+                            "texture": "#wood",
+                            "uv": [6, 6, 10, 10] if face in ("north", "south") else [10, 6, 16, 10],
+                        }
+                        for face in ("north", "south", "east", "west", "up", "down")
+                    },
+                },
+                {
+                    "from": [7, 5, 9],
+                    "to": [9, 6, 11],
+                    "faces": {face: {"texture": "#wood"} for face in ("north", "south", "east", "west", "down")},
+                },
+            ],
+        },
+    )
+    write_json(
+        ASSETS / "blockstates/birch_tap.json",
         {
             "variants": {
-                f"age={stage}": {"model": f"backcountry:block/blueberry_bush_stage{stage}"} for stage in range(4)
+                f"facing={facing},sap={sap}": {"model": "backcountry:block/birch_tap", "y": turn}
+                if turn
+                else {"model": "backcountry:block/birch_tap"}
+                for facing, turn in FACINGS.items()
+                for sap in range(9)
             }
         },
     )
+    write_json(
+        ASSETS / "models/block/dead_spruce_log.json",
+        {
+            "parent": "minecraft:block/cube_column",
+            "textures": {"end": "backcountry:block/dead_spruce_log_top", "side": "backcountry:block/dead_spruce_log"},
+        },
+    )
+    write_json(
+        ASSETS / "models/block/dead_spruce_log_horizontal.json",
+        {
+            "parent": "minecraft:block/cube_column_horizontal",
+            "textures": {"end": "backcountry:block/dead_spruce_log_top", "side": "backcountry:block/dead_spruce_log"},
+        },
+    )
+    write_json(
+        ASSETS / "blockstates/dead_spruce_log.json",
+        {
+            "variants": {
+                "axis=x": {"model": "backcountry:block/dead_spruce_log_horizontal", "x": 90, "y": 90},
+                "axis=y": {"model": "backcountry:block/dead_spruce_log"},
+                "axis=z": {"model": "backcountry:block/dead_spruce_log_horizontal", "x": 90},
+            }
+        },
+    )
+    write_json(ASSETS / "models/item/dead_spruce_log.json", {"parent": "backcountry:block/dead_spruce_log"})
 
 
 def hunting():
@@ -539,8 +602,10 @@ def main():
     with vanilla_jar() as jar, tempfile.TemporaryDirectory() as folder:
         scratch = Path(folder)
         for name, entry in source["tinted"].items():
-            tint(jar, entry["base"], entry["colour"], ASSETS / f"textures/item/{name}.png", scratch)
-            item_model(name)
+            kind = entry.get("kind", "item")
+            tint(jar, entry["base"], entry["colour"], ASSETS / f"textures/{kind}/{name}.png", scratch)
+            if kind == "item":
+                item_model(name)
         for entry in source["overrides"].values():
             tint(jar, entry["base"], entry["colour"], OUT / "assets/minecraft" / entry["path"], scratch)
         for name, entry in source["entities"].items():

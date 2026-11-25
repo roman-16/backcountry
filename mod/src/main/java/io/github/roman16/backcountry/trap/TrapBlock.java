@@ -2,9 +2,12 @@ package io.github.roman16.backcountry.trap;
 
 import com.mojang.serialization.MapCodec;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.guide.Guide;
+import io.github.roman16.backcountry.guide.Task;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.Containers;
@@ -145,6 +148,9 @@ public final class TrapBlock extends BaseEntityBlock implements SimpleWaterlogge
             } else {
                 ItemStack taken = trap.take();
                 player.displayClientMessage(Component.translatable("message.backcountry.trap_took", taken.getHoverName()), true);
+                if (player instanceof ServerPlayer server) {
+                    Guide.done(server, Task.TRAP_CATCH);
+                }
                 if (!player.getInventory().add(taken)) {
                     player.drop(taken, false);
                 }

@@ -4,7 +4,7 @@ What Backcountry is, decided before anything is built. Each document keeps its *
 
 ## Now
 
-**M1 Repo, tooling, world**, **M2 Body**, **M3 Satellite Messenger**, **M4 Fire and wood**, **M5 Food**, **M6 Hunting**, **M7 Traps, fishing, water** and **M8 The year** are built, balanced by automated playthroughs (`playthrough` skill). M2 to M8 wait for the user's first play (`just play`, the `playtest` skill's rows).
+**M1 Repo, tooling, world** to **M12 Bears and the sled** are built, balanced by automated playthroughs (`playthrough` skill). M2 to M12 wait for the user's first play (`just play`, the `playtest` skill's rows).
 
 ## Milestones
 
@@ -20,6 +20,10 @@ Each milestone ends playable, with `just lint` and `just test` green.
 | M6 Hunting | The spawn director with fewer animals about in rain, seasonal events and their alerts (bears feeding heavily, moose rut begun), strength, bows and arrows, organ hits, blood trails, carcasses, cuts, hides with the hide clothing and the Hide Pack made from them, rawhide snowshoes, the mod's birds and mosquitoes (S8) |
 | M7 Traps, fishing, water | The material chain from cordage on, traps, bait, River Fishing's kcal, season, weather and catches counted in the summary, the raft (S9) |
 | M8 The year | Balance from playtests: the first week, a winter, a whole year; the frame rate bench; the walking dev driver and the `playthrough` skill |
+| M9 Tasks | The Messenger's Tasks page: the first days and the year's goals (S11, I2) |
+| M10 The body measured | Every activity's kcal by the game time it fills at real rates, with load, terrain and snow, slope, wind, cold, clothing, digestion and sleep; skills; the rations and the energy bar rescaled; the playthroughs run again (S1) |
+| M11 Forage | Spruce tea, salmonberries, highbush cranberries and baneberries, the mushroom stew, dead spruces, birch sap and syrup, frozen fish (S6, S7) |
+| M12 Bears and the sled | The grizzly's temper by season and surprise with its bluff charge, sows with cubs, bears at the salmon run, the timid black bear; the sled (S8) |
 
 ## Documents
 

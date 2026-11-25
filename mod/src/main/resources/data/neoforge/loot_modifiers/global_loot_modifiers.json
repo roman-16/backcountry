@@ -1,6 +1,7 @@
 {
   "replace": false,
   "entries": [
-    "backcountry:plant_fibre"
+    "backcountry:plant_fibre",
+    "backcountry:spruce_needles"
   ]
 }

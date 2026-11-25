@@ -18,9 +18,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.level.ClipContext;
@@ -117,7 +119,7 @@ public final class Director {
         if (level.getEntities(type, around, Entity::isAlive).size() >= animal.cap()) {
             return 0;
         }
-        Optional<BlockPos> spot = spot(level, player, animal);
+        Optional<BlockPos> spot = spot(level, player, type, animal);
         if (spot.isEmpty()) {
             return 0;
         }
@@ -132,13 +134,19 @@ public final class Director {
                 if (entity instanceof Rabbit rabbit) {
                     rabbit.setVariant(Hunting.white(level) ? Rabbit.Variant.WHITE : Rabbit.Variant.BROWN);
                 }
+                if (entity instanceof Mob bear && Bears.is(type)) {
+                    if (Bears.salmonRun(level)) {
+                        Bears.fishing(bear, spot.get());
+                    }
+                    Bears.cubs(level, bear);
+                }
                 spawned++;
             }
         }
         return spawned;
     }
 
-    private static Optional<BlockPos> spot(ServerLevel level, ServerPlayer player, Animal animal) {
+    private static Optional<BlockPos> spot(ServerLevel level, ServerPlayer player, EntityType<?> type, Animal animal) {
         Balance.Director director = Balance.get().director();
         for (int attempt = 0; attempt < director.tries(); attempt++) {
             double angle = level.random.nextDouble() * Math.PI * 2;
@@ -150,7 +158,9 @@ public final class Director {
             BlockPos ground = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column);
             Holder<Biome> biome = level.getBiome(ground);
             boolean wet = level.getFluidState(ground).is(FluidTags.WATER) || level.getFluidState(ground.below()).is(FluidTags.WATER);
-            if (!biome.is(animal.habitat()) || (animal.nearWater() ? !wet && !nearWater(level, ground) : wet)) {
+            boolean fishing = Bears.is(type) && Bears.salmonRun(level);
+            boolean water = animal.nearWater() || fishing;
+            if (!(biome.is(animal.habitat()) || fishing && biome.is(BiomeTags.IS_RIVER)) || (water ? !wet && !nearWater(level, ground) : wet)) {
                 continue;
             }
             Vec3 eyes = player.getEyePosition();

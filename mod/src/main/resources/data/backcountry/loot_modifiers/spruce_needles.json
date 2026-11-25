@@ -1,0 +1,15 @@
+{
+  "type": "backcountry:spruce_needles",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:blocks/spruce_leaves"
+    },
+    {
+      "condition": "minecraft:match_tool",
+      "predicate": {
+        "items": "#backcountry:knives"
+      }
+    }
+  ]
+}

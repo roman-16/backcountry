@@ -1,6 +1,8 @@
 {
   "values": [
+    "backcountry:birch_tap",
     "backcountry:campfire",
+    "backcountry:dead_spruce_log",
     "backcountry:deadfall",
     "backcountry:food_cache",
     "backcountry:gill_net",

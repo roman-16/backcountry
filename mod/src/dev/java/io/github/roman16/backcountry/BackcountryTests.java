@@ -6,7 +6,9 @@ import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import io.github.roman16.backcountry.body.Alerts;
 import io.github.roman16.backcountry.food.Fish;
 import io.github.roman16.backcountry.body.Body;
+import io.github.roman16.backcountry.body.Burn;
 import io.github.roman16.backcountry.body.Calendar;
+import io.github.roman16.backcountry.body.Exertion;
 import io.github.roman16.backcountry.body.Climate;
 import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.body.Metabolism;
@@ -68,6 +70,7 @@ public final class BackcountryTests {
     private static final long DAY = 24000;
     private static final long HOUR = 1000;
     private static final double KG = 0.01;
+    private static final int HOURS_A_DAY = 24;
 
     private BackcountryTests() {}
 
@@ -113,9 +116,10 @@ public final class BackcountryTests {
         warm(helper, player);
         Body body = Metabolism.body(player);
         Metabolism.step(player, body, DAY, false);
-        double resting = Balance.get().body().restingKcalPerKgDay() * Balance.get().body().arrivalKg();
-        check(helper, Math.abs(body.kcalBurnedToday - resting) < 1, "a warm resting day burned " + body.kcalBurnedToday + " kcal, not " + resting);
-        double expected = Balance.get().body().arrivalKg() - resting / Balance.get().body().kcalPerKg();
+        double resting = Exertion.standingKcalPerKgHour() * Balance.get().body().arrivalKg() * HOURS_A_DAY;
+        double rested = body.burned[Burn.RESTING.ordinal()];
+        check(helper, Math.abs(rested - resting) < 1, "a warm resting day burned " + rested + " kcal at rest, not " + resting);
+        double expected = Balance.get().body().arrivalKg() - body.kcalBurnedToday / Balance.get().body().kcalPerKg();
         check(helper, Math.abs(body.weightKg - expected) < KG, "a day without food left " + body.weightKg + " kg, not " + expected);
         helper.succeed();
     }
@@ -150,7 +154,7 @@ public final class BackcountryTests {
         ServerPlayer player = survivor(helper);
         Body body = Metabolism.body(player);
         body.energy = 0.0001;
-        body.workKcal = Balance.get().energy().workKcalToEmpty();
+        body.workKcal = body.weightKg * Balance.get().energy().workKcalPerKgToEmpty();
         Metabolism.step(player, body, Metabolism.STEP_TICKS, false);
         check(helper, body.blackoutTicks > 0, "energy at " + body.energy + " did not black out");
         helper.succeed();
@@ -161,11 +165,11 @@ public final class BackcountryTests {
         ServerPlayer player = survivor(helper);
         Body body = Metabolism.body(player);
         for (int i = 0; i < 64; i++) {
-            Metabolism.drink(player, 0, true);
+            Metabolism.drink(player, 0, Water.of(true, 0));
         }
         check(helper, !body.has(Condition.GUT_INFECTION), "boiled water gave a gut infection");
         for (int i = 0; i < 64 && !body.has(Condition.GUT_INFECTION); i++) {
-            Metabolism.drink(player, 0, false);
+            Metabolism.drink(player, 0, Water.of(false, 0));
         }
         check(helper, body.has(Condition.GUT_INFECTION), "64 drinks of lake water never infected");
         helper.succeed();
@@ -180,7 +184,7 @@ public final class BackcountryTests {
         if (!(helper.getLevel().getBlockEntity(at) instanceof CampPotEntity pot)) {
             throw new IllegalStateException("the camp pot has no block entity");
         }
-        pot.hold(new Water(false, 2));
+        pot.hold(Water.of(false, 2));
         for (int tick = 0; tick < Balance.get().water().boilSeconds() * 20; tick++) {
             CampPotEntity.tick(helper.getLevel(), at, helper.getLevel().getBlockState(at), pot);
         }

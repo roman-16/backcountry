@@ -19,7 +19,7 @@ Everything the pack draws wears vanilla's own look: its panels, buttons, slots a
 
 ### I2 The Satellite Messenger
 
-Right-click opens it, drawn as the device itself: an orange handheld with a green-on-dark screen, the only screen with a skin of its own, as vanilla's book has its page. Its pages are tabs: the shown page's tab carries its icon and name, the others their icon alone (hovering names them), switched by a click, the arrow keys, 1 to 6 or the ◀ ▶ keys on the case. Every value has its icon and a meter; the air sits on a gauge from -40 to +30 °C banded at freezing and at -15 °C, the wind on a meter with the blizzard mark at 56 km/h, the core temperature on a gauge banded freezing, cold, comfortable and hot, and the weight on a BMI gauge with extraction marked at 17; warnings turn amber or red. A strip of alerts sits under every page, two lines at most, "and N more" past them, "No alerts" when there are none.
+Right-click opens it, drawn as the device itself: an orange handheld with a green-on-dark screen, the only screen with a skin of its own, as vanilla's book has its page. Its pages are tabs: the shown page's tab carries its icon and name, the others their icon alone (hovering names them), switched by a click, the arrow keys, 1 to 8 or the ◀ ▶ keys on the case. The pages, in order: Tasks, Weather, Forecast, Warmth, Body, Nutrition, Rations, Vitals. Every value has its icon and a meter; the air sits on a gauge from -40 to +30 °C banded at freezing and at -15 °C, the wind on a meter with the blizzard mark at 56 km/h, the core temperature on a gauge banded freezing, cold, comfortable and hot, and the weight on a BMI gauge with extraction marked at 17; warnings turn amber or red. A strip of alerts sits under every page, two lines at most, "and N more" past them, "No alerts" when there are none.
 
 ```text
 ┌ SATELLITE MESSENGER ────────────────────────────┐
@@ -34,6 +34,21 @@ Right-click opens it, drawn as the device itself: an orange handheld with a gree
 │ ⚠ Snow tomorrow  ⚠ Frost tonight                │
 │ ⚠ Weight dropped                                │
 └─────────────────────────────────────────────────┘
+```
+
+The Nutrition page lists, under the day's kcal eaten and burned, the burn by cause in two dim lines ("Rest 2,170 · Move 940 · Load 310", "Work 620 · Cold 250 · Digest 320"). The Vitals page ends with the four skills in two columns, each with its name and five steps lit to its level.
+
+The Tasks page heads the stage (First days, Before snow, Winter, The year), with "3 of 9" beside First days. Each task is a line with a box, filled once done; the stage's ticked tasks come first, as many as fit, then at most four open ones, the first with its one or two lines of how in dim text:
+
+```text
+First days                                 1 of 9
+■ Fill the Water Bottle
+□ Light a fire
+  Make tinder and a Bow Drill (JEI: R), then
+  drill a campfire.
+□ Boil water and drink it
+□ Sleep under a roof
+□ Split a log
 ```
 
 The Forecast page gives each of the next three days two lines: its sky (the icon of the rain or snow when it is likely, else of the cloud), the day and date, the chance ("Snow 80%"), and below it the high, the low and the wind. A new alert beeps once and lights a small amber light on the Messenger's icon in the hotbar until the Messenger is opened.

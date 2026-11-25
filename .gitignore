@@ -1,4 +1,5 @@
 .devbox/
+.env
 .ruff_cache/
 /build/
 /dist/

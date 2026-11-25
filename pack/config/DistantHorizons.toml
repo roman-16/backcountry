@@ -1,0 +1,14 @@
+[client.advanced.autoUpdater]
+enableAutoUpdater = false
+
+[client.advanced.graphics.quality]
+lodChunkRenderDistanceRadius = 1024
+
+[common.logging.warning]
+showGarbageCollectorWarning = false
+showHighVanillaRenderDistanceWarning = false
+showModCompatibilityWarningsOnStartup = false
+showPoolInsufficientMemoryWarning = false
+
+[server]
+realTimeUpdateDistanceRadiusInChunks = 1024

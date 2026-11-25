@@ -60,6 +60,7 @@ public final class Spoilage {
     }
 
     public static boolean age(ItemStack stack, double days, double airC) {
+        Fish.freeze(stack, days, airC);
         Optional<Double> life = life(stack);
         if (life.isEmpty() || stack.isEmpty() || days <= 0) {
             return false;

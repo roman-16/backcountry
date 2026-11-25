@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import io.github.roman16.backcountry.Things;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -85,6 +86,17 @@ public class CampPotBlock extends BaseEntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (stack.is(Things.SPRUCE_NEEDLES.get())) {
+            if (!level.isClientSide && level.getBlockEntity(pos) instanceof CampPotEntity pot) {
+                if (pot.steep()) {
+                    stack.consume(1, player);
+                    player.displayClientMessage(Component.translatable("message.backcountry.needles_in"), true);
+                } else {
+                    player.displayClientMessage(Component.translatable("message.backcountry.needles_need_water"), true);
+                }
+            }
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (!(stack.getItem() instanceof WaterVesselItem vessel) || stack.getItem() instanceof CampPotItem) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
@@ -93,7 +105,7 @@ public class CampPotBlock extends BaseEntityBlock {
             float room = vessel.capacity() - held.litres();
             float poured = Math.min(room, pot.water().litres());
             if (poured > 0) {
-                stack.set(Things.WATER.get(), held.add(pot.water().boiled(), poured, vessel.capacity()));
+                stack.set(Things.WATER.get(), held.add(pot.water(), poured, vessel.capacity()));
                 pot.hold(pot.water().take(poured));
             }
         }

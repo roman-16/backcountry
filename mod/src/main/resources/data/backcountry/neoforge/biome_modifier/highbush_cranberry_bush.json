@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#backcountry:forage_woods",
+  "features": "backcountry:patch_highbush_cranberry_bush",
+  "step": "vegetal_decoration"
+}

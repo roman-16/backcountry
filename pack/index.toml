@@ -1,6 +1,10 @@
 hash-format = "sha256"
 
 [[files]]
+file = "config/DistantHorizons.toml"
+hash = "c9ccb4e07278cb9a19aff8fe515be70662813318e45446895d81b2bc6cbd4b21"
+
+[[files]]
 file = "config/alexsmobs-common.toml"
 hash = "f9a64727415a252b7c5609e9d4918958c1bb907192e98d1601022a1e150ce008"
 

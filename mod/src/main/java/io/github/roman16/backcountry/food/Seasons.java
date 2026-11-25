@@ -28,18 +28,20 @@ public final class Seasons {
     }
 
     public static boolean within(Level level, int first, int last) {
-        int month = month(level);
-        return month >= first && month <= last;
+        return within(month(level), first, last);
+    }
+
+    public static boolean within(int month, int first, int last) {
+        return first <= last ? month >= first && month <= last : month >= first || month <= last;
     }
 
     public static boolean past(Level level, List<Double> months) {
-        int month = month(level);
-        return month > months.get(1).intValue() || month < months.get(0).intValue();
+        return !within(month(level), months.get(0).intValue(), months.get(1).intValue());
     }
 
     public static List<Double> berryMonths(Block bush) {
         Balance.Berries berries = Balance.get().berries();
-        return bush instanceof BlueberryBushBlock ? berries.blueberryMonths() : berries.lingonberryMonths();
+        return bush instanceof BerryBushBlock berry ? berry.berry().months() : berries.lingonberryMonths();
     }
 
     @SubscribeEvent

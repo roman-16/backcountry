@@ -4,6 +4,8 @@ import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Nutrition;
+import io.github.roman16.backcountry.guide.Guide;
+import io.github.roman16.backcountry.guide.Task;
 import io.github.roman16.backcountry.hunt.Hunting;
 import io.github.roman16.backcountry.survivor.Team;
 import java.util.Optional;
@@ -41,8 +43,18 @@ public final class Fish {
         double kg = data.getInt("WeightG") / GRAMS_A_KG;
         boolean raw = !data.getBoolean("Cooked");
         double poisoning = stack.has(Things.SPAWNED_OUT.get()) ? 1 : 0;
-        return Optional.of(new Nutrition(kg * fish.kcalPerKg(), kg * fish.fatGPerKg(), kg * fish.proteinGPerKg(), 0, raw ? kg * fish.vitaminCMgPerKg() : 0, raw, poisoning,
-                Optional.of(raw ? fish.rawDays() : fish.cookedDays()), 0));
+        return Optional.of(new Nutrition(kg * fish.kcalPerKg(), kg * fish.fatGPerKg(), kg * fish.proteinGPerKg(), 0, raw ? kg * fish.vitaminCMgPerKg() : 0,
+                raw && !frozenThrough(stack), poisoning, Optional.of(raw ? fish.rawDays() : fish.cookedDays()), 0));
+    }
+
+    public static boolean frozenThrough(ItemStack stack) {
+        return stack.getOrDefault(Things.FROZEN.get(), 0F) >= Balance.get().fish().frozenDays();
+    }
+
+    public static void freeze(ItemStack stack, double days, double airC) {
+        if (!stack.isEmpty() && is(stack.getItem()) && airC <= Balance.get().fish().frozenC() && !frozenThrough(stack)) {
+            stack.set(Things.FROZEN.get(), (float) (stack.getOrDefault(Things.FROZEN.get(), 0F) + days));
+        }
     }
 
     public static void land(ServerPlayer player, ItemStack stack) {
@@ -56,6 +68,7 @@ public final class Fish {
         if (Metabolism.lives(player)) {
             Metabolism.body(player).animals.merge(CAUGHT, stack.getCount(), Integer::sum);
             Team.get(player.server).caught(stack.getCount());
+            Guide.done(player, Task.LAND_FISH);
         }
     }
 }

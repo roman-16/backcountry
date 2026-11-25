@@ -4,6 +4,7 @@ import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Climate;
+import io.github.roman16.backcountry.guide.Guide;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -112,6 +113,9 @@ public final class WoodpileEntity extends BlockEntity {
         woodpile.clock = now;
         if (hours > 0) {
             woodpile.dry(hours);
+        }
+        if (level.getServer() != null) {
+            Guide.woodpile(level.getServer(), pos, Guide.dry(woodpile.pieces()));
         }
     }
 

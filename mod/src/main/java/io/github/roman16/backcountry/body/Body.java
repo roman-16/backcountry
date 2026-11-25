@@ -3,6 +3,7 @@ package io.github.roman16.backcountry.body;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.survivor.Summary;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
     public double arrivedKg;
     public long awakeTicks;
     public int blackoutTicks;
+    public final double[] burned = new double[Burn.values().length];
     public double carbsToday;
     public final EnumMap<Condition, Affliction> conditions = new EnumMap<>(Condition.class);
     public double coreC;
@@ -44,6 +46,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
     public long lastHurt;
     public ItemStack pack = ItemStack.EMPTY;
     public double proteinToday;
+    public final EnumMap<Skill, Integer> skills = new EnumMap<>(Skill.class);
     public double stomachCarbs;
     public double stomachFat;
     public double stomachKcal;
@@ -64,6 +67,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
 
     public transient double clo;
     public transient double effectiveC;
+    public transient double exertedKcal;
     public transient boolean fire;
     public transient double lastCoreC;
     @Nullable
@@ -72,8 +76,10 @@ public final class Body implements INBTSerializable<CompoundTag> {
     public transient int loadWarnedAt;
     public transient boolean sheltered;
     public transient double snowBlocks;
+    public final transient Exertion.Strides strides = new Exertion.Strides();
     public transient Vec3 snowFrom;
     public transient boolean windy;
+    public transient double windKmh;
     public transient double workKcal;
 
     public static final class Affliction {
@@ -106,6 +112,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
         animals.clear();
         lastDay = day;
         pack = ItemStack.EMPTY;
+        skills.clear();
         stomachCarbs = 0;
         stomachFat = 0;
         stomachKcal = 0;
@@ -128,6 +135,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
     }
 
     public void newDay() {
+        Arrays.fill(burned, 0);
         carbsToday = 0;
         fatToday = 0;
         kcalBurnedToday = 0;
@@ -168,6 +176,11 @@ public final class Body implements INBTSerializable<CompoundTag> {
         tag.putDouble("arrived_kg", arrivedKg);
         tag.putLong("awake_ticks", awakeTicks);
         tag.putInt("blackout_ticks", blackoutTicks);
+        CompoundTag burns = new CompoundTag();
+        for (Burn burn : Burn.values()) {
+            burns.putDouble(burn.id(), burned[burn.ordinal()]);
+        }
+        tag.put("burned", burns);
         tag.putDouble("carbs_today", carbsToday);
         CompoundTag afflictions = new CompoundTag();
         conditions.forEach((condition, affliction) -> {
@@ -198,6 +211,9 @@ public final class Body implements INBTSerializable<CompoundTag> {
             tag.put("pack", pack.save(provider));
         }
         tag.putDouble("protein_today", proteinToday);
+        CompoundTag practised = new CompoundTag();
+        skills.forEach((skill, uses) -> practised.putInt(skill.id(), uses));
+        tag.put("skills", practised);
         tag.putDouble("stomach_carbs", stomachCarbs);
         tag.putDouble("stomach_fat", stomachFat);
         tag.putDouble("stomach_kcal", stomachKcal);
@@ -234,6 +250,10 @@ public final class Body implements INBTSerializable<CompoundTag> {
         arrivedKg = tag.getDouble("arrived_kg");
         awakeTicks = tag.getLong("awake_ticks");
         blackoutTicks = tag.getInt("blackout_ticks");
+        CompoundTag burns = tag.getCompound("burned");
+        for (Burn burn : Burn.values()) {
+            burned[burn.ordinal()] = burns.getDouble(burn.id());
+        }
         carbsToday = tag.getDouble("carbs_today");
         conditions.clear();
         CompoundTag afflictions = tag.getCompound("conditions");
@@ -261,6 +281,13 @@ public final class Body implements INBTSerializable<CompoundTag> {
         lastHurt = tag.getLong("last_hurt");
         pack = tag.contains("pack") ? ItemStack.parseOptional(provider, tag.getCompound("pack")) : ItemStack.EMPTY;
         proteinToday = tag.getDouble("protein_today");
+        skills.clear();
+        CompoundTag practised = tag.getCompound("skills");
+        for (Skill skill : Skill.values()) {
+            if (practised.contains(skill.id())) {
+                skills.put(skill, practised.getInt(skill.id()));
+            }
+        }
         stomachCarbs = tag.getDouble("stomach_carbs");
         stomachFat = tag.getDouble("stomach_fat");
         stomachKcal = tag.getDouble("stomach_kcal");

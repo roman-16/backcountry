@@ -1,6 +1,7 @@
 package io.github.roman16.backcountry.client;
 
 import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.body.Skill;
 import io.github.roman16.backcountry.net.Messages;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -78,7 +79,7 @@ public final class BowDrillScreen extends Screen {
         }
         last = side;
         strokes++;
-        friction = Math.min(1, friction + Balance.get().bowDrill().strokeHeat());
+        friction = Math.min(1, friction + Balance.get().bowDrill().strokeHeat() / Skill.effort(ClientState.view.skills().get(Skill.FIRE_MAKING.ordinal())));
         if (friction >= 1) {
             stage = Stage.BLOW;
             glow = Balance.get().bowDrill().glowBand();

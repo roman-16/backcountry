@@ -3,10 +3,15 @@ package io.github.roman16.backcountry.hunt;
 import com.mojang.serialization.MapCodec;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.body.Activity;
+import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Metabolism;
+import io.github.roman16.backcountry.body.Skill;
+import io.github.roman16.backcountry.haul.Sled;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -57,9 +62,9 @@ public final class CarcassBlock extends BaseEntityBlock {
         return new CarcassEntity(pos, state);
     }
 
-    public static int clicks(CarcassEntity carcass) {
+    public static int clicks(CarcassEntity carcass, Body body) {
         double kg = carcass.data().map(Animal::kg).orElse(1.0);
-        return Math.max(LEAST_CLICKS, (int) Math.round(kg * Balance.get().hunting().dressClicksPerKg()));
+        return Math.max(LEAST_CLICKS, (int) Math.round(kg * Balance.get().hunting().dressClicksPerKg() * Skill.BUTCHERING.effort(body)));
     }
 
     @Override
@@ -77,8 +82,11 @@ public final class CarcassBlock extends BaseEntityBlock {
             return ItemInteractionResult.SUCCESS;
         }
         int done = carcass.dress();
-        int needed = clicks(carcass);
-        Metabolism.work(player, Balance.get().hunting().dressKcalPerClick());
+        int needed = clicks(carcass, Metabolism.body(player));
+        Metabolism.effortMinutes(player, Activity.BUTCHER, Balance.get().effort().dressMinutes());
+        if (player instanceof ServerPlayer server) {
+            Skill.BUTCHERING.use(server, 1);
+        }
         level.playSound(null, pos, SoundEvents.SLIME_SQUISH_SMALL, SoundSource.BLOCKS, 0.6F, 0.8F + level.random.nextFloat() * 0.4F);
         int filled = Math.min(BAR, done * BAR / needed);
         player.displayClientMessage(Component.translatable("message.backcountry.dressing", carcass.animal().getDescription(), "▮".repeat(filled) + "▯".repeat(BAR - filled)), true);
@@ -100,7 +108,11 @@ public final class CarcassBlock extends BaseEntityBlock {
         if (!player.isShiftKeyDown()) {
             player.displayClientMessage(Component.translatable("message.backcountry.carcass_hint"), true);
         } else if (animal.map(data -> data.kg() > Balance.get().hunting().carryKg()).orElse(false)) {
-            player.displayClientMessage(Component.translatable("message.backcountry.too_heavy"), true);
+            boolean loaded = player instanceof ServerPlayer puller && Sled.pulledBy(puller).stream().anyMatch(sled -> sled.load(carcass.item()));
+            if (loaded) {
+                level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+            }
+            player.displayClientMessage(Component.translatable(loaded ? "message.backcountry.loaded_on_sled" : "message.backcountry.too_heavy"), true);
         } else {
             player.setItemInHand(InteractionHand.MAIN_HAND, carcass.item());
             level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());

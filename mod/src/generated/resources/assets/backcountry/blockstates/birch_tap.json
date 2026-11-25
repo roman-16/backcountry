@@ -1,0 +1,139 @@
+{
+  "variants": {
+    "facing=north,sap=0": {
+      "model": "backcountry:block/birch_tap"
+    },
+    "facing=north,sap=1": {
+      "model": "backcountry:block/birch_tap"
+    },
+    "facing=north,sap=2": {
+      "model": "backcountry:block/birch_tap"
+    },
+    "facing=north,sap=3": {
+      "model": "backcountry:block/birch_tap"
+    },
+    "facing=north,sap=4": {
+      "model": "backcountry:block/birch_tap"
+    },
+    "facing=north,sap=5": {
+      "model": "backcountry:block/birch_tap"
+    },
+    "facing=north,sap=6": {
+      "model": "backcountry:block/birch_tap"
+    },
+    "facing=north,sap=7": {
+      "model": "backcountry:block/birch_tap"
+    },
+    "facing=north,sap=8": {
+      "model": "backcountry:block/birch_tap"
+    },
+    "facing=east,sap=0": {
+      "model": "backcountry:block/birch_tap",
+      "y": 90
+    },
+    "facing=east,sap=1": {
+      "model": "backcountry:block/birch_tap",
+      "y": 90
+    },
+    "facing=east,sap=2": {
+      "model": "backcountry:block/birch_tap",
+      "y": 90
+    },
+    "facing=east,sap=3": {
+      "model": "backcountry:block/birch_tap",
+      "y": 90
+    },
+    "facing=east,sap=4": {
+      "model": "backcountry:block/birch_tap",
+      "y": 90
+    },
+    "facing=east,sap=5": {
+      "model": "backcountry:block/birch_tap",
+      "y": 90
+    },
+    "facing=east,sap=6": {
+      "model": "backcountry:block/birch_tap",
+      "y": 90
+    },
+    "facing=east,sap=7": {
+      "model": "backcountry:block/birch_tap",
+      "y": 90
+    },
+    "facing=east,sap=8": {
+      "model": "backcountry:block/birch_tap",
+      "y": 90
+    },
+    "facing=south,sap=0": {
+      "model": "backcountry:block/birch_tap",
+      "y": 180
+    },
+    "facing=south,sap=1": {
+      "model": "backcountry:block/birch_tap",
+      "y": 180
+    },
+    "facing=south,sap=2": {
+      "model": "backcountry:block/birch_tap",
+      "y": 180
+    },
+    "facing=south,sap=3": {
+      "model": "backcountry:block/birch_tap",
+      "y": 180
+    },
+    "facing=south,sap=4": {
+      "model": "backcountry:block/birch_tap",
+      "y": 180
+    },
+    "facing=south,sap=5": {
+      "model": "backcountry:block/birch_tap",
+      "y": 180
+    },
+    "facing=south,sap=6": {
+      "model": "backcountry:block/birch_tap",
+      "y": 180
+    },
+    "facing=south,sap=7": {
+      "model": "backcountry:block/birch_tap",
+      "y": 180
+    },
+    "facing=south,sap=8": {
+      "model": "backcountry:block/birch_tap",
+      "y": 180
+    },
+    "facing=west,sap=0": {
+      "model": "backcountry:block/birch_tap",
+      "y": 270
+    },
+    "facing=west,sap=1": {
+      "model": "backcountry:block/birch_tap",
+      "y": 270
+    },
+    "facing=west,sap=2": {
+      "model": "backcountry:block/birch_tap",
+      "y": 270
+    },
+    "facing=west,sap=3": {
+      "model": "backcountry:block/birch_tap",
+      "y": 270
+    },
+    "facing=west,sap=4": {
+      "model": "backcountry:block/birch_tap",
+      "y": 270
+    },
+    "facing=west,sap=5": {
+      "model": "backcountry:block/birch_tap",
+      "y": 270
+    },
+    "facing=west,sap=6": {
+      "model": "backcountry:block/birch_tap",
+      "y": 270
+    },
+    "facing=west,sap=7": {
+      "model": "backcountry:block/birch_tap",
+      "y": 270
+    },
+    "facing=west,sap=8": {
+      "model": "backcountry:block/birch_tap",
+      "y": 270
+    }
+  }
+}

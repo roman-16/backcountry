@@ -3,9 +3,11 @@ package io.github.roman16.backcountry.hunt;
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.body.Activity;
 import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Metabolism;
+import io.github.roman16.backcountry.body.Skill;
 import io.github.roman16.backcountry.food.Seasons;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +32,7 @@ import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.ArrowLooseEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
 @EventBusSubscriber(modid = Backcountry.MODID)
@@ -74,17 +77,42 @@ public final class Hunting {
     }
 
     @SubscribeEvent
+    static void scraped(PlayerEvent.ItemCraftedEvent event) {
+        if (event.getCrafting().is(Things.SCRAPED_HIDE.get()) && !event.getEntity().level().isClientSide) {
+            Metabolism.effortMinutes(event.getEntity(), Activity.SCRAPE, Balance.get().effort().scrapeMinutes() * Skill.BUTCHERING.effort(Metabolism.body(event.getEntity())));
+            if (event.getEntity() instanceof ServerPlayer player) {
+                Skill.BUTCHERING.use(player, 1);
+            }
+        }
+    }
+
+    @SubscribeEvent
     static void loosed(ArrowLooseEvent event) {
+        if (event.getBow().getItem() instanceof HuntingBowItem) {
+            Body body = Metabolism.body(event.getEntity());
+            int charge = (int) Math.round(event.getCharge() * Skill.ARCHERY.speed(body));
+            event.setCharge(charge);
+            if (charge >= FULL_DRAW_TICKS && event.getEntity() instanceof ServerPlayer player) {
+                Skill.ARCHERY.use(player, 1);
+            }
+        }
         if (event.getBow().getItem() instanceof HuntingBowItem bow && bow.heavy()) {
             int drawn = (int) Math.floor(FULL_DRAW_TICKS * strength(event.getEntity()));
             event.setCharge(Math.min(event.getCharge(), Math.max(1, drawn)));
         }
     }
 
+    private static double recovered(double chance, AbstractArrow arrow) {
+        if (!(arrow.getOwner() instanceof Player archer)) {
+            return chance;
+        }
+        return chance + (1 - chance) * (1 - Skill.ARCHERY.effort(Metabolism.body(archer)));
+    }
+
     @SubscribeEvent
     static void struck(ProjectileImpactEvent event) {
         if (event.getProjectile() instanceof AbstractArrow arrow && event.getRayTraceResult().getType() == HitResult.Type.BLOCK
-                && arrow.getPickupItemStackOrigin().getItem() instanceof HuntArrowItem kind && arrow.level().random.nextDouble() >= kind.fromBlocks()) {
+                && arrow.getPickupItemStackOrigin().getItem() instanceof HuntArrowItem kind && arrow.level().random.nextDouble() >= recovered(kind.fromBlocks(), arrow)) {
             arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
         }
     }
@@ -102,7 +130,7 @@ public final class Hunting {
         Balance.Hunting hunting = Balance.get().hunting();
         if (direct instanceof AbstractArrow arrow) {
             ItemStack shot = arrow.getPickupItemStackOrigin();
-            if (shot.getItem() instanceof HuntArrowItem kind && target.getRandom().nextDouble() < kind.fromAnimals()) {
+            if (shot.getItem() instanceof HuntArrowItem kind && target.getRandom().nextDouble() < recovered(kind.fromAnimals(), arrow)) {
                 target.setData(Things.WOUND, target.getData(Things.WOUND).pierced(shot));
             }
         }

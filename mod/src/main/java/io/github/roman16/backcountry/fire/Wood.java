@@ -3,8 +3,11 @@ package io.github.roman16.backcountry.fire;
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.body.Activity;
 import io.github.roman16.backcountry.body.Metabolism;
+import io.github.roman16.backcountry.body.Skill;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -37,7 +40,24 @@ public final class Wood {
     @SubscribeEvent
     static void split(PlayerEvent.ItemCraftedEvent event) {
         if (event.getCrafting().getItem() instanceof FirewoodItem && !event.getEntity().level().isClientSide) {
-            Metabolism.work(event.getEntity(), Balance.get().work().chopKcal());
+            Metabolism.effortMinutes(event.getEntity(), Activity.SPLIT, Balance.get().effort().splitMinutes() * Skill.WOODCUTTING.effort(Metabolism.body(event.getEntity())));
+            if (event.getEntity() instanceof ServerPlayer player) {
+                Skill.WOODCUTTING.use(player, 1);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    static void chopping(PlayerEvent.BreakSpeed event) {
+        if (event.getState().is(BlockTags.LOGS)) {
+            event.setNewSpeed(event.getNewSpeed() * (float) Skill.WOODCUTTING.speed(Metabolism.body(event.getEntity())));
+        }
+    }
+
+    @SubscribeEvent
+    static void chopped(BlockEvent.BreakEvent event) {
+        if (event.getState().is(BlockTags.LOGS) && event.getPlayer() instanceof ServerPlayer player) {
+            Skill.WOODCUTTING.use(player, 1);
         }
     }
 }

@@ -18,17 +18,17 @@ $ python3 scripts/server.py start --fresh
 $ P='execute in minecraft:overworld positioned 0 64 0 run'
 $ python3 scripts/server.py run 'forceload add -16 -16 16 16' "$P fill ~-3 ~-1 ~-3 ~3 ~-1 ~3 stone" "$P fill ~-3 ~ ~-3 ~3 ~3 ~3 air" \
     "$P fill ~-3 ~4 ~-3 ~3 ~4 ~3 spruce_planks" "$P setblock ~2 ~-1 ~ netherrack" "$P setblock ~2 ~ ~ fire" \
-    "$P backcountry playthrough year 1 48 2048 512"
+    "$P backcountry playthrough year 1 48 3200 1024"
 ```
 
-What the runs should show, from the reference year (77 kg to 67 kg):
+What the runs should show, from the reference year (77 kg to 67 kg); a camp day's work is 1,024 kcal (two game hours on foot, one chopping, one at other work), a hard day's 2,048:
 
 | Run | Arguments | Should end near |
 |---|---|---|
-| The first week on a Normal ration | `1 7 2048 512` | 76.8 kg |
-| A winter in camp | `31 12 2048 512`, and `1024` for Lean | 76.7 kg, 75 kg Lean |
-| A steady year | `1 48 2048 512` | 76 kg |
-| A hard year, Lean rations and heavy work | `1 48 1024 1024` | 67 kg |
+| The first week on a Normal ration | `1 7 3200 1024` | 76.9 kg |
+| A winter in camp | `31 12 3200 1024`, and `2560` for Lean | 76.8 kg, 75.7 kg Lean |
+| A steady year | `1 48 3200 1024` | 76 kg |
+| A hard year, Lean rations and heavy work | `1 48 2560 2048` | 66 to 67 kg |
 
 A run that lands far from its row, or a camp run that shivers, is a balance finding: find the number in `balance.toml` that drives it, change it within the pack's rules, and run every row again.
 
@@ -47,7 +47,7 @@ $ python3 scripts/client.py start --fresh --mode shipped
 $ python3 scripts/client.py run '/time set noon' 'wait 200' 'bench 40'
 ```
 
-`bench <seconds>` turns the camera once around over the time and replies with the average and lowest frames a second. The shipped pack (Complementary Unbound and Distant Horizons, 1920 by 1080, 8 chunks) held 59 on average and 53 at its lowest, at the 60 the screen allows, on the user's desktop; a drop below 30 lowest is a finding.
+`bench <seconds>` turns the camera once around over the time and replies with the average and lowest frames a second. The shipped pack (Complementary Unbound and Distant Horizons at 1,024 chunks, 1920 by 1080, 8 chunks) held 60 on average and 59 at its lowest, at the 60 the screen allows, on the user's desktop once the far land had loaded, and 41 at its lowest in a fresh world's first minute; a drop below 30 lowest is a finding.
 
 ## Write it back
 

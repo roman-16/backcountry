@@ -12,7 +12,7 @@
 
 ### W2 Cold land
 
-- Tectonic's climate is pushed cold and wet (`temperature_multiplier` 0.5, `temperature_offset` -0.3, `vegetation_multiplier` 0.5, `vegetation_offset` 0.25): taiga, old-growth taiga, snowy taiga, grove and the peaks. Biome Replacer maps what warm or temperate biome is left onto taiga. WWOO dresses the vanilla biomes: aspens, spruces with branches, orange terracotta in water and cliffs.
+- Tectonic's climate is pushed cold and wet (`temperature_multiplier` 0.5, `temperature_offset` -0.3, `vegetation_multiplier` 0.5, `vegetation_offset` 0.25): taiga, old-growth taiga, snowy taiga, grove and the peaks. Biome Replacer maps what warm or temperate biome is left onto taiga. WWOO dresses the vanilla biomes: aspens, spruces with branches, orange terracotta in water and cliffs. Dead spruces, bare grey poles, stand scattered in the taiga (`systems.md` S6).
 - Measured on seeds 1 and 6: taiga 34 to 39%, snowy taiga 11 to 13%, old-growth pine taiga 7 to 14%, grove 7 to 8%, old-growth spruce taiga 6%, old-growth birch forest 3 to 6%, meadow up to 7%, and the peaks.
 
 ### W3 Wilderness only

@@ -1,6 +1,7 @@
 package io.github.roman16.backcountry.client;
 
 import io.github.roman16.backcountry.body.BodyView;
+import io.github.roman16.backcountry.guide.GuideView;
 import io.github.roman16.backcountry.survivor.Summary;
 import io.github.roman16.backcountry.weather.Weather;
 import io.github.roman16.backcountry.weather.WeatherView;
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 public final class ClientState {
     public static BodyView view = BodyView.NONE;
     public static WeatherView weather = WeatherView.NONE;
+    public static GuideView guide = GuideView.NONE;
     static boolean viewed;
     @Nullable
     static Summary ended;
@@ -37,6 +39,7 @@ public final class ClientState {
     static void clear() {
         view = BodyView.NONE;
         weather = WeatherView.NONE;
+        guide = GuideView.NONE;
         Weather.unshare();
         viewed = false;
         ended = null;

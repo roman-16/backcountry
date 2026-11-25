@@ -19,5 +19,10 @@
     "xorg.libXi": "latest",
     "xorg.libXrandr": "latest",
     "xorg.libXxf86vm": "latest"
+  },
+  "shell": {
+    "init_hook": [
+      "if [ -f .env ]; then set -a; . ./.env; set +a; fi"
+    ]
   }
 }

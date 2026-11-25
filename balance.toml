@@ -31,18 +31,40 @@ flee_seconds = 30
 point_blank_blocks = 1.5
 reach_blocks = 4
 
+[bears]
+bluff_share = 0.75
+bluff_stop_blocks = 2.5
+charge_blocks = 16
+charge_chance = 0.25
+cub_blocks = 16
+cub_share = 0.25
+defend_blocks = 8
+fall_months = [8, 9]
+flee_blocks = 16
+leftover_grams = 1024
+leftover_hours = 4
+most_cubs = 2
+salmon_months = [7, 9]
+spring_months = [5, 6]
+surprise_blocks = 5
+
 [berries]
+baneberry_months = [7, 9]
 blueberry_months = [7, 8]
+highbush_cranberry_months = [9, 3]
 lingonberry_months = [8, 9]
+salmonberry_months = [6, 7]
 
 [body]
 arrival_kg = 77.0
+bmr_kcal_per_kg_hour = 1.0
+digest_kcal_per_hour = 256
 extraction_bmi = 17.0
 height_m = 1.8
 kcal_per_kg = 7700
-resting_kcal_per_kg_day = 24
-stomach_kcal = 1536
-digest_kcal_per_hour = 256
+sleep_kcal_per_kg_hour = 0.95
+stomach_kcal = 3072
+thermic_share = 0.1
 vitamin_c_mg_day = 75
 vitamin_c_store_days = 8
 
@@ -53,7 +75,6 @@ flame_per_second = 0.25
 glow_band = 0.5
 glow_loss_per_second = 0.25
 stroke_heat = 0.125
-stroke_kcal = 0.5
 uses = 16
 wet_cooling = 2
 
@@ -116,6 +137,14 @@ search_blocks = 3072
 shore_rise_blocks = 8
 step_blocks = 32
 
+[effort]
+attack_minutes = 0.5
+build_minutes = 1
+dress_minutes = 4
+scrape_minutes = 8
+split_minutes = 2
+stroke_minutes = 0.5
+
 [energy]
 awake_hours_to_empty = 32
 blackout_seconds = 8
@@ -128,7 +157,7 @@ stumble_below = 0.1
 stumble_seconds = 2
 stumble_share = 0.125
 wake_energy = 0.125
-work_kcal_to_empty = 2048
+work_kcal_per_kg_to_empty = 32
 
 [farming]
 first_month = 5
@@ -167,16 +196,27 @@ pile_pieces = 8
 [fish]
 cooked_days = 4
 fat_g_per_kg = 50
+frozen_c = -16
+frozen_days = 1
 kcal_per_kg = 482
 protein_g_per_kg = 200
 raw_days = 2.5
 spawned_out_months = [9, 10]
 vitamin_c_mg_per_kg = 20
 
+[forage]
+needles_a_leaf = 2
+sap_chance = 0.75
+sap_kcal_per_l = 40
+sap_l_per_step = 0.25
+sap_months = [4, 5]
+syrup_l = 2
+syrup_seconds = 960
+tea_vitamin_c_mg_per_l = 128
+
 [headlamp]
 charge_hours = 8
 crank_hours_per_second = 0.25
-crank_kcal_per_second = 2
 dim_from_c = -20
 dimmest_c = -40
 dimmest_share = 0.25
@@ -201,7 +241,6 @@ blood_chance = 0.5
 blood_days = 1
 carry_kg = 64
 dress_clicks_per_kg = 0.125
-dress_kcal_per_click = 0.5
 heavy_power = 1.25
 organ_kg = 16
 strong_bmi = 21
@@ -238,6 +277,21 @@ stone_kg = 2.0
 tool_kg = 1.0
 warn_seconds = 4
 
+[met]
+bow_drill = 6.0
+build = 4.0
+butcher = 6.0
+chop = 6.3
+climb = 8.0
+crank = 4.0
+dig = 5.0
+fight = 7.0
+mine = 6.3
+run = 8.3
+scrape = 4.0
+split = 6.3
+swim = 6.0
+
 [mice]
 chance = 0.25
 kcal = 256
@@ -265,14 +319,25 @@ fall_chance = 0.0625
 [rations]
 dawn_hour = 6
 dusk_hour = 18
-feast_kcal = 1536
-lean_kcal = 512
-normal_kcal = 1024
+feast_kcal = 2048
+lean_kcal = 1280
+normal_kcal = 1600
 reach_blocks = 64
 
 [seasons]
 feeding_months = [8, 9]
 rut_months = [9, 9]
+
+[skills]
+level_share = 0.125
+uses_to_level = [8, 32, 128, 512]
+
+[sled]
+ground_drag = 1.0
+ground_friction = 0.5
+self_kg = 16
+snow_drag = 0.25
+snow_friction = 0.9
 
 [smoker]
 batch_hours = 12
@@ -294,6 +359,11 @@ smoked_life = 64
 [survivor]
 quiet_seconds = 8
 
+[tasks]
+dry_firewood = 16
+food_days = 16
+shown = 4
+
 [traps]
 bait_share = 2
 fish_per_day = 4
@@ -301,13 +371,34 @@ fish_share = 0.5
 mice_blocks = 8
 share = 0.5
 
+[walking]
+feet_share = 5
+ice_eta = 1.7
+load_w_per_kg = 2.0
+motion_w_per_kg = 1.5
+sneak_blocks_per_tick = 0.0647
+sneak_m_s = 0.9
+snow_deepest_cm = 50
+snow_eta = 1.3
+snow_eta_per_cm = 0.082
+snowshoe_sink = 0.25
+sprint_blocks_per_tick = 0.2806
+standing_w_per_kg = 1.5
+steepest_grade = 0.45
+swim_blocks_per_tick = 0.11
+walk_blocks_per_tick = 0.2158
+walk_m_s = 1.34
+wind_kmh_doubled = 72
+
 [warmth]
 base_clo = 2.0
+cold_share = 0.15
 comfort_c = 28
 comfort_span_c = 12
+cooling_share = 0.125
 core_c = 37.0
 core_c_per_hour = 1.0
-cooling_share = 0.125
+dry_per_hour = 0.125
 fire_dry_per_hour = 1.0
 heat_reach_blocks = 6
 rain_wet_per_hour = 0.5
@@ -316,11 +407,12 @@ shelter_c = 4
 shelter_dry_per_hour = 0.25
 shiver_core_c = 36.5
 shiver_kcal_per_hour_c = 64
+shiver_most_bmr = 4
 sweat_core_c = 37.5
 sweat_l_per_hour = 0.25
 sweat_wet_per_hour = 0.25
+very_cold_share = 0.3
 warm_c_per_clo = 8
-dry_per_hour = 0.125
 wet_insulation_loss = 0.6667
 
 [water]
@@ -372,18 +464,6 @@ storm_last_month = 8
 storm_share = 0.25
 wet_shares = [0.5, 1.0, 2.0]
 wet_wind_kmh = 40
-
-[work]
-attack_kcal = 2
-chop_kcal = 8
-dig_kcal = 2
-jump_kcal = 0.25
-mine_kcal = 8
-overload_kcal_per_kg_hour = 4
-place_kcal = 2
-sprint_kcal_per_block = 0.125
-swim_kcal_per_block = 0.25
-walk_kcal_per_block = 0.0625
 
 [world]
 across_blocks = 6144

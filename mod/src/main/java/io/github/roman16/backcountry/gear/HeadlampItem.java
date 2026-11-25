@@ -2,8 +2,10 @@ package io.github.roman16.backcountry.gear;
 
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.body.Activity;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Climate;
+import io.github.roman16.backcountry.body.Exertion;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.client.Words;
 import java.util.List;
@@ -101,7 +103,7 @@ public final class HeadlampItem extends ArmorItem {
         Balance.Headlamp lamp = Balance.get().headlamp();
         double wound = Math.min(lamp.chargeHours(), charge(stack) + lamp.crankHoursPerSecond());
         stack.set(Things.CHARGE.get(), (float) wound);
-        Metabolism.work(player, lamp.crankKcalPerSecond());
+        Metabolism.effort(player, Activity.CRANK, TICKS_A_SECOND / Exertion.TICKS_AN_HOUR);
         level.playSound(null, player, SoundEvents.CROSSBOW_LOADING_MIDDLE.value(), SoundSource.PLAYERS, 0.5F, 1.4F);
         if (wound >= lamp.chargeHours()) {
             player.stopUsingItem();

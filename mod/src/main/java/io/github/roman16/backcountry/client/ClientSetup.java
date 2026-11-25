@@ -36,6 +36,7 @@ public final class ClientSetup {
         event.registerEntityRenderer(Things.GROUSE.get(), BirdRenderer::new);
         event.registerEntityRenderer(Things.LOON.get(), BirdRenderer::new);
         event.registerEntityRenderer(Things.PTARMIGAN.get(), BirdRenderer::new);
+        event.registerEntityRenderer(Things.SLED_ENTITY.get(), SledRenderer::new);
     }
 
     @SubscribeEvent

@@ -1,6 +1,7 @@
 package io.github.roman16.backcountry.client;
 
 import io.github.roman16.backcountry.body.BodyView;
+import io.github.roman16.backcountry.guide.GuideView;
 import io.github.roman16.backcountry.survivor.Summary;
 import io.github.roman16.backcountry.weather.Day;
 import io.github.roman16.backcountry.weather.Weather;
@@ -13,8 +14,9 @@ import net.minecraft.client.gui.screens.DeathScreen;
 public final class ClientMessages {
     private ClientMessages() {}
 
-    public static void view(BodyView view, WeatherView weather) {
+    public static void view(BodyView view, WeatherView weather, GuideView guide) {
         ClientState.received(view);
+        ClientState.guide = guide;
         ClientState.weather = weather;
         ClientState.viewed = true;
         ClientState.blackout = view.blackout();

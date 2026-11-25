@@ -92,7 +92,7 @@ def files(target, side, folders, left_out=frozenset()):
 def neoforge(target):
     version = tomllib.loads((PACK / "pack.toml").read_text())["versions"]["neoforge"]
     installed = CACHE / f"neoforge-{version}-server"
-    if not (installed / "run.sh").exists():
+    if not (installed / "server.jar").exists():
         base = f"https://maven.neoforged.net/releases/net/neoforged/neoforge/{version}/neoforge-{version}-installer.jar"
         with urllib.request.urlopen(base + ".sha1", timeout=60) as response:
             sha1 = response.read().decode().split()[0]
@@ -101,11 +101,13 @@ def neoforge(target):
         shutil.rmtree(partial, ignore_errors=True)
         partial.mkdir(parents=True)
         subprocess.run(
-            ["java", "-jar", str(installer), "--install-server", "."],
+            ["java", "-jar", str(installer), "--install-server", ".", "--server-starter"],
             cwd=partial,
             check=True,
             stdout=subprocess.DEVNULL,
         )
+        for log in partial.glob("*.log"):
+            log.unlink()
         shutil.rmtree(installed, ignore_errors=True)
         partial.rename(installed)
     shutil.copytree(installed, target, copy_function=link, dirs_exist_ok=True)

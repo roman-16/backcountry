@@ -101,7 +101,7 @@ public final class Arrival {
         inventory.setItem(1, new ItemStack(Things.BEAR_SPRAY.get()));
         inventory.setItem(2, new ItemStack(Things.MED_KIT.get()));
         ItemStack bottle = new ItemStack(Things.WATER_BOTTLE.get());
-        bottle.set(Things.WATER.get(), new Water(true, (float) Balance.get().water().bottleL()));
+        bottle.set(Things.WATER.get(), Water.of(true, (float) Balance.get().water().bottleL()));
         inventory.setItem(3, bottle);
         inventory.setItem(4, new ItemStack(Things.PILOT_BREAD.get(), Balance.get().kit().pilotBread()));
         inventory.setItem(5, new ItemStack(Things.CAMP_POT.get()));

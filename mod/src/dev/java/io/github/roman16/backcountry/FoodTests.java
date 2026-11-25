@@ -96,11 +96,11 @@ public final class FoodTests {
         ServerPlayer player = BackcountryTests.survivor(helper);
         CacheEntity cache = cache(helper, new BlockPos(3, 1, 3));
         cache.setItem(0, new ItemStack(Items.BEEF, 4));
-        cache.setItem(1, new ItemStack(Items.COOKED_CHICKEN, 16));
+        cache.setItem(1, new ItemStack(Items.COOKED_CHICKEN, 32));
         double eaten = Rations.eat(player, Balance.get().rations().normalKcal(), true);
         check(helper, eaten >= Balance.get().rations().normalKcal(), "the ration ate " + eaten + " kcal");
         check(helper, cache.getItem(0).getCount() == 4, "the ration ate raw beef");
-        check(helper, cache.getItem(1).getCount() < 16, "the ration left the cooked chicken");
+        check(helper, cache.getItem(1).getCount() < 32, "the ration left the cooked chicken");
         Team.get(helper.getLevel().getServer()).emptied(helper.absolutePos(new BlockPos(3, 1, 3)));
         helper.succeed();
     }
@@ -157,7 +157,7 @@ public final class FoodTests {
             throw new IllegalStateException("the cooking pot has no block entity");
         }
         pot.pour(1);
-        check(helper, pot.add(new ItemStack(Items.BROWN_MUSHROOM)) && pot.add(new ItemStack(Items.RED_MUSHROOM)), "the pot refused mushrooms");
+        check(helper, pot.add(new ItemStack(Items.BROWN_MUSHROOM)) && pot.add(new ItemStack(Items.BROWN_MUSHROOM)), "the pot refused mushrooms");
         check(helper, !pot.add(new ItemStack(Items.STONE)), "the pot took a stone");
         pot.advance(Balance.get().cooking().stewHours() + CLOSE, true);
         check(helper, pot.stew().is(Items.MUSHROOM_STEW), "the pot cooked " + pot.stew());

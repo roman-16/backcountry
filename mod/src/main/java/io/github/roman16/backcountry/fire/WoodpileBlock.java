@@ -3,6 +3,7 @@ package io.github.roman16.backcountry.fire;
 import com.mojang.serialization.MapCodec;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.guide.Guide;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -123,6 +124,9 @@ public final class WoodpileBlock extends BaseEntityBlock {
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof WoodpileEntity woodpile) {
             woodpile.pieces().forEach(piece -> Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), piece));
+            if (level.getServer() != null) {
+                Guide.woodpileGone(level.getServer(), pos);
+            }
         }
         super.onRemove(state, level, pos, newState, moved);
     }

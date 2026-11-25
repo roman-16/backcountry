@@ -3,6 +3,8 @@ package io.github.roman16.backcountry.gear;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Metabolism;
+import io.github.roman16.backcountry.guide.Guide;
+import io.github.roman16.backcountry.guide.Task;
 import java.util.List;
 import java.util.Locale;
 import net.minecraft.ChatFormatting;
@@ -49,7 +51,10 @@ public class WaterVesselItem extends Item {
         if (hit.getType() == HitResult.Type.BLOCK) {
             BlockPos at = hit.getBlockPos();
             if (level.getFluidState(at).is(FluidTags.WATER) && water(stack).litres() < capacity) {
-                stack.set(Things.WATER.get(), water(stack).add(false, capacity(), capacity()));
+                stack.set(Things.WATER.get(), water(stack).add(Water.of(false, capacity()), capacity(), capacity()));
+                if (player instanceof ServerPlayer server) {
+                    Guide.done(server, Task.FILL_BOTTLE);
+                }
                 level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.NEUTRAL, 1.0F, 1.0F);
                 return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
             }
@@ -72,7 +77,7 @@ public class WaterVesselItem extends Item {
         if (entity instanceof ServerPlayer player) {
             Water held = water(stack);
             float sip = (float) Math.min(held.litres(), Balance.get().water().sipL());
-            Metabolism.drink(player, sip, held.boiled());
+            Metabolism.drink(player, sip, held);
             stack.set(Things.WATER.get(), held.take(sip));
         }
         return stack;
@@ -91,8 +96,12 @@ public class WaterVesselItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> lines, TooltipFlag flag) {
         Water held = water(stack);
+        String kind = switch (held.drink()) {
+            case SPRUCE_TEA -> "tooltip.backcountry.spruce_tea";
+            case BIRCH_SAP -> held.boiled() ? "tooltip.backcountry.boiled_sap" : "tooltip.backcountry.birch_sap";
+            case WATER -> held.boiled() ? "tooltip.backcountry.boiled_water" : "tooltip.backcountry.lake_water";
+        };
         lines.add((held.empty() ? Component.translatable("tooltip.backcountry.empty")
-                : Component.translatable(held.boiled() ? "tooltip.backcountry.boiled_water" : "tooltip.backcountry.lake_water",
-                        String.format(Locale.ROOT, "%.2f", held.litres()))).withStyle(ChatFormatting.GRAY));
+                : Component.translatable(kind, String.format(Locale.ROOT, "%.2f", held.litres()))).withStyle(ChatFormatting.GRAY));
     }
 }
