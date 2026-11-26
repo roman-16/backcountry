@@ -438,6 +438,7 @@ thirst_damage = 2
 blizzard_fog_blocks = 32
 blizzard_whiteout = 0.75
 blizzard_wind_kmh = 56
+breath_below_c = 7
 clear_below = 0.25
 cloudy_above = 0.5
 cloudy_swing = 0.5

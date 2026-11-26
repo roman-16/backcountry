@@ -21,6 +21,10 @@ public final class ClientState {
 
     private ClientState() {}
 
+    public static boolean stomachEmpty() {
+        return view != BodyView.NONE && view.stomach() <= 0;
+    }
+
     static boolean unread() {
         return view.unread() && !readSent;
     }

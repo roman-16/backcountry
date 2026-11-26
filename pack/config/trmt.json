@@ -1,0 +1,8 @@
+{
+  "erosion": {
+    "leavesEnabled": false
+  },
+  "pathSpeedBuff": {
+    "enabled": false
+  }
+}

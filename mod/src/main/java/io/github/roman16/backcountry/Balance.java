@@ -141,10 +141,10 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
 
     public record Water(int boilSeconds, double bottleL, int knockoutSeconds, double needLDay, double potL, double sipL, float thirstDamage) {}
 
-    public record Weather(int blizzardFogBlocks, double blizzardWhiteout, double blizzardWindKmh, double clearBelow, double cloudyAbove, double cloudySwing, double driftCarried,
-            double driftSummerC, double driftWinterC, double dryWindKmh, double forecastChanceNoise, double forecastErrorCPerDay, double forecastSkillLostPerDay,
-            double forecastWindErrorKmhPerDay, double highestWindKmh, List<Double> intensityShares, int longestSpellHours, double overcast,
-            List<Double> precipitationDays, int shortestSpellHours, double snowBelowC, int stormFirstMonth, int stormLastMonth, double stormShare,
+    public record Weather(int blizzardFogBlocks, double blizzardWhiteout, double blizzardWindKmh, double breathBelowC, double clearBelow, double cloudyAbove,
+            double cloudySwing, double driftCarried, double driftSummerC, double driftWinterC, double dryWindKmh, double forecastChanceNoise, double forecastErrorCPerDay,
+            double forecastSkillLostPerDay, double forecastWindErrorKmhPerDay, double highestWindKmh, List<Double> intensityShares, int longestSpellHours,
+            double overcast, List<Double> precipitationDays, int shortestSpellHours, double snowBelowC, int stormFirstMonth, int stormLastMonth, double stormShare,
             List<Double> wetShares, double wetWindKmh) {}
 
     public record World(int acrossBlocks, double detailShare, int detailWavelengthBlocks, double dryShare, int edgeBlocks, double highest, double innerShare,

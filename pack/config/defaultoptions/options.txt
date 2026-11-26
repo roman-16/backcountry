@@ -7,4 +7,5 @@ hideSplashTexts:true
 maxFps:260
 mouseSensitivity:0.335
 onboardAccessibility:false
+resourcePacks:["vanilla","mod_resources","file/DetailedAnimationsReworked - V1.15.zip","file/FreshAnimations_v1.11.2_1.20+.zip","file/Leggings Fix 1.16-1.21.1.zip"]
 skipMultiplayerWarning:true

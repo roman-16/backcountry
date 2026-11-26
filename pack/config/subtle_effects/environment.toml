@@ -1,0 +1,7 @@
+version = 0
+
+[fireflies]
+firefliesEnabled = false
+
+[waterfalls]
+waterfallsEnabled = false

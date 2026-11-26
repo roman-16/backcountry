@@ -11,6 +11,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Torches and lanterns burn down: a torch lasts 30 minutes and a lantern an hour, in hand too, with a bar on the slot; charcoal tops up a torch, Rendered Fat a lantern, and a spent lantern hangs dark until refilled.
 - A search box in Controls, team marks on mouse button 5, and dark nights without the shader that step aside when it draws.
 - The compass is made from iron and a glass pane and points north; the clock is gold and a glass pane; the lead is made from rope, and black dye from charcoal.
+- Voice chat between teammates within 48 blocks, open from the first join; V opens its menu.
+- Teammates show when they are typing, in a screen or idle, and survivors move, eat and drink with animations, their skins in 3D.
+- Sit on slabs and stairs; F5 steps through an over-the-shoulder view, and U swaps the shoulder.
+- What you pick up is listed at the top right, the hotbar bounces as items come and go, and sneaking shows the name of what you look at.
+- Drag and scroll items between slots, sort a chest, a cache or your pack with a middle click, and keep walking with a screen open.
+- Footprints in snow and sand, paths that wear where you walk and grow back, wakes behind the raft, and thunder that arrives after its flash.
+- New sounds for screens, items and blocks, music that follows place, time and weather, sparks from fires and lamps, breath in cold air and a growling empty stomach.
+- The far land fills in faster, and the game loads, draws and generates faster.
 
 ### Changed
 
@@ -18,7 +26,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - River Fishing catches only Alaska's fish, with the stick rod in open water and the winter rod through the ice.
 - Logs need an axe; the first is the stone axe from loose rocks and twigs.
 - The water bar sits where the XP bar was.
-- The shader is on from the first launch, with Wayfarer's keys and settings: Shift sprints, Ctrl sneaks, FOV 80, GUI scale 3, Bright, full screen.
+- The pack's items and blocks are drawn in vanilla's style: outlines in their own darker colour, light from the top left, and bows, arrows and bottles that keep vanilla's string, feathers and glass.
+- The shader is on from the first launch, with the pack's keys and settings: Shift sprints, Ctrl sneaks, FOV 80, GUI scale 3, Bright, full screen.
 - The difficulty stays Normal, and F3 shows no coordinates.
 
 ### Removed

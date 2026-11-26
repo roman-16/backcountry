@@ -132,7 +132,7 @@ public final class Driver {
     }
 
     private static void open(Minecraft minecraft, Path folder) throws IOException {
-        if (!opened && minecraft.screen instanceof TitleScreen) {
+        if (!opened && minecraft.screen instanceof TitleScreen && minecraft.getOverlay() == null) {
             opened = true;
             String world = System.getProperty(Backcountry.MODID + ".world", "");
             String seed = System.getProperty(Backcountry.MODID + ".seed", "");

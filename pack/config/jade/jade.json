@@ -1,0 +1,8 @@
+{
+  "general": {
+    "itemModNameTooltip": false
+  },
+  "overlay": {
+    "activeTheme": "jade:waila"
+  }
+}

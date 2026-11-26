@@ -18,7 +18,8 @@ SHADER_OPTIONS = "*.txt"
 DATA_VERSION = 3955
 CACHE = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "backcountry"
 IRIS = "iris.properties"
-CLIENT_CONFIGS = {IRIS: {"enableShaders": "false"}}
+DEV_CONFIGS = {"dynamic_fps.json": {"enabled": False}}
+TEST_CONFIGS = {IRIS: {"enableShaders": "false"}}
 CLIENT_OPTIONS = {
     "fullscreen": "false",
     "onboardAccessibility": "false",
@@ -30,7 +31,7 @@ CLIENT_OPTIONS = {
     "tutorialStep": "none",
 }
 SETTINGS = ("config",)
-FAR_VIEW = {"mods/distanthorizons.pw.toml"}
+FAR_VIEW = {"mods/distant-horizons-seedgen.pw.toml", "mods/distanthorizons.pw.toml"}
 DEV_CLASSPATH = {"mods/ecliptic-seasons.pw.toml"}
 SIDES = {"client": {"both", "client"}, "server": {"both", "server"}}
 DEV_SERVER_PORT = 25566
@@ -160,10 +161,9 @@ def client(target, mode):
     for options_file in (PACK / "shaderpacks").glob(SHADER_OPTIONS):
         (target / "shaderpacks").mkdir(parents=True, exist_ok=True)
         shutil.copyfile(options_file, target / "shaderpacks" / options_file.name)
-    if mode != "shipped":
-        for name, overrides in CLIENT_CONFIGS.items():
-            (target / "config").mkdir(parents=True, exist_ok=True)
-            configure(target / "config" / name, overrides)
+    for name, overrides in (DEV_CONFIGS if mode == "shipped" else DEV_CONFIGS | TEST_CONFIGS).items():
+        (target / "config").mkdir(parents=True, exist_ok=True)
+        configure(target / "config" / name, overrides)
     options(target)
 
 

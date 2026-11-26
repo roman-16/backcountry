@@ -36,6 +36,9 @@ The `finish` skill comes first, so this list keeps only what play alone shows. P
 | Controls | Shift sprints and Ctrl sneaks; Controls has a search box; mouse button 5 marks a spot your friend sees; the pause menu has Statistics across its row; F3 shows no coordinates; the published pack draws the shader from the first launch, and nights are dark with and without it |
 | End | At BMI 17 the screen fades, the summary shows the weight curve, and Arrive brings a fresh survivor to the drop-off; your left pack stands where you were |
 | Team | A teammate sees your extraction in chat and can open your left pack; on 3 May the year's summary names everyone |
+| Voice and team | V opens the voice menu; a friend's voice fades past about 48 blocks and behind walls; their head shows when they type or have a screen open; sneaking at a bush names it in a small box at the top |
+| Comfort | What you pick up lists at the top right; the hotbar bounces; an empty hand on a slab sits you down; F5 goes over the shoulder and U swaps sides; you walk with the inventory open but stand still in the bow-drill game; a middle click sorts a chest |
+| Small things | Breath steams on a cold morning and not on a warm afternoon; the stomach growls when empty; footprints in snow and sand; a path wears between camp and water over days; wakes trail the raft; thunder comes seconds after its flash; the far land fills in smoothly where you arrive |
 | Balance | Whether a week of game days felt hungry but fair, whether cold, water and energy each mattered without nagging, and whether the weather's swings, the wind and the alerts felt like Alaska without nagging |
 
 ## Bring the results back

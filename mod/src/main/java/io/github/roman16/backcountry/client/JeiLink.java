@@ -8,17 +8,31 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.runtime.IIngredientManager;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 @JeiPlugin
-public final class CutsInJei implements IModPlugin {
+public final class JeiLink implements IModPlugin {
+    @Nullable
+    private static IJeiRuntime runtime;
+
     @Override
     public ResourceLocation getPluginUid() {
-        return Backcountry.id("cuts");
+        return Backcountry.id("jei");
     }
 
     @Override
-    public void onRuntimeAvailable(IJeiRuntime runtime) {
-        IIngredientManager ingredients = runtime.getIngredientManager();
+    public void onRuntimeAvailable(IJeiRuntime available) {
+        runtime = available;
+        IIngredientManager ingredients = available.getIngredientManager();
         ingredients.removeIngredientsAtRuntime(VanillaTypes.ITEM_STACK, ingredients.getAllItemStacks().stream().filter(Cuts::cut).toList());
+    }
+
+    @Override
+    public void onRuntimeUnavailable() {
+        runtime = null;
+    }
+
+    static boolean typing() {
+        return runtime != null && runtime.getGuiRuntime().getIngredientListOverlay().hasKeyboardFocus();
     }
 }

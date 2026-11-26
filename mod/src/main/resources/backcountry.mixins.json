@@ -5,6 +5,8 @@
     "MoreDarknessMoonMixin",
     "MoreDarknessPerceptionMixin",
     "MoreDarknessReadbackMixin",
+    "SubtleEffectsBreathMixin",
+    "SubtleEffectsGrowlMixin",
     "ToastComponentMixin"
   ],
   "compatibilityLevel": "JAVA_21",
@@ -22,6 +24,9 @@
     "PrecipitationMixin",
     "RiverCalendarMixin",
     "RiverPressureMixin",
+    "SeedGenBudgetMixin",
+    "SeedGenGreetingMixin",
+    "SeedGenSharingMixin",
     "SplineCoordinateMixin",
     "StructuresMixin",
     "TamableAnimalMixin",

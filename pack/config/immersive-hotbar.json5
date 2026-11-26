@@ -1,0 +1,8 @@
+{
+	animatedXpBar: false,
+	lowDurabilityGlow: true,
+	xpBarPulseEnabled: false,
+	xpGlowEnabled: false,
+	xpLevelUpParticlesEnabled: false,
+	xpTextPulseEnabled: false
+}

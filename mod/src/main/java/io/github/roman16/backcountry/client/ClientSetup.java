@@ -18,6 +18,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -31,6 +32,7 @@ public final class ClientSetup {
     private static final int BAR_WIDTH = 13;
     private static final int BAR_X = 2;
     private static final int BAR_Y = 13;
+    private static final String INVMOVE = "invmove";
 
     private ClientSetup() {}
 
@@ -59,6 +61,9 @@ public final class ClientSetup {
                         : (stack.getUseDuration(entity) - entity.getUseItemRemainingTicks()) / DRAW_TICKS);
                 ItemProperties.register(bow, ResourceLocation.withDefaultNamespace("pulling"), (stack, level, entity, seed) -> entity != null && entity.isUsingItem()
                         && entity.getUseItem() == stack ? 1 : 0);
+            }
+            if (ModList.get().isLoaded(INVMOVE)) {
+                InvMoveLink.register();
             }
         });
     }

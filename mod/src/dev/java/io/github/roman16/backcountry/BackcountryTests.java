@@ -395,6 +395,24 @@ public final class BackcountryTests {
     }
 
     @GameTest(template = "empty")
+    public static void breathShowsOnlyInColdAir(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        int day = Calendar.day(level);
+        BlockPos at = helper.absolutePos(new BlockPos(1, 2, 1));
+        double air = Climate.airC(level, at, day);
+        double breath = Balance.get().weather().breathBelowC();
+        float drift = Weather.day(level, day).driftC();
+        Weather.set(new Day(day, (float) (drift + 2 * (breath - 16 - air)), 0, 0, 0, Day.DRY, 0, 0, false));
+        boolean cold = Climate.breathShows(level, at);
+        Weather.set(new Day(day, (float) (drift + 2 * (breath + 16 - air)), 0, 0, 0, Day.DRY, 0, 0, false));
+        boolean warm = Climate.breathShows(level, at);
+        Weather.unset(day);
+        check(helper, cold, "breath did not show in air well below " + breath + " °C");
+        check(helper, !warm, "breath showed in air well above " + breath + " °C");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void windChillsOnlyTheOpen(GameTestHelper helper) {
         ServerPlayer player = survivor(helper);
         Body body = Metabolism.body(player);

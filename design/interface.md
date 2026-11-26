@@ -17,6 +17,15 @@ The hearts stay and the energy bolts, drawn like vanilla's hunger icons over emp
 
 Everything the pack draws wears vanilla's own look: its panels, buttons, slots and font.
 
+What comes into the inventory is listed at the top right for a few seconds, a line an item, counting up while more of it arrives ("4x Stick", Pick Up Notifier). The hotbar's items bounce as they land, are used, eaten or placed, the selected slot grows, a tool near breaking glows and the selected item's name pops in (Immersive Hotbar). While a survivor sneaks, a box at the top centre names what they look at, the name alone in vanilla's tooltip look (Jade), so a forager crouching at a bush still has to tell a baneberry by its look. Chat lines slide in (Chat Animation). Simple Voice Chat draws its own icon at the bottom left: a speaker struck through while voice is off or no device is found.
+
+```text
+                    ┌───────────┐                 [■] Spruce Log x4
+                    │ Baneberry │                 [■] Blueberries x6
+                    └───────────┘
+                          +
+```
+
 ### I2 The Satellite Messenger
 
 Right-click opens it, drawn as the device itself: an orange handheld with a green-on-dark screen, the only screen with a skin of its own, as vanilla's book has its page. Its pages are tabs: the shown page's tab carries its icon and name, the others their icon alone (hovering names them), switched by a click, the arrow keys, 1 to 8 or the ◀ ▶ keys on the case. The pages, in order: Tasks, Weather, Forecast, Warmth, Body, Nutrition, Rations, Vitals. Every value has its icon and a meter; the air sits on a gauge from -40 to +30 °C banded at freezing and at -15 °C, the wind on a meter with the blizzard mark at 56 km/h, the core temperature on a gauge banded freezing, cold, comfortable and hot, and the weight on a BMI gauge with extraction marked at 17; warnings turn amber or red. A strip of alerts sits under every page, two lines at most, "and N more" past them, "No alerts" when there are none.
@@ -144,7 +153,8 @@ The inventory shows its locked rows dark ("Needs a hide pack") and the back slot
 
 ### I8 Controls and the first launch
 
-- **Keys** are Wayfarer's: Left Shift sprints and Left Ctrl sneaks; every mod's key is unbound unless a player needs it: River Fishing's fight keys on the arrows, Ping Wheel's mark on mouse button 5, JEI's keys inside its own screens (R recipes, U uses, A bookmark, Ctrl+F search). Iris's, Ecliptic Seasons' debug and Critters n' Crawlers' keys, JEI's cheat-to-inventory keys and L for advancements are unbound. Controls has a search box (Controlling). Controls' Reset Keys brings back the pack's keys.
+- **Keys:** Left Shift sprints and Left Ctrl sneaks; every mod's key is unbound unless a player needs it: River Fishing's fight keys on the arrows, Ping Wheel's mark on mouse button 5, JEI's keys inside its own screens (R recipes, U uses, A bookmark, Ctrl+F search), V for the voice menu, U to swap the shoulder in third person, the middle mouse button to sort the inventory under the cursor. F5 steps from first person to over the shoulder to facing the survivor (Shoulder Surfing Reloaded); the game starts in first person. Iris's, Ecliptic Seasons' debug and Critters n' Crawlers' keys, JEI's cheat-to-inventory keys and L for advancements are unbound. Controls has a search box (Controlling). Controls' Reset Keys brings back the pack's keys.
+- **Screens open:** a survivor keeps walking with the inventory, a chest, a cache or the Messenger open, the world showing behind it (InvMove); the bow-drill game, whose A, D and Space saw and blow, the summary and typing in JEI's search hold them still.
 - **Team marks:** mouse button 5 marks a spot for the whole team for a few seconds, with who set it and how far it is (Ping Wheel).
 - **The first launch** (Default Options): FOV 80, GUI scale 3, full screen, VSync on, an unlimited frame rate, sensitivity 67%, Brightness Bright, no splash texts, no accessibility onboarding, no multiplayer warning; render distance stays vanilla's 12 chunks. Each player's own settings stay theirs after that.
 - **Nights** are dark: without the shader More Darkness makes a moonless night black beyond the fire and a full moon pale grey, the eyes adjusting over a few seconds; with Complementary Unbound on, as it is from the first launch, More Darkness steps aside and the shader's night settings give the same night (`production.md`).

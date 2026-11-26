@@ -50,6 +50,10 @@ public final class Climate {
         return airC(level, biome, pos, Calendar.day(level), hour(level)) <= Balance.get().weather().snowBelowC();
     }
 
+    public static boolean breathShows(Level level, BlockPos pos) {
+        return airC(level, pos, Calendar.day(level)) <= Balance.get().weather().breathBelowC();
+    }
+
     public static double feelsC(double airC, double windKmh) {
         if (airC > WIND_CHILL_HIGHEST_C || windKmh <= CALM_KMH) {
             return airC;

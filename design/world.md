@@ -27,6 +27,12 @@
 
 - When the world is made, the mod searches outward from the centre on a 32-block grid for a lake: 16 or more cells of water whose surface is at y 128 or below, 512 or more blocks inland, and not joined to the sea. Its shore cell nearest the centre, no more than 8 blocks above the water, is the drop-off and the world's spawn; every survivor arrives there (`systems.md` S10). With no such lake within 3,072 blocks, the first bank of any water found is the drop-off. `just shape` marks it in red.
 
+### W5 Tracks and paths
+
+- Anything that walks presses footprints into snow layers and sand, which fade (Soft Imprints, drawn on each player's own screen).
+- Grass, dirt, sand, short plants and snow wear into a path where survivors and animals walk often, and grow back when left (The Roads More Travelled): a year at one camp wears a trail to the water and the woodpile. Leaves and berry bushes never wear, and a path makes no one faster, since a survivor's speed is the body's (energy, snow, load).
+- **Edge cases:** footprints show in snow layers, not in the snow Ecliptic Seasons draws over the ground's own blocks; a path left alone grows back whether or not anyone is near.
+
 ## Open
 
 None.

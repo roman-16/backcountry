@@ -32,6 +32,10 @@ CLOUD_LAYERS_APART = 64
 IRIS = ROOT / "pack/config/iris.properties"
 SHADER_OPTIONS = ROOT / "generator/shader.toml"
 SHADERPACKS = ROOT / "pack/shaderpacks"
+PATCHER = ROOT / "pack/mods/euphoria-patches.pw.toml"
+RESOURCEPACKS = ROOT / "pack/resourcepacks"
+DEFAULT_OPTIONS = ROOT / "pack/config/defaultoptions/options.txt"
+BUILT_IN_PACKS = ("vanilla", "mod_resources")
 
 
 def hex_colour(text):
@@ -595,7 +599,11 @@ def lights():
 
 def shaders():
     shader = tomllib.loads((SHADERPACKS / "complementary-unbound.pw.toml").read_text())["filename"]
-    IRIS.write_text(f"disableUpdateMessage=true\nenableShaders=true\nshaderPack={shader}\n")
+    patches = tomllib.loads(PATCHER.read_text())["filename"].split("-")[1]
+    pack = f"{shader.removesuffix('.zip')} + EuphoriaPatches_{patches}"
+    IRIS.write_text(f"disableUpdateMessage=true\nenableShaders=true\nshaderPack={pack}\n")
+    for stale in SHADERPACKS.glob("*.txt"):
+        stale.unlink()
     sky = tomllib.loads(BALANCE.read_text())["sky"]
     options = tomllib.loads(SHADER_OPTIONS.read_text()) | {
         "CLOUD_ALT1": str(sky["cloud_height"]),
@@ -604,7 +612,14 @@ def shaders():
         "MOON_PHASE_FULL": f"{sky['moon_full']:.2f}",
         "MOON_PHASE_PARTIAL": f"{sky['moon_partial']:.2f}",
     }
-    (SHADERPACKS / f"{shader}.txt").write_text("".join(f"{key}={value}\n" for key, value in sorted(options.items())))
+    (SHADERPACKS / f"{pack}.txt").write_text("".join(f"{key}={value}\n" for key, value in sorted(options.items())))
+
+
+def resource_packs():
+    files = [f"file/{tomllib.loads(meta.read_text())['filename']}" for meta in sorted(RESOURCEPACKS.glob("*.pw.toml"))]
+    line = "resourcePacks:" + json.dumps([*BUILT_IN_PACKS, *files], separators=(",", ":"))
+    options = [entry for entry in DEFAULT_OPTIONS.read_text().splitlines() if not entry.startswith("resourcePacks:")]
+    DEFAULT_OPTIONS.write_text("\n".join(sorted([*options, line], key=lambda entry: entry.split(":", 1)[0])) + "\n")
 
 
 def test_room():
@@ -679,6 +694,7 @@ def main():
     woodpile()
     lights()
     shaders()
+    resource_packs()
 
 
 main()
