@@ -33,9 +33,8 @@ jobs:
           mkdir site
           unzip -q "assets/Backcountry-${version}-pack.zip" -d site
           cp assets/Backcountry.zip site/
-          touch site/.nojekyll
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: site
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
