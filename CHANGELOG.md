@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-11-26
+
+### Highlights
+
+- **Alaska's island** - No caves, ore in the rock, Nether, XP, magic or machines; instead bears that act their season and mostly bluff, sows with cubs, the salmon run, new berries, spruce tea, birch syrup and a sled.
+- **Tasks** - The Satellite Messenger opens on Tasks, walking each survivor through their first days, then setting the team's goals for winter and the year.
+- **Real work, real calories** - Every activity burns what it would burn a real person, skills make work cheaper with practice, and the Nutrition page shows where the day's kcal went.
+- **Company** - Voice chat between teammates within 48 blocks (V opens its menu), and teammates seen typing, sitting and moving with animations.
+
 ### Added
 
 - Torches and lanterns burn down: a torch lasts 30 minutes and a lantern an hour, in hand too, with a bar on the slot; charcoal tops up a torch, Rendered Fat a lantern, and a spent lantern hangs dark until refilled.
@@ -19,6 +28,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Footprints in snow and sand, paths that wear where you walk and grow back, wakes behind the raft, and thunder that arrives after its flash.
 - New sounds for screens, items and blocks, music that follows place, time and weather, sparks from fires and lamps, breath in cold air and a growling empty stomach.
 - The far land fills in faster, and the game loads, draws and generates faster.
+- The Satellite Messenger opens on a Tasks page: each survivor's first days, then the team's goals for winter and the year.
+- Fire-making, Woodcutting, Butchering and Archery rise with use, each level making that work quicker and cheaper; the Vitals page shows them, and a new survivor starts over.
+- Salmonberries in June and July, highbush cranberries from September into March, and white baneberries that poison.
+- Spruce Tea against scurvy, from needles cut off spruce leaves with the knife and boiled in the Camp Pot.
+- A Birch Tap gathers sap in April and May that drinks like water and boils down to Birch Syrup.
+- Dead spruces in the taiga split into Softwood dry enough to burn from the first day.
+- Fish frozen through at -16 °C or colder for a day carries no parasites raw.
+- Sows with one or two cubs that charge anyone near them, and bears fishing the rivers from July that leave half-eaten salmon on the bank and defend it.
+- The Sled, pulled on a lead, carries 27 stacks or a whole moose, gliding on snow and dragging on bare ground.
 
 ### Changed
 
@@ -29,6 +47,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The pack's items and blocks are drawn in vanilla's style: outlines in their own darker colour, light from the top left, and bows, arrows and bottles that keep vanilla's string, feathers and glass.
 - The shader is on from the first launch, with the pack's keys and settings: Shift sprints, Ctrl sneaks, FOV 80, GUI scale 3, Bright, full screen.
 - The difficulty stays Normal, and F3 shows no coordinates.
+- Every activity burns what the same time of it burns a real person, with load, snow, slope, wind and cold counted; snowshoes and a lighter pack save kcal, and the Nutrition page splits the day's burn by cause.
+- Rations are larger to match, Lean 1,280, Normal 1,600 and Feast 2,048 kcal a meal, and the stomach holds twice as much.
+- Grizzlies come at survivors in spring and autumn and otherwise only when surprised, most charges stop short with a roar unless you run or strike, and black bears flee except at food.
+- Mushroom stew takes two brown mushrooms; with a red one it comes out Poisoned.
+- Distant Horizons draws 1,024 chunks out, with no warnings in chat.
 
 ### Removed
 
