@@ -75,7 +75,9 @@ public final class WildTests {
         Body body = Metabolism.body(player);
         Sled sled = helper.spawn(Things.SLED_ENTITY.get(), new BlockPos(3, 1, 1));
         sled.setLeashedTo(player, true);
-        sled.setItem(0, new ItemStack(Items.COBBLESTONE, 64));
+        for (int slot = 0; slot < 8; slot++) {
+            sled.setItem(slot, new ItemStack(Items.COBBLESTONE, 8));
+        }
         double ground = Sled.pulledKg(player);
         check(helper, ground > 64, "a sled of 64 cobblestone pulled as " + ground + " kg");
         Vec3 from = player.position();

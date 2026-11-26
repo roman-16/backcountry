@@ -11,7 +11,6 @@ public final class Look {
     static final int CASE = 0xFFD8742C;
     static final int CASE_DARK = 0xFFA4521A;
     static final int CASE_EDGE = 0xFF4A2208;
-    static final int CASE_KNOB = 0xFF2E2E2E;
     static final int CASE_LABEL = 0xFF5A2A08;
     static final int CASE_LIGHT = 0xFFF2A564;
     static final int CHART = 0xFF1E1E1E;
@@ -48,6 +47,8 @@ public final class Look {
     public static final int SEASONED = 0xFFAA00;
     static final int TEXT = 0xFFFFFFFF;
     static final int TEXT_QUIET = 0xFFA0A0A0;
+    static final int TOAST_TITLE = 0xFFFFFF00;
+    static final int TRACKED = 0xFFFFE080;
     static final int TRACK = 0xFF1E1E1E;
 
     private Look() {}

@@ -1,14 +1,16 @@
 package io.github.roman16.backcountry;
 
-import io.github.roman16.backcountry.body.Alert;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.food.Fish;
 import io.github.roman16.backcountry.gear.Water;
+import io.github.roman16.backcountry.guide.Deed;
 import io.github.roman16.backcountry.guide.Guide;
 import io.github.roman16.backcountry.guide.GuideView;
 import io.github.roman16.backcountry.guide.Task;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,9 +18,11 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -28,9 +32,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @GameTestHolder(Backcountry.MODID)
 @PrefixGameTestTemplate(false)
 public final class GuideTests {
+    private static final int MAY = 5;
     private static final int JUNE = 6;
-    private static final int DECEMBER = 12;
-    private static final int APRIL = 4;
 
     private GuideTests() {}
 
@@ -40,23 +43,21 @@ public final class GuideTests {
         }
     }
 
-    private static void finishFirstDays(ServerPlayer player) {
-        Task.Stage.FIRST_DAYS.tasks().forEach(task -> Guide.done(player, task));
+    private static GuideView view(GameTestHelper helper, ServerPlayer player) {
+        return Guide.get(helper.getLevel().getServer()).view(player);
     }
 
     @GameTest(template = "empty")
-    public static void aNewSurvivorStartsWithTheFirstDays(GameTestHelper helper) {
+    public static void aNewSurvivorFollowsTheFirstTask(GameTestHelper helper) {
         ServerPlayer player = BackcountryTests.survivor(helper);
-        GuideView view = Guide.get(helper.getLevel().getServer()).view(player.getUUID(), JUNE);
-        check(helper, view.stage() == Task.Stage.FIRST_DAYS, "a new survivor is at " + view.stage());
-        check(helper, view.tasks().equals(Task.Stage.FIRST_DAYS.tasks()) && view.done().isEmpty(), "a new survivor sees " + view);
-        Guide.get(helper.getLevel().getServer()).notice(player);
-        check(helper, Metabolism.body(player).alerts.containsKey(Alert.NEW_TASKS), "the first days raised no New tasks alert");
+        GuideView view = view(helper, player);
+        check(helper, Task.values()[0] == Task.FILL_BOTTLE && !view.done(Task.FILL_BOTTLE), "a new survivor has filled the Water Bottle");
+        check(helper, view.following(JUNE).equals(Optional.of(Task.FILL_BOTTLE)), "a new survivor follows " + view.following(JUNE));
         helper.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void tasksTickWhenTheSurvivorDoesThem(GameTestHelper helper) {
+    public static void aTasksLastStepDoneTicksTheWholeTask(GameTestHelper helper) {
         ServerPlayer player = BackcountryTests.survivor(helper);
         Metabolism.drink(player, 0.25, Water.of(true, 0.25F));
         ItemStack fish = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("riverfishing", "northern_pike")));
@@ -65,42 +66,61 @@ public final class GuideTests {
         data.putInt("WeightG", 2048);
         fish.set(DataComponents.CUSTOM_DATA, CustomData.of(data));
         Fish.land(player, fish);
-        NeoForge.EVENT_BUS.post(new PlayerEvent.ItemCraftedEvent(player, new ItemStack(Things.SOFTWOOD.get()), new SimpleContainer(1)));
-        GuideView view = Guide.get(helper.getLevel().getServer()).view(player.getUUID(), JUNE);
-        check(helper, view.done().equals(List.of(Task.BOIL_WATER, Task.SPLIT_LOG, Task.LAND_FISH)), "drinking boiled water, landing a fish and splitting a log ticked " + view.done());
+        check(helper, !view(helper, player).done(Task.BOIL_WATER), "the kit's boiled water finished Boil water without a pot over a fire");
+        check(helper, view(helper, player).stepsDone(Task.FILL_BOTTLE) == 1, "drinking did not tick its step of the Water Bottle");
+        Guide.did(player, Deed.FILLED_POT);
+        Guide.did(player, Deed.HUNG_POT);
+        Metabolism.drink(player, 0.25, Water.of(true, 0.25F));
+        GuideView view = view(helper, player);
+        check(helper, view.done(Task.BOIL_WATER), "drinking water boiled in the hung pot did not finish Boil water");
+        check(helper, view.done(Task.LAND_FISH), "landing a fish did not finish Land a fish");
+        check(helper, !view.done(Task.LIGHT_FIRE), "Light a fire is done without a fire");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void whatTheSurvivorHoldsTicksItsStep(GameTestHelper helper) {
+        ServerPlayer player = BackcountryTests.survivor(helper);
+        player.getInventory().setItem(0, new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("projectvibrantjourneys", "rocks"))));
+        Guide.sense(player);
+        GuideView view = view(helper, player);
+        check(helper, view.stepsDone(Task.STONE_AXE) == 1 && !view.done(Task.STONE_AXE), "a rock held ticked " + view.stepsDone(Task.STONE_AXE) + " steps of the stone axe");
+        player.getInventory().setItem(1, new ItemStack(Items.STONE_AXE));
+        Guide.sense(player);
+        check(helper, view(helper, player).done(Task.STONE_AXE), "a stone axe held did not finish Make a stone axe");
+        player.getInventory().clearContent();
+        Guide.sense(player);
+        check(helper, view(helper, player).done(Task.STONE_AXE), "Make a stone axe came undone when the axe was gone");
         helper.succeed();
     }
 
     @GameTest(template = "empty")
     public static void ticksStayWithThePlayerThroughANewSurvivor(GameTestHelper helper) {
         ServerPlayer player = BackcountryTests.survivor(helper);
-        Guide.done(player, Task.LIGHT_FIRE);
+        Guide.did(player, Deed.LIT_FIRE);
         int day = Calendar.day(helper.getLevel());
         Metabolism.body(player).reset(day, Calendar.year(day));
-        check(helper, Guide.get(helper.getLevel().getServer()).view(player.getUUID(), JUNE).done(Task.LIGHT_FIRE), "a new survivor lost the player's Light a fire");
+        GuideView view = view(helper, player);
+        check(helper, view.stepsDone(Task.LIGHT_FIRE) == 1, "a new survivor lost the player's lit fire");
+        check(helper, view.following(JUNE).equals(Optional.of(Task.FILL_BOTTLE)), "a half-lit fire jumped the queue");
         helper.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void theTeamsGoalsFollowTheYear(GameTestHelper helper) {
-        ServerPlayer player = BackcountryTests.survivor(helper);
-        finishFirstDays(player);
-        Guide guide = Guide.get(helper.getLevel().getServer());
-        GuideView june = guide.view(player.getUUID(), JUNE);
-        boolean ready = Task.Stage.BEFORE_SNOW.tasks().stream().allMatch(guide::reached);
-        check(helper, ready ? june.stage() == Task.Stage.WINTER : june.stage() == Task.Stage.BEFORE_SNOW && june.tasks().equals(Task.Stage.BEFORE_SNOW.tasks()),
-                "in June the team sees " + june);
-        GuideView december = guide.view(player.getUUID(), DECEMBER);
-        check(helper, december.stage() == Task.Stage.WINTER && december.tasks().getLast() == Task.REACH_APRIL, "in December the team sees " + december);
-        GuideView april = guide.view(player.getUUID(), APRIL);
-        check(helper, april.stage() == Task.Stage.YEAR && april.tasks().equals(List.of(Task.REACH_MAY)), "in April the team sees " + april);
+    public static void theTrackerPassesOverWhatIsOutOfSeason(GameTestHelper helper) {
+        List<Integer> steps = Arrays.stream(Task.values()).map(task -> task.ordinal() < Task.EAT_BERRIES.ordinal() ? task.full() : 0).toList();
+        GuideView view = new GuideView(steps, 0, 0, Optional.empty());
+        check(helper, view.following(JUNE).equals(Optional.of(Task.EAT_BERRIES)), "in June the tracker follows " + view.following(JUNE));
+        check(helper, view.following(MAY).equals(Optional.of(Task.SPRUCE_TEA)), "in May the tracker follows " + view.following(MAY));
+        GuideView tracked = new GuideView(steps, 0, 0, Optional.of(Task.SMOKE_MEAT));
+        check(helper, tracked.following(JUNE).equals(Optional.of(Task.SMOKE_MEAT)), "the tracked task was not followed");
         helper.succeed();
     }
 
     @GameTest(template = "empty")
     public static void dryFirewoodAndHideClothingReachTheirGoals(GameTestHelper helper) {
         ServerPlayer player = BackcountryTests.survivor(helper);
-        var server = helper.getLevel().getServer();
+        MinecraftServer server = helper.getLevel().getServer();
         BlockPos pile = helper.absolutePos(new BlockPos(1, 1, 1));
         Guide.woodpile(server, pile, (int) Balance.get().tasks().dryFirewood());
         for (var item : List.of(Things.HIDE_HAT.get(), Things.HIDE_COAT.get(), Things.SNOWSHOES.get())) {
@@ -111,6 +131,7 @@ public final class GuideTests {
         Guide.woodpileGone(server, pile);
         check(helper, guide.reached(Task.DRY_FIREWOOD), "16 pieces of dry firewood on a woodpile did not reach the goal");
         check(helper, guide.reached(Task.HIDE_CLOTHING), "a hide hat, coat and snowshoes made did not reach the goal");
+        check(helper, view(helper, player).done(Task.HIDE_CLOTHING), "the team's clothing goal does not show done");
         helper.succeed();
     }
 }

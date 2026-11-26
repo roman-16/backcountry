@@ -5,8 +5,8 @@ import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.food.Spoilage;
 import io.github.roman16.backcountry.gear.Water;
+import io.github.roman16.backcountry.guide.Deed;
 import io.github.roman16.backcountry.guide.Guide;
-import io.github.roman16.backcountry.guide.Task;
 import io.github.roman16.backcountry.net.Messages;
 import io.github.roman16.backcountry.survivor.Ending;
 import io.github.roman16.backcountry.survivor.Team;
@@ -113,7 +113,7 @@ public final class Metabolism {
                 Body body = body(player);
                 step(player, body, skipped, true);
                 if (body.sheltered) {
-                    Guide.done(player, Task.SLEEP_ROOFED);
+                    Guide.did(player, Deed.SLEPT_ROOFED);
                 }
             }
         }
@@ -368,8 +368,10 @@ public final class Metabolism {
         Balance balance = Balance.get();
         body.waterL = Math.min(balance.water().needLDay(), body.waterL + litres);
         switch (drink.drink()) {
-            case SPRUCE_TEA -> body.vitaminCMg = Math.min(balance.body().vitaminCMgDay() * balance.body().vitaminCStoreDays(),
-                    body.vitaminCMg + balance.forage().teaVitaminCMgPerL() * litres);
+            case SPRUCE_TEA -> {
+                body.vitaminCMg = Math.min(balance.body().vitaminCMgDay() * balance.body().vitaminCStoreDays(), body.vitaminCMg + balance.forage().teaVitaminCMgPerL() * litres);
+                Guide.did(player, Deed.DRANK_TEA);
+            }
             case BIRCH_SAP -> {
                 double kcal = balance.forage().sapKcalPerL() * litres;
                 body.stomachKcal += kcal;
@@ -381,8 +383,9 @@ public final class Metabolism {
             case WATER -> {
             }
         }
+        Guide.did(player, Deed.DRANK);
         if (drink.boiled()) {
-            Guide.done(player, Task.BOIL_WATER);
+            Guide.did(player, Deed.DRANK_BOILED);
         } else if (player.getRandom().nextDouble() < Balance.get().conditions().gutInfectionChance()) {
             body.afflict(Condition.GUT_INFECTION);
         }

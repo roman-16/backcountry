@@ -159,9 +159,9 @@ public final class ClientEvents {
 
     @SubscribeEvent
     static void lockedTooltip(ScreenEvent.Render.Post event) {
-        if (event.getScreen() instanceof AbstractContainerScreen<?> screen && screen.getSlotUnderMouse() instanceof Hotbar.BodySlot body && body.locked()
+        if (event.getScreen() instanceof AbstractContainerScreen<?> screen && screen.getSlotUnderMouse() instanceof Hotbar.BodySlot body
                 && screen.getMenu().getCarried().isEmpty()) {
-            event.getGuiGraphics().renderTooltip(Minecraft.getInstance().font, Component.translatable("tooltip.backcountry.needs_pack"), event.getMouseX(), event.getMouseY());
+            body.needs().ifPresent(needs -> event.getGuiGraphics().renderTooltip(Minecraft.getInstance().font, needs, event.getMouseX(), event.getMouseY()));
         }
     }
 }

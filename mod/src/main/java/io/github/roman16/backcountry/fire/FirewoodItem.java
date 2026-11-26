@@ -3,8 +3,8 @@ package io.github.roman16.backcountry.fire;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.client.Look;
+import io.github.roman16.backcountry.guide.Deed;
 import io.github.roman16.backcountry.guide.Guide;
-import io.github.roman16.backcountry.guide.Task;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -70,7 +70,7 @@ public final class FirewoodItem extends Item {
             level.playSound(null, at, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1, 0.8F);
             woodpile.tell(context.getPlayer());
             if (context.getPlayer() instanceof ServerPlayer player) {
-                Guide.done(player, Task.LAY_WOODPILE);
+                Guide.did(player, Deed.LAID_WOODPILE);
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);

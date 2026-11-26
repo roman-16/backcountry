@@ -18,8 +18,10 @@ public final class JadeLink implements IWailaPlugin {
                 || !Minecraft.getInstance().player.isCrouching());
         registration.addTooltipCollectedCallback(LAST, (box, accessor) -> {
             List<IElement> name = List.copyOf(box.getTooltip().get(JadeIds.CORE_OBJECT_NAME));
+            List<IElement> mod = List.copyOf(box.getTooltip().get(JadeIds.CORE_MOD_NAME));
             box.getTooltip().clear();
             box.getTooltip().add(name);
+            box.getTooltip().add(mod);
             box.setIcon(null);
         });
     }

@@ -14,7 +14,9 @@ import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Nutrition;
 import io.github.roman16.backcountry.body.Warmth;
+import io.github.roman16.backcountry.gear.Bulk;
 import io.github.roman16.backcountry.gear.CampPotEntity;
+import io.github.roman16.backcountry.gear.Hewing;
 import io.github.roman16.backcountry.gear.Hotbar;
 import io.github.roman16.backcountry.gear.LeftPackEntity;
 import io.github.roman16.backcountry.gear.Water;
@@ -33,7 +35,14 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Difficulty;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.neoforged.neoforge.event.EventHooks;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.animal.horse.SkeletonHorse;
 import net.minecraft.world.level.biome.Biome;
@@ -238,8 +247,11 @@ public final class BackcountryTests {
         check(helper, used == Hotbar.ROW, "12 stacks took " + used + " slots");
         Slot row = player.inventoryMenu.getSlot(Hotbar.ROW);
         check(helper, !row.mayPlace(new ItemStack(Items.STICK)), "a locked row took an item");
+        Slot second = player.inventoryMenu.getSlot(2 * Hotbar.ROW);
+        Metabolism.body(player).pack = new ItemStack(Things.CANVAS_PACK.get());
+        check(helper, row.mayPlace(new ItemStack(Items.STICK)) && !second.mayPlace(new ItemStack(Items.STICK)), "the Canvas Pack did not open exactly one row");
         Metabolism.body(player).pack = new ItemStack(Things.HIDE_PACK.get());
-        check(helper, row.mayPlace(new ItemStack(Items.STICK)), "the worn pack's row refused an item");
+        check(helper, row.mayPlace(new ItemStack(Items.STICK)) && second.mayPlace(new ItemStack(Items.STICK)), "the Hide Pack did not open two rows");
         row.set(new ItemStack(Items.FLINT, 3));
         ItemStack pack = Metabolism.body(player).pack.copy();
         check(helper, Hotbar.contents(pack).get(0).is(Items.FLINT), "the pack's row did not keep its item in the pack");
@@ -265,8 +277,12 @@ public final class BackcountryTests {
         check(helper, left, "no left pack holds what the survivor carried");
         Arrival.arrive(player);
         check(helper, !player.isSpectator() && body.ended == null && body.weightKg == Balance.get().body().arrivalKg(), "the new survivor did not arrive fresh");
-        check(helper, player.getInventory().getItem(4).is(Things.PILOT_BREAD.get()) && player.getInventory().getItem(4).getCount() == Balance.get().kit().pilotBread(),
+        check(helper, player.getInventory().getItem(3).is(Things.PILOT_BREAD.get()) && player.getInventory().getItem(3).getCount() == Balance.get().kit().pilotBread(),
                 "the kit has no " + Balance.get().kit().pilotBread() + " Pilot Bread");
+        List<ItemStack> packed = Hotbar.contents(body.pack);
+        check(helper, body.pack.is(Things.CANVAS_PACK.get()), "the new survivor wears no Canvas Pack");
+        check(helper, packed.stream().anyMatch(stack -> BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath().endsWith("sleeping_bag"))
+                && packed.stream().anyMatch(stack -> stack.is(Things.MED_KIT.get()) || stack.is(Things.HEADLAMP.get())), "the Canvas Pack holds " + packed);
         helper.succeed();
     }
 
@@ -519,6 +535,49 @@ public final class BackcountryTests {
         check(helper, Kind.falling(Balance.get().weather().snowBelowC() - 4, Balance.get().weather().blizzardWindKmh(), false) == Kind.BLIZZARD,
                 "snow in a gale was no blizzard");
         check(helper, Kind.falling(Balance.get().weather().snowBelowC() + 4, 0, true) == Kind.THUNDERSTORM, "warm thunder was no thunderstorm");
+        helper.succeed();
+    }
+    @GameTest(template = "empty")
+    public static void everyItemHasItsBulk(GameTestHelper helper) {
+        List<ResourceLocation> uncovered = Bulk.uncovered();
+        check(helper, uncovered.isEmpty(), "balance.toml [bulk] covers no size for " + uncovered);
+        check(helper, new ItemStack(Items.STICK).getMaxStackSize() == 32 && new ItemStack(Items.SPRUCE_LOG).getMaxStackSize() == 4,
+                "sticks stack to " + new ItemStack(Items.STICK).getMaxStackSize() + " and logs to " + new ItemStack(Items.SPRUCE_LOG).getMaxStackSize());
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void planksAreHewnWithAnAxe(GameTestHelper helper) {
+        var access = helper.getLevel().registryAccess();
+        var recipes = helper.getLevel().getRecipeManager().getRecipes();
+        List<ResourceLocation> byHand = recipes.stream().filter(recipe -> Hewing.planksByHand(recipe, access)).map(RecipeHolder::id).toList();
+        check(helper, byHand.isEmpty(), "planks come by hand from " + byHand);
+        CraftingInput stripped = CraftingInput.of(2, 1, List.of(new ItemStack(Items.STRIPPED_SPRUCE_LOG), new ItemStack(Items.STONE_AXE)));
+        check(helper, helper.getLevel().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, stripped, helper.getLevel())
+                .map(recipe -> recipe.value().assemble(stripped, access).is(Items.SPRUCE_PLANKS)).orElse(false), "a stripped spruce log and an axe make no planks");
+        CraftingInput barked = CraftingInput.of(2, 1, List.of(new ItemStack(Items.SPRUCE_LOG), new ItemStack(Items.STONE_AXE)));
+        check(helper, helper.getLevel().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, barked, helper.getLevel())
+                .map(recipe -> recipe.value().assemble(barked, access).is(Things.SOFTWOOD.get())).orElse(false), "a spruce log and an axe make no Softwood");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aStoneAxeIsARockLashedToAStick(GameTestHelper helper) {
+        ItemStack rock = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("projectvibrantjourneys", "rocks")));
+        CraftingInput lashed = CraftingInput.of(2, 2, List.of(rock, new ItemStack(Things.CORDAGE.get()), new ItemStack(Items.STICK), ItemStack.EMPTY));
+        check(helper, helper.getLevel().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, lashed, helper.getLevel())
+                .map(recipe -> recipe.value().assemble(lashed, helper.getLevel().registryAccess()).is(Items.STONE_AXE)).orElse(false),
+                "a rock, a cordage and a stick make no stone axe");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void noMonsterSpawnsInTheWild(GameTestHelper helper) {
+        Zombie zombie = EntityType.ZOMBIE.create(helper.getLevel());
+        BlockPos at = helper.absolutePos(new BlockPos(1, 1, 1));
+        zombie.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
+        EventHooks.finalizeMobSpawn(zombie, helper.getLevel(), helper.getLevel().getCurrentDifficultyAt(at), MobSpawnType.NATURAL, null);
+        check(helper, zombie.isSpawnCancelled(), "a natural zombie spawn went through");
         helper.succeed();
     }
 }

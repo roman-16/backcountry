@@ -10,6 +10,8 @@ A modpack about a year alone in the Alaskan wilderness, counted in calories, for
 - **The fire is the mod's.** The pack's campfire (`backcountry:campfire`, `design/systems.md` S6) burns only the wood queued in it, so vanilla's campfire, which burns forever, is cut; torches and lanterns burn down and are refilled (`fire/Lights`), and the furnace cooks no food.
 - **Vanilla's hunger is never read.** The body holds the food level at 17 (no vanilla healing, no starving) and drops it to 6 while the survivor is too tired, blistered or frostbitten, so vanilla's own check stops sprinting; the difficulty is locked at Normal, since Peaceful heals and feeds.
 - **Every food has its numbers.** Every food of every jar has an entry in `mod/src/main/resources/data/backcountry/data_maps/item/food.json`, and an item without one cannot be eaten; `just test` fails on a food without an entry, so a mod added to the pack gets its foods' entries with it.
+- **Every item has its bulk.** How many of an item fit in one slot is `balance.toml` `[bulk]`, applied as the item's stack size when the game starts; `just test` fails on an item no entry covers, so a mod added to the pack gets its items' sizes with it.
+- **The tasks are the mod's.** The Messenger's tasks (`design/systems.md` S11) tick from the mod's own state, what a survivor holds, placed and did, so no quest mod (FTB Quests and the like) goes in beside them.
 - **The spawn director owns every animal.** Natural spawns of anything not on its list are cancelled, so a creature mod adds nothing until the list names its animals; no animal breeds or is tamed.
 - **A survivalist's year.** The pack is what a survivalist alone in Alaska meets and does: a mechanic, item or place that one would not is cut, in `cuts.toml` or at its source (`design/systems.md` S12). No structure generates (`StructuresMixin`), no cave is carved (`pack/config/tectonic.json`), no ore lies in the rock but the surface iron and the birch forests' gold-flecked gravel, and no Nether portal lights: the island's surface is the whole game.
 - **What goes is in `cuts.toml`.** A cut item is hidden from JEI, every recipe that makes or needs it is dropped and every loot drops it no more; a cut creature never joins the world. A mod added to the pack has its items weighed there, a whole mod of exotic things under `[mods]` with the few it keeps; `just test` fails on a cut that names nothing, on a recipe that makes or needs a cut item, and on an item whose every recipe needed one, which is then cut or listed as `found` when the island gives it as it lies.
@@ -60,6 +62,7 @@ Each π session drives games of its own in `build/clients/<n>/` and `build/devse
 | `use`, `slot <n>`, `face <yaw> <pitch>`, `close` | A right-click, a hotbar slot, a facing, back to the world |
 | `join <address>` | Leaves the world and joins a server |
 | `pos`, `log`, `gui on\|off`, `wait <ticks>`, `quit` | Where the player stands, warnings and errors since the last `log`, the HUD, a watch, quitting |
+| `scale <n>` | Sets the interface scale (2, 3 or 4) for the steps after it, the window staying as it is |
 | `walk <x> <z>` | Walks to the column, jumping when blocked, and returns on arrival |
 | `bench <seconds>` | Turns the camera once around and returns the average and lowest frames a second |
 

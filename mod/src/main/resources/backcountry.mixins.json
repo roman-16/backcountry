@@ -1,13 +1,17 @@
 {
   "client": [
     "CloudHeightMixin",
+    "CreateWorldGameTabMixin",
+    "CreateWorldMoreTabMixin",
+    "CreateWorldWorldTabMixin",
     "MoreDarknessLightMixin",
     "MoreDarknessMoonMixin",
     "MoreDarknessPerceptionMixin",
     "MoreDarknessReadbackMixin",
     "SubtleEffectsBreathMixin",
     "SubtleEffectsGrowlMixin",
-    "ToastComponentMixin"
+    "ToastComponentMixin",
+    "WorldOpenFlowsMixin"
   ],
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",

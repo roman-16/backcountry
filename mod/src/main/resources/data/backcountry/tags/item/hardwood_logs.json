@@ -1,11 +1,18 @@
 {
   "values": [
-    "#minecraft:birch_logs",
-    "#minecraft:oak_logs",
-    "#minecraft:dark_oak_logs",
-    "#minecraft:acacia_logs",
-    "#minecraft:jungle_logs",
-    "#minecraft:mangrove_logs",
-    "#minecraft:cherry_logs"
+    "minecraft:acacia_log",
+    "minecraft:acacia_wood",
+    "minecraft:birch_log",
+    "minecraft:birch_wood",
+    "minecraft:cherry_log",
+    "minecraft:cherry_wood",
+    "minecraft:dark_oak_log",
+    "minecraft:dark_oak_wood",
+    "minecraft:jungle_log",
+    "minecraft:jungle_wood",
+    "minecraft:mangrove_log",
+    "minecraft:mangrove_wood",
+    "minecraft:oak_log",
+    "minecraft:oak_wood"
   ]
 }

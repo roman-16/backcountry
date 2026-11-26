@@ -32,6 +32,7 @@ import io.github.roman16.backcountry.gear.HeadlampItem;
 import io.github.roman16.backcountry.gear.LeftPackBlock;
 import io.github.roman16.backcountry.gear.LeftPackEntity;
 import io.github.roman16.backcountry.gear.MedKitItem;
+import io.github.roman16.backcountry.gear.PackItem;
 import io.github.roman16.backcountry.gear.PlantFibreModifier;
 import io.github.roman16.backcountry.gear.SpruceNeedlesModifier;
 import io.github.roman16.backcountry.gear.SupplyCrateBlock;
@@ -260,6 +261,8 @@ public final class Things {
     public static final DeferredItem<Item> CAMP_POT = ITEMS.registerItem("camp_pot", CampPotItem::new,
             new Item.Properties().stacksTo(1));
     public static final DeferredItem<BlockItem> CAMPFIRE_ITEM = ITEMS.registerSimpleBlockItem(CAMPFIRE);
+    public static final DeferredItem<Item> CANVAS_PACK = ITEMS.registerItem("canvas_pack", properties -> new PackItem(properties, Balance.get().load().canvasPackRows()),
+            new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> CARCASS_ITEM = ITEMS.registerItem("carcass", CarcassItem::new, new Item.Properties());
     public static final DeferredItem<BlockItem> COOKING_POT = ITEMS.registerSimpleBlockItem(COOKING_POT_BLOCK);
     public static final DeferredItem<Item> CORDAGE = ITEMS.registerSimpleItem("cordage", new Item.Properties());
@@ -280,7 +283,8 @@ public final class Things {
             new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(8)));
     public static final DeferredItem<Item> HIDE_HAT = ITEMS.registerItem("hide_hat", properties -> new ArmorItem(HIDE, ArmorItem.Type.HELMET, properties),
             new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(8)));
-    public static final DeferredItem<Item> HIDE_PACK = ITEMS.registerSimpleItem("hide_pack", new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> HIDE_PACK = ITEMS.registerItem("hide_pack", properties -> new PackItem(properties, Balance.get().load().hidePackRows()),
+            new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> HIDE_PANTS = ITEMS.registerItem("hide_pants", properties -> new ArmorItem(HIDE, ArmorItem.Type.LEGGINGS, properties),
             new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(8)));
     public static final DeferredItem<Item> HIDE_PONCHO = ITEMS.registerItem("hide_poncho", properties -> new ArmorItem(HIDE, ArmorItem.Type.CHESTPLATE, properties),

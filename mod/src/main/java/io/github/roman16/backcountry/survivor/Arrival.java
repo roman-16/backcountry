@@ -6,11 +6,16 @@ import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Metabolism;
+import io.github.roman16.backcountry.gear.Hotbar;
 import io.github.roman16.backcountry.gear.Water;
 import io.github.roman16.backcountry.net.Messages;
+import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
@@ -31,6 +36,9 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
 @EventBusSubscriber(modid = Backcountry.MODID)
 public final class Arrival {
     private static final int CRATE_NEAREST = 2;
+    private static final ResourceLocation HOOK = ResourceLocation.fromNamespaceAndPath("riverfishing", "hook_10");
+    private static final ResourceLocation LINE = ResourceLocation.fromNamespaceAndPath("riverfishing", "line_mono_010");
+    private static final ResourceLocation SLEEPING_BAG = ResourceLocation.fromNamespaceAndPath("sleeping_bags", "brown_sleeping_bag");
     private static final int CRATE_FARTHEST = 6;
     private static final int CRATE_DIRECTIONS = 16;
 
@@ -100,13 +108,12 @@ public final class Arrival {
         inventory.clearContent();
         inventory.setItem(0, new ItemStack(Things.SATELLITE_MESSENGER.get()));
         inventory.setItem(1, new ItemStack(Things.BEAR_SPRAY.get()));
-        inventory.setItem(2, new ItemStack(Things.MED_KIT.get()));
         ItemStack bottle = new ItemStack(Things.WATER_BOTTLE.get());
         bottle.set(Things.WATER.get(), Water.of(true, (float) Balance.get().water().bottleL()));
-        inventory.setItem(3, bottle);
-        inventory.setItem(4, new ItemStack(Things.PILOT_BREAD.get(), Balance.get().kit().pilotBread()));
-        inventory.setItem(5, new ItemStack(Things.CAMP_POT.get()));
-        inventory.setItem(6, new ItemStack(Things.HEADLAMP.get()));
+        inventory.setItem(2, bottle);
+        inventory.setItem(3, new ItemStack(Things.PILOT_BREAD.get(), Balance.get().kit().pilotBread()));
+        inventory.setItem(4, new ItemStack(Things.CAMP_POT.get()));
+        body.pack = canvasPack();
         player.setHealth(player.getMaxHealth());
         player.removeAllEffects();
         player.clearFire();
@@ -138,5 +145,17 @@ public final class Arrival {
             }
         }
         return Optional.empty();
+    }
+
+    public static ItemStack canvasPack() {
+        ItemStack pack = new ItemStack(Things.CANVAS_PACK.get());
+        NonNullList<ItemStack> items = Hotbar.contents(pack);
+        List<ItemStack> kit = List.of(new ItemStack(BuiltInRegistries.ITEM.get(SLEEPING_BAG)), new ItemStack(BuiltInRegistries.ITEM.get(LINE)),
+                new ItemStack(BuiltInRegistries.ITEM.get(HOOK), Balance.get().kit().hooks()), new ItemStack(Things.MED_KIT.get()), new ItemStack(Things.HEADLAMP.get()));
+        for (int i = 0; i < kit.size(); i++) {
+            items.set(i, kit.get(i));
+        }
+        Hotbar.store(pack, items);
+        return pack;
     }
 }

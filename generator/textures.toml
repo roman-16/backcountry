@@ -617,6 +617,10 @@ colour = "8a5a36"
 base = "item/bundle"
 colour = "b07a50"
 
+[tinted.canvas_pack]
+base = "item/bundle"
+colour = "3a4226,8c9660"
+
 [tinted.bow_stave]
 base = "item/stick"
 colour = "4a3418,b08850"

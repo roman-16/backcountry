@@ -3,8 +3,8 @@ package io.github.roman16.backcountry.gear;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Metabolism;
+import io.github.roman16.backcountry.guide.Deed;
 import io.github.roman16.backcountry.guide.Guide;
-import io.github.roman16.backcountry.guide.Task;
 import java.util.List;
 import java.util.Locale;
 import net.minecraft.ChatFormatting;
@@ -53,7 +53,7 @@ public class WaterVesselItem extends Item {
             if (level.getFluidState(at).is(FluidTags.WATER) && water(stack).litres() < capacity) {
                 stack.set(Things.WATER.get(), water(stack).add(Water.of(false, capacity()), capacity(), capacity()));
                 if (player instanceof ServerPlayer server) {
-                    Guide.done(server, Task.FILL_BOTTLE);
+                    Guide.did(server, stack.is(Things.CAMP_POT.get()) ? Deed.FILLED_POT : Deed.FILLED_BOTTLE);
                 }
                 level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.NEUTRAL, 1.0F, 1.0F);
                 return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());

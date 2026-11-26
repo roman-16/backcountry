@@ -38,7 +38,7 @@ Every mod in the pack and why, and what was left out. "His" marks a mod in one o
 | InvMove | Walking with a screen open, except the bow-drill game, the summary and JEI's search (`InvMoveLink`) |
 | Pick Up Notifier | What comes in, at the top right |
 | Immersive Hotbar | The hotbar's animations, with its XP bar effects off |
-| Jade | The name of what a sneaking survivor looks at, alone, in vanilla's tooltip look (`JadeLink`) |
+| Jade | The name of what a sneaking survivor looks at and the mod it comes from, in vanilla's tooltip look (`JadeLink`); every item's tooltip ends with its mod |
 | Chat Animation | Chat lines slide in |
 | Default Options, with Balm | The first launch's settings and every key of the pack (`pack/config/defaultoptions/`) |
 | More Darkness | Dark nights without the shader, stepping aside while it draws (`production.md`) |

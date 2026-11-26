@@ -3,6 +3,8 @@ package io.github.roman16.backcountry.fire;
 import com.mojang.serialization.MapCodec;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.guide.Deed;
+import io.github.roman16.backcountry.guide.Guide;
 import io.github.roman16.backcountry.net.Messages;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -150,6 +152,9 @@ public final class FireBlock extends CampfireBlock {
             } else {
                 fire.queue.set(free, stack.split(1));
                 campfire.setChanged();
+                if (player instanceof ServerPlayer server) {
+                    Guide.did(server, Deed.FED_FIRE);
+                }
                 level.playSound(null, pos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1, 0.8F);
                 player.displayClientMessage(Component.translatable("message.backcountry.queued", fire.queue.stream().filter(piece -> !piece.isEmpty()).count(), Fire.QUEUE),
                         true);

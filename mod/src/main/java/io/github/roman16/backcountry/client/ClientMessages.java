@@ -16,6 +16,9 @@ public final class ClientMessages {
 
     public static void view(BodyView view, WeatherView weather, GuideView guide) {
         ClientState.received(view);
+        if (ClientState.viewed) {
+            Tasks.compare(ClientState.guide, guide);
+        }
         ClientState.guide = guide;
         ClientState.weather = weather;
         ClientState.viewed = true;

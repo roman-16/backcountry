@@ -54,7 +54,7 @@ hash = "d5a27bab0881fd8468b9d2b9c78c53ab9bf8f407f421bf1edadfcbf717db368e"
 
 [[files]]
 file = "config/jade/jade.json"
-hash = "8547e0b8626fb90e0365d9b778c8cc4a2050c3bdb67053387a428b7d9980a4c8"
+hash = "433b2fe663f8ebc3a9b4805dbc2e60d18bfc669591d20459a313e161acea273a"
 
 [[files]]
 file = "config/more_darkness.json"

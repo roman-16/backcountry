@@ -2,8 +2,11 @@ package io.github.roman16.backcountry.gear;
 
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.guide.Deed;
+import io.github.roman16.backcountry.guide.Guide;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -33,6 +36,9 @@ public class CampPotItem extends WaterVesselItem {
             }
             level.playSound(null, above, SoundEvents.LANTERN_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
             stack.shrink(1);
+            if (context.getPlayer() instanceof ServerPlayer player) {
+                Guide.did(player, Deed.HUNG_POT);
+            }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

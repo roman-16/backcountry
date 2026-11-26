@@ -2,18 +2,13 @@ package io.github.roman16.backcountry.food;
 
 import com.mojang.serialization.MapCodec;
 import io.github.roman16.backcountry.Things;
-import io.github.roman16.backcountry.guide.Guide;
-import io.github.roman16.backcountry.guide.Task;
 import io.github.roman16.backcountry.survivor.Team;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -27,7 +22,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.Nullable;
 
 public final class CacheBlock extends BaseEntityBlock {
     public static final MapCodec<CacheBlock> CODEC = simpleCodec(CacheBlock::new);
@@ -51,14 +45,6 @@ public final class CacheBlock extends BaseEntityBlock {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
-    }
-
-    @Override
-    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        super.setPlacedBy(level, pos, state, placer, stack);
-        if (placer instanceof ServerPlayer player) {
-            Guide.done(player, Task.BUILD_CACHE);
-        }
     }
 
     @Override

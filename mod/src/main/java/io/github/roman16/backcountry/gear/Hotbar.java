@@ -5,8 +5,12 @@ import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Metabolism;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -34,12 +38,22 @@ public final class Hotbar {
         return slot;
     }
 
-    public static int packSlots() {
-        return Balance.get().load().packRows() * ROW;
+    public static List<ItemStack> carried(Player player) {
+        List<ItemStack> carried = new ArrayList<>();
+        Inventory inventory = player.getInventory();
+        for (int slot = 0; slot < ROW; slot++) {
+            carried.add(inventory.getItem(slot));
+        }
+        carried.add(player.getOffhandItem());
+        inventory.armor.forEach(carried::add);
+        ItemStack pack = Metabolism.body(player).pack;
+        carried.add(pack);
+        carried.addAll(contents(pack));
+        return carried;
     }
 
     public static NonNullList<ItemStack> contents(ItemStack pack) {
-        NonNullList<ItemStack> items = NonNullList.withSize(packSlots(), ItemStack.EMPTY);
+        NonNullList<ItemStack> items = NonNullList.withSize(PackItem.slots(pack), ItemStack.EMPTY);
         pack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(items);
         return items;
     }
@@ -65,7 +79,16 @@ public final class Hotbar {
         }
 
         public boolean locked() {
-            return !open() && (Metabolism.body(inventory.player).pack.isEmpty() || packIndex() >= packSlots());
+            return !open() && packIndex() >= PackItem.slots(Metabolism.body(inventory.player).pack);
+        }
+
+        public Optional<Component> needs() {
+            int hidePack = Balance.get().load().hidePackRows() * ROW;
+            if (!locked() || packIndex() >= hidePack) {
+                return Optional.empty();
+            }
+            int canvasPack = Balance.get().load().canvasPackRows() * ROW;
+            return Optional.of(Component.translatable(packIndex() < canvasPack ? "tooltip.backcountry.needs_pack" : "tooltip.backcountry.needs_hide_pack"));
         }
 
         @Override
@@ -110,7 +133,7 @@ public final class Hotbar {
             if (open()) {
                 return super.mayPlace(stack);
             }
-            return !locked() && !stack.is(Things.HIDE_PACK.get());
+            return !locked() && !(stack.getItem() instanceof PackItem);
         }
 
         @Override
@@ -147,7 +170,7 @@ public final class Hotbar {
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return stack.is(Things.HIDE_PACK.get());
+            return stack.getItem() instanceof PackItem;
         }
 
         @Override
@@ -167,7 +190,7 @@ public final class Hotbar {
         Body body = Metabolism.body(player);
         ItemEntity entity = event.getItemEntity();
         ItemStack stack = entity.getItem();
-        if (player.level().isClientSide || player.isCreative() || body.pack.isEmpty() || stack.is(Things.HIDE_PACK.get())) {
+        if (player.level().isClientSide || player.isCreative() || body.pack.isEmpty() || stack.getItem() instanceof PackItem) {
             return;
         }
         int over = stack.getCount() - hotbarRoom(player.getInventory(), stack);

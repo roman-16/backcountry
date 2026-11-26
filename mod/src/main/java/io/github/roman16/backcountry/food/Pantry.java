@@ -23,6 +23,10 @@ public final class Pantry {
         return Nutrition.of(stack).map(food -> food.kcal() * stack.getCount()).orElse(0.0);
     }
 
+    public static boolean cookedMeat(ItemStack stack) {
+        return Nutrition.of(stack).map(food -> !food.raw() && food.kcal() > 0 && food.protein() * PROTEIN_KCAL_PER_GRAM >= food.kcal() * MEATY_SHARE).orElse(false);
+    }
+
     public static boolean meaty(ItemStack stack) {
         return Nutrition.of(stack).map(food -> food.raw() || food.protein() * PROTEIN_KCAL_PER_GRAM >= food.kcal() * MEATY_SHARE).orElse(false);
     }

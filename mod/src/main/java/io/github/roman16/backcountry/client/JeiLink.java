@@ -5,9 +5,11 @@ import io.github.roman16.backcountry.Cuts;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.runtime.IIngredientManager;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 @JeiPlugin
@@ -30,6 +32,12 @@ public final class JeiLink implements IModPlugin {
     @Override
     public void onRuntimeUnavailable() {
         runtime = null;
+    }
+
+    static void recipes(ItemStack stack) {
+        if (runtime != null) {
+            runtime.getGuiRuntime().getRecipesGui().show(runtime.getJeiHelpers().getFocusFactory().createFocus(RecipeIngredientRole.OUTPUT, VanillaTypes.ITEM_STACK, stack));
+        }
     }
 
     static boolean typing() {

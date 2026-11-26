@@ -5,8 +5,8 @@ import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Activity;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Skill;
+import io.github.roman16.backcountry.guide.Deed;
 import io.github.roman16.backcountry.guide.Guide;
-import io.github.roman16.backcountry.guide.Task;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -57,6 +57,6 @@ public final class Lighting {
         drill.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
         level.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 0.5F, 1.2F);
         FireBlock.light(level, pos, state, campfire);
-        Guide.done(player, Task.LIGHT_FIRE);
+        Guide.did(player, Deed.LIT_FIRE);
     }
 }

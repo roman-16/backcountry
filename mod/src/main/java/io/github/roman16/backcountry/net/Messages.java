@@ -13,6 +13,7 @@ import io.github.roman16.backcountry.client.ClientMessages;
 import io.github.roman16.backcountry.fire.Lighting;
 import io.github.roman16.backcountry.guide.Guide;
 import io.github.roman16.backcountry.guide.GuideView;
+import io.github.roman16.backcountry.guide.Task;
 import io.github.roman16.backcountry.survivor.Arrival;
 import io.github.roman16.backcountry.survivor.Summary;
 import io.github.roman16.backcountry.survivor.Team;
@@ -22,6 +23,7 @@ import io.github.roman16.backcountry.weather.WeatherView;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -65,6 +67,17 @@ public final class Messages {
 
         @Override
         public Type<Sky> type() {
+            return TYPE;
+        }
+    }
+
+    public record Track(Optional<Task> task) implements CustomPacketPayload {
+        public static final Type<Track> TYPE = new Type<>(Backcountry.id("track"));
+        static final StreamCodec<ByteBuf, Track> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.optional(ByteBufCodecs.VAR_INT.map(ordinal -> Task.values()[ordinal], Task::ordinal)), Track::task, Track::new);
+
+        @Override
+        public Type<Track> type() {
             return TYPE;
         }
     }
@@ -127,6 +140,11 @@ public final class Messages {
                 arrive(player);
             }
         });
+        registrar.playToServer(Track.TYPE, Track.STREAM_CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player) {
+                Guide.track(player, payload.task());
+            }
+        });
         registrar.playToServer(Read.TYPE, Read.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player) {
                 Metabolism.body(player).unread = false;
@@ -180,6 +198,10 @@ public final class Messages {
 
     public static void drilled(BlockPos fire, int strokes, boolean lit) {
         PacketDistributor.sendToServer(new Drilled(fire, strokes, lit));
+    }
+
+    public static void track(Optional<Task> task) {
+        PacketDistributor.sendToServer(new Track(task));
     }
 
     public static void read() {

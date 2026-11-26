@@ -7,6 +7,8 @@ import io.github.roman16.backcountry.body.Activity;
 import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Skill;
+import io.github.roman16.backcountry.guide.Deed;
+import io.github.roman16.backcountry.guide.Guide;
 import io.github.roman16.backcountry.haul.Sled;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -95,6 +97,9 @@ public final class CarcassBlock extends BaseEntityBlock {
             carcass.data().ifPresent(animal -> animal.cuts().forEach(cut -> popResource(level, pos, cut.stack())));
             carcass.arrows().forEach(arrow -> popResource(level, pos, arrow.copy()));
             level.removeBlock(pos, false);
+            if (player instanceof ServerPlayer server) {
+                Guide.did(server, Deed.DRESSED);
+            }
         }
         return ItemInteractionResult.SUCCESS;
     }

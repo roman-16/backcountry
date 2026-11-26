@@ -6,6 +6,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-11-26
+
+### Highlights
+
+- **A Messenger that fills the screen** - Five named pages, Tasks, Weather, Warmth, Food and Body, the time of day in its header, and a line under every warning saying what helps.
+- **A year of tasks, step by step** - 27 tasks in seven chapters walk a survivor from the first fire to 3 May, each step naming the items it needs and how to get them; the next step shows at the top left, and a finished task shows a toast.
+- **Arriving as a survivalist would** - A Canvas Pack with a Sleeping Bag, fishing line and hooks; stone tools lashed from one rock, planks hewn with an axe, and bulky things taking more room.
+
+### Added
+
+- The next step of the tracked task shows at the top left, with the items it needs and how many you hold; a click on a task's Track button on the Tasks page follows it instead.
+- A toast in vanilla's look for every task done, a team goal reached included.
+- The Canvas Pack, worn on arrival, opens the row above the hotbar; the Supply Crate hands one to a survivor wearing no pack.
+- The kit's Sleeping Bag, Mono Line and 4 hooks, so a Stick Rod fishes and a survivor sleeps from the first day.
+- A click on an item a task needs opens its recipe in JEI.
+
+### Changed
+
+- The Satellite Messenger fills the screen: Forecast joins Weather, Nutrition and Rations become Food, Vitals and the conditions become Body, each condition shows what cures it, and the time of day replaces the signal bars.
+- The Tasks page lists the year's chapters, First day, Camp, Food, Hunting, Before snow, Winter and The year, every one from the first day, beside the chosen task's steps; a task out of season reads "From June".
+- The Hide Pack opens two rows.
+- How many of an item fit in one slot follows its bulk: logs 4, cobblestone and firewood 8, planks, rocks and cordage 16, sticks 32, plant fibre, hooks and pilot bread 64, raw meat and fish 4.
+- The stone axe, pickaxe, shovel and hoe are a Rock, a Stick and a Cordage.
+- Planks come from a log stripped with the axe and the axe in the crafting grid; a log with its bark and the axe still split into firewood.
+- Create New World offers Survival and Creative, shows Difficulty at Normal, keeps only the seed on the World tab and no Experiments, and goes straight to loading without the experimental-settings warning.
+- The survivor stands still while the Messenger is open.
+- Sneaking shows the mod under the name of what you look at, and every item's tooltip ends with its mod.
+
+### Removed
+
+- The "New tasks" alert.
+
 ## [2.0.1] - 2026-11-26
 
 ### Highlights

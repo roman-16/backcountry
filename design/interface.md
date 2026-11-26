@@ -17,50 +17,68 @@ The hearts stay and the energy bolts, drawn like vanilla's hunger icons over emp
 
 Everything the pack draws wears vanilla's own look: its panels, buttons, slots and font.
 
-What comes into the inventory is listed at the top right for a few seconds, a line an item, counting up while more of it arrives ("4x Stick", Pick Up Notifier). The hotbar's items bounce as they land, are used, eaten or placed, the selected slot grows, a tool near breaking glows and the selected item's name pops in (Immersive Hotbar). While a survivor sneaks, a box at the top centre names what they look at, the name alone in vanilla's tooltip look (Jade), so a forager crouching at a bush still has to tell a baneberry by its look. Chat lines slide in (Chat Animation). Simple Voice Chat draws its own icon at the bottom left: a speaker struck through while voice is off or no device is found.
+The tracked task's next step shows at the top left on a dark plate (`systems.md` S11): the task and its count, the step, and the items it needs with what the survivor holds of them. A step done ticks with a soft click and the next takes its place; F1 hides it, and it is gone once every task is done. A task done shows a toast in vanilla's look at the top right for a few seconds ("Task done", the task's name and icon): a survivor's own task to them, a team task to everyone online.
 
 ```text
-                    ┌───────────┐                 [■] Spruce Log x4
-                    │ Baneberry │                 [■] Blueberries x6
-                    └───────────┘
+Light a fire · 2 of 7
+▸ Make a Bow Drill
+  [Stick] 2/2  [Cordage] 0/1  [Softwood] 2/1
+```
+
+What comes into the inventory is listed at the top right for a few seconds, a line an item, counting up while more of it arrives ("4x Stick", Pick Up Notifier). The hotbar's items bounce as they land, are used, eaten or placed, the selected slot grows, a tool near breaking glows and the selected item's name pops in (Immersive Hotbar). While a survivor sneaks, a box at the top centre names what they look at and, under the name, the mod it comes from, in vanilla's tooltip look (Jade), with no health, state or contents, so a forager crouching at a bush still has to tell a baneberry by its look. Every item's tooltip ends with its mod in blue italics. Chat lines slide in (Chat Animation). Simple Voice Chat draws its own icon at the bottom left: a speaker struck through while voice is off or no device is found.
+
+```text
+                    ┌─────────────┐               [■] Spruce Log x4
+                    │ Baneberry   │               [■] Blueberries x6
+                    │ Backcountry │
+                    └─────────────┘
                           +
 ```
 
 ### I2 The Satellite Messenger
 
-Right-click opens it, drawn as the device itself: an orange handheld with a green-on-dark screen, the only screen with a skin of its own, as vanilla's book has its page. Its pages are tabs: the shown page's tab carries its icon and name, the others their icon alone (hovering names them), switched by a click, the arrow keys, 1 to 8 or the ◀ ▶ keys on the case. The pages, in order: Tasks, Weather, Forecast, Warmth, Body, Nutrition, Rations, Vitals. Every value has its icon and a meter; the air sits on a gauge from -40 to +30 °C banded at freezing and at -15 °C, the wind on a meter with the blizzard mark at 56 km/h, the core temperature on a gauge banded freezing, cold, comfortable and hot, and the weight on a BMI gauge with extraction marked at 17; warnings turn amber or red. A strip of alerts sits under every page, two lines at most, "and N more" past them, "No alerts" when there are none.
+Right-click opens it, drawn as the device itself: an orange case with a green-on-dark screen, the only screen with a skin of its own, as vanilla's book has its page. It fills the screen up to 640 by 360 GUI pixels (GUI scale 3 at 1080p) and stands centred on anything larger; it still fits vanilla's smallest screen, 320 by 240. While it is open the survivor stands still, since it covers the world (I8).
+
+The header shows the day and date on the left and the time of day on the right. Under it five tabs, each with its icon and name: Tasks, Weather, Warmth, Food, Body, switched by a click, 1 to 5 or the ← → keys; E or Esc closes it. A strip of alerts sits under every page, two lines at most, "and N more" past them, "No alerts" when there are none. Every value has its icon and a meter or gauge; warnings turn amber or red, and a value in warning carries one dim line under it saying what helps.
 
 ```text
-┌ SATELLITE MESSENGER ────────────────────────────┐
-│ Day 31 · 17 Dec                         SAT ▮▮▮ │
-│ [☁ Weather]  📅   🔥   🌡   🍖   ♥              │
-│ 🌡 Air            -6 °C · feels like -13 °C     │
-│ ❄ Precipitation       Light snow until 18:00    │
-│ ≋ Wind                            18 km/h NW    │
-│ ☁ Cloud                                  80%    │
-│ 📅 Today              High -3 °C · low -11 °C   │
-├─────────────────────────────────────────────────┤
-│ ⚠ Snow tomorrow  ⚠ Frost tonight                │
-│ ⚠ Weight dropped                                │
-└─────────────────────────────────────────────────┘
+┌ SATELLITE MESSENGER ────────────────────────────────────────────────────────────────┐
+│ Day 1 · 3 May                                                                 14:20 │
+│ [▤ Tasks]    ☁ Weather    🔥 Warmth    🍖 Food    ♥ Body                            │
+├─────────────────────────────┬───────────────────────────────────────────────────────┤
+│ First day            2 of 5 │ Light a fire                         ◆ Tracked 2 of 7 │
+│  ■ Fill the Water Bottle    │ A fire warms and dries you, cooks and boils water.    │
+│  ■ Make a stone axe         │ ■ Fell a spruce                                       │
+│ ◆□ Light a fire             │ ■ Split it into Softwood                              │
+│  □ Boil water               │ ▸ Make a Bow Drill                                    │
+│  □ Sleep under a roof       │   [Stick] 2/2   [Cordage] 0/1   [Softwood] 2/1        │
+│ Camp                 0 of 5 │   Grass and ferns drop Plant Fibre; 4 twist into      │
+│ Food                 0 of 6 │   a Cordage.                                          │
+│ Hunting              0 of 5 │ □ Make a Tinder Bundle                                │
+│ Before snow · team   0 of 3 │ □ Build a Campfire and set it down                    │
+│ Winter               0 of 2 │ □ Light it with the Bow Drill                         │
+│ The year · team      0 of 1 │ □ Feed it Softwood                                    │
+├─────────────────────────────┴───────────────────────────────────────────────────────┤
+│ ⚠ Frost tonight                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-The Nutrition page lists, under the day's kcal eaten and burned, the burn by cause in two dim lines ("Rest 2,170 · Move 940 · Load 310", "Work 620 · Cold 250 · Digest 320"). The Vitals page ends with the four skills in two columns, each with its name and five steps lit to its level.
-
-The Tasks page heads the stage (First days, Before snow, Winter, The year), with "3 of 9" beside First days. Each task is a line with a box, filled once done; the stage's ticked tasks come first, as many as fit, then at most four open ones, the first with its one or two lines of how in dim text:
+- **Tasks** (`systems.md` S11): on the left the chapters, each with its count ("2 of 5", "· team" beside the team's); the chapter of the chosen task is open with its tasks, the others folded to their heading, and a click on a heading opens it. On the right the chosen task: its name, its count, one line on why it matters, and its steps, each with a box filled once done; the first open step shows the items it needs with what the survivor holds of them ("2/2", met in the screen's text colour, unmet dim) and how to get them. Hovering an item names it with "Click for its recipe", and a click opens its recipe in JEI. A task carrying a season reads "From June" while out of it. The tracked task wears ◆ in the list and "◆ Tracked" beside its name; another task shows a Track button there. ↑ ↓ choose a task, Enter tracks it.
+- **Weather:** the air and how it feels on a gauge from -40 to +30 °C banded at freezing and at -15 °C, the rain or snow now or later today with its hours, the wind on a meter with the blizzard mark at 56 km/h, the cloud, today's high and low; then the next three days a line each: its sky (the icon of the rain or snow when it is likely, else of the cloud), the day and date, the chance ("Snow 80%"), the high and low and the wind.
+- **Warmth:** the core temperature with how it feels and its trend on a gauge banded freezing, cold, comfortable and hot, then what sets it: fire, shelter, clothing and wetness.
+- **Food:** the day's kcal eaten and burned, the burn by cause in a dim line ("Rest 2,170 · Move 940 · Load 310 · Work 620 · Cold 250 · Digest 320") and protein, carbs and fat; the stomach; the ration, the next meal and the team's food stores in days.
+- **Body:** the weight on a BMI gauge with extraction marked at 17, energy, water and the load carried, hours awake, the conditions each with what cures it, and the four skills, each with its name and five steps lit to its level.
 
 ```text
-First days                                 1 of 9
-■ Fill the Water Bottle
-□ Light a fire
-  Fell logs with a stone axe, light them with
-  a Bow Drill (JEI: R).
-□ Boil water and drink it
-□ Sleep under a roof
-□ Split a log
+Warmth    Core                          35.6 °C · very cold · cooling
+            Get to a fire or under a roof, and dry off.
+          Shelter                       Open sky · in the wind
+            A roof within 4 blocks overhead takes the wind off.
+Food      Food stores                   0.0 days
+            Put food in a Food Cache: the rations eat from caches within 64 blocks.
 ```
 
-The Forecast page gives each of the next three days two lines: its sky (the icon of the rain or snow when it is likely, else of the cloud), the day and date, the chance ("Snow 80%"), and below it the high, the low and the wind. A new alert beeps once and lights a small amber light on the Messenger's icon in the hotbar until the Messenger is opened.
+A new alert beeps once and lights a small amber light on the Messenger's icon in the hotbar until the Messenger is opened.
 
 ### I3 Food
 
@@ -149,16 +167,16 @@ Mo 77.0 → 71.2 kg (arrived Day 12)
 [ Go on into Year 2 ]
 ```
 
-The inventory shows its locked rows dark ("Needs a hide pack") and the back slot beside the armour.
+The inventory shows the rows no pack opens dark ("Needs a pack", and over the second row "Needs a hide pack") and the back slot beside the armour.
 
 ### I8 Controls and the first launch
 
 - **Keys:** Left Shift sprints and Left Ctrl sneaks; every mod's key is unbound unless a player needs it: River Fishing's fight keys on the arrows, Ping Wheel's mark on mouse button 5, JEI's keys inside its own screens (R recipes, U uses, A bookmark, Ctrl+F search), V for the voice menu, U to swap the shoulder in third person, the middle mouse button to sort the inventory under the cursor. F5 steps from first person to over the shoulder to facing the survivor (Shoulder Surfing Reloaded); the game starts in first person. Iris's, Ecliptic Seasons' debug and Critters n' Crawlers' keys, JEI's cheat-to-inventory keys and L for advancements are unbound. Controls has a search box (Controlling). Controls' Reset Keys brings back the pack's keys.
-- **Screens open:** a survivor keeps walking with the inventory, a chest, a cache or the Messenger open, the world showing behind it (InvMove); the bow-drill game, whose A, D and Space saw and blow, the summary and typing in JEI's search hold them still.
+- **Screens open:** a survivor keeps walking with the inventory, a chest or a cache open, the world showing behind it (InvMove); the Messenger, which covers the world, the bow-drill game, whose A, D and Space saw and blow, the summary and typing in JEI's search hold them still.
 - **Team marks:** mouse button 5 marks a spot for the whole team for a few seconds, with who set it and how far it is (Ping Wheel).
 - **The first launch** (Default Options): FOV 80, GUI scale 3, full screen, VSync on, an unlimited frame rate, sensitivity 67%, Brightness Bright, no splash texts, no accessibility onboarding, no multiplayer warning; render distance stays vanilla's 12 chunks. Each player's own settings stay theirs after that.
 - **Nights** are dark: without the shader More Darkness makes a moonless night black beyond the fire and a full moon pale grey, the eyes adjusting over a few seconds; with Complementary Unbound on, as it is from the first launch, More Darkness steps aside and the shader's night settings give the same night (`production.md`).
-- **The pause menu** has Statistics across the whole row where Advancements and Statistics stood.
+- **Create New World** offers what the pack plays: Game Mode holds Survival and Creative (a Hardcore death would end the world, where the pack's brings a new survivor), Difficulty stands greyed at Normal, the World tab holds only the seed, with no world type, Generate Structures or Bonus Chest, and the More tab holds Game Rules and Data Packs without Experiments. Creating the world goes straight to loading, with no warning about experimental settings, since every world of the pack has them; a Hardcore world made before keeps its mode.\n- **The pause menu** has Statistics across the whole row where Advancements and Statistics stood.
 - **F3** shows no coordinates, facing or biome.
 - **Sodium's donation prompt and Iris's update notice** never show.
 - **Edge cases:** a player who launched the pack before keeps their own settings and keys, Reset Keys giving them the pack's; a key a player rebinds stays theirs through updates.

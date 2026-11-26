@@ -4,8 +4,8 @@ import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Nutrition;
+import io.github.roman16.backcountry.guide.Deed;
 import io.github.roman16.backcountry.guide.Guide;
-import io.github.roman16.backcountry.guide.Task;
 import io.github.roman16.backcountry.hunt.Hunting;
 import io.github.roman16.backcountry.survivor.Team;
 import java.util.Optional;
@@ -68,7 +68,7 @@ public final class Fish {
         if (Metabolism.lives(player)) {
             Metabolism.body(player).animals.merge(CAUGHT, stack.getCount(), Integer::sum);
             Team.get(player.server).caught(stack.getCount());
-            Guide.done(player, Task.LAND_FISH);
+            Guide.did(player, Deed.LANDED_FISH);
         }
     }
 }

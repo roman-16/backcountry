@@ -1,5 +1,6 @@
 {
   "values": [
-    "#minecraft:spruce_logs"
+    "minecraft:spruce_log",
+    "minecraft:spruce_wood"
   ]
 }

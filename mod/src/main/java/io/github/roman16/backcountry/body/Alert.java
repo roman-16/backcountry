@@ -4,7 +4,6 @@ import java.util.Locale;
 import net.minecraft.network.chat.Component;
 
 public enum Alert {
-    NEW_TASKS(false),
     SNOW_TOMORROW(true),
     BLIZZARD_TOMORROW(true),
     THUNDERSTORM_TOMORROW(true),
@@ -26,7 +25,7 @@ public enum Alert {
     }
 
     public boolean dayLong() {
-        return this == NEW_TASKS || this == WEIGHT_DROPPED || this == MICE_IN_CACHE || this == MOOSE_RUT || this == BEARS_FEEDING;
+        return this == WEIGHT_DROPPED || this == MICE_IN_CACHE || this == MOOSE_RUT || this == BEARS_FEEDING;
     }
 
     public boolean danger() {

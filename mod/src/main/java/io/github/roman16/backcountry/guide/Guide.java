@@ -3,21 +3,24 @@ package io.github.roman16.backcountry.guide;
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
-import io.github.roman16.backcountry.body.Alert;
-import io.github.roman16.backcountry.body.Alerts;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.fire.FirewoodItem;
+import io.github.roman16.backcountry.food.Pantry;
+import io.github.roman16.backcountry.gear.Hotbar;
+import io.github.roman16.backcountry.hunt.Animal;
 import io.github.roman16.backcountry.survivor.Team;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -32,18 +35,22 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 @EventBusSubscriber(modid = Backcountry.MODID)
 public final class Guide extends SavedData {
     private static final String NAME = "backcountry_guide";
+    private static final String SEPARATOR = "/";
     private static final int CHECK_TICKS = 100;
-    private static final int APRIL = 4;
-    private static final int NOVEMBER = 11;
+    private static final Thing BERRIES = Thing.any(Thing.of(Things.BLUEBERRIES), Thing.of(Things.HIGHBUSH_CRANBERRIES), Thing.of(Things.SALMONBERRIES),
+            Thing.of("minecraft:sweet_berries"));
 
-    private final Map<UUID, EnumSet<Task>> own = new HashMap<>();
-    private final Map<UUID, String> shown = new HashMap<>();
+    private final Map<UUID, Set<String>> own = new HashMap<>();
+    private final Map<UUID, Task> tracked = new HashMap<>();
     private final EnumSet<Task> goals = EnumSet.noneOf(Task.class);
     private final Map<Long, Integer> woodpiles = new TreeMap<>();
     private final Set<String> made = new TreeSet<>();
@@ -57,13 +64,15 @@ public final class Guide extends SavedData {
         Guide guide = new Guide();
         CompoundTag players = tag.getCompound("own");
         for (String key : players.getAllKeys()) {
-            guide.own.put(UUID.fromString(key), tasks(players.getList(key, Tag.TAG_STRING)));
+            Set<String> ticks = new TreeSet<>();
+            players.getList(key, Tag.TAG_STRING).forEach(entry -> ticks.add(entry.getAsString()));
+            guide.own.put(UUID.fromString(key), ticks);
         }
-        CompoundTag seen = tag.getCompound("shown");
-        for (String key : seen.getAllKeys()) {
-            guide.shown.put(UUID.fromString(key), seen.getString(key));
+        CompoundTag following = tag.getCompound("tracked");
+        for (String key : following.getAllKeys()) {
+            task(following.getString(key)).ifPresent(task -> guide.tracked.put(UUID.fromString(key), task));
         }
-        guide.goals.addAll(tasks(tag.getList("goals", Tag.TAG_STRING)));
+        tag.getList("goals", Tag.TAG_STRING).forEach(entry -> task(entry.getAsString()).ifPresent(guide.goals::add));
         CompoundTag piles = tag.getCompound("woodpiles");
         for (String key : piles.getAllKeys()) {
             guide.woodpiles.put(Long.parseLong(key), piles.getInt(key));
@@ -76,48 +85,79 @@ public final class Guide extends SavedData {
     @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
         CompoundTag players = new CompoundTag();
-        own.forEach((player, tasks) -> players.put(player.toString(), list(tasks)));
+        own.forEach((player, ticks) -> players.put(player.toString(), strings(ticks)));
         tag.put("own", players);
-        CompoundTag seen = new CompoundTag();
-        shown.forEach((player, key) -> seen.putString(player.toString(), key));
-        tag.put("shown", seen);
-        tag.put("goals", list(goals));
+        CompoundTag following = new CompoundTag();
+        tracked.forEach((player, task) -> following.putString(player.toString(), task.id()));
+        tag.put("tracked", following);
+        tag.put("goals", strings(goals.stream().map(Task::id).toList()));
         CompoundTag piles = new CompoundTag();
         woodpiles.forEach((pos, dry) -> piles.putInt(Long.toString(pos), dry));
         tag.put("woodpiles", piles);
-        ListTag crafted = new ListTag();
-        made.forEach(item -> crafted.add(StringTag.valueOf(item)));
-        tag.put("made", crafted);
+        tag.put("made", strings(made));
         tag.putInt("year", year);
         return tag;
     }
 
-    private static EnumSet<Task> tasks(ListTag list) {
-        EnumSet<Task> tasks = EnumSet.noneOf(Task.class);
-        for (Tag entry : list) {
-            for (Task task : Task.values()) {
-                if (task.id().equals(entry.getAsString())) {
-                    tasks.add(task);
-                }
+    private static Optional<Task> task(String id) {
+        for (Task task : Task.values()) {
+            if (task.id().equals(id)) {
+                return Optional.of(task);
             }
         }
-        return tasks;
+        return Optional.empty();
     }
 
-    private static ListTag list(Set<Task> tasks) {
+    private static ListTag strings(Iterable<String> values) {
         ListTag list = new ListTag();
-        tasks.forEach(task -> list.add(StringTag.valueOf(task.id())));
+        values.forEach(value -> list.add(StringTag.valueOf(value)));
         return list;
     }
 
-    public static void done(ServerPlayer player, Task task) {
-        if (task.stage().team() || !Metabolism.lives(player)) {
+    private static String key(Task task, Step step) {
+        return task.id() + SEPARATOR + step.id();
+    }
+
+    public static void did(ServerPlayer player, Deed deed) {
+        tick(player, check -> check instanceof Check.Did did && did.deed() == deed);
+    }
+
+    private static void tick(ServerPlayer player, Predicate<Check> done) {
+        if (!Metabolism.lives(player)) {
             return;
         }
         Guide guide = get(player.server);
-        if (guide.own.computeIfAbsent(player.getUUID(), uuid -> EnumSet.noneOf(Task.class)).add(task)) {
+        Set<String> ticks = guide.own.computeIfAbsent(player.getUUID(), uuid -> new TreeSet<>());
+        boolean changed = false;
+        for (Task task : Task.values()) {
+            if (task.team()) {
+                continue;
+            }
+            for (Step step : task.steps()) {
+                if (task.pace() == Task.Pace.IN_ORDER && !ticks.contains(key(task, step)) && !done.test(step.check())) {
+                    break;
+                }
+                if (done.test(step.check()) && ticks.add(key(task, step))) {
+                    changed = true;
+                    if (step == task.steps().getLast()) {
+                        task.steps().forEach(earlier -> ticks.add(key(task, earlier)));
+                    }
+                }
+            }
+        }
+        if (changed) {
             guide.setDirty();
         }
+    }
+
+    public static void track(ServerPlayer player, Optional<Task> task) {
+        Guide guide = get(player.server);
+        if (task.isPresent()) {
+            guide.tracked.put(player.getUUID(), task.get());
+        } else {
+            guide.tracked.remove(player.getUUID());
+        }
+        guide.setDirty();
     }
 
     public static void woodpile(MinecraftServer server, BlockPos pos, int dry) {
@@ -139,27 +179,37 @@ public final class Guide extends SavedData {
         return (int) pieces.stream().filter(FirewoodItem::catches).count();
     }
 
-    public GuideView view(ServerPlayer player) {
-        return view(player.getUUID(), Calendar.date(Calendar.day(player.level())).getMonthValue());
+    public int dryFirewood() {
+        return woodpiles.values().stream().mapToInt(Integer::intValue).sum();
     }
 
-    public GuideView view(UUID player, int month) {
-        EnumSet<Task> mine = own.getOrDefault(player, EnumSet.noneOf(Task.class));
-        List<Task> first = Task.Stage.FIRST_DAYS.tasks();
-        if (!mine.containsAll(first)) {
-            return new GuideView(Task.Stage.FIRST_DAYS, first, first.stream().filter(mine::contains).toList());
+    public GuideView view(ServerPlayer player) {
+        Set<String> ticks = own.getOrDefault(player.getUUID(), Set.of());
+        List<Integer> steps = new ArrayList<>();
+        for (Task task : Task.values()) {
+            int mask = 0;
+            for (int i = 0; i < task.steps().size(); i++) {
+                Step step = task.steps().get(i);
+                boolean done = task.team() ? goals.contains(task) || teamStep(step) : ticks.contains(key(task, step));
+                mask |= done ? 1 << i : 0;
+            }
+            steps.add(mask);
         }
-        if (month == APRIL) {
-            return new GuideView(Task.Stage.YEAR, Task.Stage.YEAR.tasks(), List.of());
-        }
-        List<Task> preparing = Task.Stage.BEFORE_SNOW.tasks();
-        List<Task> done = preparing.stream().filter(goals::contains).toList();
-        if (done.size() == preparing.size() || month >= NOVEMBER || month < APRIL) {
-            List<Task> open = new ArrayList<>(preparing.stream().filter(task -> !goals.contains(task)).toList());
-            open.addAll(Task.Stage.WINTER.tasks());
-            return new GuideView(Task.Stage.WINTER, List.copyOf(open), List.of());
-        }
-        return new GuideView(Task.Stage.BEFORE_SNOW, preparing, done);
+        Team team = Team.get(player.server);
+        return new GuideView(List.copyOf(steps), (float) team.storesDays(Team.living(player.server)), dryFirewood(),
+                Optional.ofNullable(tracked.get(player.getUUID())));
+    }
+
+    private boolean teamStep(Step step) {
+        return step.check() instanceof Check.Made item && made.contains(key(item.item().get()));
+    }
+
+    public boolean reached(Task goal) {
+        return goals.contains(goal);
+    }
+
+    private static String key(Item item) {
+        return BuiltInRegistries.ITEM.getKey(item).toString();
     }
 
     @SubscribeEvent
@@ -167,15 +217,39 @@ public final class Guide extends SavedData {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
-        ItemStack result = event.getCrafting();
-        if (result.getItem() instanceof FirewoodItem) {
-            done(player, Task.SPLIT_LOG);
+        Item result = event.getCrafting().getItem();
+        boolean clothing = Task.HIDE_CLOTHING.steps().stream().anyMatch(step -> step.check() instanceof Check.Made item && item.item().get() == result);
+        Guide guide = get(player.server);
+        if (clothing && guide.made.add(key(result))) {
+            guide.setDirty();
         }
-        if (result.is(Things.HIDE_HAT.get()) || result.is(Things.HIDE_COAT.get()) || result.is(Things.SNOWSHOES.get())) {
-            Guide guide = get(player.server);
-            if (guide.made.add(key(result.getItem()))) {
-                guide.setDirty();
-            }
+    }
+
+    @SubscribeEvent
+    static void placed(BlockEvent.EntityPlaceEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            tick(player, check -> check instanceof Check.Placed placed && event.getPlacedBlock().is(placed.block().get()));
+        }
+    }
+
+    @SubscribeEvent
+    static void ate(LivingEntityUseItemEvent.Finish event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+        ItemStack eaten = event.getItem();
+        if (BERRIES.matches(eaten)) {
+            did(player, Deed.ATE_BERRIES);
+        }
+        if (Pantry.cookedMeat(eaten)) {
+            did(player, Deed.ATE_COOKED);
+        }
+    }
+
+    @SubscribeEvent
+    static void killed(LivingDeathEvent event) {
+        if (event.getSource().getEntity() instanceof ServerPlayer player && Animal.of(event.getEntity().getType()).isPresent()) {
+            did(player, Deed.KILLED_ANIMAL);
         }
     }
 
@@ -198,38 +272,32 @@ public final class Guide extends SavedData {
         }
         Balance.Tasks rules = Balance.get().tasks();
         Team team = Team.get(server);
-        if (team.storesDays(Team.living(server)) >= rules.foodDays()) {
-            reach(Task.FOOD_STORES);
+        double stores = team.storesDays(Team.living(server));
+        int month = Calendar.date(day).getMonthValue();
+        for (Task task : Task.values()) {
+            if (task.team() && task.steps().stream().allMatch(step -> switch (step.check()) {
+                case Check.FoodStores ignored -> stores >= rules.foodDays();
+                case Check.DryFirewood ignored -> dryFirewood() >= rules.dryFirewood();
+                case Check.Made item -> made.contains(key(item.item().get()));
+                case Check.Reach reach -> month == reach.month();
+                default -> false;
+            })) {
+                reach(task);
+            }
         }
-        if (woodpiles.values().stream().mapToInt(Integer::intValue).sum() >= rules.dryFirewood()) {
-            reach(Task.DRY_FIREWOOD);
-        }
-        if (made.containsAll(List.of(key(Things.HIDE_HAT.get()), key(Things.HIDE_COAT.get()), key(Things.SNOWSHOES.get())))) {
-            reach(Task.HIDE_CLOTHING);
-        }
-        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            notice(player);
-        }
+        server.getPlayerList().getPlayers().forEach(Guide::sense);
     }
 
-    public void notice(ServerPlayer player) {
-        if (!Metabolism.lives(player)) {
-            return;
-        }
-        String key = year + ":" + view(player).stage().name();
-        if (!key.equals(shown.get(player.getUUID()))) {
-            shown.put(player.getUUID(), key);
-            setDirty();
-            Alerts.announce(player, Alert.NEW_TASKS);
-        }
-    }
-
-    public boolean reached(Task goal) {
-        return goals.contains(goal);
-    }
-
-    private static String key(Item item) {
-        return BuiltInRegistries.ITEM.getKey(item).toString();
+    public static void sense(ServerPlayer player) {
+        List<ItemStack> carried = Hotbar.carried(player);
+        double stores = Team.get(player.server).storesDays(Team.living(player.server));
+        tick(player, check -> switch (check) {
+            case Check.Held held -> carried.stream().filter(held.thing()::matches).mapToInt(ItemStack::getCount).sum() >= held.count();
+            case Check.Sheltered ignored -> Metabolism.body(player).sheltered;
+            case Check.WearsHidePack ignored -> Metabolism.body(player).pack.is(Things.HIDE_PACK.get());
+            case Check.FoodInACache ignored -> stores > 0;
+            default -> false;
+        });
     }
 
     private void reach(Task goal) {

@@ -56,6 +56,7 @@ public final class Hud {
         event.replaceLayer(VanillaGuiLayers.EXPERIENCE_LEVEL, (graphics, delta) -> {});
         event.replaceLayer(VanillaGuiLayers.FOOD_LEVEL, Hud::energy);
         event.registerAbove(VanillaGuiLayers.HOTBAR, Backcountry.id("body"), Hud::body);
+        event.registerBelow(VanillaGuiLayers.CHAT, Backcountry.id("tasks"), TaskTracker::render);
         event.registerBelow(VanillaGuiLayers.CHAT, Backcountry.id("blackout"), Hud::blackout);
         event.registerBelowAll(Backcountry.id("whiteout"), Blizzard::whiteout);
     }

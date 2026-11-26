@@ -17,7 +17,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpray, Bears bears, Berries berries, Body body, BowDrill bowDrill, Cache cache, Climate climate,
+public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpray, Bears bears, Berries berries, Body body, BowDrill bowDrill, Map<String, Double> bulk, Cache cache, Climate climate,
         Conditions conditions, Cooking cooking, Director director, DropOff dropOff, Effort effort, Energy energy, Farming farming, Fire fire, Firewood firewood, Fish fish, Forage forage,
         Headlamp headlamp, Healing healing, Map<String, Double> heat, Hunting hunting, Ice ice, Map<String, Double> insulation, Kit kit, Lights lights, Load load, Map<String, Double> met, Mice mice,
         Mining mining, Mosquitoes mosquitoes, PlantFibre plantFibre, Raft raft, Rations rations, Seasons seasons, Skills skills, Sky sky, Sled sled, Smoker smoker, Snow snow, Spoilage spoilage,
@@ -91,11 +91,11 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
 
     public record Ice(double freezeBelowC, double thawAboveC) {}
 
-    public record Kit(int pilotBread) {}
+    public record Kit(int hooks, int pilotBread) {}
 
     public record Lights(double lanternHours, double torchHours) {}
 
-    public record Load(double blockKg, double capacityKg, double clothingKg, double firewoodKg, double foodKgPerKcal, double itemKg, double logKg, int packRows, double stoneKg, double toolKg,
+    public record Load(double blockKg, int canvasPackRows, double capacityKg, double clothingKg, double firewoodKg, double foodKgPerKcal, int hidePackRows, double itemKg, double logKg, double stoneKg, double toolKg,
             int warnSeconds) {}
 
     public record Mice(double chance, double kcal) {}
@@ -126,7 +126,7 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
 
     public record Survivor(int quietSeconds) {}
 
-    public record Tasks(double dryFirewood, double foodDays, int shown) {}
+    public record Tasks(double dryFirewood, double foodDays) {}
 
     public record Traps(double baitShare, double fishPerDay, double fishShare, int miceBlocks, double share) {}
 

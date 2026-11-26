@@ -1,5 +1,7 @@
 package io.github.roman16.backcountry.client;
 
+import java.time.Month;
+import java.time.format.TextStyle;
 import java.util.Locale;
 import net.minecraft.network.chat.Component;
 
@@ -8,6 +10,7 @@ public final class Words {
     private static final int DAY_START_HOUR = 6;
     private static final int HOURS = 24;
     private static final int MINUTES_AN_HOUR = 60;
+    private static final int TICKS_AN_HOUR = 1000;
 
     private Words() {}
 
@@ -33,6 +36,15 @@ public final class Words {
 
     static String clock(int hoursIntoDay) {
         return String.format(Locale.ROOT, "%02d:00", (hoursIntoDay + DAY_START_HOUR) % HOURS);
+    }
+
+    static String time(long dayTime) {
+        int minutes = (int) (Math.floorMod(dayTime, (long) HOURS * TICKS_AN_HOUR) * MINUTES_AN_HOUR / TICKS_AN_HOUR);
+        return String.format(Locale.ROOT, "%02d:%02d", (minutes / MINUTES_AN_HOUR + DAY_START_HOUR) % HOURS, minutes % MINUTES_AN_HOUR);
+    }
+
+    static String month(int month) {
+        return Month.of(month).getDisplayName(TextStyle.FULL, Locale.ENGLISH);
     }
 
     static String compass(int from) {

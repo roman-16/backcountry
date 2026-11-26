@@ -1,6 +1,7 @@
 package io.github.roman16.backcountry.gear;
 
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Metabolism;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -30,13 +31,19 @@ public class SupplyCrateBlock extends Block {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide) {
-            if (carriesMessenger(player)) {
-                player.displayClientMessage(Component.translatable("message.backcountry.carries_messenger"), true);
-            } else {
+            Body body = Metabolism.body(player);
+            boolean packless = body.pack.isEmpty() && !player.isCreative();
+            if (packless) {
+                body.pack = new ItemStack(Things.CANVAS_PACK.get());
+                player.displayClientMessage(Component.translatable("message.backcountry.canvas_pack"), true);
+            }
+            if (!carriesMessenger(player)) {
                 ItemStack messenger = new ItemStack(Things.SATELLITE_MESSENGER.get());
                 if (!player.getInventory().add(messenger)) {
                     player.drop(messenger, false);
                 }
+            } else if (!packless) {
+                player.displayClientMessage(Component.translatable("message.backcountry.carries_messenger"), true);
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);

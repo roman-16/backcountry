@@ -9,6 +9,7 @@ import io.github.roman16.backcountry.body.Skill;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -39,7 +40,7 @@ public final class Wood {
 
     @SubscribeEvent
     static void split(PlayerEvent.ItemCraftedEvent event) {
-        if (event.getCrafting().getItem() instanceof FirewoodItem && !event.getEntity().level().isClientSide) {
+        if ((event.getCrafting().getItem() instanceof FirewoodItem || event.getCrafting().is(ItemTags.PLANKS)) && !event.getEntity().level().isClientSide) {
             Metabolism.effortMinutes(event.getEntity(), Activity.SPLIT, Balance.get().effort().splitMinutes() * Skill.WOODCUTTING.effort(Metabolism.body(event.getEntity())));
             if (event.getEntity() instanceof ServerPlayer player) {
                 Skill.WOODCUTTING.use(player, 1);

@@ -22,6 +22,6 @@ final class InvMoveLink extends ModuleImpl {
 
     @Override
     public Movement shouldAllowMovement(Screen screen) {
-        return screen instanceof BowDrillScreen || screen instanceof SummaryScreen || ModList.get().isLoaded(JEI) && JeiLink.typing() ? Movement.FORCE_DISABLE : Movement.PASS;
+        return screen instanceof BowDrillScreen || screen instanceof MessengerScreen || screen instanceof SummaryScreen || ModList.get().isLoaded(JEI) && JeiLink.typing() ? Movement.FORCE_DISABLE : Movement.PASS;
     }
 }

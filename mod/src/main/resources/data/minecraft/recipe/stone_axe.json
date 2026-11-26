@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "backcountry:cordage"
+    },
+    "R": {
+      "tag": "backcountry:rocks"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "RC",
+    "S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:stone_axe"
+  }
+}

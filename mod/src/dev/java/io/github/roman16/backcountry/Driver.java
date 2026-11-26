@@ -10,6 +10,7 @@ import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Climate;
 import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.client.ClientState;
+import io.github.roman16.backcountry.guide.GuideView;
 import io.github.roman16.backcountry.mixin.dev.GuiAccessor;
 import io.github.roman16.backcountry.weather.Outlook;
 import io.github.roman16.backcountry.weather.WeatherView;
@@ -259,6 +260,10 @@ public final class Driver {
                 until = () -> ticks >= wait;
             }
             case "gui" -> minecraft.options.hideGui = argument.equals("off");
+            case "scale" -> {
+                minecraft.options.guiScale().set(Integer.parseInt(argument));
+                minecraft.resizeDisplay();
+            }
             case "log" -> result.add("log", log(minecraft));
             case "join" -> join(minecraft, argument);
             case "quit" -> minecraft.stop();
@@ -313,6 +318,9 @@ public final class Driver {
         }
         seen.add("alerts", alerts);
         seen.addProperty("unread", view.unread());
+        GuideView guide = ClientState.guide;
+        guide.following(Calendar.date(Math.max(1, view.day())).getMonthValue()).ifPresent(task -> seen.addProperty("task",
+                "%s %d/%d: %s".formatted(task.title().getString(), guide.stepsDone(task), task.steps().size(), guide.next(task).map(step -> task.step(step).getString()).orElse(""))));
         seen.addProperty("date", Calendar.label(view.day()).getString());
         seen.addProperty("time", minecraft.level.getDayTime() % 24000);
         GuiAccessor gui = (GuiAccessor) minecraft.gui;
