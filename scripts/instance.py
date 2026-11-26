@@ -28,7 +28,6 @@ CLIENT_OPTIONS = {
     "simulationDistance": "8",
     "skipMultiplayerWarning": "true",
     "soundCategory_master": "0.5",
-    "tutorialStep": "none",
 }
 SETTINGS = ("config",)
 FAR_VIEW = {"mods/distant-horizons-seedgen.pw.toml", "mods/distanthorizons.pw.toml"}

@@ -4,7 +4,7 @@ What Backcountry is, decided before anything is built. Each document keeps its *
 
 ## Now
 
-**M1 Repo, tooling, world** to **M15 The Messenger and the tasks** are built, M1 to M12 balanced by automated playthroughs (`playthrough` skill). M2 to M15 wait for the user's first play (`just play`, the `playtest` skill's rows).
+**M1 Repo, tooling, world** to **M17 Binoculars** are built, M1 to M12 balanced by automated playthroughs (`playthrough` skill). M2 to M17 wait for the user's first play (`just play`, the `playtest` skill's rows). M16's title panorama waits until the island's terrain is settled.
 
 ## Milestones
 
@@ -27,6 +27,8 @@ Each milestone ends playable, with `just lint` and `just test` green.
 | M13 A survivalist's island | What a survivalist in Alaska would not meet or do cut from vanilla and every mod: no caves or ore in the rock, no Nether, XP, magic, machines or exotic gear, Alaska's fish only, logs that need an axe, torches and lanterns that burn down, a locked Normal difficulty (S6, S12, `world.md` W3); the pack's keys, first-launch settings, Ping Wheel's marks and dark nights (`interface.md` I8, `production.md`) |
 | M14 Company and comfort | Voice within earshot, teammates' typing and screens, sitting, animated players, the pick-up list, the animated hotbar, Jade's name while sneaking, dragging, sorting and walking with screens open, footprints and worn paths, wakes, thunder by distance, new sounds and music, breath by the air and a growl by the stomach, the far land from the seed and the speed mods (`systems.md` S1, S5, S10, `world.md` W5, `interface.md` I1, I8, `production.md`) |
 | M15 The Messenger and the tasks | The Messenger full screen with five named pages and what helps under each warning, the clock; the year's tasks in seven chapters of steps with items, the tracker and the toasts; the Canvas Pack, the Sleeping Bag, line and hooks in the kit; lashed stone tools, hewn planks and bulk by stack size; Create New World as the pack plays (`systems.md` S1, S4, S6, S9, S10, S11, `interface.md` I1, I2, I8) |
+| M16 Clearer screens | Water as droplets above the bolts, the body panel's words and every HUD element named on hover, frost at the screen's edges when cold, no vanilla tutorial or recipe book, the Messenger by the movement keys and SOS to tap out, the Backcountry Preset in Video Settings with Complementary Reimagined, the island on the title screen (`interface.md` I1, I2, I7, I8, `systems.md` S10, `production.md`) |
+| M17 Binoculars | The Binoculars in the kit, worn in the neck slot above the pack and looked through with C or in hand at 8× (`systems.md` S1, S8, S10, `interface.md` I8) |
 
 ## Documents
 

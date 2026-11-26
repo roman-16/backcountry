@@ -47,7 +47,7 @@ $ python3 scripts/client.py start --fresh --mode shipped
 $ python3 scripts/client.py run '/time set noon' 'wait 200' 'bench 40'
 ```
 
-`bench <seconds>` turns the camera once around over the time and replies with the average and lowest frames a second. The shipped pack (Complementary Unbound and Distant Horizons at 1,024 chunks, 1920 by 1080, 8 chunks) held 60 on average and 59 at its lowest, at the 60 the screen allows, on the user's desktop once the far land had loaded, and 41 at its lowest in a fresh world's first minute; a drop below 30 lowest is a finding.
+`bench <seconds>` turns the camera once around over the time and replies with the average and lowest frames a second; `graphics <step> shaders on|off` picks the Preset's step first, and `far` waits until the far land is drawn. A drop below 30 lowest is a finding.
 
 ## Write it back
 

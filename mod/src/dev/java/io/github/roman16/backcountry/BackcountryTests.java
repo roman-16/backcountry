@@ -9,6 +9,7 @@ import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Burn;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Exertion;
+import io.github.roman16.backcountry.body.Load;
 import io.github.roman16.backcountry.body.Climate;
 import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.body.Metabolism;
@@ -22,6 +23,7 @@ import io.github.roman16.backcountry.gear.LeftPackEntity;
 import io.github.roman16.backcountry.gear.Water;
 import io.github.roman16.backcountry.gear.WaterVesselItem;
 import io.github.roman16.backcountry.survivor.Arrival;
+import io.github.roman16.backcountry.survivor.Ending;
 import io.github.roman16.backcountry.survivor.Summary;
 import io.github.roman16.backcountry.survivor.Team;
 import io.github.roman16.backcountry.weather.Day;
@@ -283,6 +285,51 @@ public final class BackcountryTests {
         check(helper, body.pack.is(Things.CANVAS_PACK.get()), "the new survivor wears no Canvas Pack");
         check(helper, packed.stream().anyMatch(stack -> BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath().endsWith("sleeping_bag"))
                 && packed.stream().anyMatch(stack -> stack.is(Things.MED_KIT.get()) || stack.is(Things.HEADLAMP.get())), "the Canvas Pack holds " + packed);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void theBinocularsAreWornAtTheNeck(GameTestHelper helper) {
+        ServerPlayer player = survivor(helper);
+        Body body = Metabolism.body(player);
+        Slot neck = player.inventoryMenu.slots.stream().filter(slot -> slot instanceof Hotbar.WornSlot && slot.y == Hotbar.Worn.NECK.y).findFirst().orElseThrow();
+        check(helper, neck.mayPlace(new ItemStack(Things.BINOCULARS.get())) && !neck.mayPlace(new ItemStack(Items.STICK)), "the neck slot took something other than Binoculars");
+        double bare = Load.kg(player, body);
+        neck.set(new ItemStack(Things.BINOCULARS.get()));
+        check(helper, body.binoculars.is(Things.BINOCULARS.get()), "the neck slot did not put the Binoculars on");
+        check(helper, Load.kg(player, body) > bare, "worn Binoculars weighed nothing");
+        check(helper, Hotbar.carried(player).stream().anyMatch(stack -> stack.is(Things.BINOCULARS.get())), "worn Binoculars were not carried");
+        BlockPos stood = player.blockPosition();
+        Ending.tapOut(player);
+        boolean left = false;
+        for (BlockPos at : BlockPos.betweenClosed(stood.offset(-8, -8, -8), stood.offset(8, 8, 8))) {
+            if (helper.getLevel().getBlockEntity(at) instanceof LeftPackEntity pack) {
+                for (int slot = 0; slot < pack.getContainerSize(); slot++) {
+                    left |= pack.getItem(slot).is(Things.BINOCULARS.get());
+                }
+            }
+        }
+        check(helper, left && body.binoculars.isEmpty(), "the worn Binoculars did not go into the left pack");
+        Arrival.arrive(player);
+        check(helper, body.binoculars.is(Things.BINOCULARS.get()), "the new survivor wears no Binoculars");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void sosTapsOut(GameTestHelper helper) {
+        ServerPlayer player = survivor(helper);
+        player.getInventory().setItem(0, new ItemStack(Items.FLINT, 5));
+        Body body = Metabolism.body(player);
+        Ending.tapOut(player);
+        check(helper, body.ended != null && body.ended.kind() == Summary.Kind.TAPPED_OUT, "SOS did not tap the survivor out");
+        check(helper, player.isSpectator(), "the survivor who tapped out stayed in the world");
+        Summary first = body.ended;
+        Ending.tapOut(player);
+        check(helper, body.ended == first, "a second SOS ended the run again");
+        ServerPlayer builder = survivor(helper);
+        builder.setGameMode(GameType.CREATIVE);
+        Ending.tapOut(builder);
+        check(helper, Metabolism.body(builder).ended == null, "SOS tapped out a player in creative");
         helper.succeed();
     }
 

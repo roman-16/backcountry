@@ -1,6 +1,6 @@
 package io.github.roman16.backcountry.mixin;
 
-import io.github.roman16.backcountry.client.Shaders;
+import io.github.roman16.backcountry.client.Graphics;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
@@ -16,7 +16,7 @@ abstract class MoreDarknessLightMixin {
 
     @Inject(method = "updateLuminance", at = @At("HEAD"), cancellable = true)
     private static void backcountry$leaveNightToShader(CallbackInfo info) {
-        if (Shaders.drawing()) {
+        if (Graphics.shaded()) {
             active = false;
             info.cancel();
         }

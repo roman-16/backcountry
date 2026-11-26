@@ -15,8 +15,8 @@ Every mod in the pack and why, and what was left out. "His" marks a mod in one o
 | Better Foliage Renewed (his) | Bushy leaves, reeds; its last 1.21.1 build is from 22.08.2024, so it leaves if it breaks with Sodium or Iris |
 | Ecliptic Seasons | The year's look: day length, gradual snow on the ground, falling leaves, lake ice (`systems.md` S2); the sky and whether it rains or snows are the mod's weather (S3); nothing it adds can be held (`systems.md` S12) |
 | Distant Horizons (his) | The far view |
-| Sodium, Iris, Complementary Unbound (his) | Drawing and the shader |
-| Euphoria Patches | Unbound's added options, kept at their defaults; no pop-up, messages or update check |
+| Sodium, Iris, Complementary Reimagined | Drawing and the shader; the mod's Backcountry page in Video Settings sets them with the far view through one Preset (`production.md`) |
+| Euphoria Patches | Reimagined's added options, kept at their defaults; no pop-up, messages or update check |
 | Distant Horizons SeedGen | The far land from the seed; its chat lines go to the log (`SeedGenGreetingMixin`, `SeedGenSharingMixin`) and it loads within Distant Horizons' share of a frame (`SeedGenBudgetMixin`) |
 | Lithium, FerriteCore, ModernFix, ImmediatelyFast, ScalableLux, C2ME, Noisiumed, Entity Culling, More Culling | Speed (`production.md`) |
 | Dynamic FPS | 10 frames a second in the background; off in every dev instance, whose driver waits on drawn frames |
@@ -31,7 +31,7 @@ Every mod in the pack and why, and what was left out. "His" marks a mod in one o
 | Soft Imprints | Footprints in snow layers and sand (`world.md` W5) |
 | The Roads More Travelled | Paths that wear and grow back; leaves never wear and paths give no speed (`world.md` W5) |
 | Wakes Reforged | Wakes behind the Raft and swimmers |
-| LambDynamicLights | Light from what is held, and the headlamp |
+| LambDynamicLights | Light from what is held, and the headlamp, with the shader on and off; its quality follows the Preset, and the shader's own held light is off so a torch never lights twice |
 | JEI | Recipes; it lists only what the island gives (`cuts.toml`) |
 | Controlling, with Searchables | A search box in Controls |
 | Mouse Tweaks (his), Inventory Sorter (his) | Dragging and scrolling items; a middle click sorts, never into a dark row |
@@ -73,7 +73,7 @@ Libraries they bring: Architectury, Cloth Config, CoroUtil, CreativeCore, Fzzy C
 | Chunky | Distant Horizons 3.3.3 binds to it while the server prepares its spawn, before Chunky is loaded, and the server crashes |
 | Immersive UI | Its trails mark rarity, which the island has none of, and the inventory with its dark rows is the pack's own |
 | JourneyMap | Maps are made on the island from paper and the compass, and coordinates are hidden (`systems.md` S12) |
-| Auroras | Complementary Unbound draws its own aurora |
+| Auroras | Complementary Reimagined draws its own aurora |
 | Particle Rain, Windy | They draw rain, snow and wind of their own, where the mod's weather decides them (`systems.md` S3) |
 | Simple Grass Flowers | Flowers painted on the grass all year, through autumn |
 | Motschen's Better Leaves | Better Foliage Renewed already draws bushy leaves |
@@ -83,8 +83,8 @@ Libraries they bring: Architectury, Cloth Config, CoroUtil, CreativeCore, Fzzy C
 | Spice of Life Onion, AppleSkin, Healing Campfire | The body is the mod's, and vanilla's hunger is never read |
 | Serene Seasons, Terralith, Geophilic, Terraphilic | Ecliptic Seasons keeps the year; WWOO dresses the land |
 | Naturalist, Friends & Foes, Respawning Animals, Improved Mobs, The Hordes, Spawn Animations, No Hostiles Around Campfire, Attract to Sound | The spawn director owns every animal and no monster spawns; a hearing AI would fight the bears' seasonal temper (`systems.md` S8) |
-| Artifacts, Better Combat, Combat Roll, Simply Swords, Silent Gear, Hang Glider, Yori3o's Grappling Hooks, Small Ships, Waystones, Horseman, Enhanced Celestials, RarityCore, Enchantment Descriptions, Enchant Icons, Spyglass Improvements, Supplementaries, Amendments, Easy NPC, Simply Tooltips, Traveler's Titles | No exotic gear, magic, XP or labels on the land (`systems.md` S12); Amendments' wall lanterns would never burn down |
-| Sophisticated Backpacks, Nomadic Tents, GraveStone, HT's TreeChop, Farmer's Delight | The mod builds them: the hotbar and the Hide Pack, the camp, the fallen survivor's pack, felling, the pots and every food's numbers |
+| Artifacts, Better Combat, Combat Roll, Simply Swords, Silent Gear, Hang Glider, Yori3o's Grappling Hooks, Small Ships, Waystones, Horseman, Enhanced Celestials, RarityCore, Enchantment Descriptions, Enchant Icons, Supplementaries, Amendments, Easy NPC, Simply Tooltips, Traveler's Titles | No exotic gear, magic, XP or labels on the land (`systems.md` S12); Amendments' wall lanterns would never burn down |
+| Sophisticated Backpacks, Curios API, Spyglass Improvements, Nomadic Tents, GraveStone, HT's TreeChop, Farmer's Delight | The mod builds them: the hotbar and the Hide Pack, the back and neck slots, the binoculars' zoom (Spyglass Improvements zooms only the vanilla spyglass, which the island cannot make), the camp, the fallen survivor's pack, felling, the pots and every food's numbers |
 
 ## Open
 

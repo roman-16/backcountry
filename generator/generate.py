@@ -598,7 +598,7 @@ def lights():
 
 
 def shaders():
-    shader = tomllib.loads((SHADERPACKS / "complementary-unbound.pw.toml").read_text())["filename"]
+    shader = tomllib.loads((SHADERPACKS / "complementary-reimagined.pw.toml").read_text())["filename"]
     patches = tomllib.loads(PATCHER.read_text())["filename"].split("-")[1]
     pack = f"{shader.removesuffix('.zip')} + EuphoriaPatches_{patches}"
     IRIS.write_text(f"disableUpdateMessage=true\nenableShaders=true\nshaderPack={pack}\n")
@@ -650,6 +650,11 @@ def main():
         png.write(ASSETS / f"textures/block/{name}.png", grid(name, entry, 16))
     for name, entry in source["hud"].items():
         png.write(ASSETS / f"textures/gui/sprites/hud/{name}.png", grid(name, entry, 9))
+    for name, entry in source["slots"].items():
+        png.write(ASSETS / f"textures/item/empty_slot_{name}.png", grid(name, entry, 16))
+    for name, entry in source["views"].items():
+        rows = entry["rows"]
+        png.write(ASSETS / f"textures/misc/{name}.png", grid(name, entry, len(rows[0]), len(rows)))
     for name, entry in source["worn"].items():
         png.write(ASSETS / f"textures/models/armor/{name}_layer_1.png", grid(name, entry, 64, 32))
     with vanilla_jar() as jar, tempfile.TemporaryDirectory() as folder:
@@ -663,8 +668,6 @@ def main():
             tint(jar, entry["base"], entry["colour"], OUT / "assets/minecraft" / entry["path"], scratch)
         for name, entry in source["entities"].items():
             tint(jar, entry["base"], entry["colour"], ASSETS / f"textures/entity/{name}.png", scratch)
-        for name, entry in source["sprites"].items():
-            tint(jar, entry["base"], entry["colour"], ASSETS / f"textures/gui/sprites/hud/{name}.png", scratch)
         for name, entry in source["armour"].items():
             for layer in (1, 2):
                 tint(

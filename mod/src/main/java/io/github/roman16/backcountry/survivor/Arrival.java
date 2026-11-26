@@ -113,6 +113,7 @@ public final class Arrival {
         inventory.setItem(2, bottle);
         inventory.setItem(3, new ItemStack(Things.PILOT_BREAD.get(), Balance.get().kit().pilotBread()));
         inventory.setItem(4, new ItemStack(Things.CAMP_POT.get()));
+        body.binoculars = new ItemStack(Things.BINOCULARS.get());
         body.pack = canvasPack();
         player.setHealth(player.getMaxHealth());
         player.removeAllEffects();

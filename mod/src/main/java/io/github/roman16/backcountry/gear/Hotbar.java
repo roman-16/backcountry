@@ -1,21 +1,27 @@
 package io.github.roman16.backcountry.gear;
 
+import com.mojang.datafixers.util.Pair;
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
-import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Metabolism;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -25,8 +31,7 @@ import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 @EventBusSubscriber(modid = Backcountry.MODID)
 public final class Hotbar {
     public static final int ROW = 9;
-    public static final int BACK_X = 77;
-    public static final int BACK_Y = 44;
+    public static final int WORN_X = 77;
 
     private Hotbar() {}
 
@@ -46,9 +51,10 @@ public final class Hotbar {
         }
         carried.add(player.getOffhandItem());
         inventory.armor.forEach(carried::add);
-        ItemStack pack = Metabolism.body(player).pack;
-        carried.add(pack);
-        carried.addAll(contents(pack));
+        Body body = Metabolism.body(player);
+        carried.add(body.binoculars);
+        carried.add(body.pack);
+        carried.addAll(contents(body.pack));
         return carried;
     }
 
@@ -142,35 +148,56 @@ public final class Hotbar {
         }
     }
 
-    public static final class BackSlot extends Slot {
-        private final Player player;
+    public enum Worn {
+        BACK(44, PackItem.class, body -> body.pack, (body, stack) -> body.pack = stack),
+        NECK(26, BinocularsItem.class, body -> body.binoculars, (body, stack) -> body.binoculars = stack);
 
-        public BackSlot(Player player) {
-            super(new SimpleContainer(1), 0, BACK_X, BACK_Y);
+        public final int y;
+        private final Class<? extends Item> fits;
+        private final Function<Body, ItemStack> get;
+        private final BiConsumer<Body, ItemStack> set;
+        private final ResourceLocation empty;
+
+        Worn(int y, Class<? extends Item> fits, Function<Body, ItemStack> get, BiConsumer<Body, ItemStack> set) {
+            this.y = y;
+            this.fits = fits;
+            this.get = get;
+            this.set = set;
+            this.empty = Backcountry.id("item/empty_slot_" + name().toLowerCase(Locale.ROOT));
+        }
+    }
+
+    public static final class WornSlot extends Slot {
+        private final Player player;
+        private final Worn worn;
+
+        public WornSlot(Player player, Worn worn) {
+            super(new SimpleContainer(1), 0, WORN_X, worn.y);
             this.player = player;
+            this.worn = worn;
         }
 
         @Override
         public ItemStack getItem() {
-            return Metabolism.body(player).pack;
+            return worn.get.apply(Metabolism.body(player));
         }
 
         @Override
         public void set(ItemStack stack) {
-            Metabolism.body(player).pack = stack;
+            worn.set.accept(Metabolism.body(player), stack);
             setChanged();
         }
 
         @Override
         public ItemStack remove(int amount) {
-            ItemStack pack = Metabolism.body(player).pack;
-            Metabolism.body(player).pack = ItemStack.EMPTY;
-            return pack;
+            ItemStack taken = getItem();
+            worn.set.accept(Metabolism.body(player), ItemStack.EMPTY);
+            return taken;
         }
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return stack.getItem() instanceof PackItem;
+            return worn.fits.isInstance(stack.getItem());
         }
 
         @Override
@@ -181,6 +208,11 @@ public final class Hotbar {
         @Override
         public boolean isActive() {
             return !player.isCreative();
+        }
+
+        @Override
+        public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+            return Pair.of(InventoryMenu.BLOCK_ATLAS, worn.empty);
         }
     }
 

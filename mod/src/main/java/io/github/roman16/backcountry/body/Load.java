@@ -22,6 +22,7 @@ public final class Load {
         for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
             total += kg(player.getInventory().getItem(slot));
         }
+        total += kg(body.binoculars);
         total += kg(body.pack);
         return total;
     }

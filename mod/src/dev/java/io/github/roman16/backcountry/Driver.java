@@ -4,12 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.NativeImage;
 import io.github.roman16.backcountry.body.Alert;
 import io.github.roman16.backcountry.body.BodyView;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Climate;
 import io.github.roman16.backcountry.body.Condition;
+import io.github.roman16.backcountry.client.Binoculars;
 import io.github.roman16.backcountry.client.ClientState;
+import io.github.roman16.backcountry.client.Graphics;
 import io.github.roman16.backcountry.guide.GuideView;
 import io.github.roman16.backcountry.mixin.dev.GuiAccessor;
 import io.github.roman16.backcountry.weather.Outlook;
@@ -23,10 +26,13 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
+import net.caffeinemc.mods.sodium.client.render.SodiumWorldRenderer;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -68,8 +74,13 @@ public final class Driver {
     private static final double ARRIVED_BLOCKS = 1.5;
     private static final float FULL_TURN = 360;
     private static final int TICKS_A_SECOND = 20;
+    private static final int PANORAMA_FOV = 90;
+    private static final int PANORAMA_FRAMES = 32;
+    private static final int PANORAMA_SIZE = 1024;
+    private static final float[][] PANORAMA_FACES = {{0, 0}, {90, 0}, {180, 0}, {-90, 0}, {0, -90}, {0, 90}};
     private static final Deque<String> STEPS = new ArrayDeque<>();
     private static final List<String> HEARD = new ArrayList<>();
+    private static final Set<KeyMapping> HELD = new HashSet<>();
     private static boolean opened;
     private static boolean announced;
     private static boolean running;
@@ -124,6 +135,7 @@ public final class Driver {
                 running = true;
                 step = null;
             }
+            HELD.forEach(mapping -> mapping.setDown(true));
             if (running) {
                 advance(minecraft, folder);
             }
@@ -238,6 +250,9 @@ public final class Driver {
             case "hold" -> hold(minecraft, argument.split(" "));
             case "walk" -> walk(minecraft, argument.split(" "));
             case "bench" -> bench(minecraft, Integer.parseInt(argument));
+            case "graphics" -> graphics(argument.split(" "));
+            case "far" -> far();
+            case "panorama" -> panorama(minecraft, argument);
             case "use" -> {
                 KeyMapping.click(minecraft.options.keyUse.getKey());
                 until = () -> ticks >= 1;
@@ -409,8 +424,13 @@ public final class Driver {
     }
 
     private static void key(Minecraft minecraft, String name) {
-        if (name.equals("inventory") && minecraft.screen == null) {
-            KeyMapping.click(minecraft.options.keyInventory.getKey());
+        KeyMapping world = switch (name) {
+            case "inventory" -> minecraft.options.keyInventory;
+            case "perspective" -> minecraft.options.keyTogglePerspective;
+            default -> null;
+        };
+        if (world != null && minecraft.screen == null) {
+            KeyMapping.click(world.getKey());
             until = () -> ticks >= 1;
             return;
         }
@@ -437,8 +457,19 @@ public final class Driver {
             case "sprint" -> minecraft.options.keySprint;
             case "use" -> minecraft.options.keyUse;
             case "attack" -> minecraft.options.keyAttack;
+            case "binoculars" -> Binoculars.KEY;
             default -> throw new IllegalArgumentException("no key " + words[0] + " to hold");
         };
+        if (words[1].equals("on") || words[1].equals("off")) {
+            boolean on = words[1].equals("on");
+            if (on) {
+                HELD.add(mapping);
+            } else {
+                HELD.remove(mapping);
+            }
+            mapping.setDown(on);
+            return;
+        }
         int length = Integer.parseInt(words[1]);
         each = () -> mapping.setDown(ticks < length);
         until = () -> {
@@ -491,6 +522,105 @@ public final class Driver {
                     samples.stream().mapToInt(Integer::intValue).min().orElse(0), seconds));
             return true;
         };
+    }
+
+    private static void graphics(String[] words) {
+        if (words.length != 3 || !words[1].equals("shaders")) {
+            throw new IllegalArgumentException("graphics takes a step and shaders on or off: graphics high shaders on");
+        }
+        Graphics.shaders(words[2].equals("on"));
+        Graphics.choose(Graphics.valueOf(words[0].toUpperCase(Locale.ROOT)));
+        result.addProperty("graphics", Graphics.current().name().toLowerCase(Locale.ROOT) + (Graphics.shaded() ? " with the shader" : " without the shader"));
+    }
+
+    private static void far() {
+        if (!FarView.read().generating()) {
+            throw new IllegalStateException("Distant Horizons draws no far view in this client; start it with --mode shipped");
+        }
+        long started = System.nanoTime();
+        FarView.Work[] last = {FarView.read()};
+        until = () -> {
+            if (ticks % TICKS_A_SECOND != 0) {
+                return false;
+            }
+            FarView.Work work = FarView.read();
+            boolean still = work.generated() == last[0].generated() && work.drawn() == last[0].drawn();
+            if (!still) {
+                ticks = 0;
+            }
+            last[0] = work;
+            if (work.left() > 0 || !still) {
+                return false;
+            }
+            result.addProperty("far", "Distant Horizons has drawn the far view, after %.0f s".formatted((System.nanoTime() - started) / 1e9));
+            return true;
+        };
+    }
+
+    private static void panorama(Minecraft minecraft, String name) {
+        LocalPlayer player = minecraft.player;
+        float yaw = player.getYRot();
+        int fov = minecraft.options.fov().get();
+        double effects = minecraft.options.fovEffectScale().get();
+        minecraft.options.fov().set(PANORAMA_FOV);
+        minecraft.options.fovEffectScale().set(0.0);
+        minecraft.gameRenderer.setRenderBlockOutline(false);
+        Path folder = minecraft.gameDirectory.toPath().resolve("screenshots/panorama").resolve(name);
+        JsonArray shots = new JsonArray();
+        int[] face = {0};
+        long[] steady = {-1};
+        turn(player, yaw, face[0]);
+        until = () -> {
+            if (!rendered()) {
+                steady[0] = -1;
+                return false;
+            }
+            if (steady[0] < 0) {
+                steady[0] = frames;
+            }
+            if (frames < steady[0] + PANORAMA_FRAMES) {
+                return false;
+            }
+            Path path = folder.resolve("panorama_" + face[0] + ".png").toAbsolutePath().normalize();
+            square(minecraft, path);
+            shots.add(path.toString());
+            if (++face[0] < PANORAMA_FACES.length) {
+                steady[0] = -1;
+                ticks = 0;
+                turn(player, yaw, face[0]);
+                return false;
+            }
+            minecraft.options.fov().set(fov);
+            minecraft.options.fovEffectScale().set(effects);
+            minecraft.gameRenderer.setRenderBlockOutline(true);
+            player.setYRot(yaw);
+            player.setXRot(0);
+            result.add("screenshot", shots);
+            return true;
+        };
+    }
+
+    private static void turn(LocalPlayer player, float yaw, int face) {
+        player.setYRot(yaw + PANORAMA_FACES[face][0]);
+        player.setXRot(PANORAMA_FACES[face][1]);
+        player.yRotO = player.getYRot();
+        player.xRotO = player.getXRot();
+    }
+
+    private static boolean rendered() {
+        SodiumWorldRenderer renderer = SodiumWorldRenderer.instanceNullable();
+        return renderer == null || renderer.isTerrainRenderComplete();
+    }
+
+    private static void square(Minecraft minecraft, Path path) {
+        try (NativeImage image = Screenshot.takeScreenshot(minecraft.getMainRenderTarget()); NativeImage square = new NativeImage(PANORAMA_SIZE, PANORAMA_SIZE, false)) {
+            int side = Math.min(image.getWidth(), image.getHeight());
+            image.resizeSubRectTo((image.getWidth() - side) / 2, (image.getHeight() - side) / 2, side, side, square);
+            Files.createDirectories(path.getParent());
+            square.writeToFile(path);
+        } catch (IOException exception) {
+            throw new UncheckedIOException(exception);
+        }
     }
 
     private static JsonArray log(Minecraft minecraft) {

@@ -481,6 +481,27 @@ rows = [
   "................",
 ]
 
+[items.binoculars]
+palette = { O = "1b1e1d", d = "2b302d", m = "3c433f", l = "525b56", h = "6b756f", g = "8a8a8a", G = "b8b8b8", c = "1e6566", C = "339090", w = "68bdbd" }
+rows = [
+  "................",
+  "..OOOO....OOOO..",
+  "..OwCO....OwCO..",
+  "..OCcO....OCcO..",
+  ".OOOOOO..OOOOOO.",
+  ".OhllmOOOOhllmO.",
+  ".OlmmdOgGOlmmdO.",
+  ".OlmmdOOOOlmmdO.",
+  ".OlmmdO..OlmmdO.",
+  ".OlmmdO..OlmmdO.",
+  ".OlmmdO..OlmmdO.",
+  ".OmmddO..OmmddO.",
+  ".OgGggO..OgGggO.",
+  ".OOOOOO..OOOOOO.",
+  "................",
+  "................",
+]
+
 [hud.energy_empty]
 palette = { b = "000000", c = "282828" }
 rows = [".....bbbb", "....bcccb", "...bcccb.", "..bcccbbb", ".bccccccb", "bbbbcccb.", "...bccb..", "..bccb...", "..bbb...."]
@@ -506,8 +527,20 @@ palette = { b = "000000", l = "a0703c", L = "6e4a24", s = "d8b080" }
 rows = ["..bbbbb..", ".bb...bb.", ".bbbbbbb.", "bllllllLb", "blssssLLb", "bllllllLb", "bllllllLb", "bLLLLLLLb", "bbbbbbbbb"]
 
 [hud.wet]
-palette = { b = "000000", c = "3f76e4", e = "a8d0ff" }
-rows = ["....b....", "...bcb...", "...bcb...", "..bcccb..", ".bcceccb.", ".bcecccb.", ".bcccccb.", "..bcccb..", "...bbb..."]
+palette = { b = "000000", w = "8fb3dc", c = "5d7fa8", C = "3f5f86", d = "a8d0ff" }
+rows = [".bb...bb.", "bwcbbbcCb", "bwcccccCb", "bbbwcCbbb", "..bwcCb..", "..bwcCb..", "..bbbbb..", "...d.d...", "...d....."]
+
+[hud.water_empty]
+palette = { b = "000000", c = "282828" }
+rows = ["....b....", "...bcb...", "...bcb...", "..bcccb..", ".bcccccb.", ".bcccccb.", ".bcccccb.", "..bcccb..", "...bbb..."]
+
+[hud.water_full]
+palette = { h = "d1ebff", l = "56b8ff", m = "0094ff", s = "0070d0" }
+rows = [".........", "....l....", "....l....", "...lmm...", "..lhmmm..", "..lhmms..", "..mmmms..", "...sss...", "........."]
+
+[hud.water_half]
+palette = { h = "d1ebff", l = "56b8ff", m = "0094ff", s = "0070d0" }
+rows = [".........", ".........", ".........", ".........", "..hllll..", "..lmmms..", "..mmmms..", "...sss...", "........."]
 
 [hud.frost]
 palette = { b = "000000", c = "9fd8ff", C = "ffffff" }
@@ -593,9 +626,116 @@ rows = [".bbbbbbb.", ".bpppppPb", ".bgpllpPb", ".bpppppPb", ".bgpllpPb", ".bpppp
 palette = { k = "3c2410", s = "c8823c", S = "a0642a", w = "8b5a2b", W = "6b4220", b = "d0d0d0" }
 rows = [".........", "..b.b.b..", "...b.b...", "kkkkkkkkk", "kssssssSk", ".kwwwwwk.", ".kwwwwWk.", "..kkkkk..", "........."]
 
-[sprites.water_bar_progress]
-base = "gui/sprites/hud/experience_bar_progress"
-colour = "1d5fbf,c4ecff"
+[slots.back]
+palette = { o = "555555" }
+rows = [
+  "................",
+  "................",
+  "......oooo......",
+  ".....o....o.....",
+  "...oooooooooo...",
+  "..o..........o..",
+  "..o..........o..",
+  "..oooooooooooo..",
+  "..o....oo....o..",
+  "..o..........o..",
+  "..o..........o..",
+  "..o..........o..",
+  "..o..........o..",
+  "...oooooooooo...",
+  "................",
+  "................",
+]
+
+[slots.neck]
+palette = { o = "555555" }
+rows = [
+  "................",
+  "..oooo....oooo..",
+  "..o..o....o..o..",
+  "..o..o....o..o..",
+  ".oo..oo..oo..oo.",
+  ".o....oooo....o.",
+  ".o....o..o....o.",
+  ".o....oooo....o.",
+  ".o....o..o....o.",
+  ".o....o..o....o.",
+  ".o....o..o....o.",
+  ".o....o..o....o.",
+  ".o....o..o....o.",
+  ".oooooo..oooooo.",
+  "................",
+  "................",
+]
+
+[views.binoculars]
+palette = { B = "000000", r = "1b1e1d" }
+rows = [
+  "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBrrrrrrrrrrBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBrrrrrrrrrrBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBBBBBBBrrrr..........rrrrBBBBBBBBBBBBBBBBBBBBBBrrrr..........rrrrBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBBBBrrr..................rrrBBBBBBBBBBBBBBBBrrr..................rrrBBBBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBBrrr......................rrrBBBBBBBBBBBBrrr......................rrrBBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBrr..........................rrBBBBBBBBBBrr..........................rrBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBrr..............................rrBBBBBBrr..............................rrBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBrr................................rrBBBBrr................................rrBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBr....................................rBBr....................................rBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBr......................................rr......................................rBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBr................................................................................rBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBr..................................................................................rBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBrr..................................................................................rrBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBr....................................................................................rBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBr......................................................................................rBBBBBBBBBBBB",
+  "BBBBBBBBBBBrr......................................................................................rrBBBBBBBBBBB",
+  "BBBBBBBBBBBr........................................................................................rBBBBBBBBBBB",
+  "BBBBBBBBBBrr........................................................................................rrBBBBBBBBBB",
+  "BBBBBBBBBBr..........................................................................................rBBBBBBBBBB",
+  "BBBBBBBBBBr..........................................................................................rBBBBBBBBBB",
+  "BBBBBBBBBr............................................................................................rBBBBBBBBB",
+  "BBBBBBBBBr............................................................................................rBBBBBBBBB",
+  "BBBBBBBBBr............................................................................................rBBBBBBBBB",
+  "BBBBBBBBBr............................................................................................rBBBBBBBBB",
+  "BBBBBBBBr..............................................................................................rBBBBBBBB",
+  "BBBBBBBBr..............................................................................................rBBBBBBBB",
+  "BBBBBBBBr..............................................................................................rBBBBBBBB",
+  "BBBBBBBBr..............................................................................................rBBBBBBBB",
+  "BBBBBBBBr..............................................................................................rBBBBBBBB",
+  "BBBBBBBBr..............................................................................................rBBBBBBBB",
+  "BBBBBBBBr..............................................................................................rBBBBBBBB",
+  "BBBBBBBBr..............................................................................................rBBBBBBBB",
+  "BBBBBBBBr..............................................................................................rBBBBBBBB",
+  "BBBBBBBBr..............................................................................................rBBBBBBBB",
+  "BBBBBBBBBr............................................................................................rBBBBBBBBB",
+  "BBBBBBBBBr............................................................................................rBBBBBBBBB",
+  "BBBBBBBBBr............................................................................................rBBBBBBBBB",
+  "BBBBBBBBBr............................................................................................rBBBBBBBBB",
+  "BBBBBBBBBBr..........................................................................................rBBBBBBBBBB",
+  "BBBBBBBBBBr..........................................................................................rBBBBBBBBBB",
+  "BBBBBBBBBBrr........................................................................................rrBBBBBBBBBB",
+  "BBBBBBBBBBBr........................................................................................rBBBBBBBBBBB",
+  "BBBBBBBBBBBrr......................................................................................rrBBBBBBBBBBB",
+  "BBBBBBBBBBBBr......................................................................................rBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBr....................................................................................rBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBrr..................................................................................rrBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBr..................................................................................rBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBr................................................................................rBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBr......................................rr......................................rBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBr....................................rBBr....................................rBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBrr................................rrBBBBrr................................rrBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBrr..............................rrBBBBBBrr..............................rrBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBrr..........................rrBBBBBBBBBBrr..........................rrBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBBrrr......................rrrBBBBBBBBBBBBrrr......................rrrBBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBBBBrrr..................rrrBBBBBBBBBBBBBBBBrrr..................rrrBBBBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBBBBBBBrrrr..........rrrrBBBBBBBBBBBBBBBBBBBBBBrrrr..........rrrrBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBrrrrrrrrrrBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBrrrrrrrrrrBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+  "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+]
 
 [tinted.hide_hat]
 base = "item/leather_helmet"

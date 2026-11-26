@@ -31,6 +31,11 @@ START_SECONDS = 600
 RUN_SECONDS = 300
 STOP_SECONDS = 120
 FRESH = "play"
+PANORAMA = ROOT / "mod/src/main/resources/assets/minecraft/textures/gui/title/background"
+PANORAMA_FACES = 6
+PANORAMA_SEED = "1"
+PANORAMA_TIMES = {"dawn": 23400, "dusk": 12600, "night": 18000, "noon": 6000}
+PANORAMA_SECONDS = 1800
 
 
 def screen(visible):
@@ -210,6 +215,45 @@ def restore(arguments):
     start(arguments)
 
 
+def panorama(arguments):
+    arguments.fresh = False
+    arguments.mode = "shipped"
+    arguments.seed = PANORAMA_SEED
+    arguments.world = None
+    start(arguments)
+    steps = ["graphics ultra shaders on", "gui off", "/gamemode spectator", "/backcountry weather clear", "far"]
+    for name, daytime in sorted(PANORAMA_TIMES.items()):
+        steps += [
+            "/tick unfreeze",
+            f"/time set {daytime}",
+            "/backcountry weather clear",
+            "/tick freeze",
+            f"panorama {name}",
+        ]
+    steps += ["/tick unfreeze", "/gamemode survival", "gui on"]
+    arguments.steps = steps
+    arguments.timeout = PANORAMA_SECONDS
+    run(arguments)
+    shutil.rmtree(PANORAMA, ignore_errors=True)
+    for name in sorted(PANORAMA_TIMES):
+        (PANORAMA / name).mkdir(parents=True)
+        for face in range(PANORAMA_FACES):
+            shot = CLIENT / "screenshots" / "panorama" / name / f"panorama_{face}.png"
+            subprocess.run(
+                [
+                    "magick",
+                    str(shot),
+                    "-dither",
+                    "FloydSteinberg",
+                    "-colors",
+                    "256",
+                    f"PNG8:{PANORAMA / name / f'panorama_{face}.png'}",
+                ],
+                check=True,
+            )
+    print(f"the title's panoramas ({', '.join(sorted(PANORAMA_TIMES))}) are in {PANORAMA.relative_to(ROOT)}")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Drive the dev client: start it, run steps in it, stop it")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -233,12 +277,26 @@ def main():
     restore_parser.add_argument(
         "--visible", action="store_true", help="draw on the user's screen instead of a hidden one"
     )
+    panorama_parser = commands.add_parser(
+        "panorama",
+        help="grow the panorama's world from its seed and photograph the title's panoramas at the drop-off at each time of day, "
+        "with the shader at Ultra and the far view drawn",
+    )
+    panorama_parser.add_argument(
+        "--visible", action="store_true", help="draw on the user's screen instead of a hidden one"
+    )
     commands.add_parser("stop", help="quit the client; returns once it has exited")
     arguments = parser.parse_args()
     try:
-        {"checkpoint": checkpoint, "restore": restore, "run": run, "start": start, "stop": stop, "swap": swap}[
-            arguments.command
-        ](arguments)
+        {
+            "checkpoint": checkpoint,
+            "panorama": panorama,
+            "restore": restore,
+            "run": run,
+            "start": start,
+            "stop": stop,
+            "swap": swap,
+        }[arguments.command](arguments)
     except Failure as failure:
         sys.exit(str(failure))
 

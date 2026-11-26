@@ -55,6 +55,9 @@ highbush_cranberry_months = [9, 3]
 lingonberry_months = [8, 9]
 salmonberry_months = [6, 7]
 
+[binoculars]
+magnification = 8
+
 [body]
 arrival_kg = 77.0
 bmr_kcal_per_kg_hour = 1.0
@@ -338,6 +341,15 @@ sap_months = [4, 5]
 syrup_l = 2
 syrup_seconds = 960
 tea_vitamin_c_mg_per_l = 128
+
+[graphics]
+far_view_chunks = [128, 128, 256, 512]
+far_view_detail = ["LOW", "MEDIUM", "MEDIUM", "HIGH"]
+far_view_threads = ["MINIMAL_IMPACT", "LOW_IMPACT", "BALANCED", "BALANCED"]
+held_light = ["fastest", "fast", "fancy", "fancy"]
+profiles = ["LOW", "MEDIUM", "HIGH", "ULTRA"]
+render_chunks = [6, 10, 12, 16]
+simulation_chunks = [6, 10, 12, 12]
 
 [headlamp]
 charge_hours = 8

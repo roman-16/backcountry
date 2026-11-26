@@ -10,6 +10,7 @@ import io.github.roman16.backcountry.net.Messages;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -30,13 +31,26 @@ public final class Ending {
     private Ending() {}
 
     public static void extract(ServerPlayer player) {
+        String bmi = String.format(Locale.ROOT, "%.1f", Metabolism.body(player).bmi());
+        leave(player, Summary.Kind.EXTRACTED, Component.translatable("message.backcountry.extracted", player.getDisplayName(), bmi));
+    }
+
+    public static void tapOut(ServerPlayer player) {
         Body body = Metabolism.body(player);
-        double bmi = body.bmi();
+        GameType mode = player.gameMode.getGameModeForPlayer();
+        if (!body.arrived || body.ended != null || !player.isAlive() || mode != GameType.SURVIVAL && mode != GameType.ADVENTURE) {
+            return;
+        }
+        int day = Calendar.dayOfYear(Calendar.day(player.level()));
+        leave(player, Summary.Kind.TAPPED_OUT, Component.translatable("message.backcountry.tapped_out", player.getDisplayName(), day));
+    }
+
+    private static void leave(ServerPlayer player, Summary.Kind kind, Component told) {
+        Body body = Metabolism.body(player);
         body.gameModeBeforeEnd = player.gameMode.getGameModeForPlayer().getId();
-        Summary summary = end(player, Summary.Kind.EXTRACTED);
+        Summary summary = end(player, kind);
         player.setGameMode(GameType.SPECTATOR);
-        player.server.getPlayerList().broadcastSystemMessage(
-                Component.translatable("message.backcountry.extracted", player.getDisplayName(), String.format(java.util.Locale.ROOT, "%.1f", bmi)), false);
+        player.server.getPlayerList().broadcastSystemMessage(told, false);
         Messages.summary(player, summary);
     }
 
@@ -76,6 +90,10 @@ public final class Ending {
             if (!stack.isEmpty()) {
                 carried.add(stack);
             }
+        }
+        if (!body.binoculars.isEmpty()) {
+            carried.add(body.binoculars);
+            body.binoculars = ItemStack.EMPTY;
         }
         if (!body.pack.isEmpty()) {
             carried.add(body.pack);

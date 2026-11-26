@@ -3,6 +3,7 @@ key_iris.keybind.shaderPackSelection:key.keyboard.unknown
 key_iris.keybind.toggleShaders:key.keyboard.unknown
 key_iris.keybind.wireframe:key.keyboard.unknown
 key_key.advancements:key.keyboard.unknown
+key_key.backcountry.binoculars:key.keyboard.c
 key_key.cnc.caribou_dash:key.keyboard.unknown
 key_key.cnc.whistle:key.keyboard.unknown
 key_key.disable_voice_chat:key.keyboard.unknown
@@ -69,6 +70,7 @@ key_key.riverfishing.lift:key.keyboard.up
 key_key.riverfishing.pull_left:key.keyboard.left
 key_key.riverfishing.pull_right:key.keyboard.right
 key_key.riverfishing.push:key.keyboard.down
+key_key.saveToolbarActivator:key.keyboard.unknown
 key_key.shouldersurfing.adjust_camera_down:key.keyboard.unknown
 key_key.shouldersurfing.adjust_camera_in:key.keyboard.unknown
 key_key.shouldersurfing.adjust_camera_left:key.keyboard.unknown

@@ -6,6 +6,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-11-26
+
+### Highlights
+
+- **Broad mountain ranges** - The island's mountains stand in a few broad ranges with rolling lowland full of rivers and lakes between them; start a new world to see them.
+- **Binoculars** - Worn in a neck slot above the pack: hold C to see 8 times closer.
+- **Tapping out** - SOS on the Satellite Messenger ends a survivor's year as on Alone, with the summary headed "Tapped out".
+- **Graphics presets** - Video Settings opens on a Backcountry page whose Preset, from Low to Ultra, sets the shader, the draw distance and the far view together.
+
+### Added
+
+- SOS on the Satellite Messenger taps a survivor out, as on Alone: after one question the survivor leaves with the summary headed "Tapped out", and a new survivor arrives at the drop-off.
+- Hovering over the hearts, the energy, the water or a line of the body panel with the inventory open names it and says what fills it.
+- Frost creeps in from the screen's edges as the body grows cold.
+- Video Settings opens on a Backcountry page: a Preset from Low to Ultra sets the shader's profile, the draw and simulation distance and the far view together, and Shaders switches the shader on or off.
+- Binoculars, worn in a neck slot above the pack: hold C, or hold use with them in hand, to see 8 times closer. The empty neck and back slots show the outline of what they take.
+
+### Changed
+
+- Water is a row of droplets above the energy, and the hearts and energy sit where the XP bar was.
+- The body panel reads "Body 35.5 °C · feels cold", and wetness wears a wet shirt instead of a drop.
+- A, D, W, S and Space move through the Messenger's pages and tasks, beside the arrow keys and Enter.
+- The shader is Complementary Reimagined; the Headlamp lights the way under it too.
+- Save Hotbar Activator is unbound, so C is the binoculars' key.
+- The island's mountains stand in a few broad ranges, with rolling lowland full of rivers and lakes between them. A new world is needed to see it.
+
+### Removed
+
+- Vanilla's tutorial hints, such as "Punch a tree".
+- The recipe book's button.
+
 ## [2.1.0] - 2026-11-26
 
 ### Highlights

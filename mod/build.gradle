@@ -22,6 +22,9 @@ def ecliptic = modrinth(providers.fileContents(layout.projectDirectory.file('../
 def farView = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/distanthorizons.pw.toml')).asText)
 def lookedAt = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/jade.pw.toml')).asText)
 def recipeViewer = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/jei.pw.toml')).asText)
+def renderer = providers.fileContents(layout.projectDirectory.file('../pack/mods/sodium.pw.toml')).asText.map { text ->
+    "net.caffeinemc:sodium-neoforge-mod:${(text =~ /(?m)^filename = "sodium-neoforge-(.+)\.jar"$/)[0][1]}".toString()
+}
 def shaders = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/iris.pw.toml')).asText)
 def walkInScreens = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/invmove.pw.toml')).asText)
 
@@ -42,6 +45,11 @@ configurations {
 }
 
 repositories {
+    maven {
+        name = 'CaffeineMC'
+        url = 'https://maven.caffeinemc.net/releases'
+        content { includeGroup 'net.caffeinemc' }
+    }
     maven {
         name = 'Modrinth'
         url = 'https://api.modrinth.com/maven'
@@ -126,6 +134,7 @@ dependencies {
     compileOnly farView
     compileOnly lookedAt
     compileOnly recipeViewer
+    compileOnly renderer
     compileOnly shaders
     compileOnly walkInScreens
     implementation ecliptic

@@ -26,6 +26,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
     public int arrivedDay;
     public double arrivedKg;
     public long awakeTicks;
+    public ItemStack binoculars = ItemStack.EMPTY;
     public int blackoutTicks;
     public final double[] burned = new double[Burn.values().length];
     public double carbsToday;
@@ -100,6 +101,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
         arrivedDay = day;
         arrivedKg = balance.body().arrivalKg();
         awakeTicks = 0;
+        binoculars = ItemStack.EMPTY;
         blackoutTicks = 0;
         conditions.clear();
         coreC = balance.warmth().coreC();
@@ -175,6 +177,9 @@ public final class Body implements INBTSerializable<CompoundTag> {
         tag.putInt("arrived_day", arrivedDay);
         tag.putDouble("arrived_kg", arrivedKg);
         tag.putLong("awake_ticks", awakeTicks);
+        if (!binoculars.isEmpty()) {
+            tag.put("binoculars", binoculars.save(provider));
+        }
         tag.putInt("blackout_ticks", blackoutTicks);
         CompoundTag burns = new CompoundTag();
         for (Burn burn : Burn.values()) {
@@ -249,6 +254,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
         arrivedDay = tag.getInt("arrived_day");
         arrivedKg = tag.getDouble("arrived_kg");
         awakeTicks = tag.getLong("awake_ticks");
+        binoculars = tag.contains("binoculars") ? ItemStack.parseOptional(provider, tag.getCompound("binoculars")) : ItemStack.EMPTY;
         blackoutTicks = tag.getInt("blackout_ticks");
         CompoundTag burns = tag.getCompound("burned");
         for (Burn burn : Burn.values()) {

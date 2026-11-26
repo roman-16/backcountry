@@ -15,6 +15,7 @@ import io.github.roman16.backcountry.guide.Guide;
 import io.github.roman16.backcountry.guide.GuideView;
 import io.github.roman16.backcountry.guide.Task;
 import io.github.roman16.backcountry.survivor.Arrival;
+import io.github.roman16.backcountry.survivor.Ending;
 import io.github.roman16.backcountry.survivor.Summary;
 import io.github.roman16.backcountry.survivor.Team;
 import io.github.roman16.backcountry.weather.Day;
@@ -92,6 +93,16 @@ public final class Messages {
         }
     }
 
+    public record Sos() implements CustomPacketPayload {
+        public static final Type<Sos> TYPE = new Type<>(Backcountry.id("sos"));
+        static final StreamCodec<ByteBuf, Sos> STREAM_CODEC = StreamCodec.unit(new Sos());
+
+        @Override
+        public Type<Sos> type() {
+            return TYPE;
+        }
+    }
+
     public record Arrive() implements CustomPacketPayload {
         public static final Type<Arrive> TYPE = new Type<>(Backcountry.id("arrive"));
         static final StreamCodec<ByteBuf, Arrive> STREAM_CODEC = StreamCodec.unit(new Arrive());
@@ -143,6 +154,11 @@ public final class Messages {
         registrar.playToServer(Track.TYPE, Track.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player) {
                 Guide.track(player, payload.task());
+            }
+        });
+        registrar.playToServer(Sos.TYPE, Sos.STREAM_CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player) {
+                Ending.tapOut(player);
             }
         });
         registrar.playToServer(Read.TYPE, Read.STREAM_CODEC, (payload, context) -> {
@@ -206,6 +222,10 @@ public final class Messages {
 
     public static void read() {
         PacketDistributor.sendToServer(new Read());
+    }
+
+    public static void sos() {
+        PacketDistributor.sendToServer(new Sos());
     }
 
     public static void arrive() {

@@ -4,6 +4,7 @@ import net.minecraft.client.gui.components.toasts.AdvancementToast;
 import net.minecraft.client.gui.components.toasts.RecipeToast;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
+import net.minecraft.client.gui.components.toasts.TutorialToast;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,7 +16,7 @@ abstract class ToastComponentMixin {
 
     @Inject(method = "addToast", at = @At("HEAD"), cancellable = true)
     private void backcountry$quiet(Toast toast, CallbackInfo info) {
-        if (toast instanceof AdvancementToast || toast instanceof RecipeToast || toast.getClass().getName().equals(FIELD_GUIDE_ENTRY)) {
+        if (toast instanceof AdvancementToast || toast instanceof RecipeToast || toast instanceof TutorialToast || toast.getClass().getName().equals(FIELD_GUIDE_ENTRY)) {
             info.cancel();
         }
     }

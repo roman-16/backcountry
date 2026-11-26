@@ -18,7 +18,9 @@ abstract class InventoryMenuMixin extends AbstractContainerMenu {
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void backcountry$backSlot(Inventory inventory, boolean active, Player owner, CallbackInfo info) {
-        addSlot(new Hotbar.BackSlot(owner));
+    private void backcountry$wornSlots(Inventory inventory, boolean active, Player owner, CallbackInfo info) {
+        for (Hotbar.Worn worn : Hotbar.Worn.values()) {
+            addSlot(new Hotbar.WornSlot(owner, worn));
+        }
     }
 }

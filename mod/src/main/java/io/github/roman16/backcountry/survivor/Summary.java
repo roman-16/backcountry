@@ -13,6 +13,7 @@ public record Summary(Kind kind, int day, double bmi, double weightKg, double ar
         DIED,
         EXTRACTED,
         LIVING,
+        TAPPED_OUT,
         YEAR;
 
         public static final Codec<Kind> CODEC = Codec.STRING.xmap(name -> Kind.valueOf(name.toUpperCase(Locale.ROOT)), kind -> kind.name().toLowerCase(Locale.ROOT));

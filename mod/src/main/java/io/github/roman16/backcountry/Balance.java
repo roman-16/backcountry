@@ -17,9 +17,9 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpray, Bears bears, Berries berries, Body body, BowDrill bowDrill, Map<String, Double> bulk, Cache cache, Climate climate,
+public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpray, Bears bears, Berries berries, Binoculars binoculars, Body body, BowDrill bowDrill, Map<String, Double> bulk, Cache cache, Climate climate,
         Conditions conditions, Cooking cooking, Director director, DropOff dropOff, Effort effort, Energy energy, Farming farming, Fire fire, Firewood firewood, Fish fish, Forage forage,
-        Headlamp headlamp, Healing healing, Map<String, Double> heat, Hunting hunting, Ice ice, Map<String, Double> insulation, Kit kit, Lights lights, Load load, Map<String, Double> met, Mice mice,
+        Graphics graphics, Headlamp headlamp, Healing healing, Map<String, Double> heat, Hunting hunting, Ice ice, Map<String, Double> insulation, Kit kit, Lights lights, Load load, Map<String, Double> met, Mice mice,
         Mining mining, Mosquitoes mosquitoes, PlantFibre plantFibre, Raft raft, Rations rations, Seasons seasons, Skills skills, Sky sky, Sled sled, Smoker smoker, Snow snow, Spoilage spoilage,
         Survivor survivor, Tasks tasks, Traps traps, Warmth warmth, Walking walking, Water water, Weather weather, World world, Year year) {
     private static final Pattern WORD_START = Pattern.compile("([A-Z])");
@@ -40,6 +40,8 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
 
     public record Berries(List<Double> baneberryMonths, List<Double> blueberryMonths, List<Double> highbushCranberryMonths, List<Double> lingonberryMonths,
             List<Double> salmonberryMonths) {}
+
+    public record Binoculars(double magnification) {}
 
     public record Body(double arrivalKg, double bmrKcalPerKgHour, double digestKcalPerHour, double extractionBmi, double heightM, double kcalPerKg, double sleepKcalPerKgHour,
             double stomachKcal, double thermicShare, double vitaminCMgDay, double vitaminCStoreDays) {}
@@ -81,6 +83,9 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
 
     public record Forage(int needlesALeaf, double sapChance, double sapKcalPerL, double sapLPerStep, List<Double> sapMonths, double syrupL, int syrupSeconds,
             double teaVitaminCMgPerL) {}
+
+    public record Graphics(List<Integer> farViewChunks, List<String> farViewDetail, List<String> farViewThreads, List<String> heldLight, List<String> profiles,
+            List<Integer> renderChunks, List<Integer> simulationChunks) {}
 
     public record Headlamp(double chargeHours, double crankHoursPerSecond, double dimFromC, double dimmestC, double dimmestShare, int light) {}
 
@@ -198,8 +203,15 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
         if (type == int.class) {
             return ((Number) raw).intValue();
         }
-        if (type == List.class) {
-            return ((List<?>) raw).stream().map(item -> ((Number) item).doubleValue()).toList();
+        if (type == List.class && generic instanceof ParameterizedType list) {
+            Type item = list.getActualTypeArguments()[0];
+            if (item == String.class) {
+                return ((List<?>) raw).stream().map(String.class::cast).toList();
+            }
+            if (item == Integer.class) {
+                return ((List<?>) raw).stream().map(number -> ((Number) number).intValue()).toList();
+            }
+            return ((List<?>) raw).stream().map(number -> ((Number) number).doubleValue()).toList();
         }
         if (type == Map.class && generic instanceof ParameterizedType) {
             Map<String, Double> map = new TreeMap<>();

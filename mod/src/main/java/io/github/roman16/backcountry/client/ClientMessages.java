@@ -37,7 +37,7 @@ public final class ClientMessages {
         Minecraft minecraft = Minecraft.getInstance();
         switch (summary.kind()) {
             case YEAR -> ClientState.year = summary;
-            case EXTRACTED -> {
+            case EXTRACTED, TAPPED_OUT -> {
                 ClientState.ended = summary;
                 minecraft.setScreen(new SummaryScreen(summary));
             }

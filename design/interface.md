@@ -6,14 +6,21 @@ Everything read off the screen outside the world. Units are metric: °C, kg, km/
 
 ### I1 The HUD
 
-The hearts stay and the energy bolts, drawn like vanilla's hunger icons over empty slots, take the hunger bar's place; they shake while the survivor is too tired to sprint. Water is a blue bar drawn like vanilla's XP bar, in the XP bar's own place across the hotbar's width, and it blinks below a quarter; there is no XP (`systems.md` S12), so neither bar nor level shows. Right of the hotbar, each line on a dark plate with its icon, the body panel shows the core temperature and how it feels (blue when cold, orange when hot), the wetness while wet, and above them the conditions by name.
+The hearts stay and the energy bolts, drawn like vanilla's hunger icons over empty slots, take the hunger bar's place; they shake while the survivor is too tired to sprint. Water is a row of droplets drawn the same way above the bolts, and they shake below a quarter. There is no XP (`systems.md` S12), so neither bar nor level shows, and the hearts and bolts sit down in the XP bar's row; air bubbles stack above the droplets. Right of the hotbar, each line on a dark plate with its icon, the body panel shows the core temperature and how the air feels through the clothes ("Body 35.6 °C · feels very cold", blue when the core is cold, orange when hot), the wetness while wet (a wet shirt, so a drop means only water), and above them the conditions by name.
 
 ```text
- ♥♥♥♥♥♥♥♥♥♥                 ⚡⚡⚡⚡⚡⚡░░░░    ❄ Frostnip
- ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬░░░░░░░░░░░░░   ✚ Infected wound
- [ ][ ][ ][ ][ ][ ][ ][ ][ ]                   💧 Wet 37%
-                                               🌡 35.6 °C · very cold
+                           💧💧💧💧💧💧💧💧░░
+ ♥♥♥♥♥♥♥♥♥♥               ⚡⚡⚡⚡⚡⚡░░░░    ❄ Frostnip
+ [ ][ ][ ][ ][ ][ ][ ][ ][ ]                ✚ Infected wound
+                                            👕 Wet 37%
+                                            🌡 Body 35.6 °C · feels very cold
 ```
+
+With the inventory or a container open, the HUD shows under it, and hovering over the hearts, the bolts, the droplets or a line of the body panel shows a tooltip in vanilla's look with its name, its value and what fills it: "Energy 62%" with "Work, cold and a heavy pack drain it; sleep and food restore it." and "Below 20% you are too tired to sprint.", the water with how much to drink, the body line with what the two values are and, when cold, what helps, the wetness with what dries it, each condition with its cure. Nothing shows while an item is held on the cursor.
+
+As the core falls below 36.5 °C, vanilla's own freezing frost creeps in from the screen's edges, full at 35 °C, as deep in powder snow, and it fades as the survivor warms; in powder snow the thicker of the two shows. Only that survivor sees it, never while dead, extracted or in creative, and F1 and third person treat it as they treat vanilla's frost.
+
+No vanilla tutorial hint shows ("Punch a tree", "Craft wooden planks", "Move with W, A, S and D", "Open your inventory", "Social Interactions"), and no screen has the recipe book's button: recipes are JEI's and the tasks'.
 
 Everything the pack draws wears vanilla's own look: its panels, buttons, slots and font.
 
@@ -39,10 +46,10 @@ What comes into the inventory is listed at the top right for a few seconds, a li
 
 Right-click opens it, drawn as the device itself: an orange case with a green-on-dark screen, the only screen with a skin of its own, as vanilla's book has its page. It fills the screen up to 640 by 360 GUI pixels (GUI scale 3 at 1080p) and stands centred on anything larger; it still fits vanilla's smallest screen, 320 by 240. While it is open the survivor stands still, since it covers the world (I8).
 
-The header shows the day and date on the left and the time of day on the right. Under it five tabs, each with its icon and name: Tasks, Weather, Warmth, Food, Body, switched by a click, 1 to 5 or the ← → keys; E or Esc closes it. A strip of alerts sits under every page, two lines at most, "and N more" past them, "No alerts" when there are none. Every value has its icon and a meter or gauge; warnings turn amber or red, and a value in warning carries one dim line under it saying what helps.
+The case carries the device's name at the top left and a red SOS button at the top right. The header shows the day and date on the left and the time of day on the right. Under it five tabs, each with its icon and name: Tasks, Weather, Warmth, Food, Body, switched by a click, 1 to 5, A and D or the ← → keys; E or Esc closes it. The letters are the survivor's own movement keys, so a rebound layout moves through it the same way. A strip of alerts sits under every page, two lines at most, "and N more" past them, "No alerts" when there are none. Every value has its icon and a meter or gauge; warnings turn amber or red, and a value in warning carries one dim line under it saying what helps.
 
 ```text
-┌ SATELLITE MESSENGER ────────────────────────────────────────────────────────────────┐
+┌ SATELLITE MESSENGER ───────────────────────────────────────────────────────── [SOS] ┐
 │ Day 1 · 3 May                                                                 14:20 │
 │ [▤ Tasks]    ☁ Weather    🔥 Warmth    🍖 Food    ♥ Body                            │
 ├─────────────────────────────┬───────────────────────────────────────────────────────┤
@@ -63,7 +70,7 @@ The header shows the day and date on the left and the time of day on the right. 
 └─────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-- **Tasks** (`systems.md` S11): on the left the chapters, each with its count ("2 of 5", "· team" beside the team's); the chapter of the chosen task is open with its tasks, the others folded to their heading, and a click on a heading opens it. On the right the chosen task: its name, its count, one line on why it matters, and its steps, each with a box filled once done; the first open step shows the items it needs with what the survivor holds of them ("2/2", met in the screen's text colour, unmet dim) and how to get them. Hovering an item names it with "Click for its recipe", and a click opens its recipe in JEI. A task carrying a season reads "From June" while out of it. The tracked task wears ◆ in the list and "◆ Tracked" beside its name; another task shows a Track button there. ↑ ↓ choose a task, Enter tracks it.
+- **Tasks** (`systems.md` S11): on the left the chapters, each with its count ("2 of 5", "· team" beside the team's); the chapter of the chosen task is open with its tasks, the others folded to their heading, and a click on a heading opens it. On the right the chosen task: its name, its count, one line on why it matters, and its steps, each with a box filled once done; the first open step shows the items it needs with what the survivor holds of them ("2/2", met in the screen's text colour, unmet dim) and how to get them. Hovering an item names it with "Click for its recipe", and a click opens its recipe in JEI. A task carrying a season reads "From June" while out of it. The tracked task wears ◆ in the list and "◆ Tracked" beside its name; another task shows a Track button there. W and S or ↑ ↓ choose a task, Space or Enter tracks it.
 - **Weather:** the air and how it feels on a gauge from -40 to +30 °C banded at freezing and at -15 °C, the rain or snow now or later today with its hours, the wind on a meter with the blizzard mark at 56 km/h, the cloud, today's high and low; then the next three days a line each: its sky (the icon of the rain or snow when it is likely, else of the cloud), the day and date, the chance ("Snow 80%"), the high and low and the wind.
 - **Warmth:** the core temperature with how it feels and its trend on a gauge banded freezing, cold, comfortable and hot, then what sets it: fire, shelter, clothing and wetness.
 - **Food:** the day's kcal eaten and burned, the burn by cause in a dim line ("Rest 2,170 · Move 940 · Load 310 · Work 620 · Cold 250 · Digest 320") and protein, carbs and fat; the stomach; the ration, the next meal and the team's food stores in days.
@@ -79,6 +86,18 @@ Food      Food stores                   0.0 days
 ```
 
 A new alert beeps once and lights a small amber light on the Messenger's icon in the hotbar until the Messenger is opened.
+
+**SOS** taps a survivor out, as on *Alone* (`systems.md` S10). A click on it asks on the screen, the tabs unlit:
+
+```text
+│ Send SOS and tap out?                                                               │
+│ A boat picks you up, and your run ends here.                                        │
+│ Your pack stays where you stand.                                                    │
+│ A new survivor arrives at the drop-off.                                             │
+│ [Tap out] [Cancel]                                                                  │
+```
+
+Only a click on Tap out confirms; a tab, Cancel, E or Esc drop the question, and no other key answers it. The button is dim and does nothing for a player who is not a living survivor in survival.
 
 ### I3 Food
 
@@ -157,28 +176,38 @@ BMI 17.0 · 55.0 kg (arrived at 77.0 kg)
 [ Title Screen ]
 ```
 
-It stands on vanilla's dark panel: the weight curve is a chart with 5 kg grid lines, the first and the last day, and a dashed red line where extraction comes; beside it the days, the kcal and each animal taken, each with its icon (the animal's spawn egg), three at most and "and N more". A death reads "Died" over vanilla's red. On 3 May the team's year shows, each survivor with their weight from start to end and when they arrived, died or were extracted, and "Year 2" begins:
+It stands on vanilla's dark panel: the weight curve is a chart with 5 kg grid lines, the first and the last day, and a dashed red line where extraction comes; beside it the days, the kcal and each animal taken, each with its icon (the animal's spawn egg), three at most and "and N more". A death reads "Died" over vanilla's red, a survivor who sent SOS "Tapped out · Day 31 · 17 Dec", and everyone reads "Roman tapped out on Day 31" in chat. On 3 May the team's year shows, each survivor with their weight from start to end and when they arrived, died or were extracted, and "Year 2" begins:
 
 ```text
 Year 1 · 3 May
 Roman 77.0 → 68.4 kg
 Mo 77.0 → 71.2 kg (arrived Day 12)
+Ana 77.0 → 69.8 kg (tapped out Day 40)
 48 days · 412,000 kcal eaten · 2 moose · 5 beaver · 31 hare
 [ Go on into Year 2 ]
 ```
 
-The inventory shows the rows no pack opens dark ("Needs a pack", and over the second row "Needs a hide pack") and the back slot beside the armour.
+The inventory shows the rows no pack opens dark ("Needs a pack", and over the second row "Needs a hide pack") and beside the armour the back slot with the neck slot above it, each showing the outline of what it takes while empty.
 
 ### I8 Controls and the first launch
 
-- **Keys:** Left Shift sprints and Left Ctrl sneaks; every mod's key is unbound unless a player needs it: River Fishing's fight keys on the arrows, Ping Wheel's mark on mouse button 5, JEI's keys inside its own screens (R recipes, U uses, A bookmark, Ctrl+F search), V for the voice menu, U to swap the shoulder in third person, the middle mouse button to sort the inventory under the cursor. F5 steps from first person to over the shoulder to facing the survivor (Shoulder Surfing Reloaded); the game starts in first person. Iris's, Ecliptic Seasons' debug and Critters n' Crawlers' keys, JEI's cheat-to-inventory keys and L for advancements are unbound. Controls has a search box (Controlling). Controls' Reset Keys brings back the pack's keys.
+- **Keys:** Left Shift sprints and Left Ctrl sneaks; every mod's key is unbound unless a player needs it: River Fishing's fight keys on the arrows, Ping Wheel's mark on mouse button 5, JEI's keys inside its own screens (R recipes, U uses, A bookmark, Ctrl+F search), V for the voice menu, U to swap the shoulder in third person, the middle mouse button to sort the inventory under the cursor, C to look through the binoculars. F5 steps from first person to over the shoulder to facing the survivor (Shoulder Surfing Reloaded); the game starts in first person. Iris's, Ecliptic Seasons' debug and Critters n' Crawlers' keys, JEI's cheat-to-inventory keys, Save Hotbar Activator and L for advancements are unbound. Controls has a search box (Controlling). Controls' Reset Keys brings back the pack's keys.
 - **Screens open:** a survivor keeps walking with the inventory, a chest or a cache open, the world showing behind it (InvMove); the Messenger, which covers the world, the bow-drill game, whose A, D and Space saw and blow, the summary and typing in JEI's search hold them still.
 - **Team marks:** mouse button 5 marks a spot for the whole team for a few seconds, with who set it and how far it is (Ping Wheel).
-- **The first launch** (Default Options): FOV 80, GUI scale 3, full screen, VSync on, an unlimited frame rate, sensitivity 67%, Brightness Bright, no splash texts, no accessibility onboarding, no multiplayer warning; render distance stays vanilla's 12 chunks. Each player's own settings stay theirs after that.
-- **Nights** are dark: without the shader More Darkness makes a moonless night black beyond the fire and a full moon pale grey, the eyes adjusting over a few seconds; with Complementary Unbound on, as it is from the first launch, More Darkness steps aside and the shader's night settings give the same night (`production.md`).
-- **Create New World** offers what the pack plays: Game Mode holds Survival and Creative (a Hardcore death would end the world, where the pack's brings a new survivor), Difficulty stands greyed at Normal, the World tab holds only the seed, with no world type, Generate Structures or Bonus Chest, and the More tab holds Game Rules and Data Packs without Experiments. Creating the world goes straight to loading, with no warning about experimental settings, since every world of the pack has them; a Hardcore world made before keeps its mode.\n- **The pause menu** has Statistics across the whole row where Advancements and Statistics stood.
+- **The first launch** (Default Options): FOV 80, GUI scale 3, full screen, VSync on, an unlimited frame rate, sensitivity 67%, Brightness Bright, no splash texts, no accessibility onboarding, no multiplayer warning; the graphics Preset reads High. Each player's own settings stay theirs after that.
+- **Video Settings** opens on a Backcountry page, first in Sodium's list, in Sodium's own look: a Preset that steps Low, Medium, High and Ultra, and Shaders on or off (`production.md`). A player who launched before reads Custom until they pick a step.
+
+```text
+Options › Video Settings › Backcountry › Graphics
+  Preset    High
+  Shaders   [x]
+```
+- **Nights** are dark: without the shader More Darkness makes a moonless night black beyond the fire and a full moon pale grey, the eyes adjusting over a few seconds; with Complementary Reimagined on, as it is from the first launch, More Darkness steps aside and the shader's night settings give the same night (`production.md`).
+- **Create New World** offers what the pack plays: Game Mode holds Survival and Creative (a Hardcore death would end the world, where the pack's brings a new survivor), Difficulty stands greyed at Normal, the World tab holds only the seed, with no world type, Generate Structures or Bonus Chest, and the More tab holds Game Rules and Data Packs without Experiments. Creating the world goes straight to loading, with no warning about experimental settings, since every world of the pack has them; a Hardcore world made before keeps its mode.
+- **The pause menu** has Statistics across the whole row where Advancements and Statistics stood.
 - **F3** shows no coordinates, facing or biome.
 - **Sodium's donation prompt and Iris's update notice** never show.
+- **The title screen** shows the island, photographed in the game at the drop-off lake at dawn, noon, dusk and night, one set at random each start (`python3 scripts/client.py panorama`); until the island's terrain is settled it shows vanilla's panorama.
 - **Edge cases:** a player who launched the pack before keeps their own settings and keys, Reset Keys giving them the pack's; a key a player rebinds stays theirs through updates.
 
 ## Open

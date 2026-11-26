@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Optional;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -97,6 +98,9 @@ public class MessengerScreen extends Screen {
     private static final int BMI_WARNING = 1;
     private static final int BURNS_A_LINE = 3;
     private static final int SKILL_STEP = 4;
+    private static final int SOS_TOP = 3;
+    private static final int SOS_HEIGHT = 12;
+    private static final List<String> SOS_LINES = List.of("boat", "pack", "arrival");
     private static Page page = Page.TASKS;
     private static Optional<Task> chosen = Optional.empty();
     private static Optional<Chapter> opened = Optional.empty();
@@ -108,6 +112,7 @@ public class MessengerScreen extends Screen {
     private int deviceHeight;
     private int line;
     private int meterRow;
+    private boolean asking;
 
     private enum Page {
         TASKS(MessengerScreen.TASKS),
@@ -204,27 +209,32 @@ public class MessengerScreen extends Screen {
 
     @Override
     public boolean keyPressed(int key, int scan, int modifiers) {
-        if (key == GLFW.GLFW_KEY_LEFT || key == GLFW.GLFW_KEY_RIGHT) {
-            show(Page.values()[Math.floorMod(page.ordinal() + (key == GLFW.GLFW_KEY_LEFT ? -1 : 1), Page.values().length)]);
+        if (minecraft.options.keyInventory.matches(key, scan)) {
+            onClose();
+            return true;
+        }
+        if (asking) {
+            return key == GLFW.GLFW_KEY_ESCAPE ? super.keyPressed(key, scan, modifiers) : true;
+        }
+        boolean back = key == GLFW.GLFW_KEY_LEFT || minecraft.options.keyLeft.matches(key, scan);
+        if (back || key == GLFW.GLFW_KEY_RIGHT || minecraft.options.keyRight.matches(key, scan)) {
+            show(Page.values()[Math.floorMod(page.ordinal() + (back ? -1 : 1), Page.values().length)]);
             return true;
         }
         if (key >= GLFW.GLFW_KEY_1 && key < GLFW.GLFW_KEY_1 + Page.values().length) {
             show(Page.values()[key - GLFW.GLFW_KEY_1]);
             return true;
         }
-        if (page == Page.TASKS && (key == GLFW.GLFW_KEY_UP || key == GLFW.GLFW_KEY_DOWN)) {
+        boolean up = key == GLFW.GLFW_KEY_UP || minecraft.options.keyUp.matches(key, scan);
+        if (page == Page.TASKS && (up || key == GLFW.GLFW_KEY_DOWN || minecraft.options.keyDown.matches(key, scan))) {
             Task current = chosenTask(ClientState.guide);
-            Task next = Task.values()[Math.floorMod(current.ordinal() + (key == GLFW.GLFW_KEY_UP ? -1 : 1), Task.values().length)];
+            Task next = Task.values()[Math.floorMod(current.ordinal() + (up ? -1 : 1), Task.values().length)];
             chosen = Optional.of(next);
             opened = Optional.of(next.chapter());
             return true;
         }
-        if (page == Page.TASKS && (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER)) {
+        if (page == Page.TASKS && (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER || minecraft.options.keyJump.matches(key, scan))) {
             track(chosenTask(ClientState.guide));
-            return true;
-        }
-        if (minecraft != null && minecraft.options.keyInventory.matches(key, scan)) {
-            onClose();
             return true;
         }
         return super.keyPressed(key, scan, modifiers);
@@ -259,6 +269,7 @@ public class MessengerScreen extends Screen {
         hits.clear();
         items.clear();
         casing(graphics);
+        sosButton(graphics, mouseX, mouseY);
         BodyView view = ClientState.view;
         graphics.drawString(font, Calendar.label(view.day()), x0(), lcdTop() + 4, Look.LCD_DIM, false);
         String time = Words.time(minecraft.level.getDayTime());
@@ -266,12 +277,16 @@ public class MessengerScreen extends Screen {
         tabs(graphics, mouseX, mouseY);
         int y = lcdTop() + CONTENT_Y;
         graphics.enableScissor(lcdLeft(), y, lcdRight(), contentBottom());
-        switch (page) {
-            case TASKS -> tasks(graphics, y, mouseX, mouseY);
-            case WEATHER -> weather(graphics, y, ClientState.weather);
-            case WARMTH -> warmth(graphics, y, view);
-            case FOOD -> food(graphics, y, view);
-            case BODY -> body(graphics, y, view);
+        if (asking) {
+            sos(graphics, y, mouseX, mouseY);
+        } else {
+            switch (page) {
+                case TASKS -> tasks(graphics, y, mouseX, mouseY);
+                case WEATHER -> weather(graphics, y, ClientState.weather);
+                case WARMTH -> warmth(graphics, y, view);
+                case FOOD -> food(graphics, y, view);
+                case BODY -> body(graphics, y, view);
+            }
         }
         graphics.disableScissor();
         alerts(graphics, view.alerts());
@@ -301,20 +316,77 @@ public class MessengerScreen extends Screen {
         graphics.fill(lcdLeft(), lcdTop(), lcdRight(), lcdTop() + 1, Look.LCD_GLARE);
     }
 
+    private boolean canTapOut() {
+        return ClientState.viewed && ClientState.ended == null && minecraft.gameMode != null && minecraft.gameMode.canHurtPlayer() && minecraft.player.isAlive();
+    }
+
+    private void sosButton(GuiGraphics graphics, int mouseX, int mouseY) {
+        Component label = Component.translatable("messenger.backcountry.sos");
+        int buttonWidth = font.width(label) + 2 * TAB_PAD + 2;
+        int x = lcdRight() + 2 - buttonWidth;
+        int y = top + SOS_TOP;
+        int right = x + buttonWidth;
+        int bottom = y + SOS_HEIGHT;
+        boolean live = canTapOut();
+        boolean hovered = live && mouseX >= x && mouseX < right && mouseY >= y && mouseY < bottom;
+        graphics.fill(x, y, right, bottom, Look.CASE_EDGE);
+        graphics.fill(x + 1, y + 1, right - 1, bottom - 1, live ? hovered ? Look.SOS_LIGHT : Look.SOS : Look.CASE_DARK);
+        if (live) {
+            graphics.fill(x + 1, y + 1, right - 1, y + 2, Look.SOS_LIGHT);
+            graphics.fill(x + 1, bottom - 2, right - 1, bottom - 1, Look.SOS_DARK);
+        }
+        graphics.drawString(font, label, x + (buttonWidth - font.width(label)) / 2, y + 2, live ? Look.TEXT : Look.CASE_LABEL, false);
+        if (live) {
+            hits.add(new Hit(x, y, buttonWidth, SOS_HEIGHT, () -> asking = true));
+        }
+    }
+
+    private void sos(GuiGraphics graphics, int y, int mouseX, int mouseY) {
+        int x = x0();
+        graphics.drawString(font, Component.translatable("messenger.backcountry.sos.question"), x, y + 1, Look.LCD_WARN, false);
+        y += line + GAP;
+        for (String consequence : SOS_LINES) {
+            for (FormattedCharSequence wrapped : font.split(Component.translatable("messenger.backcountry.sos." + consequence), x1() - x)) {
+                graphics.drawString(font, wrapped, x, y + 1, Look.LCD_TEXT, false);
+                y += line;
+            }
+        }
+        y += GAP + 1;
+        int tapOut = button(graphics, x, y, Component.translatable("messenger.backcountry.sos.tap_out"), Look.LCD_DANGER, mouseX, mouseY, () -> {
+            asking = false;
+            Messages.sos();
+        });
+        button(graphics, x + tapOut + GAP, y, CommonComponents.GUI_CANCEL, Look.LCD_TEXT, mouseX, mouseY, () -> asking = false);
+    }
+
+    private int button(GuiGraphics graphics, int x, int y, Component label, int colour, int mouseX, int mouseY, Runnable action) {
+        int labelWidth = font.width(label) + 2 * TAB_PAD;
+        boolean hovered = mouseX >= x && mouseX < x + labelWidth && mouseY >= y - 1 && mouseY < y + line;
+        graphics.fill(x, y - 1, x + labelWidth, y + line, colour == Look.LCD_TEXT ? Look.LCD_DIM : colour);
+        graphics.fill(x + 1, y, x + labelWidth - 1, y + line - 1, hovered ? Look.LCD_TRACK : Look.LCD);
+        graphics.drawString(font, label, x + TAB_PAD, y + 1, colour, false);
+        hits.add(new Hit(x, y - 1, labelWidth, line + 1, action));
+        return labelWidth;
+    }
+
     private void tabs(GuiGraphics graphics, int mouseX, int mouseY) {
         int y = lcdTop() + TABS_Y;
         int x = x0() - TAB_PAD;
         for (Page shown : Page.values()) {
             int tabWidth = TAB_PAD + ICON + ICON_GAP + font.width(shown.title()) + TAB_PAD;
             boolean hovered = mouseX >= x && mouseX < x + tabWidth && mouseY >= y - 2 && mouseY < y + line - 1;
-            if (shown == page) {
+            boolean selected = shown == page && !asking;
+            if (selected) {
                 graphics.fill(x, y - 2, x + tabWidth, y + line - 1, Look.LCD_TEXT);
             } else if (hovered) {
                 graphics.fill(x, y - 2, x + tabWidth, y + line - 1, Look.LCD_TRACK);
             }
             graphics.blitSprite(shown.icon, x + TAB_PAD, y - 1, ICON, ICON);
-            graphics.drawString(font, shown.title(), x + TAB_PAD + ICON + ICON_GAP, y, shown == page ? Look.LCD : Look.LCD_DIM, false);
-            hits.add(new Hit(x, y - 2, tabWidth, line + 1, () -> show(shown)));
+            graphics.drawString(font, shown.title(), x + TAB_PAD + ICON + ICON_GAP, y, selected ? Look.LCD : Look.LCD_DIM, false);
+            hits.add(new Hit(x, y - 2, tabWidth, line + 1, () -> {
+                asking = false;
+                show(shown);
+            }));
             x += tabWidth + TAB_GAP;
         }
         graphics.fill(x0(), y + line + 1, x1(), y + line + 2, Look.LCD_TRACK);
@@ -502,11 +574,7 @@ public class MessengerScreen extends Screen {
             if (tracked) {
                 graphics.drawString(font, label, labelLeft, y + 1, Look.LCD_WARN, false);
             } else {
-                boolean hovered = mouseX >= labelLeft && mouseX < labelLeft + labelWidth && mouseY >= y - 1 && mouseY < y + line;
-                graphics.fill(labelLeft, y - 1, labelLeft + labelWidth, y + line, Look.LCD_DIM);
-                graphics.fill(labelLeft + 1, y, labelLeft + labelWidth - 1, y + line - 1, hovered ? Look.LCD_TRACK : Look.LCD);
-                graphics.drawString(font, label, labelLeft + TAB_PAD, y + 1, Look.LCD_TEXT, false);
-                hits.add(new Hit(labelLeft, y - 1, labelWidth, line + 1, () -> track(task)));
+                button(graphics, labelLeft, y, label, Look.LCD_TEXT, mouseX, mouseY, () -> track(task));
             }
             titleRight = labelLeft - GAP;
         }

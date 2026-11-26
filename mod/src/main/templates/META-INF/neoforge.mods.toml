@@ -11,6 +11,9 @@ description = '''
 The rules of the Backcountry modpack: a year alone in the Alaskan wilderness, counted in calories.
 '''
 
+[modproperties.${mod_id}]
+"sodium:config_api_user" = "io.github.roman16.backcountry.client.VideoSettings"
+
 [[mixins]]
 config = "${mod_id}.mixins.json"
 

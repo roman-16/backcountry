@@ -2,7 +2,7 @@ hash-format = "sha256"
 
 [[files]]
 file = "config/DistantHorizons.toml"
-hash = "c9ccb4e07278cb9a19aff8fe515be70662813318e45446895d81b2bc6cbd4b21"
+hash = "2828d2ed66b6c6e62840d3f6c7d8c6ed21712d1a9f36a2b0b28d4c2fdb9d7ca3"
 
 [[files]]
 file = "config/alexsmobs-common.toml"
@@ -22,7 +22,7 @@ hash = "2c235c6311331bc9ff838e15382023c3ea139fd53c03635a6760fe0c04538970"
 
 [[files]]
 file = "config/defaultoptions/keybindings.txt"
-hash = "072cdbf38b9745f7a4d6d29b1ac244d1dec61a2276722cc11485deddad538770"
+hash = "132ce41f19fbcad34424e37e53275b9cb61cbfd3136afd56930d4ae69c16b937"
 
 [[files]]
 file = "config/defaultoptions/options.txt"
@@ -50,7 +50,7 @@ hash = "1f7cc9dda767ba9e8f1a48f04bac4d4c54b6b6cabba7367c910583224fedf454"
 
 [[files]]
 file = "config/iris.properties"
-hash = "d5a27bab0881fd8468b9d2b9c78c53ab9bf8f407f421bf1edadfcbf717db368e"
+hash = "b5f29652c3197e83dabb4d97d51b18691612072dadb091904a143da5a88d4dcb"
 
 [[files]]
 file = "config/jade/jade.json"
@@ -98,7 +98,7 @@ hash = "c1cfd0d6d3b4d9ce2a299861dd04e0faf51cb9bd769e7b5ee2dc8af673687691"
 
 [[files]]
 file = "config/tectonic.json"
-hash = "99f856e754994d5f83d7c5c45c9f2094b18b8a32b5a0767810ae76a643641116"
+hash = "861bb354de5cb87789f4db5555c584ad731a5cd6044dfe7fb1eb03ec38d9cf46"
 
 [[files]]
 file = "config/trmt.json"
@@ -250,7 +250,7 @@ metafile = true
 
 [[files]]
 file = "mods/fowlplay.pw.toml"
-hash = "549e72a053da13a50404bd0901b75ce25c6045e778d5a89afcf58e9b5e1945f5"
+hash = "a062a34236acb766f24a2082b9f7681217e4316034fd5b6ae55cff3861f346c4"
 metafile = true
 
 [[files]]
@@ -529,10 +529,10 @@ hash = "27896b53b896cc48ad2e3a30e41caefa3d568be9537f525f22687eea16c8136a"
 metafile = true
 
 [[files]]
-file = "shaderpacks/ComplementaryUnbound_r5.10 + EuphoriaPatches_1.11.2.txt"
-hash = "9d57c0881e0cdb5a54850f5929120086c2cf143145704b5c0550b1dbc00839c9"
+file = "shaderpacks/ComplementaryReimagined_r5.10 + EuphoriaPatches_1.11.2.txt"
+hash = "df612433b6d1891c349c390653a1ffbefc437a8c0c96c03a39ce5ab6d3377558"
 
 [[files]]
-file = "shaderpacks/complementary-unbound.pw.toml"
-hash = "9ceebab8640099bd51b9ad88bbf2d3938772ba03a836c6f6e116ba33924541e7"
+file = "shaderpacks/complementary-reimagined.pw.toml"
+hash = "5c17de8161b06a10dbd8e59645e7d7edfc583054009b5a787086d5f4fb1a77f1"
 metafile = true

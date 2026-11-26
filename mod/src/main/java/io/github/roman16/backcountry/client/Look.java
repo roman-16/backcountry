@@ -45,11 +45,15 @@ public final class Look {
     static final int LOCKED = 0xB0202020;
     static final int PLATE = 0x80000000;
     public static final int SEASONED = 0xFFAA00;
+    static final int SOS = 0xFFC42A1E;
+    static final int SOS_DARK = 0xFF7E1610;
+    static final int SOS_LIGHT = 0xFFE65A48;
     static final int TEXT = 0xFFFFFFFF;
     static final int TEXT_QUIET = 0xFFA0A0A0;
     static final int TOAST_TITLE = 0xFFFFFF00;
     static final int TRACKED = 0xFFFFE080;
     static final int TRACK = 0xFF1E1E1E;
+    static final int VIEW_DARK = 0xFF000000;
 
     private Look() {}
 }

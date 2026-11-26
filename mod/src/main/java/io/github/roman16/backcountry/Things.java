@@ -25,6 +25,7 @@ import io.github.roman16.backcountry.food.SmokerMenu;
 import io.github.roman16.backcountry.food.StewRecipe;
 import io.github.roman16.backcountry.gear.BandageItem;
 import io.github.roman16.backcountry.gear.BearSprayItem;
+import io.github.roman16.backcountry.gear.BinocularsItem;
 import io.github.roman16.backcountry.gear.CampPotBlock;
 import io.github.roman16.backcountry.gear.CampPotEntity;
 import io.github.roman16.backcountry.gear.CampPotItem;
@@ -242,6 +243,7 @@ public final class Things {
     public static final DeferredItem<Item> BANDAGE = ITEMS.registerItem("bandage", BandageItem::new, new Item.Properties().stacksTo(16));
     public static final DeferredItem<Item> BEAR_SPRAY = ITEMS.registerItem("bear_spray", BearSprayItem::new, new Item.Properties().durability(Balance.get().bearSpray().bursts()));
     public static final DeferredItem<Item> BEAVER_TAIL = food("beaver_tail");
+    public static final DeferredItem<Item> BINOCULARS = ITEMS.registerItem("binoculars", BinocularsItem::new, new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> BIRCH_BARK = ITEMS.registerSimpleItem("birch_bark", new Item.Properties());
     public static final DeferredItem<Item> BANEBERRIES = berries("baneberries", BANEBERRY_BUSH);
     public static final DeferredItem<Item> BIRCH_SYRUP = food("birch_syrup");

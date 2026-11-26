@@ -142,9 +142,9 @@ public final class ClientEvents {
     @SubscribeEvent
     static void background(ContainerScreenEvent.Render.Background event) {
         if (event.getContainerScreen() instanceof InventoryScreen screen && !Minecraft.getInstance().player.isCreative()) {
-            int x = screen.getGuiLeft() + Hotbar.BACK_X - 1;
-            int y = screen.getGuiTop() + Hotbar.BACK_Y - 1;
-            event.getGuiGraphics().blitSprite(SLOT_SPRITE, x, y, SLOT, SLOT);
+            for (Hotbar.Worn worn : Hotbar.Worn.values()) {
+                event.getGuiGraphics().blitSprite(SLOT_SPRITE, screen.getGuiLeft() + Hotbar.WORN_X - 1, screen.getGuiTop() + worn.y - 1, SLOT, SLOT);
+            }
         }
     }
 
