@@ -2,6 +2,7 @@ package io.github.roman16.backcountry;
 
 import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Calendar;
+import io.github.roman16.backcountry.body.Exertion;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Warmth;
 import io.github.roman16.backcountry.fire.Fire;
@@ -148,6 +149,26 @@ public final class FireTests {
         check(helper, !menu.slots.get(0).mayPlace(new ItemStack(Things.HARDWOOD.get())), "the queue took green wood");
         check(helper, menu.slots.get(0).mayPlace(wood(Things.HARDWOOD.get(), 1)), "the queue refused seasoned hardwood");
         helper.succeed();
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 480)
+    public static void anUntendedFireBurnsDownAndItsCoalsCatchFedWood(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(2, 1, 2);
+        CampfireBlockEntity campfire = campfire(helper, pos);
+        BlockPos at = helper.absolutePos(pos);
+        FireBlock.light(helper.getLevel(), at, helper.getLevel().getBlockState(at), campfire);
+        int kindling = (int) Math.round(Balance.get().fire().kindlingHours() * Exertion.TICKS_AN_HOUR);
+        int step = 2 * 20;
+        Fire fire = Fire.of(campfire);
+        helper.runAfterDelay(kindling + step, () -> {
+            check(helper, fire.coals() && helper.getLevel().getBlockState(at).getValue(FireBlock.COALS), "the fire with nothing cooking never burnt its kindling down");
+            fire.queue.set(0, softwood(1));
+            campfire.setChanged();
+        });
+        helper.runAfterDelay(kindling + 2 * step, () -> {
+            check(helper, fire.lit() && !fire.queued() && helper.getLevel().getBlockState(at).getValue(CampfireBlock.LIT), "the coals did not catch the queued piece");
+            helper.succeed();
+        });
     }
 
     @GameTest(template = "empty")

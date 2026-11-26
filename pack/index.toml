@@ -57,6 +57,10 @@ file = "config/jade/jade.json"
 hash = "433b2fe663f8ebc3a9b4805dbc2e60d18bfc669591d20459a313e161acea273a"
 
 [[files]]
+file = "config/lithium.properties"
+hash = "5239b07d7ed356bea224df7602f625517930ad3ea732335e1cd24bf3b31f2a7a"
+
+[[files]]
 file = "config/more_darkness.json"
 hash = "86c99cb188defcf0fb73f06e7f2713a78a7a9e6dd23f0c2b604477b697386ddb"
 
@@ -191,6 +195,11 @@ metafile = true
 [[files]]
 file = "mods/critters-n-crawlers.pw.toml"
 hash = "115c44c46c06f4ed20e9eacfdc11624f823eb0d87c305a0496a81c55de1d2c32"
+metafile = true
+
+[[files]]
+file = "mods/cut-through.pw.toml"
+hash = "4c16ee75d3b04443e96d854eec79344293963e9f4beaaf8e7215023e8ef53b88"
 metafile = true
 
 [[files]]

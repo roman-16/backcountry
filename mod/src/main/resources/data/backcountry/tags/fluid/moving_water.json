@@ -1,0 +1,13 @@
+{
+  "values": [
+    "minecraft:flowing_water",
+    {
+      "id": "streamsreflowing:flowing_stream",
+      "required": false
+    },
+    {
+      "id": "streamsreflowing:stream",
+      "required": false
+    }
+  ]
+}

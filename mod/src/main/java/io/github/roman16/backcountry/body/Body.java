@@ -38,6 +38,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
     public double fatToday;
     public double frostHours;
     public int gameModeBeforeEnd;
+    public double gutOnsetDays;
     public double healHours;
     public double kcalBurnedToday;
     public double kcalEaten;
@@ -45,6 +46,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
     public final Map<String, Integer> animals = new TreeMap<>();
     public int lastDay;
     public long lastHurt;
+    public double metresToday;
     public ItemStack pack = ItemStack.EMPTY;
     public double proteinToday;
     public final EnumMap<Skill, Integer> skills = new EnumMap<>(Skill.class);
@@ -86,10 +88,12 @@ public final class Body implements INBTSerializable<CompoundTag> {
     public static final class Affliction {
         public boolean bandaged;
         public double days;
+        public boolean told;
 
-        public Affliction(double days, boolean bandaged) {
+        public Affliction(double days, boolean bandaged, boolean told) {
             this.days = days;
             this.bandaged = bandaged;
+            this.told = told;
         }
     }
 
@@ -109,6 +113,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
         energy = 1;
         ended = null;
         frostHours = 0;
+        gutOnsetDays = 0;
         healHours = 0;
         kcalEaten = 0;
         animals.clear();
@@ -142,6 +147,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
         fatToday = 0;
         kcalBurnedToday = 0;
         kcalEatenToday = 0;
+        metresToday = 0;
         proteinToday = 0;
     }
 
@@ -155,7 +161,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
     }
 
     public void afflict(Condition condition) {
-        conditions.putIfAbsent(condition, new Affliction(0, false));
+        conditions.putIfAbsent(condition, new Affliction(0, false, false));
     }
 
     public double stomachShare() {
@@ -192,6 +198,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
             CompoundTag entry = new CompoundTag();
             entry.putDouble("days", affliction.days);
             entry.putBoolean("bandaged", affliction.bandaged);
+            entry.putBoolean("told", affliction.told);
             afflictions.put(condition.id(), entry);
         });
         tag.put("conditions", afflictions);
@@ -203,6 +210,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
         tag.putDouble("fat_today", fatToday);
         tag.putDouble("frost_hours", frostHours);
         tag.putInt("game_mode_before_end", gameModeBeforeEnd);
+        tag.putDouble("gut_onset_days", gutOnsetDays);
         tag.putDouble("heal_hours", healHours);
         tag.putDouble("kcal_burned_today", kcalBurnedToday);
         tag.putDouble("kcal_eaten", kcalEaten);
@@ -212,6 +220,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
         tag.put("animals", taken);
         tag.putInt("last_day", lastDay);
         tag.putLong("last_hurt", lastHurt);
+        tag.putDouble("metres_today", metresToday);
         if (!pack.isEmpty()) {
             tag.put("pack", pack.save(provider));
         }
@@ -266,7 +275,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
         for (Condition condition : Condition.values()) {
             if (afflictions.contains(condition.id())) {
                 CompoundTag entry = afflictions.getCompound(condition.id());
-                conditions.put(condition, new Affliction(entry.getDouble("days"), entry.getBoolean("bandaged")));
+                conditions.put(condition, new Affliction(entry.getDouble("days"), entry.getBoolean("bandaged"), entry.getBoolean("told")));
             }
         }
         coreC = tag.getDouble("core_c");
@@ -276,6 +285,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
         fatToday = tag.getDouble("fat_today");
         frostHours = tag.getDouble("frost_hours");
         gameModeBeforeEnd = tag.getInt("game_mode_before_end");
+        gutOnsetDays = tag.getDouble("gut_onset_days");
         healHours = tag.getDouble("heal_hours");
         kcalBurnedToday = tag.getDouble("kcal_burned_today");
         kcalEaten = tag.getDouble("kcal_eaten");
@@ -285,6 +295,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
         taken.getAllKeys().forEach(key -> animals.put(key, taken.getInt(key)));
         lastDay = tag.getInt("last_day");
         lastHurt = tag.getLong("last_hurt");
+        metresToday = tag.getDouble("metres_today");
         pack = tag.contains("pack") ? ItemStack.parseOptional(provider, tag.getCompound("pack")) : ItemStack.EMPTY;
         proteinToday = tag.getDouble("protein_today");
         skills.clear();

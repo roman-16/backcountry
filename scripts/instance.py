@@ -29,6 +29,7 @@ CLIENT_OPTIONS = {
     "skipMultiplayerWarning": "true",
     "soundCategory_master": "0.5",
 }
+SILENT_OPTIONS = {"soundCategory_master": "0.0"}
 SETTINGS = ("config",)
 FAR_VIEW = {"mods/distant-horizons-seedgen.pw.toml", "mods/distanthorizons.pw.toml"}
 DEV_CLASSPATH = {"mods/ecliptic-seasons.pw.toml"}
@@ -116,7 +117,7 @@ def neoforge(target):
     shutil.copytree(installed, target, copy_function=link, dirs_exist_ok=True)
 
 
-def options(target):
+def options(target, silent):
     path = target / "options.txt"
     lines = path.read_text().splitlines() if path.exists() else []
     shipped = {
@@ -124,7 +125,7 @@ def options(target):
         for source in (DEFAULT_OPTIONS, DEFAULT_KEYS)
         for key, value in (line.split(":", 1) for line in source.read_text().splitlines() if ":" in line)
     }
-    overrides = shipped | CLIENT_OPTIONS
+    overrides = shipped | CLIENT_OPTIONS | (SILENT_OPTIONS if silent else {})
     kept = [line for line in lines if line.split(":", 1)[0] not in overrides]
     if not any(line.startswith("version:") for line in kept):
         kept.insert(0, f"version:{DATA_VERSION}")
@@ -147,7 +148,7 @@ def settings(target):
             shutil.copytree(PACK / folder, target / folder, dirs_exist_ok=True)
 
 
-def client(target, mode):
+def client(target, mode, silent):
     shutil.rmtree(target / "mods", ignore_errors=True)
     (target / "mods").mkdir(parents=True)
     files(
@@ -163,7 +164,7 @@ def client(target, mode):
     for name, overrides in (DEV_CONFIGS if mode == "shipped" else DEV_CONFIGS | TEST_CONFIGS).items():
         (target / "config").mkdir(parents=True, exist_ok=True)
         configure(target / "config" / name, overrides)
-    options(target)
+    options(target, silent)
 
 
 def properties(target, overrides):
@@ -229,6 +230,7 @@ def main():
         default="full",
         help="lean loads only the Backcountry mod; shipped keeps the far view and the shader as the pack ships them",
     )
+    client_parser.add_argument("--silent", action="store_true", help="mute the game, for a client nobody listens to")
     devserver_parser = sides.add_parser(
         "devserver",
         help="mods, configs and properties for the dev server, which brings the Backcountry mod itself",
@@ -244,7 +246,7 @@ def main():
     server_parser.add_argument("jar", type=Path)
     arguments = parser.parse_args()
     if arguments.side == "client":
-        client(arguments.target.resolve(), arguments.mode)
+        client(arguments.target.resolve(), arguments.mode, arguments.silent)
     elif arguments.side == "devserver":
         dev_server(arguments.target.resolve(), arguments.mode, arguments.port, arguments.rcon_port)
     elif arguments.side == "gametest":

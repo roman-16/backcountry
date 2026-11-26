@@ -54,6 +54,13 @@ public final class Afflictions {
                 afflictions.remove();
             }
         }
+        if (body.gutOnsetDays > 0) {
+            body.gutOnsetDays -= days;
+            if (body.gutOnsetDays <= 0) {
+                body.gutOnsetDays = 0;
+                body.afflict(Condition.GUT_INFECTION);
+            }
+        }
         if (body.wetBlocks >= rules.blistersWetBlocks()) {
             body.wetBlocks = 0;
             body.afflict(Condition.BLISTERS);
@@ -69,6 +76,16 @@ public final class Afflictions {
             boolean frozen = body.has(Condition.SEVERE_FROSTBITE);
             player.hurt(player.damageSources().source(frozen ? Metabolism.FROSTBITE : Metabolism.INFECTION), DRAIN);
         }
+        tell(player, body);
+    }
+
+    private static void tell(ServerPlayer player, Body body) {
+        body.conditions.forEach((condition, affliction) -> {
+            if (!affliction.told) {
+                affliction.told = true;
+                player.sendSystemMessage(condition.began());
+            }
+        });
     }
 
     private static int wholeHours(double fromDays, double toDays) {
@@ -111,8 +128,15 @@ public final class Afflictions {
         }
     }
 
+    public static boolean incubating(Body body) {
+        return body.gutOnsetDays > 0;
+    }
+
     public static boolean treat(Body body, boolean medKit) {
-        boolean treated = false;
+        boolean treated = medKit && incubating(body);
+        if (treated) {
+            body.gutOnsetDays = 0;
+        }
         Iterator<Map.Entry<Condition, Body.Affliction>> afflictions = body.conditions.entrySet().iterator();
         while (afflictions.hasNext()) {
             Map.Entry<Condition, Body.Affliction> entry = afflictions.next();

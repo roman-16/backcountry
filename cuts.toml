@@ -940,6 +940,7 @@ tackle = [
   "riverfishing:ultralight_rod",
 ]
 trade = ["riverfishing:contract", "riverfishing:fishing_stall"]
+unfinished = ["fowlplay:bird_feeder"]
 workshop = [
   "minecraft:black_concrete",
   "minecraft:black_concrete_powder",

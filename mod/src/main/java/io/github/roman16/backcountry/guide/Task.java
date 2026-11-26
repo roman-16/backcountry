@@ -21,9 +21,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
 public enum Task {
-    FILL_BOTTLE(Chapter.FIRST_DAY, Thing.of(Things.WATER_BOTTLE),
-            Step.of("drunk", new Did(Deed.DRANK)),
-            Step.of("filled", new Did(Deed.FILLED_BOTTLE))),
     STONE_AXE(Chapter.FIRST_DAY, Common.STONE_AXE,
             Step.of("rock", new Held(Common.ROCKS, 1)),
             Step.of("stick", new Held(Common.STICK, 1)),
@@ -41,6 +38,9 @@ public enum Task {
             Step.of("filled", new Did(Deed.FILLED_POT)),
             Step.of("hung", new Did(Deed.HUNG_POT)),
             Step.of("drunk", new Did(Deed.DRANK_BOILED))),
+    FILL_BOTTLE(Chapter.FIRST_DAY, Thing.of(Things.WATER_BOTTLE),
+            Step.of("drunk", new Did(Deed.DRANK)),
+            Step.of("filled", new Did(Deed.BOTTLE_FROM_POT))),
     SLEEP_ROOFED(Chapter.FIRST_DAY, Thing.of("sleeping_bags:brown_sleeping_bag"),
             Step.of("roof", new Check.Sheltered()),
             Step.of("slept", new Did(Deed.SLEPT_ROOFED))),
@@ -64,6 +64,7 @@ public enum Task {
             Step.of("ingot", new Held(Thing.of("minecraft:iron_ingot"), 1))),
     LAND_FISH(Chapter.FOOD, Thing.of("riverfishing:stick_rod"),
             Step.of("rod", new Held(Thing.of("riverfishing:stick_rod"), 1), need(Common.STICK, 3)),
+            Step.of("bait", new Held(Thing.of("riverfishing:worm"), 1)),
             Step.of("fish", new Did(Deed.LANDED_FISH))),
     TRAP_CATCH(Chapter.FOOD, Thing.of(Things.SMALL_SNARE_ITEM),
             Step.of("wire", new Held(Thing.of(Things.SNARE_WIRE), 1), need(Thing.of("minecraft:iron_ingot"), 1)),

@@ -10,6 +10,7 @@ public final class Words {
     private static final int DAY_START_HOUR = 6;
     private static final int HOURS = 24;
     private static final int MINUTES_AN_HOUR = 60;
+    private static final int SECONDS_A_MINUTE = 60;
     private static final int TICKS_AN_HOUR = 1000;
 
     private Words() {}
@@ -58,6 +59,15 @@ public final class Words {
             return rest + " min";
         }
         return rest == 0 ? hours + " h" : hours + " h " + rest + " min";
+    }
+
+    static String seconds(int seconds) {
+        int minutes = seconds / SECONDS_A_MINUTE;
+        int rest = seconds % SECONDS_A_MINUTE;
+        if (minutes == 0) {
+            return rest + " s";
+        }
+        return rest == 0 ? minutes + " min" : minutes + " min " + rest + " s";
     }
 
     static String days(double days) {

@@ -211,13 +211,13 @@ public final class Metabolism {
         Balance balance = Balance.get();
         Balance.Energy energy = balance.energy();
         if (body.blackoutTicks == 0 && body.energy <= 0) {
-            blackOut(player, body);
+            blackOut(player, body, "message.backcountry.blacked_out_tired");
         }
         if (body.waterL <= 0) {
             body.thirstSeconds += ticks / (double) TICKS_A_SECOND;
             if (body.thirstSeconds >= balance.water().knockoutSeconds()) {
                 body.thirstSeconds = 0;
-                blackOut(player, body);
+                blackOut(player, body, "message.backcountry.blacked_out_thirst");
                 player.hurt(player.damageSources().source(THIRST), balance.water().thirstDamage());
             }
         } else {
@@ -234,9 +234,9 @@ public final class Metabolism {
         }
     }
 
-    private static void blackOut(ServerPlayer player, Body body) {
+    private static void blackOut(ServerPlayer player, Body body, String why) {
         body.blackoutTicks = Balance.get().energy().blackoutSeconds() * TICKS_A_SECOND;
-        player.displayClientMessage(Component.translatable("message.backcountry.blacked_out"), true);
+        player.displayClientMessage(Component.translatable(why), true);
         if (player.isSleeping()) {
             player.stopSleeping();
         }
@@ -317,7 +317,7 @@ public final class Metabolism {
             poison(body(player));
         }
         if (food.get().water() > 0) {
-            drink(player, food.get().water(), Water.of(true, (float) food.get().water()));
+            drink(player, food.get().water(), Water.boiled((float) food.get().water()));
         }
         return true;
     }
@@ -386,9 +386,15 @@ public final class Metabolism {
         Guide.did(player, Deed.DRANK);
         if (drink.boiled()) {
             Guide.did(player, Deed.DRANK_BOILED);
-        } else if (player.getRandom().nextDouble() < Balance.get().conditions().gutInfectionChance()) {
-            body.afflict(Condition.GUT_INFECTION);
+        } else if (drink.risky() && !Afflictions.incubating(body) && !body.has(Condition.GUT_INFECTION) && player.getRandom().nextDouble() < infection(drink, litres)) {
+            body.gutOnsetDays = Balance.get().conditions().gutOnsetDays();
         }
+    }
+
+    public static double infection(Water drink, double litres) {
+        Balance.Conditions rules = Balance.get().conditions();
+        double perLitre = drink.source() == Water.Source.STREAM ? rules.gutStreamChance() : rules.gutLakeChance();
+        return 1 - Math.pow(1 - perLitre, litres);
     }
 
     public static void effort(Player player, Activity activity, double hours) {
@@ -480,7 +486,7 @@ public final class Metabolism {
             return;
         }
         if (event.getItem().is(Items.POTION) && event.getItem().getOrDefault(net.minecraft.core.component.DataComponents.POTION_CONTENTS, PotionContents.EMPTY).is(Potions.WATER)) {
-            drink(player, Balance.get().water().sipL(), Water.of(false, (float) Balance.get().water().sipL()));
+            drink(player, Balance.get().water().sipL(), Water.drawn(Water.Source.LAKE, (float) Balance.get().water().sipL()));
             return;
         }
         eat(player, event.getItem());

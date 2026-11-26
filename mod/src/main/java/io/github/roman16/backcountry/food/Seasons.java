@@ -22,6 +22,11 @@ import net.neoforged.neoforge.event.level.block.CropGrowEvent;
 
 @EventBusSubscriber(modid = Backcountry.MODID)
 public final class Seasons {
+    private static final int MONTHS = 12;
+    private static final int BARE = 1;
+    private static final int KEPT = 2;
+    private static final int RIPE = 3;
+
     private Seasons() {}
 
     public static int month(Level level) {
@@ -36,8 +41,17 @@ public final class Seasons {
         return first <= last ? month >= first && month <= last : month >= first || month <= last;
     }
 
-    public static boolean past(Level level, List<Double> months) {
-        return !within(month(level), months.get(0).intValue(), months.get(1).intValue());
+    public static int ripest(Level level, Block bush) {
+        return ripest(month(level), bush);
+    }
+
+    public static int ripest(int month, Block bush) {
+        List<Double> months = berryMonths(bush);
+        int last = months.get(1).intValue();
+        if (within(month, months.get(0).intValue(), last)) {
+            return RIPE;
+        }
+        return !(bush instanceof BerryBushBlock) && within(month, last % MONTHS + 1, Balance.get().berries().lingonberryKeptUntil()) ? KEPT : BARE;
     }
 
     public static List<Double> berryMonths(Block bush) {

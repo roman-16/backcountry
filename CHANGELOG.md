@@ -6,6 +6,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-11-26
+
+### Highlights
+
+- **Walking you can afford** - Walking, running, swimming and climbing cost what the same distance costs a person, so exploring no longer starves a survivor or empties their energy into blackouts.
+- **Water you can trust** - Lake water makes you ill 1 time in 4 a litre and stream water 1 in 16, a day after the drink; boiled water is never topped up with lake water, and the Camp Pot shows when it is safe.
+- **A fire you can tend** - A fire with nothing cooking on it burns down as it should, and its coals catch the firewood you lay in.
+
+### Added
+
+- Sneaking and looking at the Camp Pot shows how long it has left to boil, or "Boiled water · safe to drink"; looking at a campfire shows its burning time and how long each piece cooking on it has left.
+- The Camp Pot shows its water, steams while it heats and rolls at a boil once safe.
+- Every condition says in chat as it begins what it does and what cures it.
+- The Food page shows how far you walked today beside Move.
+- Land a fish has a Bait the hook step, and worms turn up on one dig in 8 on dry days too.
+- A swing passes through grass and ferns to hit the animal behind them.
+
+### Changed
+
+- Unboiled water is lake water or stream water, its risk counted per litre and showing a day after the drink.
+- A bottle holding boiled water drinks when aimed at a lake or stream, and refuses water from a pot that has not boiled.
+- The first day's tasks start with the stone axe; Refill the Water Bottle comes after Boil water and fills from the boiled pot.
+- Each ration says in chat what it ate.
+- Food of one kind picked within a quarter day stacks.
+- A hare gives 800 kcal, a duck 1,000, a goose or loon 3,000, a grouse 280 and a squirrel 240; rabbit stew holds its rabbit's kcal.
+- Berry bushes bear as the date stands: on arrival only lingonberry bushes hold a few berries from last autumn.
+- "You blacked out" says whether thirst or tiredness did it, and wood too green to catch says to dry it on a woodpile.
+
+### Fixed
+
+- The server no longer crashes when a player leaves, and joining players get the far land's seed again.
+- Coals catch queued firewood, and a lit fire burns down, even with nothing cooking on it.
+
 ## [2.3.0] - 2026-11-26
 
 ### Highlights

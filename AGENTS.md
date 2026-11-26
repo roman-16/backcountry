@@ -50,7 +50,7 @@ $ python3 scripts/client.py panorama             # photographs the title's panor
 $ python3 scripts/server.py start --fresh        # the dev server, which prints its port; run '<command>' answers through RCON
 ```
 
-Each π session drives games of its own in `build/clients/<n>/` and `build/devservers/<n>/`, with its own ports; a shell outside π, `just play` and `just devserver` use `build/client` and `build/devserver`. The client runs on a hidden screen (gamescope from the system) unless `--visible`.
+Each π session drives games of its own in `build/clients/<n>/` and `build/devservers/<n>/`, with its own ports; a shell outside π, `just play` and `just devserver` use `build/client` and `build/devserver`. The client runs muted on a hidden screen (gamescope from the system) unless `--visible`.
 
 | Step | Does |
 |---|---|
@@ -77,7 +77,9 @@ Dev runs have `/backcountry body <field> <value>` (core, energy, stomach, water,
 ## Mods
 
 - packwiz marks a mod for both sides unless Modrinth says otherwise; set `side = "client"` in its `.pw.toml` when the server never needs it, so the server pack stays lean.
-- PandaLib is pinned at 0.6.0: Panda's Falling Trees 0.14.0 crashes at load with PandaLib 0.6.2.
+- PandaLib is pinned at 0.6.0: Panda's Falling Trees 0.14.0 crashes at load with PandaLib 0.6.2. A dedicated server never receives the players' Falling Trees options under it and falls back to the defaults the pack keeps, so `PandaLibSyncMixin` drops the warning it logs at every chop.
+- Lithium's campfire sleeping stays off (`pack/config/lithium.properties`): it stops ticking a campfire with nothing cooking, and the pack's fire burns, settles to coals and catches queued wood in that tick.
+- A mixin into another mod's class that names client classes is a client mixin: as a common one it makes the dedicated server load those classes and crash. The headless boot (`scripts/boot.py`) fails on one.
 - NeoForge (`pack/pack.toml`, `mod/gradle.properties`) stays at the newest version Prism's metadata lists (`https://meta.prismlauncher.org/v1/net.neoforged/index.json`), even when a newer one is out: a Prism instance cannot launch on a NeoForge that list lacks.
 - A mod's starting item, chat greeting or pop-up is switched off, in its config where it has one, else by a mixin (`DailyOrderMixin`, `ToastComponentMixin`): the arrival kit is the design's alone (`design/systems.md` S10) and the screen tells only what the pack tells. Advancements are not announced in chat (`announceAdvancements` off in every new world).
 - A mod that reads vanilla's state where the pack has its own is hooked to the pack's or switched off: Subtle Effects' breath follows the mod's air and its growl the body's stomach, and its fireflies and Particular's stay off, since Alaska has none.

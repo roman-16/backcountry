@@ -122,7 +122,7 @@ public final class BirchTapBlock extends HorizontalDirectionalBlock {
         if (poured <= 0) {
             return ItemInteractionResult.CONSUME;
         }
-        stack.set(Things.WATER.get(), held.add(new Water(Water.Drink.BIRCH_SAP, false, poured), poured, vessel.capacity()));
+        stack.set(Things.WATER.get(), held.add(new Water(Water.Drink.BIRCH_SAP, false, Water.Source.LAKE, poured), poured, vessel.capacity()));
         int left = (int) Math.round((litres - poured) / Balance.get().forage().sapLPerStep());
         level.setBlock(pos, state.setValue(SAP, left), Block.UPDATE_ALL);
         level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1, 1.2F);

@@ -21,11 +21,15 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @GameTestHolder(Backcountry.MODID)
 @PrefixGameTestTemplate(false)
 public final class BodyTests {
-    private static final int TICKS_AN_HOUR = 1000;
     private static final double KCAL_PER_WATT_HOUR = 0.8598;
+    private static final double STRIDE_BLOCKS = 0.2;
+    private static final int STRIDES_A_KM = 5000;
+    private static final double METRES_A_KM = 1000;
+    private static final double SECONDS_AN_HOUR = 3600;
+    private static final double WALK_HOURS = 1;
     private static final double CLOSE = 1;
     private static final int DEEP_LAYERS = 4;
-    private static final double UPHILL_BLOCKS_A_TICK = 0.1;
+    private static final double UPHILL_BLOCKS_A_STRIDE = 0.1;
     private static final double CARRIED_KG = 20;
     private static final double EATEN = 1024;
 
@@ -37,31 +41,36 @@ public final class BodyTests {
         }
     }
 
-    private static double walkHour(ServerPlayer player, Body body, double risePerTick) {
+    private static double walkKilometre(ServerPlayer player, Body body, double risePerStride) {
         Vec3 from = player.position();
-        Vec3 to = from.add(Balance.get().walking().walkBlocksPerTick(), risePerTick, 0);
-        for (int tick = 0; tick < TICKS_AN_HOUR; tick++) {
+        Vec3 to = from.add(STRIDE_BLOCKS, risePerStride, 0);
+        for (int stride = 0; stride < STRIDES_A_KM; stride++) {
             Exertion.stride(player, body, from, to);
         }
         body.burned[Burn.MOVING.ordinal()] = 0;
         body.burned[Burn.LOAD.ordinal()] = 0;
-        Exertion.burn(player, body, 1, false, 0);
+        Exertion.burn(player, body, WALK_HOURS, false, 0);
         return body.burned[Burn.MOVING.ordinal()];
     }
 
-    private static double flatHour(Body body) {
+    private static double flatKilometre(Body body) {
         Balance.Walking walking = Balance.get().walking();
-        return KCAL_PER_WATT_HOUR * walking.motionWPerKg() * walking.walkMS() * walking.walkMS() * body.weightKg;
+        double hours = METRES_A_KM / walking.walkMS() / SECONDS_AN_HOUR;
+        return KCAL_PER_WATT_HOUR * walking.motionWPerKg() * walking.walkMS() * walking.walkMS() * hours * body.weightKg;
     }
 
     @GameTest(template = "empty")
-    public static void aGameHourOfWalkingCostsARealHour(GameTestHelper helper) {
+    public static void aKilometreWalkedCostsWhatItCostsAWalker(GameTestHelper helper) {
         ServerPlayer player = BackcountryTests.survivor(helper);
         Body body = Metabolism.body(player);
-        double flat = walkHour(player, body, 0);
-        check(helper, Math.abs(flat - flatHour(body)) < CLOSE, "a game hour of walking burned " + flat + " kcal above standing, not " + flatHour(body));
-        double uphill = walkHour(player, body, UPHILL_BLOCKS_A_TICK);
-        check(helper, uphill > 2 * flat, "a game hour uphill burned " + uphill + " kcal against " + flat + " on the flat");
+        double flat = walkKilometre(player, body, 0);
+        check(helper, Math.abs(flat - flatKilometre(body)) < CLOSE, "a kilometre walked burned " + flat + " kcal above standing, not " + flatKilometre(body));
+        double uphill = walkKilometre(player, body, UPHILL_BLOCKS_A_STRIDE);
+        check(helper, uphill > 2 * flat, "a kilometre uphill burned " + uphill + " kcal against " + flat + " on the flat");
+        Vec3 from = player.position();
+        body.metresToday = 0;
+        Exertion.stride(player, body, from, from.add(METRES_A_KM, 0, 0));
+        check(helper, body.metresToday <= Balance.get().walking().sprintBlocksPerTick() + 1e-9, "a teleport counted " + body.metresToday + " m walked");
         helper.succeed();
     }
 
@@ -70,11 +79,11 @@ public final class BodyTests {
         ServerPlayer player = BackcountryTests.survivor(helper);
         Body body = Metabolism.body(player);
         helper.setBlock(new BlockPos(1, 1, 1), Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, DEEP_LAYERS));
-        double flat = flatHour(body);
-        double snow = walkHour(player, body, 0);
+        double flat = flatKilometre(body);
+        double snow = walkKilometre(player, body, 0);
         check(helper, snow > 4 * flat, "50 cm of snow burned " + snow + " kcal against " + flat + " on bare ground");
         player.setItemSlot(EquipmentSlot.FEET, new ItemStack(Things.SNOWSHOES.get()));
-        double shoes = walkHour(player, body, 0);
+        double shoes = walkKilometre(player, body, 0);
         check(helper, shoes < snow / 2 && shoes > flat, "snowshoes in 50 cm of snow burned " + shoes + " kcal against " + snow + " without them");
         helper.succeed();
     }
@@ -84,10 +93,10 @@ public final class BodyTests {
         ServerPlayer player = BackcountryTests.survivor(helper);
         Body body = Metabolism.body(player);
         body.loadKg = CARRIED_KG;
-        walkHour(player, body, 0);
+        walkKilometre(player, body, 0);
         double carried = body.burned[Burn.LOAD.ordinal()];
-        double expected = flatHour(body) * CARRIED_KG / body.weightKg;
-        check(helper, carried > expected, "carrying 20 kg for a game hour burned " + carried + " kcal for the load, under " + expected);
+        double expected = flatKilometre(body) * CARRIED_KG / body.weightKg;
+        check(helper, carried > expected, "carrying 20 kg for a kilometre burned " + carried + " kcal for the load, under " + expected);
         body.burned[Burn.DIGESTION.ordinal()] = 0;
         Exertion.burn(player, body, 0, false, EATEN);
         double digestion = body.burned[Burn.DIGESTION.ordinal()];

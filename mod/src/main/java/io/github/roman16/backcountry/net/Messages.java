@@ -186,7 +186,7 @@ public final class Messages {
                 (float) body.fatToday, (float) body.stomachShare(), (float) body.loadKg, (float) balance.load().capacityKg(), Calendar.day(player.level()), body.blackoutTicks,
                 body.fire, body.sheltered, body.windy, (float) body.clo, Alerts.shown(body), body.unread, team.ration().ordinal(),
                 (float) team.storesDays(Team.living(player.server)), Arrays.stream(body.burned).mapToObj(kcal -> (float) kcal).toList(),
-                Skill.levels(body));
+                (float) body.metresToday, Skill.levels(body));
         if (!(player instanceof FakePlayer) && player.connection.hasChannel(View.TYPE)) {
             PacketDistributor.sendToPlayer(player, new View(view, Forecast.view(player, body), Guide.get(player.server).view(player)));
         }

@@ -26,6 +26,9 @@ public abstract class TreatmentItem extends Item {
     }
 
     private boolean treats(Body body) {
+        if (medKit && Afflictions.incubating(body)) {
+            return true;
+        }
         for (var entry : body.conditions.entrySet()) {
             Condition condition = entry.getKey();
             if (medKit ? condition.curedByMedKit() : condition == Condition.BLISTERS || condition.takesBandage() && !entry.getValue().bandaged) {

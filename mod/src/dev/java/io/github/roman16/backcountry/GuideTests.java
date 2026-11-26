@@ -51,15 +51,15 @@ public final class GuideTests {
     public static void aNewSurvivorFollowsTheFirstTask(GameTestHelper helper) {
         ServerPlayer player = BackcountryTests.survivor(helper);
         GuideView view = view(helper, player);
-        check(helper, Task.values()[0] == Task.FILL_BOTTLE && !view.done(Task.FILL_BOTTLE), "a new survivor has filled the Water Bottle");
-        check(helper, view.following(JUNE).equals(Optional.of(Task.FILL_BOTTLE)), "a new survivor follows " + view.following(JUNE));
+        check(helper, Task.values()[0] == Task.STONE_AXE && !view.done(Task.STONE_AXE), "a new survivor has made a stone axe");
+        check(helper, view.following(JUNE).equals(Optional.of(Task.STONE_AXE)), "a new survivor follows " + view.following(JUNE));
         helper.succeed();
     }
 
     @GameTest(template = "empty")
     public static void aTasksLastStepDoneTicksTheWholeTask(GameTestHelper helper) {
         ServerPlayer player = BackcountryTests.survivor(helper);
-        Metabolism.drink(player, 0.25, Water.of(true, 0.25F));
+        Metabolism.drink(player, 0.25, Water.boiled(0.25F));
         ItemStack fish = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("riverfishing", "northern_pike")));
         CompoundTag data = new CompoundTag();
         data.putString("Species", "riverfishing:northern_pike");
@@ -70,7 +70,7 @@ public final class GuideTests {
         check(helper, view(helper, player).stepsDone(Task.FILL_BOTTLE) == 1, "drinking did not tick its step of the Water Bottle");
         Guide.did(player, Deed.FILLED_POT);
         Guide.did(player, Deed.HUNG_POT);
-        Metabolism.drink(player, 0.25, Water.of(true, 0.25F));
+        Metabolism.drink(player, 0.25, Water.boiled(0.25F));
         GuideView view = view(helper, player);
         check(helper, view.done(Task.BOIL_WATER), "drinking water boiled in the hung pot did not finish Boil water");
         check(helper, view.done(Task.LAND_FISH), "landing a fish did not finish Land a fish");
@@ -102,7 +102,7 @@ public final class GuideTests {
         Metabolism.body(player).reset(day, Calendar.year(day));
         GuideView view = view(helper, player);
         check(helper, view.stepsDone(Task.LIGHT_FIRE) == 1, "a new survivor lost the player's lit fire");
-        check(helper, view.following(JUNE).equals(Optional.of(Task.FILL_BOTTLE)), "a half-lit fire jumped the queue");
+        check(helper, view.following(JUNE).equals(Optional.of(Task.STONE_AXE)), "a half-lit fire jumped the queue");
         helper.succeed();
     }
 

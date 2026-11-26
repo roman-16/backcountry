@@ -97,6 +97,7 @@ public class MessengerScreen extends Screen {
     private static final float STORES_LOW_DAYS = 2;
     private static final int BMI_WARNING = 1;
     private static final int BURNS_A_LINE = 3;
+    private static final float METRES_A_KM = 1000;
     private static final int SKILL_STEP = 4;
     private static final int SOS_TOP = 3;
     private static final int SOS_HEIGHT = 12;
@@ -735,7 +736,9 @@ public class MessengerScreen extends Screen {
         if (view.burned().size() == Burn.values().length) {
             List<String> parts = new ArrayList<>();
             for (Burn burn : Burn.values()) {
-                parts.add(burn.title().getString() + " " + Words.kcal(view.burned().get(burn.ordinal())));
+                String kcal = Words.kcal(view.burned().get(burn.ordinal()));
+                parts.add(burn == Burn.MOVING ? Component.translatable("messenger.backcountry.burn.moving_distance", kcal, Words.one(view.metresToday() / METRES_A_KM)).getString()
+                        : burn.title().getString() + " " + kcal);
             }
             boolean oneLine = font.width(String.join(" · ", parts)) <= x1() - x0() - LABEL;
             for (int burnLine = 0; burnLine < (oneLine ? 1 : 2); burnLine++) {

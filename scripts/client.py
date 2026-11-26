@@ -106,7 +106,10 @@ def start(arguments):
     started = time.monotonic()
     with drive.locked(LOCK):
         subprocess.run(
-            ["python3", "scripts/instance.py", "client", str(CLIENT), "--mode", arguments.mode], cwd=ROOT, check=True
+            ["python3", "scripts/instance.py", "client", str(CLIENT), "--mode", arguments.mode]
+            + ([] if arguments.visible else ["--silent"]),
+            cwd=ROOT,
+            check=True,
         )
         environment = screen(arguments.visible) | {
             "BACKCOUNTRY_GAME_DIRECTORY": str(CLIENT),

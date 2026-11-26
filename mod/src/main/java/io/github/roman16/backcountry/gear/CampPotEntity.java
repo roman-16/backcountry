@@ -4,10 +4,8 @@ import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -16,7 +14,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class CampPotEntity extends BlockEntity {
-    private static final int STEAM_TICKS = 10;
     private static final int TICKS_A_SECOND = 20;
     private Water water = Water.EMPTY;
     private int boilTicks;
@@ -46,9 +43,20 @@ public class CampPotEntity extends BlockEntity {
         }
         needles = true;
         boilTicks = 0;
-        water = Water.of(false, water.litres());
         setChanged();
         return true;
+    }
+
+    public boolean needles() {
+        return needles;
+    }
+
+    public int boilTicks() {
+        return boilTicks;
+    }
+
+    public boolean heating() {
+        return !water.empty() && (!water.boiled() || needles || water.drink() == Water.Drink.BIRCH_SAP);
     }
 
     public ItemStack item() {
@@ -66,29 +74,33 @@ public class CampPotEntity extends BlockEntity {
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, CampPotEntity pot) {
-        BlockState fire = level.getBlockState(pos.below());
-        boolean syrup = pot.water.drink() == Water.Drink.BIRCH_SAP;
-        if (pot.water.empty() || pot.water.boiled() && !syrup || !CampfireBlock.isLitCampfire(fire)) {
-            return;
+        boolean lit = CampfireBlock.isLitCampfire(level.getBlockState(pos.below()));
+        if (lit && pot.heating()) {
+            pot.boil(level, pos);
         }
-        pot.boilTicks++;
-        if (pot.boilTicks % STEAM_TICKS == 0 && level instanceof ServerLevel server) {
-            server.sendParticles(ParticleTypes.CLOUD, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1, 0.1, 0.05, 0.1, 0.01);
+        BlockState shown = state.setValue(CampPotBlock.CONTENT, pot.water.empty() ? CampPotBlock.Content.EMPTY
+                : !lit ? CampPotBlock.Content.WATER : pot.heating() ? CampPotBlock.Content.HEATING : CampPotBlock.Content.BOILING);
+        if (shown != state) {
+            level.setBlock(pos, shown, Block.UPDATE_CLIENTS);
         }
+    }
+
+    private void boil(Level level, BlockPos pos) {
         Balance balance = Balance.get();
-        if (!pot.water.boiled() && pot.boilTicks >= balance.water().boilSeconds() * TICKS_A_SECOND) {
-            pot.water = pot.needles ? new Water(Water.Drink.SPRUCE_TEA, true, pot.water.litres()) : pot.water.boil();
-            pot.needles = false;
+        boilTicks++;
+        if ((!water.boiled() || needles) && boilTicks >= balance.water().boilSeconds() * TICKS_A_SECOND) {
+            water = needles ? new Water(Water.Drink.SPRUCE_TEA, true, water.source(), water.litres()) : water.boil();
+            needles = false;
         }
-        if (syrup && pot.boilTicks >= balance.forage().syrupSeconds() * TICKS_A_SECOND) {
-            int made = (int) Math.floor(pot.water.litres() / balance.forage().syrupL() + 1e-6);
+        if (water.drink() == Water.Drink.BIRCH_SAP && boilTicks >= balance.forage().syrupSeconds() * TICKS_A_SECOND) {
+            int made = (int) Math.floor(water.litres() / balance.forage().syrupL() + 1e-6);
             if (made > 0) {
                 Block.popResource(level, pos, new ItemStack(Things.BIRCH_SYRUP.get(), made));
             }
-            pot.water = Water.EMPTY;
-            pot.boilTicks = 0;
+            water = Water.EMPTY;
+            boilTicks = 0;
         }
-        pot.setChanged();
+        setChanged();
     }
 
     @Override

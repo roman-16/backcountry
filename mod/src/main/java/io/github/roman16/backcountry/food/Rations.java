@@ -12,14 +12,18 @@ import io.github.roman16.backcountry.survivor.Team;
 import io.github.roman16.backcountry.trap.TrapBlock;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -88,6 +92,7 @@ public final class Rations {
         food.sort(Comparator.comparingDouble(source -> Spoilage.daysLeft(source.stack(), source.airC()).orElse(Double.MAX_VALUE)));
         double eaten = 0;
         boolean full = false;
+        Map<Item, Integer> bites = new LinkedHashMap<>();
         for (Source source : food) {
             while (eaten < meal && !source.stack().isEmpty()) {
                 ItemStack bite = source.stack().copyWithCount(1);
@@ -96,6 +101,7 @@ public final class Rations {
                     break;
                 }
                 eaten += Pantry.kcal(bite);
+                bites.merge(bite.getItem(), 1, Integer::sum);
                 source.stack().shrink(1);
                 source.changed().run();
                 FoodProperties properties = bite.get(DataComponents.FOOD);
@@ -112,14 +118,25 @@ public final class Rations {
         if (eaten <= 0) {
             told = Component.translatable("ration.backcountry." + when + "_none");
         } else if (full) {
-            told = Component.translatable("ration.backcountry." + when + "_full", Words.kcal(eaten));
+            told = Component.translatable("ration.backcountry." + when + "_full", eatenList(bites), Words.kcal(eaten));
         } else if (eaten < meal) {
-            told = Component.translatable("ration.backcountry." + when + "_short", Words.kcal(eaten), Words.kcal(meal));
+            told = Component.translatable("ration.backcountry." + when + "_short", eatenList(bites), Words.kcal(eaten), Words.kcal(meal));
         } else {
-            told = Component.translatable("ration.backcountry." + when, Words.kcal(eaten));
+            told = Component.translatable("ration.backcountry." + when, eatenList(bites), Words.kcal(eaten));
         }
-        player.displayClientMessage(told, true);
+        player.sendSystemMessage(told);
         return eaten;
+    }
+
+    private static Component eatenList(Map<Item, Integer> bites) {
+        MutableComponent list = Component.empty();
+        bites.forEach((item, count) -> {
+            if (!list.getSiblings().isEmpty()) {
+                list.append(", ");
+            }
+            list.append(Component.translatable("ration.backcountry.bites", count, item.getDescription()));
+        });
+        return list;
     }
 
     private static List<Source> cached(ServerPlayer player) {

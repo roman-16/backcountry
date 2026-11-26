@@ -52,7 +52,8 @@ public final class Wilds {
                 && level.random.nextDouble() < bait.cricketChance()) {
             event.getDrops().add(new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(Things.CRICKET.get())));
         }
-        if ((state.is(BlockTags.DIRT)) && event.getTool().getItem() instanceof ShovelItem && rainedLately(level, pos) && level.random.nextDouble() < bait.wormChance()) {
+        if (state.is(BlockTags.DIRT) && event.getTool().getItem() instanceof ShovelItem && Climate.airC(level, pos, Calendar.day(level)) > 0
+                && level.random.nextDouble() < (rainedLately(level, pos) ? bait.rainWormChance() : bait.dryWormChance())) {
             event.getDrops().add(new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(BuiltInRegistries.ITEM.get(WORM))));
         }
     }

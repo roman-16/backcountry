@@ -32,7 +32,7 @@ Light a fire · 2 of 7
   [Stick] 2/2  [Cordage] 0/1  [Softwood] 2/1
 ```
 
-What comes into the inventory is listed at the top right for a few seconds, a line an item, counting up while more of it arrives ("4x Stick", Pick Up Notifier). The hotbar's items bounce as they land, are used, eaten or placed, the selected slot grows, a tool near breaking glows and the selected item's name pops in (Immersive Hotbar). While a survivor sneaks, a box at the top centre names what they look at and, under the name, the mod it comes from, in vanilla's tooltip look (Jade), with no health, state or contents, so a forager crouching at a bush still has to tell a baneberry by its look. Every item's tooltip ends with its mod in blue italics. Chat lines slide in (Chat Animation). Simple Voice Chat draws its own icon at the bottom left: a speaker struck through while voice is off or no device is found.
+What comes into the inventory is listed at the top right for a few seconds, a line an item, counting up while more of it arrives ("4x Stick", Pick Up Notifier). The hotbar's items bounce as they land, are used, eaten or placed, the selected slot grows, a tool near breaking glows and the selected item's name pops in (Immersive Hotbar). While a survivor sneaks, a box at the top centre names what they look at and, under the name, the mod it comes from, in vanilla's tooltip look (Jade), with no health, state or contents, so a forager crouching at a bush still has to tell a baneberry by its look. Two things also tell their state under the name: the Camp Pot ("Boiling · 1 min 40 s left", "Fire out · 1 min 40 s left", "Boiled water · safe to drink · 2.00 L", "Lake water · 2.00 L" off the fire, "Spruce tea · steeping · 1 min left", "Birch sap · syrup in 12 min", "Empty") and the campfire (its time line as on its screen, I4, and a line for each piece cooking on it: "Raw Grouse · 20 s left"). Every item's tooltip ends with its mod in blue italics. Chat lines slide in (Chat Animation). Simple Voice Chat draws its own icon at the bottom left: a speaker struck through while voice is off or no device is found.
 
 ```text
                     ┌─────────────┐               [■] Spruce Log x4
@@ -53,11 +53,11 @@ The case carries the device's name at the top left and a red SOS button at the t
 │ Day 1 · 3 May                                                                 14:20 │
 │ [▤ Tasks]    ☁ Weather    🔥 Warmth    🍖 Food    ♥ Body                            │
 ├─────────────────────────────┬───────────────────────────────────────────────────────┤
-│ First day            2 of 5 │ Light a fire                         ◆ Tracked 2 of 7 │
-│  ■ Fill the Water Bottle    │ A fire warms and dries you, cooks and boils water.    │
-│  ■ Make a stone axe         │ ■ Fell a spruce                                       │
-│ ◆□ Light a fire             │ ■ Split it into Softwood                              │
-│  □ Boil water               │ ▸ Make a Bow Drill                                    │
+│ First day            1 of 5 │ Light a fire                         ◆ Tracked 2 of 7 │
+│  ■ Make a stone axe         │ A fire warms and dries you, cooks and boils water.    │
+│ ◆□ Light a fire             │ ■ Fell a spruce                                       │
+│  □ Boil water               │ ■ Split it into Softwood                              │
+│  □ Refill the Water Bottle  │ ▸ Make a Bow Drill                                    │
 │  □ Sleep under a roof       │   [Stick] 2/2   [Cordage] 0/1   [Softwood] 2/1        │
 │ Camp                 0 of 5 │   Grass and ferns drop Plant Fibre; 4 twist into      │
 │ Food                 0 of 6 │   a Cordage.                                          │
@@ -73,7 +73,7 @@ The case carries the device's name at the top left and a red SOS button at the t
 - **Tasks** (`systems.md` S11): on the left the chapters, each with its count ("2 of 5", "· team" beside the team's); the chapter of the chosen task is open with its tasks, the others folded to their heading, and a click on a heading opens it. On the right the chosen task: its name, its count, one line on why it matters, and its steps, each with a box filled once done; the first open step shows the items it needs with what the survivor holds of them ("2/2", met in the screen's text colour, unmet dim) and how to get them. Hovering an item names it with "Click for its recipe", and a click opens its recipe in JEI. A task carrying a season reads "From June" while out of it. The tracked task wears ◆ in the list and "◆ Tracked" beside its name; another task shows a Track button there. W and S or ↑ ↓ choose a task, Space or Enter tracks it.
 - **Weather:** the air and how it feels on a gauge from -40 to +30 °C banded at freezing and at -15 °C, the rain or snow now or later today with its hours, the wind on a meter with the blizzard mark at 56 km/h, the cloud, today's high and low; then the next three days a line each: its sky (the icon of the rain or snow when it is likely, else of the cloud), the day and date, the chance ("Snow 80%"), the high and low and the wind.
 - **Warmth:** the core temperature with how it feels and its trend on a gauge banded freezing, cold, comfortable and hot, then what sets it: fire, shelter, clothing and wetness.
-- **Food:** the day's kcal eaten and burned, the burn by cause in a dim line ("Rest 2,170 · Move 940 · Load 310 · Work 620 · Cold 250 · Digest 320") and protein, carbs and fat; the stomach; the ration, the next meal and the team's food stores in days.
+- **Food:** the day's kcal eaten and burned, the burn by cause in a dim line ("Rest 2,170 · Move 190 (5.1 km) · Load 40 · Work 620 · Cold 250 · Digest 320") and protein, carbs and fat; the stomach; the ration, the next meal and the team's food stores in days.
 - **Body:** the weight on a BMI gauge with extraction marked at 17, energy, water and the load carried, hours awake, the conditions each with what cures it, and the four skills, each with its name and five steps lit to its level.
 
 ```text
@@ -123,7 +123,7 @@ A spoiled food reads "Spoiled" in red instead, a smoked one adds "Smoked", and o
 └───────────────────────────────────────────────────┘
 ```
 
-It stands on vanilla's panel above the survivor's inventory, its locked rows dark. Each queued piece shows its seasoning under its slot, and the shown setting is the pressed button. Settled to coals, the time line reads "Coals 2 h 30 min · queued 1 h"; cold, "Cold: light it with a bow drill"; packed too full, a red line "Packed too full: sparks may catch" joins the checklist. Out of the rain is ticked under a roof.
+It stands on vanilla's panel above the survivor's inventory, its locked rows dark. Each queued piece shows its seasoning under its slot, and the shown setting is the pressed button. Settled to coals, the time line reads "Coals 2 h 30 min: add firewood and it catches"; cold, "Cold: light it with a bow drill"; packed too full, a red line "Packed too full: sparks may catch" joins the checklist. Out of the rain is ticked under a roof.
 
 The bow-drill game is a small panel over the world, the friction bar first and then the ember's glow with its band and the flame growing beside it:
 

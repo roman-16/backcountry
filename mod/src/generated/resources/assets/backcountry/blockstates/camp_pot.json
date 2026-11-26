@@ -1,6 +1,15 @@
 {
   "variants": {
-    "": {
+    "content=boiling": {
+      "model": "backcountry:block/camp_pot"
+    },
+    "content=empty": {
+      "model": "backcountry:block/camp_pot_empty"
+    },
+    "content=heating": {
+      "model": "backcountry:block/camp_pot"
+    },
+    "content=water": {
       "model": "backcountry:block/camp_pot"
     }
   }

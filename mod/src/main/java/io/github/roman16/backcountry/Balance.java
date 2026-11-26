@@ -30,7 +30,7 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
     public record Arrows(double bluntAnimals, double bluntBlocks, double bluntDamage, double boneAnimals, double boneBlocks, double boneDamage, double broadheadAnimals,
             double broadheadBlocks, double broadheadDamage) {}
 
-    public record Bait(double cricketChance, List<Double> cricketMonths, double wormChance, double wormHours) {}
+    public record Bait(double cricketChance, List<Double> cricketMonths, double dryWormChance, double rainWormChance, double wormHours) {}
 
     public record BearSpray(int blindSeconds, int bursts, double coneDegrees, int fleeSeconds, double pointBlankBlocks, double reachBlocks) {}
 
@@ -38,7 +38,7 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
             List<Double> fallMonths, double fleeBlocks, int leftoverGrams, double leftoverHours, int mostCubs, List<Double> salmonMonths, List<Double> springMonths,
             double surpriseBlocks) {}
 
-    public record Berries(List<Double> baneberryMonths, List<Double> blueberryMonths, List<Double> highbushCranberryMonths, List<Double> lingonberryMonths,
+    public record Berries(List<Double> baneberryMonths, List<Double> blueberryMonths, List<Double> highbushCranberryMonths, int lingonberryKeptUntil, List<Double> lingonberryMonths,
             List<Double> salmonberryMonths) {}
 
     public record Binoculars(double magnification) {}
@@ -55,7 +55,7 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
             int seaLevel) {}
 
     public record Conditions(double bareSkinC, double blistersWetBlocks, double blistersWetness, double burnsDays, double dryWetness, double exhaustedAwakeDays,
-            double exhaustedEnergy, double feverBurn, double frostCoreC, double frostStageHours, double gutAbsorb, double gutDays, double gutInfectionChance, double gutWater,
+            double exhaustedEnergy, double feverBurn, double frostCoreC, double frostStageHours, double gutAbsorb, double gutDays, double gutLakeChance, double gutOnsetDays, double gutStreamChance, double gutWater,
             double infectionChance, double infectionDays, double parasitesAbsorb, double parasitesChance, double poisoningDays, double scurvyBurn, double vomitL) {}
 
     public record Cooking(double potL, double servingL, double stewHours) {}
@@ -127,7 +127,7 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
 
     public record Snow(int deepLayers, double frostbiteBlocks, double slowShare) {}
 
-    public record Spoilage(double doublingC, double frozenBelowC, double frozenShare, double referenceC, double smokedLife) {}
+    public record Spoilage(double doublingC, double frozenBelowC, double frozenShare, double referenceC, double smokedLife, double stackDays) {}
 
     public record Survivor(int quietSeconds) {}
 
@@ -140,9 +140,9 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
             double shiverKcalPerHourC, double shiverMostBmr, double sweatCoreC, double sweatLPerHour, double sweatWetPerHour, double veryColdShare, double warmCPerClo,
             double wetInsulationLoss) {}
 
-    public record Walking(double feetShare, double iceEta, double loadWPerKg, double motionWPerKg, double sneakBlocksPerTick, double sneakMS, double snowDeepestCm,
-            double snowEta, double snowEtaPerCm, double snowshoeSink, double sprintBlocksPerTick, double standingWPerKg, double steepestGrade, double swimBlocksPerTick,
-            double walkBlocksPerTick, double walkMS, double windKmhDoubled) {}
+    public record Walking(double climbMS, double feetShare, double iceEta, double loadWPerKg, double motionWPerKg, double runMS, double sneakMS, double snowDeepestCm,
+            double snowEta, double snowEtaPerCm, double snowshoeSink, double sprintBlocksPerTick, double standingWPerKg, double steepestGrade, double swimMS, double walkMS,
+            double windKmhDoubled) {}
 
     public record Water(int boilSeconds, double bottleL, int knockoutSeconds, double needLDay, double potL, double sipL, float thirstDamage) {}
 

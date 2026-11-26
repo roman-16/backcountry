@@ -31,7 +31,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @GameTestHolder(Backcountry.MODID)
 @PrefixGameTestTemplate(false)
 public final class WildTests {
-    private static final int TICKS_AN_HOUR = 1000;
+    private static final int STRIDES = 1000;
+    private static final double STRIDE_BLOCKS = 0.2;
 
     private WildTests() {}
 
@@ -81,13 +82,13 @@ public final class WildTests {
         double ground = Sled.pulledKg(player);
         check(helper, ground > 64, "a sled of 64 cobblestone pulled as " + ground + " kg");
         Vec3 from = player.position();
-        Vec3 to = from.add(Balance.get().walking().walkBlocksPerTick(), 0, 0);
-        for (int tick = 0; tick < TICKS_AN_HOUR; tick++) {
+        Vec3 to = from.add(STRIDE_BLOCKS, 0, 0);
+        for (int stride = 0; stride < STRIDES; stride++) {
             Exertion.stride(player, body, from, to);
         }
         body.burned[Burn.LOAD.ordinal()] = 0;
         Exertion.burn(player, body, 1, false, 0);
-        check(helper, body.burned[Burn.LOAD.ordinal()] > 0, "pulling the sled for a game hour burned nothing for the load");
+        check(helper, body.burned[Burn.LOAD.ordinal()] > 0, "pulling the sled 200 m burned nothing for the load");
         helper.setBlock(new BlockPos(3, 1, 1), Blocks.SNOW.defaultBlockState());
         sled.moveTo(sled.getX(), sled.getY() + 0.2, sled.getZ());
         check(helper, Sled.pulledKg(player) < ground, "the sled pulled as heavy on snow as on ground");

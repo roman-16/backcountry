@@ -6,6 +6,7 @@ import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.fire.Lights;
 import io.github.roman16.backcountry.hunt.Hunting;
+import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ChickenRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -22,6 +23,7 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterItemDecorationsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
@@ -41,6 +43,11 @@ public final class ClientSetup {
         event.register(Things.FIRE_MENU.get(), FireScreen::new);
         event.register(Things.FOOD_CACHE_MENU.get(), CacheScreen::new);
         event.register(Things.SMOKER_MENU.get(), SmokerScreen::new);
+    }
+
+    @SubscribeEvent
+    static void colours(RegisterColorHandlersEvent.Block event) {
+        event.register((state, level, pos, tint) -> level == null || pos == null ? Look.WATER : BiomeColors.getAverageWaterColor(level, pos), Things.CAMP_POT_BLOCK.get());
     }
 
     @SubscribeEvent

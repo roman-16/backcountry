@@ -4,7 +4,7 @@ What Backcountry is, decided before anything is built. Each document keeps its *
 
 ## Now
 
-**M1 Repo, tooling, world** to **M17 Binoculars** are built, M1 to M12 balanced by automated playthroughs (`playthrough` skill). M2 to M17 wait for the user's first play (`just play`, the `playtest` skill's rows). M16's title panorama waits until the island's terrain is settled.
+**M1 Repo, tooling, world** to **M17 Binoculars** are built, M1 to M12 balanced by automated playthroughs (`playthrough` skill) and by the team's first play on the server, which set walking by distance, water by its source, small game's meat and the berries' season. The rest of the `playtest` skill's rows wait for the next play. M16's title panorama waits until the island's terrain is settled.
 
 ## Milestones
 

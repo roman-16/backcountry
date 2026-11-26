@@ -111,12 +111,16 @@ public final class FireScreen extends AbstractContainerScreen<FireMenu> {
     }
 
     private Component times() {
-        String queued = Words.duration(menu.queuedMinutes());
-        if (menu.lit()) {
-            return Component.translatable("fire.backcountry.burning", Words.duration(menu.burningMinutes()), queued);
+        return times(menu.lit(), menu.burningMinutes(), menu.queuedMinutes(), menu.coalMinutes());
+    }
+
+    static Component times(boolean lit, int burning, int queued, int coals) {
+        if (lit) {
+            return Component.translatable("fire.backcountry.burning", Words.duration(burning), Words.duration(queued));
         }
-        if (menu.coalMinutes() > 0) {
-            return Component.translatable("fire.backcountry.settled", Words.duration(menu.coalMinutes()), queued);
+        if (coals > 0) {
+            return queued > 0 ? Component.translatable("fire.backcountry.settled", Words.duration(coals), Words.duration(queued))
+                    : Component.translatable("fire.backcountry.coals_catch", Words.duration(coals));
         }
         return Component.translatable("fire.backcountry.cold");
     }

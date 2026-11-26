@@ -70,7 +70,7 @@ public final class ForageTests {
     @GameTest(template = "empty")
     public static void spruceNeedlesBoilIntoTeaWithVitaminC(GameTestHelper helper) {
         CampPotEntity pot = pot(helper);
-        pot.hold(Water.of(false, 2));
+        pot.hold(Water.drawn(Water.Source.LAKE, 2));
         check(helper, pot.steep(), "a pot of water took no needles");
         boil(helper, pot, Balance.get().water().boilSeconds());
         check(helper, pot.water().drink() == Water.Drink.SPRUCE_TEA && pot.water().boiled(), "boiling needles made " + pot.water());
@@ -85,7 +85,7 @@ public final class ForageTests {
     @GameTest(template = "empty")
     public static void birchSapBoilsDownToSyrup(GameTestHelper helper) {
         CampPotEntity pot = pot(helper);
-        pot.hold(new Water(Water.Drink.BIRCH_SAP, false, (float) Balance.get().forage().syrupL()));
+        pot.hold(new Water(Water.Drink.BIRCH_SAP, false, Water.Source.LAKE, (float) Balance.get().forage().syrupL()));
         boil(helper, pot, Balance.get().forage().syrupSeconds());
         check(helper, pot.water().empty(), "the sap did not boil down");
         boolean syrup = !helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(pot.getBlockPos()).inflate(2))

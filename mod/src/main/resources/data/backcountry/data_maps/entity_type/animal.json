@@ -126,7 +126,7 @@
       "cuts": [
         {
           "item": "cnc:raw_game",
-          "count": 4
+          "count": 6
         },
         {
           "item": "backcountry:animal_fat",
@@ -169,7 +169,8 @@
       "kg": 4,
       "cuts": [
         {
-          "item": "cnc:raw_waterfowl"
+          "item": "cnc:raw_waterfowl",
+          "count": 3
         },
         {
           "item": "minecraft:feather",
@@ -206,7 +207,7 @@
       "cuts": [
         {
           "item": "cnc:raw_game",
-          "count": 2
+          "count": 3
         },
         {
           "item": "backcountry:beaver_tail"
@@ -321,7 +322,7 @@
       "cuts": [
         {
           "item": "cnc:raw_game",
-          "count": 2
+          "count": 3
         },
         {
           "item": "backcountry:heart"
@@ -403,7 +404,8 @@
       "kg": 4,
       "cuts": [
         {
-          "item": "cnc:raw_waterfowl"
+          "item": "cnc:raw_waterfowl",
+          "count": 3
         },
         {
           "item": "minecraft:feather",

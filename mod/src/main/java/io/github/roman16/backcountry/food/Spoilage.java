@@ -48,7 +48,8 @@ public final class Spoilage {
     }
 
     public static double age(ItemStack stack) {
-        return stack.getOrDefault(Things.AGE.get(), 0F);
+        Age age = stack.get(Things.AGE.get());
+        return age == null ? 0 : age.days();
     }
 
     public static boolean spoiled(ItemStack stack) {
@@ -66,7 +67,7 @@ public final class Spoilage {
             return false;
         }
         double aged = Math.min(life.get(), age(stack) + days * rate(airC));
-        stack.set(Things.AGE.get(), (float) aged);
+        stack.set(Things.AGE.get(), new Age((float) aged));
         return true;
     }
 

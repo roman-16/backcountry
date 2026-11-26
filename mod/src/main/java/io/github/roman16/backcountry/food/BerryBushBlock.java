@@ -3,10 +3,8 @@ package io.github.roman16.backcountry.food;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -46,20 +44,6 @@ public final class BerryBushBlock extends SweetBerryBushBlock {
     @Override
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return new ItemStack(berry.berries());
-    }
-
-    @Override
-    protected boolean isRandomlyTicking(BlockState state) {
-        return true;
-    }
-
-    @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (state.getValue(AGE) > 1 && Seasons.past(level, berry.months())) {
-            level.setBlock(pos, state.setValue(AGE, 1), 2);
-            return;
-        }
-        super.randomTick(state, level, pos, random);
     }
 
     @Override

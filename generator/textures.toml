@@ -418,6 +418,27 @@ rows = [
   "fFFFFFFFFFFFFFFf",
 ]
 
+[blocks.camp_pot]
+palette = { a = "4f4f4f", b = "595858", c = "676161", d = "494848", e = "2d2d32", f = "343438", g = "3f3e42", h = "5d5d5d", i = "7d7878", j = "27272b" }
+rows = [
+  "ciiccccbgggggggg",
+  "cbbbbbadffgffgff",
+  "bbhbbbadffffffff",
+  "abbbbaadefffffef",
+  "aaaadddgeeefeeee",
+  "gddddggejjjjjjjj",
+  "................",
+  "................",
+  "ejjejj..ci......",
+  "jjejjj..bc......",
+  "jjjjej..bb......",
+  "ejjjjj..bc......",
+  "jjejje..ab......",
+  "jejjjj..bb......",
+  "........ab......",
+  "........aa......",
+]
+
 [blocks.blood]
 palette = { O = "3e0606", d = "5e0a0a", m = "7e1212", l = "a01c1c" }
 rows = [

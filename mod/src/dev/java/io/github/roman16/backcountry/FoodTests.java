@@ -4,11 +4,13 @@ import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.fire.FirewoodItem;
+import io.github.roman16.backcountry.food.Age;
 import io.github.roman16.backcountry.food.CacheEntity;
 import io.github.roman16.backcountry.food.CookingPotEntity;
 import io.github.roman16.backcountry.food.Farmland;
 import io.github.roman16.backcountry.food.Pantry;
 import io.github.roman16.backcountry.food.Rations;
+import io.github.roman16.backcountry.food.Seasons;
 import io.github.roman16.backcountry.food.SmokerEntity;
 import io.github.roman16.backcountry.food.Spoilage;
 import io.github.roman16.backcountry.survivor.Team;
@@ -96,11 +98,11 @@ public final class FoodTests {
         ServerPlayer player = BackcountryTests.survivor(helper);
         CacheEntity cache = cache(helper, new BlockPos(3, 1, 3));
         cache.setItem(0, new ItemStack(Items.BEEF, 4));
-        cache.setItem(1, new ItemStack(Items.COOKED_CHICKEN, 32));
+        cache.setItem(1, new ItemStack(Items.COOKED_RABBIT, 4));
         double eaten = Rations.eat(player, Balance.get().rations().normalKcal(), true);
         check(helper, eaten >= Balance.get().rations().normalKcal(), "the ration ate " + eaten + " kcal");
         check(helper, cache.getItem(0).getCount() == 4, "the ration ate raw beef");
-        check(helper, cache.getItem(1).getCount() < 32, "the ration left the cooked chicken");
+        check(helper, cache.getItem(1).getCount() < 4, "the ration left the cooked rabbit");
         Team.get(helper.getLevel().getServer()).emptied(helper.absolutePos(new BlockPos(3, 1, 3)));
         helper.succeed();
     }
@@ -195,6 +197,29 @@ public final class FoodTests {
         List<ItemEntity> dropped = helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(at).inflate(2));
         check(helper, dropped.stream().anyMatch(item -> item.getItem().is(Things.BLUEBERRIES.get())), "picking the bush gave no blueberries");
         check(helper, helper.getBlockState(pos).getValue(SweetBerryBushBlock.AGE) == 1, "the picked bush kept its berries");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void foodPickedWithinAQuarterDayStacks(GameTestHelper helper) {
+        double window = Balance.get().spoilage().stackDays();
+        ItemStack early = new ItemStack(Items.SWEET_BERRIES);
+        ItemStack later = new ItemStack(Items.SWEET_BERRIES);
+        early.set(Things.AGE.get(), new Age((float) (window * 0.75)));
+        later.set(Things.AGE.get(), new Age((float) (window * 0.25)));
+        check(helper, ItemStack.isSameItemSameComponents(early, later), "berries picked within a quarter day did not stack");
+        later.set(Things.AGE.get(), new Age((float) (window * 1.25)));
+        check(helper, !ItemStack.isSameItemSameComponents(early, later), "berries picked a quarter day apart stacked");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void bushesBearAsTheMonthStands(GameTestHelper helper) {
+        int may = 5;
+        check(helper, Seasons.ripest(may, Blocks.SWEET_BERRY_BUSH) == 2, "lingonberries kept none of last year's berries into May");
+        check(helper, Seasons.ripest(may, Things.SALMONBERRY_BUSH.get()) == 1, "salmonberries were ripe in May");
+        check(helper, Seasons.ripest(7, Blocks.SWEET_BERRY_BUSH) == 1, "lingonberries kept berries into July");
+        check(helper, Seasons.ripest(8, Blocks.SWEET_BERRY_BUSH) == 3, "lingonberries were not ripe in August");
         helper.succeed();
     }
 }

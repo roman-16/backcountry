@@ -18,17 +18,15 @@ public final class Exertion {
     private static final double KCAL_PER_WATT_HOUR = 0.8598;
     private static final double CM_A_LAYER = 12.5;
     private static final double SHORTEST_RUN_BLOCKS = 0.5;
+    private static final double SECONDS_AN_HOUR = 3600;
 
     private Exertion() {}
 
     public static final class Strides {
         public Strides() {}
 
-        double walk;
         double walkEta;
-        double sneak;
         double sneakEta;
-        double run;
         double runEta;
         double swim;
         double climb;
@@ -36,11 +34,8 @@ public final class Exertion {
         double rise;
 
         void clear() {
-            walk = 0;
             walkEta = 0;
-            sneak = 0;
             sneakEta = 0;
-            run = 0;
             runEta = 0;
             swim = 0;
             climb = 0;
@@ -52,14 +47,20 @@ public final class Exertion {
     public static void stride(ServerPlayer player, Body body, Vec3 from, Vec3 to) {
         Balance.Walking walking = Balance.get().walking();
         Strides strides = body.strides;
-        double blocks = Math.sqrt(Math.pow(to.x - from.x, 2) + Math.pow(to.z - from.z, 2));
+        double farthest = walking.sprintBlocksPerTick();
+        double blocks = Math.min(farthest, Math.sqrt(Math.pow(to.x - from.x, 2) + Math.pow(to.z - from.z, 2)));
         double rise = to.y - from.y;
+        if (player.isPassenger()) {
+            return;
+        }
         if (player.isInWater() || player.isSwimming()) {
-            strides.swim += Math.min(1, blocks / walking.swimBlocksPerTick());
+            double swum = Math.min(farthest, Math.sqrt(blocks * blocks + rise * rise));
+            strides.swim += swum;
+            body.metresToday += swum;
             return;
         }
         if (player.onClimbable() && rise > 0) {
-            strides.climb += 1;
+            strides.climb += Math.min(farthest, rise);
             return;
         }
         if (blocks <= 0) {
@@ -67,20 +68,15 @@ public final class Exertion {
         }
         double eta = terrain(player);
         if (player.isSprinting()) {
-            double share = Math.min(1, blocks / walking.sprintBlocksPerTick());
-            strides.run += share;
-            strides.runEta += share * eta;
+            strides.runEta += blocks * eta;
         } else if (player.isCrouching()) {
-            double share = Math.min(1, blocks / walking.sneakBlocksPerTick());
-            strides.sneak += share;
-            strides.sneakEta += share * eta;
+            strides.sneakEta += blocks * eta;
         } else {
-            double share = Math.min(1, blocks / walking.walkBlocksPerTick());
-            strides.walk += share;
-            strides.walkEta += share * eta;
+            strides.walkEta += blocks * eta;
         }
         strides.distance += blocks;
-        strides.rise += rise;
+        strides.rise += Math.max(-farthest, Math.min(farthest, rise));
+        body.metresToday += blocks;
     }
 
     public static double terrain(ServerPlayer player) {
@@ -152,10 +148,12 @@ public final class Exertion {
         double grade = strides.distance > SHORTEST_RUN_BLOCKS ? strides.rise / strides.distance : 0;
         double hill = slope(grade);
         double wind = body.windy ? 1 + body.windKmh / walking.windKmhDoubled() : 1;
-        double gait = KCAL_PER_WATT_HOUR * (strides.walkEta * motion(walking.walkMS()) + strides.sneakEta * motion(walking.sneakMS())) / TICKS_AN_HOUR
-                + strides.runEta / TICKS_AN_HOUR * Math.max(0, Activity.RUN.met() - standingKcalPerKgHour());
-        double carried = (gait * hill * wind + strides.climb / TICKS_AN_HOUR * Math.max(0, Activity.CLIMB.met() - standingKcalPerKgHour()));
-        double moving = carried * kg + strides.swim / TICKS_AN_HOUR * Math.max(0, Activity.SWIM.met() - standingKcalPerKgHour()) * kg;
+        double walked = hoursOver(strides.walkEta, walking.walkMS());
+        double sneaked = hoursOver(strides.sneakEta, walking.sneakMS());
+        double gait = KCAL_PER_WATT_HOUR * (walked * motion(walking.walkMS()) + sneaked * motion(walking.sneakMS()))
+                + activityKcal(Activity.RUN.met(), 1, hoursOver(strides.runEta, walking.runMS()));
+        double carried = gait * hill * wind + activityKcal(Activity.CLIMB.met(), 1, hoursOver(strides.climb, walking.climbMS()));
+        double moving = carried * kg + activityKcal(Activity.SWIM.met(), kg, hoursOver(strides.swim, walking.swimMS()));
         double loadStanding = asleep ? 0 : walking.loadWPerKg() * (kg + load) * Math.pow(load / kg, 2) * KCAL_PER_WATT_HOUR * hours;
         double pulled = Sled.pulledKg(player);
         double loaded = carried * (load + pulled) + loadStanding;
@@ -171,6 +169,10 @@ public final class Exertion {
         body.burned[Burn.DIGESTION.ordinal()] += digestion;
         body.exertedKcal = moving + loaded + work + shiver;
         return resting + moving + loaded + work + cold + digestion;
+    }
+
+    private static double hoursOver(double metres, double metresPerSecond) {
+        return metres / metresPerSecond / SECONDS_AN_HOUR;
     }
 
     private static double motion(double metresPerSecond) {

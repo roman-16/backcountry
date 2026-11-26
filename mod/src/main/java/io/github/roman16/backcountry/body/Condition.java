@@ -41,6 +41,10 @@ public enum Condition {
         return Component.translatable("condition.backcountry." + id());
     }
 
+    public Component began() {
+        return Component.translatable("condition.backcountry." + id() + ".began");
+    }
+
     public ResourceLocation icon() {
         return Backcountry.id("hud/" + switch (this) {
             case FROSTNIP, FROSTBITE, SEVERE_FROSTBITE -> "frost";

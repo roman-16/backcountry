@@ -12,6 +12,7 @@ import io.github.roman16.backcountry.fire.Lights;
 import io.github.roman16.backcountry.fire.WoodpileBlock;
 import io.github.roman16.backcountry.fire.WoodpileEntity;
 import io.github.roman16.backcountry.food.Berry;
+import io.github.roman16.backcountry.food.Age;
 import io.github.roman16.backcountry.food.BerryBushBlock;
 import io.github.roman16.backcountry.food.BirchTapBlock;
 import io.github.roman16.backcountry.food.CacheBlock;
@@ -88,6 +89,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -127,6 +129,7 @@ public final class Things {
     public static final DataMapType<EntityType<?>, Animal> ANIMAL = DataMapType.builder(Backcountry.id("animal"), Registries.ENTITY_TYPE, Animal.CODEC).build();
     public static final TagKey<Item> KNIVES = TagKey.create(Registries.ITEM, Backcountry.id("knives"));
     public static final TagKey<Biome> SALT_WATER = TagKey.create(Registries.BIOME, Backcountry.id("salt_water"));
+    public static final TagKey<Fluid> MOVING_WATER = TagKey.create(Registries.FLUID, Backcountry.id("moving_water"));
     public static final DataMapType<Item, Nutrition> FOOD = DataMapType.builder(Backcountry.id("food"), Registries.ITEM, Nutrition.CODEC).synced(Nutrition.CODEC, true).build();
 
     public static final Supplier<AttachmentType<Body>> BODY = ATTACHMENTS.register("body", () -> AttachmentType.serializable(Body::new).build());
@@ -138,8 +141,8 @@ public final class Things {
             () -> AttachmentType.builder(() -> Long.MIN_VALUE).serialize(Codec.LONG).build());
     public static final Supplier<AttachmentType<Long>> SPRAYED_UNTIL = ATTACHMENTS.register("sprayed_until", () -> AttachmentType.builder(() -> 0L).build());
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> AGE = COMPONENTS.registerComponentType("age",
-            builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Age>> AGE = COMPONENTS.registerComponentType("age",
+            builder -> builder.persistent(Age.CODEC).networkSynchronized(Age.STREAM_CODEC));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> BURN = COMPONENTS.registerComponentType("burn",
             builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Unit>> CONTAMINATED = COMPONENTS.registerComponentType("contaminated",

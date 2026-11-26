@@ -11,11 +11,13 @@ import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Exertion;
 import io.github.roman16.backcountry.body.Load;
 import io.github.roman16.backcountry.body.Climate;
+import io.github.roman16.backcountry.body.Afflictions;
 import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Nutrition;
 import io.github.roman16.backcountry.body.Warmth;
 import io.github.roman16.backcountry.gear.Bulk;
+import io.github.roman16.backcountry.gear.CampPotBlock;
 import io.github.roman16.backcountry.gear.CampPotEntity;
 import io.github.roman16.backcountry.gear.Hewing;
 import io.github.roman16.backcountry.gear.Hotbar;
@@ -172,17 +174,34 @@ public final class BackcountryTests {
     }
 
     @GameTest(template = "empty")
-    public static void onlyUnboiledWaterInfects(GameTestHelper helper) {
+    public static void unboiledWaterInfectsADayLater(GameTestHelper helper) {
         ServerPlayer player = survivor(helper);
         Body body = Metabolism.body(player);
         for (int i = 0; i < 64; i++) {
-            Metabolism.drink(player, 0, Water.of(true, 0));
+            Metabolism.drink(player, 1, Water.boiled(1));
         }
-        check(helper, !body.has(Condition.GUT_INFECTION), "boiled water gave a gut infection");
-        for (int i = 0; i < 64 && !body.has(Condition.GUT_INFECTION); i++) {
-            Metabolism.drink(player, 0, Water.of(false, 0));
+        check(helper, !Afflictions.incubating(body), "boiled water carried a gut infection");
+        for (int i = 0; i < 64 && !Afflictions.incubating(body); i++) {
+            Metabolism.drink(player, 1, Water.drawn(Water.Source.LAKE, 1));
         }
-        check(helper, body.has(Condition.GUT_INFECTION), "64 drinks of lake water never infected");
+        check(helper, Afflictions.incubating(body) && !body.has(Condition.GUT_INFECTION), "64 litres of lake water carried no infection, or it showed at once");
+        Afflictions.advance(player, body, Balance.get().conditions().gutOnsetDays(), 0);
+        check(helper, body.has(Condition.GUT_INFECTION) && !Afflictions.incubating(body), "the infection did not show a day after the drink");
+        Balance.Conditions rules = Balance.get().conditions();
+        check(helper, Math.abs(Metabolism.infection(Water.drawn(Water.Source.LAKE, 1), 1) - rules.gutLakeChance()) < 1e-9
+                && Math.abs(Metabolism.infection(Water.drawn(Water.Source.STREAM, 1), 1) - rules.gutStreamChance()) < 1e-9, "a litre's chance is not the rule's");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void boiledWaterNeverMixesWithUnboiled(GameTestHelper helper) {
+        Water boiled = Water.boiled(0.5F);
+        Water lake = Water.drawn(Water.Source.LAKE, 1);
+        Water stream = Water.drawn(Water.Source.STREAM, 1);
+        check(helper, !boiled.takes(lake) && !boiled.takes(stream), "a bottle of boiled water took unboiled water");
+        check(helper, lake.takes(boiled) && Water.EMPTY.takes(lake), "lake water or an empty bottle refused water");
+        check(helper, stream.take(0.5F).add(lake, 0.5F, 1).source() == Water.Source.LAKE, "stream and lake water mixed were not lake water");
+        check(helper, stream.take(0.5F).add(boiled, 0.5F, 1).source() == Water.Source.STREAM, "boiled water turned stream water into lake water");
         helper.succeed();
     }
 
@@ -195,11 +214,12 @@ public final class BackcountryTests {
         if (!(helper.getLevel().getBlockEntity(at) instanceof CampPotEntity pot)) {
             throw new IllegalStateException("the camp pot has no block entity");
         }
-        pot.hold(Water.of(false, 2));
+        pot.hold(Water.drawn(Water.Source.LAKE, 2));
         for (int tick = 0; tick < Balance.get().water().boilSeconds() * 20; tick++) {
             CampPotEntity.tick(helper.getLevel(), at, helper.getLevel().getBlockState(at), pot);
         }
         check(helper, pot.water().boiled(), "the pot's water did not boil");
+        check(helper, helper.getLevel().getBlockState(at).getValue(CampPotBlock.CONTENT) == CampPotBlock.Content.BOILING, "the boiled pot does not show its boil");
         ItemStack bottle = new ItemStack(Things.WATER_BOTTLE.get());
         ServerPlayer player = survivor(helper);
         player.setItemInHand(InteractionHand.MAIN_HAND, bottle);

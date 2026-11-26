@@ -7,10 +7,11 @@ import net.minecraft.network.codec.StreamCodec;
 
 public record BodyView(float energy, float water, float waterL, float needL, List<Condition> conditions, float weightKg, float coreC, int comfort, int trend, float wetness,
         float awakeHours, float kcalEaten, float kcalBurned, float protein, float carbs, float fat, float stomach, float loadKg, float capacityKg, int day, int blackout,
-        boolean fire, boolean sheltered, boolean windy, float clo, List<Alert> alerts, boolean unread, int ration, float storesDays, List<Float> burned, List<Integer> skills) {
-    public static final BodyView NONE = new BodyView(1, 1, 0, 0, List.of(), 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, 0, List.of(), false, 1, 0, List.of(), List.of(1, 1, 1, 1));
+        boolean fire, boolean sheltered, boolean windy, float clo, List<Alert> alerts, boolean unread, int ration, float storesDays, List<Float> burned, float metresToday,
+        List<Integer> skills) {
+    public static final BodyView NONE = new BodyView(1, 1, 0, 0, List.of(), 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false, 0, List.of(), false, 1, 0, List.of(), 0, List.of(1, 1, 1, 1));
     public static final StreamCodec<RegistryFriendlyByteBuf, BodyView> STREAM_CODEC = StreamCodec.of(BodyView::write, BodyView::read);
-    private static final int FLOATS = 17;
+    private static final int FLOATS = 18;
 
     public float bmi(double heightM) {
         return (float) (weightKg / (heightM * heightM));
@@ -18,7 +19,7 @@ public record BodyView(float energy, float water, float waterL, float needL, Lis
 
     private static void write(RegistryFriendlyByteBuf buffer, BodyView view) {
         for (float number : new float[] {view.energy, view.water, view.waterL, view.needL, view.weightKg, view.coreC, view.wetness, view.awakeHours, view.kcalEaten,
-                view.kcalBurned, view.protein, view.carbs, view.fat, view.stomach, view.loadKg, view.capacityKg, view.clo}) {
+                view.kcalBurned, view.protein, view.carbs, view.fat, view.stomach, view.loadKg, view.capacityKg, view.clo, view.metresToday}) {
             buffer.writeFloat(number);
         }
         buffer.writeVarInt(view.conditions.size());
@@ -77,6 +78,6 @@ public record BodyView(float energy, float water, float waterL, float needL, Lis
             skills.add(buffer.readVarInt());
         }
         return new BodyView(n[0], n[1], n[2], n[3], List.copyOf(conditions), n[4], n[5], comfort, trend, n[6], n[7], n[8], n[9], n[10], n[11], n[12], n[13], n[14], n[15],
-                day, blackout, fire, sheltered, windy, n[16], List.copyOf(alerts), unread, ration, storesDays, List.copyOf(burned), List.copyOf(skills));
+                day, blackout, fire, sheltered, windy, n[16], List.copyOf(alerts), unread, ration, storesDays, List.copyOf(burned), n[17], List.copyOf(skills));
     }
 }

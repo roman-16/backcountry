@@ -118,43 +118,7 @@ def blocks():
         },
     )
     write_json(ASSETS / "models/item/supply_crate.json", {"parent": "backcountry:block/supply_crate"})
-    write_json(
-        ASSETS / "models/block/camp_pot.json",
-        {
-            "parent": "minecraft:block/block",
-            "textures": {
-                "inside": "minecraft:block/cauldron_inner",
-                "particle": "minecraft:block/cauldron_side",
-                "side": "minecraft:block/cauldron_side",
-                "top": "minecraft:block/cauldron_top",
-            },
-            "elements": [
-                {
-                    "from": [4, 0, 4],
-                    "to": [12, 6, 12],
-                    "faces": {
-                        "down": {"texture": "#inside"},
-                        "east": {"texture": "#side"},
-                        "north": {"texture": "#side"},
-                        "south": {"texture": "#side"},
-                        "up": {"texture": "#top"},
-                        "west": {"texture": "#side"},
-                    },
-                },
-                {
-                    "from": [7.5, 6, 4],
-                    "to": [8.5, 9, 12],
-                    "faces": {
-                        "east": {"texture": "#side"},
-                        "north": {"texture": "#side"},
-                        "south": {"texture": "#side"},
-                        "up": {"texture": "#side"},
-                        "west": {"texture": "#side"},
-                    },
-                },
-            ],
-        },
-    )
+    camp_pot()
     write_json(
         ASSETS / "models/block/left_pack.json",
         {
@@ -195,8 +159,104 @@ def blocks():
             }
         },
     )
-    for name in ("camp_pot", "left_pack", "supply_crate"):
+    for name in ("left_pack", "supply_crate"):
         write_json(ASSETS / f"blockstates/{name}.json", {"variants": {"": {"model": f"backcountry:block/{name}"}}})
+    write_json(
+        OUT / "assets/fowlplay/blockstates/bird_feeder.json", {"variants": {"": {"model": "minecraft:block/air"}}}
+    )
+    write_json(OUT / "assets/fowlplay/models/item/bird_feeder.json", {"parent": "minecraft:item/barrier"})
+
+
+def pot_faces(outer, inner, top):
+    return {
+        "down": {"texture": "#pot", "uv": [0, 5, 8, 6]},
+        "up": {"texture": "#pot", "uv": top},
+        **{face: {"texture": "#pot", "uv": uv} for face, uv in (*outer, *inner)},
+    }
+
+
+def camp_pot():
+    outer = [0, 0, 8, 6]
+    inner = [8, 0, 16, 6]
+    end = [0, 0, 1, 6]
+    walls = [
+        {
+            "from": [4, 0, 4],
+            "to": [12, 6, 5],
+            "faces": pot_faces([("north", outer), ("east", end), ("west", end)], [("south", inner)], [0, 0, 8, 1]),
+        },
+        {
+            "from": [4, 0, 11],
+            "to": [12, 6, 12],
+            "faces": pot_faces([("south", outer), ("east", end), ("west", end)], [("north", inner)], [0, 0, 8, 1]),
+        },
+        {
+            "from": [4, 0, 5],
+            "to": [5, 6, 11],
+            "faces": pot_faces([("west", [1, 0, 7, 6])], [("east", [9, 0, 15, 6])], [1, 0, 7, 1]),
+        },
+        {
+            "from": [11, 0, 5],
+            "to": [12, 6, 11],
+            "faces": pot_faces([("east", [1, 0, 7, 6])], [("west", [9, 0, 15, 6])], [1, 0, 7, 1]),
+        },
+        {
+            "from": [5, 0, 5],
+            "to": [11, 1, 11],
+            "faces": {"down": {"texture": "#pot", "uv": [0, 8, 6, 14]}, "up": {"texture": "#pot", "uv": [0, 8, 6, 14]}},
+        },
+    ]
+    rod = ("down", "east", "north", "south", "up", "west")
+    bail = [
+        {"from": start, "to": stop, "faces": {face: {"texture": "#pot", "uv": uv} for face in rod}}
+        for start, stop, uv in (
+            ([3.5, 4, 7.75], [4, 9, 8.25], [8, 8, 9, 13]),
+            ([12, 4, 7.75], [12.5, 9, 8.25], [8, 8, 9, 13]),
+            ([3.5, 9, 7.75], [12.5, 9.5, 8.25], [0, 0, 8, 1]),
+            ([7.75, 9.5, 7.75], [8.25, 10, 8.25], [8, 8, 9, 9]),
+        )
+    ]
+    crane = [
+        {"from": start, "to": stop, "faces": {face: {"texture": "#stake", "uv": uv} for face in rod}}
+        for start, stop, uv in (
+            ([7, -16, -1.5], [9, 0, 0], [7, 0, 9, 16]),
+            ([7, 0, -1.5], [9, 11, 0], [7, 5, 9, 16]),
+            ([7, -16, 16], [9, 0, 17.5], [7, 0, 9, 16]),
+            ([7, 0, 16], [9, 11, 17.5], [7, 5, 9, 16]),
+            ([7.25, 10, -1.5], [8.75, 11.5, 8], [0, 7, 9.5, 8.5]),
+            ([7.25, 10, 8], [8.75, 11.5, 17.5], [6.5, 7, 16, 8.5]),
+        )
+    ]
+    water = {
+        "from": [5, 5, 5],
+        "to": [11, 5, 11],
+        "faces": {"up": {"texture": "#water", "uv": [5, 5, 11, 11], "tintindex": 0}},
+    }
+    textures = {
+        "particle": "backcountry:block/camp_pot",
+        "pot": "backcountry:block/camp_pot",
+        "stake": "minecraft:block/stripped_spruce_log",
+        "water": "minecraft:block/water_still",
+    }
+    for name, elements in (("camp_pot_empty", walls + bail + crane), ("camp_pot", walls + bail + crane + [water])):
+        write_json(
+            ASSETS / f"models/block/{name}.json",
+            {
+                "ambientocclusion": False,
+                "render_type": "minecraft:translucent",
+                "textures": textures,
+                "elements": elements,
+            },
+        )
+    write_json(
+        ASSETS / "blockstates/camp_pot.json",
+        {
+            "variants": {
+                f"content={content}": {"model": "backcountry:block/camp_pot" + ("_empty" if content == "empty" else "")}
+                for content in ("boiling", "empty", "heating", "water")
+            }
+        },
+    )
 
 
 def campfire(jar):

@@ -10,6 +10,7 @@ import java.util.Locale;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -58,10 +59,11 @@ public class WaterVesselItem extends Item {
                 }
                 return InteractionResultHolder.fail(stack);
             }
-            if (aimedAtWater && !salt && water(stack).litres() < capacity) {
-                stack.set(Things.WATER.get(), water(stack).add(Water.of(false, capacity()), capacity(), capacity()));
-                if (player instanceof ServerPlayer server) {
-                    Guide.did(server, stack.is(Things.CAMP_POT.get()) ? Deed.FILLED_POT : Deed.FILLED_BOTTLE);
+            Water drawn = Water.drawn(Water.Source.at(level, at), capacity());
+            if (aimedAtWater && !salt && water(stack).litres() < capacity && water(stack).takes(drawn)) {
+                stack.set(Things.WATER.get(), water(stack).add(drawn, capacity(), capacity()));
+                if (player instanceof ServerPlayer server && stack.is(Things.CAMP_POT.get())) {
+                    Guide.did(server, Deed.FILLED_POT);
                 }
                 level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.NEUTRAL, 1.0F, 1.0F);
                 return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
@@ -103,13 +105,23 @@ public class WaterVesselItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> lines, TooltipFlag flag) {
-        Water held = water(stack);
+        lines.add(describe(water(stack)).withStyle(ChatFormatting.GRAY));
+    }
+
+    public static MutableComponent describe(Water held) {
+        if (held.empty()) {
+            return Component.translatable("tooltip.backcountry.empty");
+        }
         String kind = switch (held.drink()) {
             case SPRUCE_TEA -> "tooltip.backcountry.spruce_tea";
             case BIRCH_SAP -> held.boiled() ? "tooltip.backcountry.boiled_sap" : "tooltip.backcountry.birch_sap";
-            case WATER -> held.boiled() ? "tooltip.backcountry.boiled_water" : "tooltip.backcountry.lake_water";
+            case WATER -> held.boiled() ? "tooltip.backcountry.boiled_water"
+                    : held.source() == Water.Source.STREAM ? "tooltip.backcountry.stream_water" : "tooltip.backcountry.lake_water";
         };
-        lines.add((held.empty() ? Component.translatable("tooltip.backcountry.empty")
-                : Component.translatable(kind, String.format(Locale.ROOT, "%.2f", held.litres()))).withStyle(ChatFormatting.GRAY));
+        return Component.translatable(kind, litres(held));
+    }
+
+    public static String litres(Water held) {
+        return String.format(Locale.ROOT, "%.2f", held.litres());
     }
 }

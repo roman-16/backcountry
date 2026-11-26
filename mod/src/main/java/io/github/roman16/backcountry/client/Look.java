@@ -54,6 +54,7 @@ public final class Look {
     static final int TRACKED = 0xFFFFE080;
     static final int TRACK = 0xFF1E1E1E;
     static final int VIEW_DARK = 0xFF000000;
+    static final int WATER = 0x3F76E4;
 
     private Look() {}
 }
