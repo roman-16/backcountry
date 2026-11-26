@@ -55,8 +55,7 @@ def quoted(value):
     return '"' + str(value).replace("\\", "\\\\").replace('"', '\\"') + '"'
 
 
-def instance(icon, version, versions, gigabytes):
-    major = version.split(".")[0]
+def instance(icon, versions, gigabytes):
     settings = {
         "ConfigVersion": "1.2",
         "InstanceType": "OneSix",
@@ -64,9 +63,9 @@ def instance(icon, version, versions, gigabytes):
         "MinMemAlloc": LEAST_MEGABYTES,
         "OverrideCommands": "true",
         "OverrideMemory": "true",
-        "PreLaunchCommand": f'"$INST_JAVA" -jar packwiz-installer-bootstrap.jar {SITE}/{major}/pack.toml',
+        "PreLaunchCommand": f'"$INST_JAVA" -jar packwiz-installer-bootstrap.jar {SITE}/pack.toml',
         "iconKey": ICON,
-        "name": f"Backcountry {major}",
+        "name": "Backcountry",
     }
     components = {
         "components": [
@@ -79,7 +78,7 @@ def instance(icon, version, versions, gigabytes):
         ],
         "formatVersion": 1,
     }
-    with zipfile.ZipFile(DIST / f"Backcountry-{major}.zip", "w", zipfile.ZIP_DEFLATED) as archive:
+    with zipfile.ZipFile(DIST / "Backcountry.zip", "w", zipfile.ZIP_DEFLATED) as archive:
         archive.writestr(
             "instance.cfg",
             "[General]\n" + "".join(f"{key}={quoted(value)}\n" for key, value in settings.items()),
@@ -101,7 +100,7 @@ def main():
     DIST.mkdir(parents=True, exist_ok=True)
     hosted(arguments.jar, version)
     gigabytes = tomllib.loads((ROOT / "balance.toml").read_text())["heap"]["gigabytes"]
-    instance(arguments.icon, version, pack["versions"], gigabytes)
+    instance(arguments.icon, pack["versions"], gigabytes)
 
 
 main()

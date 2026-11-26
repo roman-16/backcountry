@@ -14,13 +14,13 @@ $ direnv allow
 
 ## Play
 
-In Prism Launcher: **Add Instance → Import**, and give it the address of the major version's instance:
+In Prism Launcher: **Add Instance → Import**, and give it this address:
 
 ```text
-https://roman-16.github.io/backcountry/1/Backcountry.zip
+https://roman-16.github.io/backcountry/Backcountry.zip
 ```
 
-Before every launch the instance fetches what changed in the newest 1.x version.
+Before every launch the instance fetches what changed in the newest version.
 
 To release a version, give it its dated section in `CHANGELOG.md` (`## [1.2.3] - 2026-11-19`) and push it to main: the Release workflow lints it, builds it and makes it the GitHub release of its version, which GitHub Pages serves. `just pack` builds the same into `dist/` locally.
 

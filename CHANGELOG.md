@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-11-26
+
+### Highlights
+
+- **One address to import** - Import `https://roman-16.github.io/backcountry/Backcountry.zip` in Prism once more; from then on the instance follows every release by itself.
+
+### Changed
+
+- Prism imports the pack from `https://roman-16.github.io/backcountry/Backcountry.zip`, and the instance follows every release, majors included. An instance imported from `/1/` or `/2/` no longer updates: import the new address once.
+
 ## [2.0.0] - 2026-11-26
 
 ### Highlights
