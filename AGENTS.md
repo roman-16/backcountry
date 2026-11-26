@@ -78,6 +78,7 @@ Dev runs have `/backcountry body <field> <value>` (core, energy, stomach, water,
 
 - packwiz marks a mod for both sides unless Modrinth says otherwise; set `side = "client"` in its `.pw.toml` when the server never needs it, so the server pack stays lean.
 - PandaLib is pinned at 0.6.0: Panda's Falling Trees 0.14.0 crashes at load with PandaLib 0.6.2.
+- NeoForge (`pack/pack.toml`, `mod/gradle.properties`) stays at the newest version Prism's metadata lists (`https://meta.prismlauncher.org/v1/net.neoforged/index.json`), even when a newer one is out: a Prism instance cannot launch on a NeoForge that list lacks.
 - A mod's starting item, chat greeting or pop-up is switched off, in its config where it has one, else by a mixin (`DailyOrderMixin`, `ToastComponentMixin`): the arrival kit is the design's alone (`design/systems.md` S10) and the screen tells only what the pack tells. Advancements are not announced in chat (`announceAdvancements` off in every new world).
 - A mod that reads vanilla's state where the pack has its own is hooked to the pack's or switched off: Subtle Effects' breath follows the mod's air and its growl the body's stomach, and its fireflies and Particular's stay off, since Alaska has none.
 - LambDynamicLights lights what is held and worn with the shader on too, and the shader's own held light is off (`generator/shader.toml`), since the Headlamp is worn and the shader lights only the hand.
