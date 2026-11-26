@@ -28,7 +28,7 @@
       "cuts": [
         {
           "item": "minecraft:beef",
-          "count": 12
+          "count": 48
         },
         {
           "item": "backcountry:heart"
@@ -55,7 +55,8 @@
           "item": "minecraft:bone",
           "count": 2
         }
-      ]
+      ],
+      "track": "bear"
     },
     "alexsmobs:moose": {
       "habitat": "#minecraft:is_taiga",
@@ -104,7 +105,9 @@
         {
           "item": "backcountry:moose_head"
         }
-      ]
+      ],
+      "track": "moose",
+      "scents": true
     },
     "alexsmobs:orca": {
       "habitat": "#minecraft:is_ocean",
@@ -126,7 +129,7 @@
       "cuts": [
         {
           "item": "cnc:raw_game",
-          "count": 6
+          "count": 23
         },
         {
           "item": "backcountry:animal_fat",
@@ -207,7 +210,7 @@
       "cuts": [
         {
           "item": "cnc:raw_game",
-          "count": 3
+          "count": 5
         },
         {
           "item": "backcountry:beaver_tail"
@@ -235,7 +238,7 @@
       "cuts": [
         {
           "item": "minecraft:beef",
-          "count": 6
+          "count": 19
         },
         {
           "item": "backcountry:heart"
@@ -262,7 +265,8 @@
           "item": "minecraft:bone",
           "count": 2
         }
-      ]
+      ],
+      "track": "bear"
     },
     "cnc:caribou": {
       "habitat": "#c:is_snowy",
@@ -277,7 +281,7 @@
       "cuts": [
         {
           "item": "cnc:raw_venison",
-          "count": 8
+          "count": 19
         },
         {
           "item": "backcountry:heart"
@@ -307,7 +311,9 @@
         {
           "item": "backcountry:tongue"
         }
-      ]
+      ],
+      "track": "caribou",
+      "scents": true
     },
     "cnc:timber_wolf": {
       "habitat": "#minecraft:is_taiga",
@@ -322,7 +328,7 @@
       "cuts": [
         {
           "item": "cnc:raw_game",
-          "count": 3
+          "count": 12
         },
         {
           "item": "backcountry:heart"
@@ -336,7 +342,8 @@
         {
           "item": "minecraft:bone"
         }
-      ]
+      ],
+      "track": "wolf"
     },
     "cnc:wolverine": {
       "habitat": "#minecraft:is_taiga",
@@ -346,12 +353,14 @@
       "scavenger": true,
       "cuts": [
         {
-          "item": "cnc:raw_game"
+          "item": "cnc:raw_game",
+          "count": 5
         },
         {
           "item": "backcountry:pelt"
         }
-      ]
+      ],
+      "track": "wolverine"
     },
     "fowlplay:chickadee": {
       "habitat": "#minecraft:is_taiga",
@@ -465,7 +474,8 @@
         {
           "item": "minecraft:rabbit_hide"
         }
-      ]
+      ],
+      "track": "hare"
     },
     "wildernature:squirrel": {
       "habitat": "#minecraft:is_taiga",

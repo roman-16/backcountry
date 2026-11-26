@@ -3,19 +3,20 @@ package io.github.roman16.backcountry;
 import com.mojang.authlib.GameProfile;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
+import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
+import io.github.roman16.backcountry.body.Afflictions;
 import io.github.roman16.backcountry.body.Alerts;
-import io.github.roman16.backcountry.food.Fish;
 import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Burn;
 import io.github.roman16.backcountry.body.Calendar;
+import io.github.roman16.backcountry.body.Climate;
+import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.body.Exertion;
 import io.github.roman16.backcountry.body.Load;
-import io.github.roman16.backcountry.body.Climate;
-import io.github.roman16.backcountry.body.Afflictions;
-import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Nutrition;
 import io.github.roman16.backcountry.body.Warmth;
+import io.github.roman16.backcountry.food.Fish;
 import io.github.roman16.backcountry.gear.Bulk;
 import io.github.roman16.backcountry.gear.CampPotBlock;
 import io.github.roman16.backcountry.gear.CampPotEntity;
@@ -33,48 +34,49 @@ import io.github.roman16.backcountry.weather.Day;
 import io.github.roman16.backcountry.weather.Kind;
 import io.github.roman16.backcountry.weather.Sky;
 import io.github.roman16.backcountry.weather.Weather;
-import com.teamtea.eclipticseasons.common.core.biome.WeatherManager;
 import java.time.LocalDate;
-import net.minecraft.commands.CommandSource;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.Difficulty;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.monster.Zombie;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.neoforged.neoforge.event.EventHooks;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.animal.horse.SkeletonHorse;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
-import net.minecraft.world.phys.Vec2;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.animal.horse.SkeletonHorse;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.core.Direction;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
+import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -85,6 +87,7 @@ public final class BackcountryTests {
     private static final long HOUR = 1000;
     private static final double KG = 0.01;
     private static final int HOURS_A_DAY = 24;
+    private static final int FIRST_HOTBAR_SLOT = 36;
 
     private BackcountryTests() {}
 
@@ -256,7 +259,7 @@ public final class BackcountryTests {
         for (int hour = 0; hour < 4; hour++) {
             Warmth.core(body, 1);
         }
-        check(helper, body.coreC < Balance.get().conditions().frostCoreC(), "four hours at -20 °C left the core at " + body.coreC);
+        check(helper, body.coreC < Balance.get().conditions().hypothermiaCoreC(), "four hours at -20 °C left the core at " + body.coreC);
         helper.succeed();
     }
 
@@ -294,6 +297,26 @@ public final class BackcountryTests {
         row.set(new ItemStack(Items.FLINT, 3));
         ItemStack pack = Metabolism.body(player).pack.copy();
         check(helper, Hotbar.contents(pack).get(0).is(Items.FLINT), "the pack's row did not keep its item in the pack");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void thePackKeepsWhatJoinsItAndLetsGoOfWhatIsThrown(GameTestHelper helper) {
+        ServerPlayer player = survivor(helper);
+        player.getInventory().clearContent();
+        Body body = Metabolism.body(player);
+        body.pack = new ItemStack(Things.CANVAS_PACK.get());
+        Slot row = player.inventoryMenu.getSlot(Hotbar.ROW);
+        row.set(new ItemStack(Items.IRON_INGOT, 4));
+        player.getInventory().setItem(0, new ItemStack(Items.IRON_INGOT, 4));
+        player.inventoryMenu.quickMoveStack(player, FIRST_HOTBAR_SLOT);
+        int packed = Hotbar.contents(body.pack).get(0).getCount();
+        check(helper, packed == 8 && player.getInventory().getItem(0).isEmpty(), "shifting 4 ingots onto 4 in the pack left " + packed + " in it");
+        player.inventoryMenu.clicked(Hotbar.ROW, 0, ClickType.THROW, player);
+        List<ItemEntity> thrown = helper.getLevel().getEntitiesOfClass(ItemEntity.class, player.getBoundingBox().inflate(2), item -> item.getItem().is(Items.IRON_INGOT));
+        check(helper, thrown.size() == 1 && Hotbar.contents(body.pack).get(0).getCount() == 7, "throwing from the pack dropped " + thrown.size() + " stacks");
+        thrown.getFirst().playerTouch(player);
+        check(helper, !thrown.getFirst().getItem().isEmpty() && Hotbar.contents(body.pack).get(0).getCount() == 7, "the thrown ingot went straight back into the pack");
         helper.succeed();
     }
 

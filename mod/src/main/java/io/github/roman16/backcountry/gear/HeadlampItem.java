@@ -53,11 +53,19 @@ public final class HeadlampItem extends ArmorItem {
         return Math.max(1, (int) Math.round(lamp.light() * share));
     }
 
+    public static boolean dark(Level level, BlockPos head) {
+        return level.getMaxLocalRawBrightness(head) < Balance.get().headlamp().darkBelow();
+    }
+
     public static void shine(ServerPlayer player, ItemStack stack, long ticks) {
-        double charge = Math.max(0, charge(stack) - ticks / TICKS_AN_HOUR);
-        stack.set(Things.CHARGE.get(), (float) charge);
         BlockPos head = BlockPos.containing(player.getEyePosition());
-        int light = light(charge, Climate.airC(player.level(), head, Calendar.day(player.level())));
+        shine(stack, ticks, dark(player.level(), head), Climate.airC(player.level(), head, Calendar.day(player.level())));
+    }
+
+    public static void shine(ItemStack stack, long ticks, boolean dark, double airC) {
+        double charge = dark ? Math.max(0, charge(stack) - ticks / TICKS_AN_HOUR) : charge(stack);
+        stack.set(Things.CHARGE.get(), (float) charge);
+        int light = dark ? light(charge, airC) : 0;
         if (stack.getOrDefault(Things.LIGHT.get(), 0) != light) {
             stack.set(Things.LIGHT.get(), light);
         }

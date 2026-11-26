@@ -21,7 +21,7 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
         Conditions conditions, Cooking cooking, Director director, DropOff dropOff, Effort effort, Energy energy, Farming farming, Fire fire, Firewood firewood, Fish fish, Forage forage,
         Graphics graphics, Headlamp headlamp, Healing healing, Map<String, Double> heat, Hunting hunting, Ice ice, Map<String, Double> insulation, Kit kit, Lights lights, Load load, Locator locator, Map<String, Double> met, Mice mice,
         Mining mining, Mosquitoes mosquitoes, PlantFibre plantFibre, Raft raft, Rations rations, Seasons seasons, Skills skills, Sky sky, Sled sled, Smoker smoker, Snow snow, Spoilage spoilage,
-        Survivor survivor, Tasks tasks, Traps traps, Warmth warmth, Walking walking, Water water, Weather weather, World world, Year year) {
+        Survivor survivor, Tasks tasks, Tracking tracking, Traps traps, Warmth warmth, Walking walking, Water water, Weather weather, World world, Year year) {
     private static final Pattern WORD_START = Pattern.compile("([A-Z])");
     private static final Balance LOADED = read();
 
@@ -55,8 +55,8 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
             int seaLevel) {}
 
     public record Conditions(double bareSkinC, double blistersWetBlocks, double blistersWetness, double burnsDays, double dryWetness, double exhaustedAwakeDays,
-            double exhaustedEnergy, double feverBurn, double frostCoreC, double frostStageHours, double gutAbsorb, double gutDays, double gutLakeChance, double gutOnsetDays, double gutStreamChance, double gutWater,
-            double infectionChance, double infectionDays, double parasitesAbsorb, double parasitesChance, double poisoningDays, double scurvyBurn, double vomitL) {}
+            double exhaustedEnergy, double feverBurn, double frostStageHours, double gutAbsorb, double gutDays, double gutLakeChance, double gutOnsetDays, double gutStreamChance, double gutWater,
+            double hypothermiaCoreC, double infectionChance, double infectionDays, double parasitesAbsorb, double parasitesChance, double poisoningDays, double scurvyBurn, double severeHypothermiaCoreC, double vomitL) {}
 
     public record Cooking(double potL, double servingL, double stewHours) {}
 
@@ -78,8 +78,8 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
 
     public record Firewood(double catches, double dryPerDay, double freshHardwood, double freshSoftwood, double frozenDrying, int pilePieces) {}
 
-    public record Fish(double cookedDays, double fatGPerKg, double frozenC, double frozenDays, double kcalPerKg, double proteinGPerKg, double rawDays,
-            List<Double> spawnedOutMonths, double vitaminCMgPerKg) {}
+    public record Fish(double cookedDays, double cookedWaterLPerKg, double fatGPerKg, double frozenC, double frozenDays, double kcalPerKg, double proteinGPerKg, double rawDays,
+            double rawWaterLPerKg, List<Double> spawnedOutMonths, double vitaminCMgPerKg) {}
 
     public record Forage(int needlesALeaf, double sapChance, double sapKcalPerL, double sapLPerStep, List<Double> sapMonths, double syrupL, int syrupSeconds,
             double teaVitaminCMgPerL) {}
@@ -87,12 +87,12 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
     public record Graphics(List<Integer> farViewChunks, List<String> farViewDetail, List<String> farViewThreads, List<String> heldLight, List<String> profiles,
             List<Integer> renderChunks, List<Integer> simulationChunks) {}
 
-    public record Headlamp(double chargeHours, double crankHoursPerSecond, double dimFromC, double dimmestC, double dimmestShare, int light) {}
+    public record Headlamp(double chargeHours, double crankHoursPerSecond, int darkBelow, double dimFromC, double dimmestC, double dimmestShare, int light) {}
 
     public record Healing(double above, double asleepFactor, double hoursPerHeart, double scurvyFactor) {}
 
     public record Hunting(double bleedHours, double bloodChance, double bloodDays, double carryKg, double dressClicksPerKg, double heavyPower,
-            double organKg, double strongBmi, double strongEnergy, double woundShare) {}
+            double organKg, double scavengedDays, double strongBmi, double strongEnergy, int wolfKeepOffBlocks, double woundShare) {}
 
     public record Ice(double freezeBelowC, double thawAboveC) {}
 
@@ -107,7 +107,7 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
 
     public record Mice(double chance, double kcal) {}
 
-    public record Mining(int openBlocks, double speed) {}
+    public record Mining(double speed) {}
 
     public record Mosquitoes(double calmKmh, double energyPerHour, int firstHour, int lastHour, List<Double> months, double sleepShare, int waterBlocks) {}
 
@@ -133,9 +133,12 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
 
     public record Survivor(int quietSeconds) {}
 
-    public record Tasks(double dryFirewood, double foodDays) {}
+    public record Tasks(int cacheFromCampBlocks, double dryFirewood, double foodDays) {}
 
-    public record Traps(double baitShare, double fishPerDay, double fishShare, int miceBlocks, double share) {}
+    public record Tracking(List<Double> ageHours, double backTrailBlocks, double backTrailHours, double calmKmh, double calmScentBlocks, double droppingsBlocks, double fleeBlocks,
+            double printBlocks, double rainFade, double readHours, double scentBlocks, double scentDegrees, double signDays, double stalkBlocks) {}
+
+    public record Traps(double baitShare, double fishPerDay, double fishShare, int miceBlocks, int runBlocks, double runShare, double share) {}
 
     public record Warmth(double baseClo, double coldShare, double comfortC, double comfortSpanC, double coolingShare, double coreC, double coreCPerHour, double dryPerHour,
             double fireDryPerHour, int heatReachBlocks, double rainWetPerHour, int roofBlocks, double shelterC, double shelterDryPerHour, double shiverCoreC,

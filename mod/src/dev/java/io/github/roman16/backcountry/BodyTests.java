@@ -1,14 +1,19 @@
 package io.github.roman16.backcountry;
 
+import io.github.roman16.backcountry.body.Afflictions;
 import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Burn;
 import io.github.roman16.backcountry.body.Calendar;
+import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.body.Exertion;
 import io.github.roman16.backcountry.body.Metabolism;
+import io.github.roman16.backcountry.body.Nutrition;
 import io.github.roman16.backcountry.body.Skill;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -32,6 +37,9 @@ public final class BodyTests {
     private static final double UPHILL_BLOCKS_A_STRIDE = 0.1;
     private static final double CARRIED_KG = 20;
     private static final double EATEN = 1024;
+    private static final int HOURS_A_DAY = 24;
+    private static final double HALF_LITRE = 0.5;
+    private static final double SIP = 0.01;
 
     private BodyTests() {}
 
@@ -115,6 +123,38 @@ public final class BodyTests {
         int day = Calendar.day(helper.getLevel());
         body.reset(day, Calendar.year(day));
         check(helper, Skill.WOODCUTTING.level(body) == 1, "a new survivor chops at Woodcutting " + Skill.WOODCUTTING.level(body));
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aColdCoreIsHypothermiaNotFrostbite(GameTestHelper helper) {
+        ServerPlayer player = BackcountryTests.survivor(helper);
+        player.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Things.HIDE_HAT.get()));
+        Body body = Metabolism.body(player);
+        Balance.Conditions rules = Balance.get().conditions();
+        body.coreC = rules.hypothermiaCoreC() - 1;
+        Afflictions.advance(player, body, 1.0 / HOURS_A_DAY, 1);
+        check(helper, body.has(Condition.HYPOTHERMIA) && !body.has(Condition.FROSTNIP), "a cold core gave " + body.conditions.keySet());
+        body.coreC = rules.severeHypothermiaCoreC() - 1;
+        Afflictions.advance(player, body, 1.0 / HOURS_A_DAY, 1);
+        check(helper, body.has(Condition.SEVERE_HYPOTHERMIA) && !body.has(Condition.HYPOTHERMIA), "a core below 32 °C gave " + body.conditions.keySet());
+        body.coreC = rules.hypothermiaCoreC() + 1;
+        Afflictions.advance(player, body, 1.0 / HOURS_A_DAY, 1);
+        check(helper, !body.has(Condition.SEVERE_HYPOTHERMIA) && !body.has(Condition.HYPOTHERMIA), "a warm core kept " + body.conditions.keySet());
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void foodGivesItsWater(GameTestHelper helper) {
+        ServerPlayer player = BackcountryTests.survivor(helper);
+        Body body = Metabolism.body(player);
+        body.waterL = 0;
+        ItemStack ribs = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse("alexsmobs:cooked_moose_ribs")));
+        double water = Nutrition.of(ribs).map(Nutrition::water).orElse(0.0);
+        check(helper, water > HALF_LITRE, "cooked moose ribs hold " + water + " L of water");
+        Metabolism.eat(player, ribs);
+        check(helper, Math.abs(body.waterL - water) < SIP, "eating cooked moose ribs gave " + body.waterL + " L, not " + water);
+        check(helper, Metabolism.tooFull(Balance.get().body().stomachKcal(), ribs), "a full stomach took more food");
         helper.succeed();
     }
 }

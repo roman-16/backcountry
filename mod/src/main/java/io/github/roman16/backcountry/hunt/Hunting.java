@@ -191,7 +191,7 @@ public final class Hunting {
         }
         BlockState carcass = Things.CARCASS.get().defaultBlockState();
         if (level.getBlockState(at).canBeReplaced() && level.setBlockAndUpdate(at, carcass) && level.getBlockEntity(at) instanceof CarcassEntity entity) {
-            entity.hold(dead.getType(), dead.getData(Things.WOUND).arrows());
+            entity.hold(dead.getType(), dead.getData(Things.WOUND).arrows(), 0);
         }
     }
 }

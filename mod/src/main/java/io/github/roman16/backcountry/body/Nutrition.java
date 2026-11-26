@@ -17,7 +17,7 @@ public record Nutrition(double kcal, double fat, double protein, double carbs, d
             Codec.BOOL.optionalFieldOf("raw", false).forGetter(Nutrition::raw),
             Codec.DOUBLE.optionalFieldOf("poisoning", 0.0).forGetter(Nutrition::poisoning),
             Codec.DOUBLE.optionalFieldOf("days").forGetter(Nutrition::days),
-            Codec.DOUBLE.optionalFieldOf("water", 0.0).forGetter(Nutrition::water))
+            Codec.DOUBLE.fieldOf("water").forGetter(Nutrition::water))
             .apply(instance, Nutrition::new));
 
     public static Optional<Nutrition> of(ItemStack stack) {

@@ -10,8 +10,11 @@ import io.github.roman16.backcountry.fire.FireBlock;
 import io.github.roman16.backcountry.fire.FireMenu;
 import io.github.roman16.backcountry.fire.FirewoodItem;
 import io.github.roman16.backcountry.fire.Lighting;
+import io.github.roman16.backcountry.fire.WoodpileBlock;
 import io.github.roman16.backcountry.fire.WoodpileEntity;
+import io.github.roman16.backcountry.gear.CampPotEntity;
 import io.github.roman16.backcountry.gear.HeadlampItem;
+import io.github.roman16.backcountry.gear.Water;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -43,6 +46,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 public final class FireTests {
     private static final double CLOSE = 1e-6;
     private static final double MOMENT = 0.01;
+    private static final int COOK_TICKS = 600;
+    private static final int NIGHT_TICKS = 8000;
 
     private FireTests() {}
 
@@ -323,10 +328,74 @@ public final class FireTests {
         check(helper, HeadlampItem.light(lamp.chargeHours(), 0) == lamp.light(), "a charged lamp did not shine fully");
         check(helper, HeadlampItem.light(lamp.chargeHours(), lamp.dimmestC()) < lamp.light() / 2, "the lamp did not dim in extreme cold");
         check(helper, HeadlampItem.light(0, 0) == 0, "an empty lamp shone");
+        ItemStack dark = new ItemStack(Things.HEADLAMP.get());
+        HeadlampItem.shine(dark, 1000, true, 0);
+        check(helper, Math.abs(HeadlampItem.charge(dark) - (lamp.chargeHours() - 1)) < MOMENT, "an hour worn in the dark left " + HeadlampItem.charge(dark) + " h");
+        ItemStack lit = new ItemStack(Things.HEADLAMP.get());
+        HeadlampItem.shine(lit, 1000, false, 0);
+        check(helper, Math.abs(HeadlampItem.charge(lit) - lamp.chargeHours()) < MOMENT && lit.getOrDefault(Things.LIGHT.get(), 0) == 0,
+                "an hour worn in daylight ran the lamp down to " + HeadlampItem.charge(lit) + " h");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aNightSleptCooksAndBoils(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(2, 1, 2);
+        CampfireBlockEntity campfire = burning(helper, pos);
+        BlockPos at = helper.absolutePos(pos);
+        campfire.placeFood(null, new ItemStack(Items.RABBIT), COOK_TICKS);
+        helper.setBlock(pos.above(), Things.CAMP_POT_BLOCK.get().defaultBlockState());
+        if (!(helper.getLevel().getBlockEntity(at.above()) instanceof CampPotEntity pot)) {
+            throw new IllegalStateException("the camp pot has no block entity");
+        }
+        pot.hold(Water.drawn(Water.Source.LAKE, (float) Balance.get().water().potL()));
+        Fire.slept(helper.getLevel(), at, campfire, Fire.of(campfire), NIGHT_TICKS);
+        check(helper, pot.water().boiled(), "a night slept over the fire left the pot unboiled");
+        check(helper, campfire.getItems().stream().allMatch(ItemStack::isEmpty), "a night slept left the rabbit on the fire");
+        List<ItemEntity> dropped = helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(at).inflate(2));
+        check(helper, dropped.stream().anyMatch(item -> item.getItem().is(Items.COOKED_RABBIT)), "the rabbit did not come off cooked");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aHotFireBoilsSooner(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(2, 1, 2);
+        CampfireBlockEntity campfire = burning(helper, pos);
+        BlockPos above = helper.absolutePos(pos.above());
+        helper.setBlock(pos.above(), Things.CAMP_POT_BLOCK.get().defaultBlockState());
+        if (!(helper.getLevel().getBlockEntity(above) instanceof CampPotEntity pot)) {
+            throw new IllegalStateException("the camp pot has no block entity");
+        }
+        pot.hold(Water.drawn(Water.Source.LAKE, 1));
+        int steady = pot.ticksLeft(CampPotEntity.heat(helper.getLevel(), above));
+        Fire.of(campfire).setting = Fire.Setting.HOT;
+        int hot = pot.ticksLeft(CampPotEntity.heat(helper.getLevel(), above));
+        Fire.of(campfire).setting = Fire.Setting.LOW;
+        int low = pot.ticksLeft(CampPotEntity.heat(helper.getLevel(), above));
+        check(helper, hot * 2 == steady && low == steady * 2, "boiling took " + low + ", " + steady + " and " + hot + " ticks on Low, Steady and Hot");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void fullWoodpilesStack(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(2, 1, 2);
+        helper.setBlock(pos.below(), Blocks.STONE);
+        int full = Balance.get().firewood().pilePieces();
+        helper.setBlock(pos, Things.WOODPILE.get().defaultBlockState().setValue(WoodpileBlock.PIECES, full));
+        if (!(helper.getLevel().getBlockEntity(helper.absolutePos(pos)) instanceof WoodpileEntity woodpile)) {
+            throw new IllegalStateException("the woodpile has no block entity");
+        }
+        for (int piece = 0; piece < full; piece++) {
+            woodpile.add(softwood(1));
+        }
         ServerPlayer player = BackcountryTests.survivor(helper);
-        ItemStack stack = new ItemStack(Things.HEADLAMP.get());
-        HeadlampItem.shine(player, stack, 1000);
-        check(helper, Math.abs(HeadlampItem.charge(stack) - (lamp.chargeHours() - 1)) < MOMENT, "an hour worn left " + HeadlampItem.charge(stack) + " h");
+        ItemStack wood = softwood(1);
+        player.setItemInHand(InteractionHand.MAIN_HAND, wood);
+        BlockPos at = helper.absolutePos(pos);
+        wood.useOn(new UseOnContext(player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(at).add(0, 0.5, 0), Direction.UP, at, false)));
+        check(helper, helper.getBlockState(pos.above()).is(Things.WOODPILE.get()), "a full woodpile took no pile on top");
+        helper.useBlock(pos, player);
+        check(helper, helper.getBlockState(pos.above()).isAir() && woodpile.pieces().size() == full, "a piece came from the lower pile, not the top one");
         helper.succeed();
     }
 }

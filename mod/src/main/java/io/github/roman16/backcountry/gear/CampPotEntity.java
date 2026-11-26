@@ -2,6 +2,7 @@ package io.github.roman16.backcountry.gear;
 
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.fire.Fire;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -11,12 +12,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class CampPotEntity extends BlockEntity {
     private static final int TICKS_A_SECOND = 20;
     private Water water = Water.EMPTY;
-    private int boilTicks;
+    private double boilTicks;
     private boolean needles;
     private boolean pickedUp;
 
@@ -51,8 +53,24 @@ public class CampPotEntity extends BlockEntity {
         return needles;
     }
 
-    public int boilTicks() {
-        return boilTicks;
+    public boolean started() {
+        return boilTicks > 0;
+    }
+
+    public int ticksLeft(double heat) {
+        Balance balance = Balance.get();
+        double seconds = water.drink() == Water.Drink.BIRCH_SAP ? balance.forage().syrupSeconds() : balance.water().boilSeconds();
+        return (int) Math.ceil(Math.max(0, seconds * TICKS_A_SECOND - boilTicks) / heat);
+    }
+
+    public static double heat(Level level, BlockPos pos) {
+        return level.getBlockEntity(pos.below()) instanceof CampfireBlockEntity campfire ? Fire.of(campfire).setting.burn() : 1;
+    }
+
+    public void slept(Level level, BlockPos pos, int ticks, double heat) {
+        if (heating()) {
+            boil(level, pos, ticks * heat);
+        }
     }
 
     public boolean heating() {
@@ -76,7 +94,7 @@ public class CampPotEntity extends BlockEntity {
     public static void tick(Level level, BlockPos pos, BlockState state, CampPotEntity pot) {
         boolean lit = CampfireBlock.isLitCampfire(level.getBlockState(pos.below()));
         if (lit && pot.heating()) {
-            pot.boil(level, pos);
+            pot.boil(level, pos, heat(level, pos));
         }
         BlockState shown = state.setValue(CampPotBlock.CONTENT, pot.water.empty() ? CampPotBlock.Content.EMPTY
                 : !lit ? CampPotBlock.Content.WATER : pot.heating() ? CampPotBlock.Content.HEATING : CampPotBlock.Content.BOILING);
@@ -85,9 +103,9 @@ public class CampPotEntity extends BlockEntity {
         }
     }
 
-    private void boil(Level level, BlockPos pos) {
+    private void boil(Level level, BlockPos pos, double heat) {
         Balance balance = Balance.get();
-        boilTicks++;
+        boilTicks += heat;
         if ((!water.boiled() || needles) && boilTicks >= balance.water().boilSeconds() * TICKS_A_SECOND) {
             water = needles ? new Water(Water.Drink.SPRUCE_TEA, true, water.source(), water.litres()) : water.boil();
             needles = false;
@@ -107,7 +125,7 @@ public class CampPotEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
         Water.CODEC.encodeStart(NbtOps.INSTANCE, water).ifSuccess(encoded -> tag.put("water", encoded));
-        tag.putInt("boil_ticks", boilTicks);
+        tag.putDouble("boil_ticks", boilTicks);
         tag.putBoolean("needles", needles);
     }
 
@@ -115,7 +133,7 @@ public class CampPotEntity extends BlockEntity {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.loadAdditional(tag, provider);
         water = Water.CODEC.parse(NbtOps.INSTANCE, tag.get("water")).result().orElse(Water.EMPTY);
-        boilTicks = tag.getInt("boil_ticks");
+        boilTicks = tag.getDouble("boil_ticks");
         needles = tag.getBoolean("needles");
     }
 }

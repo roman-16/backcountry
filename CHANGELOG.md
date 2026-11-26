@@ -6,6 +6,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [2.6.0] - 2026-11-26
+
+### Highlights
+
+- **Tracking game** - Big game leaves prints and droppings that lead to it: sneak and look at sign to read whose it is and how old, and stalk moose and caribou into the wind, which Plant Fibre shows.
+- **A guide in the Messenger** - The Satellite Messenger's Guide page explains rations, caches, wolves and bears, water, fire, cold and the rest, and messages say why when something goes wrong.
+- **Wolves and cold as in Alaska** - Wolves keep their distance unless you hit one, and a cold core is hypothermia, with frostbite only from hard frost.
+- **The pack keeps your things** - Items thrown from the pack stay on the ground, and nothing shift-clicked, crafted or smelted into it vanishes.
+
+### Added
+
+- Big game leaves prints in snow, mud, sand and dirt and droppings on any ground; sneaking and looking at sign tells whose it is and how old, and each animal arrives with the trail it came by.
+- Moose and caribou smell you from downwind and walk off; sneak and right-click with Plant Fibre to see which way the wind blows.
+- A Small Snare on fresh hare prints in snow catches twice as often.
+- The Satellite Messenger has a Guide page explaining rations, caches, wolves and bears, water, fire, cold, health, food, hunting and rock.
+- Heart, liver, tongue and kidney cook on the campfire, and the Cooking Pot turns a Moose Head into 8 bowls of Moose Head Soup.
+- Sneak and right-click pours a Water Bottle or Camp Pot out.
+- Sneaking and looking at water names it sea, lake or stream water, and at a carcass tells how long scavengers leave it.
+- The Messenger has two new tasks, Track an animal and Cook a stew.
+
+### Changed
+
+- Wolves keep their distance and never hunt survivors; a wolf you hit fights back with its pack.
+- A cold core is hypothermia, and only bare skin in hard frost gets frostbite.
+- The Camp Pot holds 4 L, and a hotter fire boils it sooner: 8 minutes on Low, 4 on Steady, 2 on Hot.
+- Every food carries the water it really holds, so berries and meat count towards the day's water.
+- Big game gives its share of meat: a timber wolf 12 pieces, a caribou 19, a black bear 19, a grizzly 48.
+- A woodpile holds 16 pieces and fills a block, and full piles stack.
+- Rock breaks slowly wherever it sits.
+- The headlamp lights only in the dark, so its charge lasts the night.
+- A night slept by the fire cooks what lies on it and boils the pot above it.
+- Scavengers take an undressed carcass 2 days after it fell.
+- Snare Wire is twisted from 2 iron nuggets, and the Hide Poncho takes 5 cured hides.
+- Messages say why: an empty ration names where rations eat from, firewood says what seasoning does, raw food warns of parasites, and the Med Kit says what brings hearts back.
+
+### Fixed
+
+- Items thrown from the pack stay on the ground instead of jumping straight back in.
+- Shift-clicking onto a stack in the pack keeps every item; crafted items and smelted ingots no longer vanish.
+- Eating while too full stops at once instead of chewing on and on.
+- Snare Wire and the Hide Poncho can be crafted: each shared its grid with another recipe.
+
 ## [2.5.0] - 2026-11-26
 
 ### Highlights

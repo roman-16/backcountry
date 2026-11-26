@@ -4,6 +4,8 @@ public enum Deed {
     ATE_BERRIES,
     ATE_COOKED,
     BOTTLE_FROM_POT,
+    CACHE_OUT_OF_CAMP,
+    CHECKED_WIND,
     DRANK,
     DRANK_BOILED,
     DRANK_TEA,
@@ -15,7 +17,10 @@ public enum Deed {
     LAID_WOODPILE,
     LANDED_FISH,
     LIT_FIRE,
+    READ_SIGN,
+    SERVED_STEW,
     SLEPT_ROOFED,
+    STALKED,
     TIP_UP_CATCH,
     TRAP_CATCH
 }

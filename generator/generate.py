@@ -19,6 +19,19 @@ ASSETS = OUT / "assets/backcountry"
 ARTIFACTS = ROOT / "mod/build/moddev/artifacts"
 VANILLA = "assets/minecraft/textures/"
 TRANSPARENT = "."
+RGBA = 4
+OPAQUE = 255
+TRACKS = {
+    "moose": "pellets",
+    "caribou": "pellets",
+    "bear": "scat",
+    "wolf": "scat",
+    "wolverine": "scat",
+    "hare": "pellets",
+}
+SNOW_LAYERS = 8
+SNOW_LAYER = 2
+ON_TOP = 0.05
 DATA_VERSION = 3955
 TEST_ROOM = 8
 FACINGS = {"north": 0, "east": 90, "south": 180, "west": 270}
@@ -39,7 +52,8 @@ BUILT_IN_PACKS = ("vanilla", "mod_resources")
 
 
 def hex_colour(text):
-    return [int(text[i : i + 2], 16) for i in (0, 2, 4)] + [255]
+    channels = [int(text[i : i + 2], 16) for i in range(0, len(text), 2)]
+    return channels if len(channels) == RGBA else [*channels, OPAQUE]
 
 
 def grid(name, entry, width, height=None):
@@ -531,6 +545,49 @@ def hunting():
     )
     for name in ("blood", "carcass"):
         write_json(ASSETS / f"blockstates/{name}.json", {"variants": {"": {"model": f"backcountry:block/{name}"}}})
+    sign()
+
+
+def sign():
+    faces = ("down", "east", "north", "south", "up", "west")
+    marks = {f"track_{kind}": "minecraft:translucent" for kind in TRACKS} | {
+        f"droppings_{group}": "minecraft:cutout" for group in set(TRACKS.values())
+    }
+    for mark, render in marks.items():
+        for snow in range(SNOW_LAYERS + 1):
+            top = snow * SNOW_LAYER
+            elements = (
+                [{"from": [0, 0, 0], "to": [16, top, 16], "faces": {face: {"texture": "#snow"} for face in faces}}]
+                if snow
+                else []
+            )
+            elements.append(
+                {"from": [0, top + ON_TOP, 0], "to": [16, top + ON_TOP, 16], "faces": {"up": {"texture": "#mark"}}}
+            )
+            write_json(
+                ASSETS / f"models/block/{mark}_{snow}.json",
+                {
+                    "parent": "minecraft:block/block",
+                    "render_type": render,
+                    "textures": {
+                        "mark": f"backcountry:block/{mark}",
+                        "snow": "minecraft:block/snow",
+                        "particle": "minecraft:block/snow" if snow else f"backcountry:block/{mark}",
+                    },
+                    "elements": elements,
+                },
+            )
+    for block, mark in (
+        ("tracks", lambda kind: f"track_{kind}"),
+        ("droppings", lambda kind: f"droppings_{TRACKS[kind]}"),
+    ):
+        variants = {}
+        for kind in TRACKS:
+            for facing, turn in FACINGS.items():
+                for snow in range(SNOW_LAYERS + 1):
+                    model = {"model": f"backcountry:block/{mark(kind)}_{snow}"}
+                    variants[f"facing={facing},kind={kind},snow={snow}"] = {**model, "y": turn} if turn else model
+        write_json(ASSETS / f"blockstates/{block}.json", {"variants": variants})
 
 
 def traps():

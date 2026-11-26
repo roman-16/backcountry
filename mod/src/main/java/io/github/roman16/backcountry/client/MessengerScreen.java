@@ -50,6 +50,7 @@ public class MessengerScreen extends Screen {
     private static final ResourceLocation HEART = ResourceLocation.withDefaultNamespace("hud/heart/full");
     private static final ResourceLocation RATION = Backcountry.id("hud/ration");
     private static final ResourceLocation TASKS = Backcountry.id("hud/tasks");
+    private static final ResourceLocation GUIDE = Backcountry.id("hud/guide");
     private static final String JEI = "jei";
     private static final int MOST_WIDTH = 640;
     private static final int MOST_HEIGHT = 360;
@@ -105,6 +106,7 @@ public class MessengerScreen extends Screen {
     private static Page page = Page.TASKS;
     private static Optional<Task> chosen = Optional.empty();
     private static Optional<Chapter> opened = Optional.empty();
+    private static Topic topic = Topic.RATIONS;
     private final List<Hit> hits = new ArrayList<>();
     private final List<Shown> items = new ArrayList<>();
     private int left;
@@ -120,7 +122,8 @@ public class MessengerScreen extends Screen {
         WEATHER(Kind.PARTLY_CLOUDY.icon()),
         WARMTH(FIRE),
         FOOD(MessengerScreen.FOOD),
-        BODY(HEART);
+        BODY(HEART),
+        GUIDE(MessengerScreen.GUIDE);
 
         private final ResourceLocation icon;
 
@@ -130,6 +133,27 @@ public class MessengerScreen extends Screen {
 
         Component title() {
             return Component.translatable("messenger.backcountry.page." + name().toLowerCase(Locale.ROOT));
+        }
+    }
+
+    private enum Topic {
+        RATIONS,
+        CACHES,
+        WILDLIFE,
+        WATER,
+        FIRE,
+        COLD,
+        HEALTH,
+        FOOD,
+        HUNTING,
+        ROCK;
+
+        Component title() {
+            return Component.translatable("messenger.backcountry.guide." + name().toLowerCase(Locale.ROOT));
+        }
+
+        Component text() {
+            return Component.translatable("messenger.backcountry.guide." + name().toLowerCase(Locale.ROOT) + ".text");
         }
     }
 
@@ -234,6 +258,10 @@ public class MessengerScreen extends Screen {
             opened = Optional.of(next.chapter());
             return true;
         }
+        if (page == Page.GUIDE && (up || key == GLFW.GLFW_KEY_DOWN || minecraft.options.keyDown.matches(key, scan))) {
+            topic = Topic.values()[Math.floorMod(topic.ordinal() + (up ? -1 : 1), Topic.values().length)];
+            return true;
+        }
         if (page == Page.TASKS && (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER || minecraft.options.keyJump.matches(key, scan))) {
             track(chosenTask(ClientState.guide));
             return true;
@@ -287,6 +315,7 @@ public class MessengerScreen extends Screen {
                 case WARMTH -> warmth(graphics, y, view);
                 case FOOD -> food(graphics, y, view);
                 case BODY -> body(graphics, y, view);
+                case GUIDE -> guide(graphics, y, mouseX, mouseY);
             }
         }
         graphics.disableScissor();
@@ -556,6 +585,30 @@ public class MessengerScreen extends Screen {
         detail(graphics, task, guide, split + PAD, y, mouseX, mouseY);
     }
 
+    private void guide(GuiGraphics graphics, int y, int mouseX, int mouseY) {
+        int listWidth = Mth.clamp(Math.round((x1() - x0()) * LIST_SHARE), LIST_LEAST, LIST_MOST);
+        int split = x0() + listWidth;
+        int listY = y;
+        for (Topic item : Topic.values()) {
+            boolean hovered = mouseX >= x0() && mouseX < split && mouseY >= listY && mouseY < listY + line;
+            if (item == topic) {
+                graphics.fill(x0() - 2, listY, split - PAD + 2, listY + line - 1, Look.LCD_TRACK);
+            }
+            String title = font.plainSubstrByWidth(item.title().getString(), split - PAD - x0());
+            graphics.drawString(font, title, x0(), listY + 1, item == topic || hovered ? Look.LCD_TEXT : Look.LCD_DIM, false);
+            hits.add(new Hit(x0(), listY, listWidth, line, () -> topic = item));
+            listY += line;
+        }
+        graphics.fill(split - 1, y, split, contentBottom(), Look.LCD_TRACK);
+        int x = split + PAD;
+        graphics.drawString(font, topic.title(), x, y + 1, Look.LCD_TEXT, false);
+        y += line + GAP;
+        for (FormattedCharSequence wrapped : font.split(topic.text(), x1() - x)) {
+            graphics.drawString(font, wrapped, x, y + 1, Look.LCD_TEXT, false);
+            y += line;
+        }
+    }
+
     private void box(GuiGraphics graphics, int x, int y, boolean done) {
         graphics.fill(x, y, x + BOX, y + BOX, done ? Look.LCD_DIM : Look.LCD_TEXT);
         graphics.fill(x + 1, y + 1, x + BOX - 1, y + BOX - 1, done ? Look.LCD_DIM : Look.LCD);
@@ -702,10 +755,10 @@ public class MessengerScreen extends Screen {
     private void warmth(GuiGraphics graphics, int y, BodyView view) {
         Balance.Warmth warmth = Balance.get().warmth();
         boolean cold = view.coreC() < warmth.shiverCoreC();
-        int colour = view.coreC() < Balance.get().conditions().frostCoreC() ? Look.LCD_DANGER : cold ? Look.LCD_COLD : view.coreC() > warmth.sweatCoreC() ? Look.LCD_WARN : Look.LCD_TEXT;
+        int colour = view.coreC() < Balance.get().conditions().hypothermiaCoreC() ? Look.LCD_DANGER : cold ? Look.LCD_COLD : view.coreC() > warmth.sweatCoreC() ? Look.LCD_WARN : Look.LCD_TEXT;
         y = row(graphics, y, TEMPERATURE, Component.translatable("messenger.backcountry.core"),
                 Component.translatable("messenger.backcountry.core_value", Words.one(view.coreC()), Words.comfort(view.comfort()), Words.trend(view.trend())), colour);
-        y = gauge(graphics, y, CORE_LOW, CORE_HIGH, view.coreC(), new float[] {(float) Balance.get().conditions().frostCoreC(), (float) warmth.shiverCoreC(),
+        y = gauge(graphics, y, CORE_LOW, CORE_HIGH, view.coreC(), new float[] {(float) Balance.get().conditions().hypothermiaCoreC(), (float) warmth.shiverCoreC(),
                 (float) warmth.sweatCoreC()}, new int[] {Look.LCD_DANGER_DIM, Look.LCD_COLD_DIM, Look.LCD_TRACK, Look.LCD_WARN_DIM}, 0);
         if (cold) {
             y = advice(graphics, y, Component.translatable("messenger.backcountry.help.cold"));
@@ -809,7 +862,7 @@ public class MessengerScreen extends Screen {
         }
         for (Condition condition : view.conditions()) {
             graphics.blitSprite(condition.icon(), x0(), y, ICON, ICON);
-            graphics.drawString(font, condition.title(), x0() + LABEL, y + 1, condition == Condition.SEVERE_FROSTBITE ? Look.LCD_DANGER : Look.LCD_WARN, false);
+            graphics.drawString(font, condition.title(), x0() + LABEL, y + 1, condition.deadly() ? Look.LCD_DANGER : Look.LCD_WARN, false);
             int cureLeft = x0() + LABEL + font.width(condition.title()) + GAP;
             String cure = font.plainSubstrByWidth(Component.translatable("condition.backcountry." + condition.id() + ".cure").getString(), x1() - cureLeft);
             graphics.drawString(font, cure, cureLeft, y + 1, Look.LCD_DIM, false);

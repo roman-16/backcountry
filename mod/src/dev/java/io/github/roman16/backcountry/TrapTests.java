@@ -5,10 +5,14 @@ import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Nutrition;
 import io.github.roman16.backcountry.food.Fish;
 import io.github.roman16.backcountry.hunt.CarcassItem;
+import io.github.roman16.backcountry.hunt.Track;
+import io.github.roman16.backcountry.hunt.Tracks;
 import io.github.roman16.backcountry.trap.TrapBlock;
 import io.github.roman16.backcountry.trap.TrapEntity;
 import java.lang.reflect.Method;
+import java.util.List;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
@@ -19,7 +23,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Unit;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -125,6 +132,29 @@ public final class TrapTests {
         Object season = calendar.getMethod("season", Level.class).invoke(null, helper.getLevel());
         String expected = month >= 3 && month <= 5 ? "SPRING" : month >= 6 && month <= 8 ? "SUMMER" : month >= 9 && month <= 11 ? "AUTUMN" : "WINTER";
         check(helper, ((Enum<?>) season).name().equals(expected), "River Fishing says " + season + " in month " + month);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aSnareOnAHareRunKnowsIt(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(2, 1, 2);
+        helper.setBlock(pos.below(), Blocks.SNOW_BLOCK);
+        helper.setBlock(pos, Things.SMALL_SNARE.get().defaultBlockState());
+        TrapEntity snare = trap(helper, pos);
+        check(helper, !snare.onRun(helper.getLevel(), Track.HARE), "a snare with no prints near stood on a run");
+        helper.setBlock(new BlockPos(3, 0, 2), Blocks.SNOW_BLOCK);
+        Tracks.mark(helper.getLevel(), helper.absolutePos(new BlockPos(3, 1, 2)), Track.HARE, Direction.NORTH, helper.getLevel().getDayTime(), false);
+        check(helper, snare.onRun(helper.getLevel(), Track.HARE), "a snare beside fresh hare prints was not on a run");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void twoNuggetsTwistIntoSnareWire(GameTestHelper helper) {
+        ItemStack nugget = new ItemStack(Items.IRON_NUGGET);
+        CraftingInput grid = CraftingInput.of(2, 1, List.of(nugget, nugget.copy()));
+        ItemStack made = helper.getLevel().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, grid, helper.getLevel())
+                .map(recipe -> recipe.value().assemble(grid, helper.getLevel().registryAccess())).orElse(ItemStack.EMPTY);
+        check(helper, made.is(Things.SNARE_WIRE.get()), "two iron nuggets made " + made);
         helper.succeed();
     }
 }

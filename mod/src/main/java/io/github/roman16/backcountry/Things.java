@@ -11,8 +11,8 @@ import io.github.roman16.backcountry.fire.FirewoodItem;
 import io.github.roman16.backcountry.fire.Lights;
 import io.github.roman16.backcountry.fire.WoodpileBlock;
 import io.github.roman16.backcountry.fire.WoodpileEntity;
-import io.github.roman16.backcountry.food.Berry;
 import io.github.roman16.backcountry.food.Age;
+import io.github.roman16.backcountry.food.Berry;
 import io.github.roman16.backcountry.food.BerryBushBlock;
 import io.github.roman16.backcountry.food.BirchTapBlock;
 import io.github.roman16.backcountry.food.CacheBlock;
@@ -35,6 +35,7 @@ import io.github.roman16.backcountry.gear.LeftPackBlock;
 import io.github.roman16.backcountry.gear.LeftPackEntity;
 import io.github.roman16.backcountry.gear.MedKitItem;
 import io.github.roman16.backcountry.gear.PackItem;
+import io.github.roman16.backcountry.gear.PlantFibreItem;
 import io.github.roman16.backcountry.gear.PlantFibreModifier;
 import io.github.roman16.backcountry.gear.SpruceNeedlesModifier;
 import io.github.roman16.backcountry.gear.SupplyCrateBlock;
@@ -52,6 +53,9 @@ import io.github.roman16.backcountry.hunt.CarcassItem;
 import io.github.roman16.backcountry.hunt.HuntArrowItem;
 import io.github.roman16.backcountry.hunt.HuntingBowItem;
 import io.github.roman16.backcountry.hunt.MooseCallItem;
+import io.github.roman16.backcountry.hunt.TrackBlock;
+import io.github.roman16.backcountry.hunt.TrackEntity;
+import io.github.roman16.backcountry.hunt.Tracks;
 import io.github.roman16.backcountry.hunt.Wound;
 import io.github.roman16.backcountry.trap.Kind;
 import io.github.roman16.backcountry.trap.TrapBlock;
@@ -89,7 +93,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -97,6 +101,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
@@ -130,6 +135,7 @@ public final class Things {
     public static final TagKey<Item> KNIVES = TagKey.create(Registries.ITEM, Backcountry.id("knives"));
     public static final TagKey<Biome> SALT_WATER = TagKey.create(Registries.BIOME, Backcountry.id("salt_water"));
     public static final TagKey<Fluid> MOVING_WATER = TagKey.create(Registries.FLUID, Backcountry.id("moving_water"));
+    public static final TagKey<Block> TAKES_PRINTS = TagKey.create(Registries.BLOCK, Backcountry.id("takes_prints"));
     public static final DataMapType<Item, Nutrition> FOOD = DataMapType.builder(Backcountry.id("food"), Registries.ITEM, Nutrition.CODEC).synced(Nutrition.CODEC, true).build();
 
     public static final Supplier<AttachmentType<Body>> BODY = ATTACHMENTS.register("body", () -> AttachmentType.serializable(Body::new).build());
@@ -140,6 +146,9 @@ public final class Things {
     public static final Supplier<AttachmentType<Long>> FISHING_AT = ATTACHMENTS.register("fishing_at",
             () -> AttachmentType.builder(() -> Long.MIN_VALUE).serialize(Codec.LONG).build());
     public static final Supplier<AttachmentType<Long>> SPRAYED_UNTIL = ATTACHMENTS.register("sprayed_until", () -> AttachmentType.builder(() -> 0L).build());
+    public static final Supplier<AttachmentType<Long>> FLEEING_UNTIL = ATTACHMENTS.register("fleeing_until", () -> AttachmentType.builder(() -> 0L).build());
+    public static final Supplier<AttachmentType<Boolean>> ANSWERING = ATTACHMENTS.register("answering", () -> AttachmentType.builder(() -> false).build());
+    public static final Supplier<AttachmentType<Tracks.Steps>> STEPS = ATTACHMENTS.register("steps", () -> AttachmentType.builder(Tracks.Steps::new).build());
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Age>> AGE = COMPONENTS.registerComponentType("age",
             builder -> builder.persistent(Age.CODEC).networkSynchronized(Age.STREAM_CODEC));
@@ -153,6 +162,8 @@ public final class Things {
             builder -> builder.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ItemStack>>> ARROWS = COMPONENTS.registerComponentType("arrows",
             builder -> builder.persistent(ItemStack.CODEC.listOf()).networkSynchronized(ItemStack.LIST_STREAM_CODEC));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> LAIN = COMPONENTS.registerComponentType("lain",
+            builder -> builder.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Unit>> LANDED = COMPONENTS.registerComponentType("landed",
             builder -> builder.persistent(Unit.CODEC).networkSynchronized(StreamCodec.unit(Unit.INSTANCE)));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Unit>> SPAWNED_OUT = COMPONENTS.registerComponentType("spawned_out",
@@ -194,6 +205,8 @@ public final class Things {
     public static final DeferredBlock<BloodBlock> BLOOD = BLOCKS.registerBlock("blood", BloodBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).noCollission().instabreak().replaceable().randomTicks().noLootTable().sound(SoundType.SLIME_BLOCK)
                     .pushReaction(PushReaction.DESTROY));
+    public static final DeferredBlock<TrackBlock> TRACKS = BLOCKS.registerBlock("tracks", properties -> new TrackBlock(false, properties), sign());
+    public static final DeferredBlock<TrackBlock> DROPPINGS = BLOCKS.registerBlock("droppings", properties -> new TrackBlock(true, properties), sign());
     public static final DeferredBlock<CarcassBlock> CARCASS = BLOCKS.registerBlock("carcass", CarcassBlock::new,
             BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BROWN).strength(1.0F).sound(SoundType.WOOL).noOcclusion().noLootTable());
     public static final DeferredBlock<TrapBlock> DEADFALL = trap("deadfall", Kind.DEADFALL);
@@ -229,6 +242,8 @@ public final class Things {
 
     public static final Supplier<BlockEntityType<CampPotEntity>> CAMP_POT_ENTITY = BLOCK_ENTITIES.register("camp_pot",
             () -> BlockEntityType.Builder.of(CampPotEntity::new, CAMP_POT_BLOCK.get()).build(null));
+    public static final Supplier<BlockEntityType<TrackEntity>> TRACK_ENTITY = BLOCK_ENTITIES.register("track",
+            () -> BlockEntityType.Builder.of(TrackEntity::new, TRACKS.get(), DROPPINGS.get()).build(null));
     public static final Supplier<BlockEntityType<CarcassEntity>> CARCASS_ENTITY = BLOCK_ENTITIES.register("carcass",
             () -> BlockEntityType.Builder.of(CarcassEntity::new, CARCASS.get()).build(null));
     public static final Supplier<BlockEntityType<TrapEntity>> TRAP_ENTITY = BLOCK_ENTITIES.register("trap",
@@ -284,6 +299,7 @@ public final class Things {
     public static final DeferredItem<Item> HARDWOOD = ITEMS.registerItem("hardwood", properties -> new FirewoodItem(properties, true), new Item.Properties());
     public static final DeferredItem<Item> HEADLAMP = ITEMS.registerItem("headlamp", properties -> new HeadlampItem(HEADLAMP_STRAP, properties), new Item.Properties());
     public static final DeferredItem<Item> HEART = food("heart");
+    public static final DeferredItem<Item> COOKED_HEART = food("cooked_heart");
     public static final DeferredItem<Item> HEAVY_HUNTING_BOW = ITEMS.registerItem("heavy_hunting_bow", properties -> new HuntingBowItem(properties, true),
             new Item.Properties().durability(384));
     public static final DeferredItem<Item> HIDE_COAT = ITEMS.registerItem("hide_coat", properties -> new ArmorItem(HIDE, ArmorItem.Type.CHESTPLATE, properties),
@@ -297,21 +313,25 @@ public final class Things {
     public static final DeferredItem<Item> HIDE_PONCHO = ITEMS.registerItem("hide_poncho", properties -> new ArmorItem(HIDE, ArmorItem.Type.CHESTPLATE, properties),
             new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(4)));
     public static final DeferredItem<Item> KIDNEY = food("kidney");
+    public static final DeferredItem<Item> COOKED_KIDNEY = food("cooked_kidney");
     public static final DeferredItem<Item> KNIFE = ITEMS.registerItem("knife", properties -> new SwordItem(Tiers.STONE, properties),
             new Item.Properties().attributes(SwordItem.createAttributes(Tiers.STONE, 1, -2.0F)));
     public static final DeferredItem<BlockItem> LARGE_SNARE_ITEM = ITEMS.registerSimpleBlockItem(LARGE_SNARE);
     public static final DeferredItem<Item> LIGHT_HUNTING_BOW = ITEMS.registerItem("light_hunting_bow", properties -> new HuntingBowItem(properties, false),
             new Item.Properties().durability(256));
     public static final DeferredItem<Item> LIVER = food("liver");
+    public static final DeferredItem<Item> COOKED_LIVER = food("cooked_liver");
     public static final DeferredItem<Item> MED_KIT = ITEMS.registerItem("med_kit", MedKitItem::new, new Item.Properties().durability(4));
     public static final DeferredItem<Item> MOOSE_CALL = ITEMS.registerItem("moose_call", MooseCallItem::new, new Item.Properties());
     public static final DeferredItem<Item> MOOSE_HEAD = ITEMS.registerSimpleItem("moose_head", new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> MOOSE_HEAD_SOUP = ITEMS.registerSimpleItem("moose_head_soup",
+            new Item.Properties().stacksTo(1).food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.1F).usingConvertsTo(Items.BOWL).build()));
     public static final DeferredItem<Item> MOUSE_DROPPINGS = ITEMS.registerSimpleItem("mouse_droppings", new Item.Properties());
     public static final DeferredItem<BlockItem> MOUSE_TRAP_ITEM = ITEMS.registerSimpleBlockItem(MOUSE_TRAP);
     public static final DeferredItem<Item> PELT = ITEMS.registerSimpleItem("pelt", new Item.Properties());
     public static final DeferredItem<Item> PILOT_BREAD = ITEMS.registerSimpleItem("pilot_bread",
             new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.1F).build()));
-    public static final DeferredItem<Item> PLANT_FIBRE = ITEMS.registerSimpleItem("plant_fibre", new Item.Properties());
+    public static final DeferredItem<Item> PLANT_FIBRE = ITEMS.registerItem("plant_fibre", PlantFibreItem::new, new Item.Properties());
     public static final DeferredItem<Item> RAWHIDE_STRIPS = ITEMS.registerSimpleItem("rawhide_strips", new Item.Properties());
     public static final DeferredItem<Item> RENDERED_FAT = food("rendered_fat");
     public static final DeferredItem<Item> ROPE = ITEMS.registerSimpleItem("rope", new Item.Properties());
@@ -328,6 +348,7 @@ public final class Things {
     public static final DeferredItem<Item> TINDER_BUNDLE = ITEMS.registerSimpleItem("tinder_bundle", new Item.Properties());
     public static final DeferredItem<BlockItem> TIP_UP_ITEM = ITEMS.registerSimpleBlockItem(TIP_UP);
     public static final DeferredItem<Item> TONGUE = food("tongue");
+    public static final DeferredItem<Item> COOKED_TONGUE = food("cooked_tongue");
     public static final DeferredItem<Item> TRAP_STAKES = ITEMS.registerSimpleItem("trap_stakes", new Item.Properties());
     public static final DeferredItem<Item> WATER_BOTTLE = ITEMS.registerItem("water_bottle",
             properties -> new WaterVesselItem(properties, Balance.get().water().bottleL()), new Item.Properties().stacksTo(1));
@@ -377,6 +398,11 @@ public final class Things {
     private static DeferredItem<Item> berries(String name, DeferredBlock<BerryBushBlock> bush) {
         return ITEMS.registerItem(name, properties -> new ItemNameBlockItem(bush.get(), properties),
                 new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.1F).build()));
+    }
+
+    private static BlockBehaviour.Properties sign() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.SNOW).replaceable().noOcclusion().strength(0.1F).randomTicks().noLootTable().sound(SoundType.SNOW)
+                .pushReaction(PushReaction.DESTROY);
     }
 
     private static DeferredItem<Item> food(String name) {

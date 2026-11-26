@@ -3,6 +3,7 @@ package io.github.roman16.backcountry;
 import io.github.roman16.backcountry.fire.Lights;
 import io.github.roman16.backcountry.gear.WaterVesselItem;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -34,8 +35,12 @@ import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
@@ -65,6 +70,7 @@ public final class WildernessTests {
     private static final ResourceLocation CUT_FISH = ResourceLocation.fromNamespaceAndPath("riverfishing", "bluegill");
     private static final int BIOME_REACH = 8;
     private static final long DROP_OFF_SEED = 1;
+    private static final int GRID = 3;
 
     private WildernessTests() {}
 
@@ -99,6 +105,42 @@ public final class WildernessTests {
                 .map(recipe -> recipe.id().toString()).sorted().toList();
         check(helper, wrong.isEmpty(), "recipes that make or need a cut item: " + String.join(", ", wrong));
         helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void noTwoRecipesShareAGrid(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        List<RecipeHolder<CraftingRecipe>> crafting = level.getServer().getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING);
+        List<String> shared = new ArrayList<>();
+        for (RecipeHolder<CraftingRecipe> recipe : crafting) {
+            grid(recipe.value()).ifPresent(grid -> {
+                List<String> others = crafting.stream()
+                        .filter(other -> other != recipe && !other.value().getIngredients().isEmpty() && other.value().matches(grid, level))
+                        .map(other -> other.id().toString()).sorted().toList();
+                if (!others.isEmpty()) {
+                    shared.add(recipe.id() + " with " + String.join(", ", others));
+                }
+            });
+        }
+        check(helper, shared.isEmpty(), "recipes one grid makes, so the game picks one of them: " + String.join("; ", shared.stream().sorted().toList()));
+        helper.succeed();
+    }
+
+    private static Optional<CraftingInput> grid(CraftingRecipe recipe) {
+        List<Ingredient> ingredients = recipe.getIngredients();
+        if (ingredients.isEmpty() || ingredients.stream().anyMatch(ingredient -> !ingredient.isEmpty() && ingredient.getItems().length == 0)) {
+            return Optional.empty();
+        }
+        List<ItemStack> items = new ArrayList<>(ingredients.stream().map(ingredient -> ingredient.isEmpty() ? ItemStack.EMPTY : ingredient.getItems()[0].copy()).toList());
+        if (recipe instanceof ShapedRecipe shaped) {
+            return Optional.of(CraftingInput.of(shaped.getWidth(), shaped.getHeight(), items));
+        }
+        int width = Math.min(GRID, items.size());
+        int height = (items.size() + GRID - 1) / GRID;
+        while (items.size() < width * height) {
+            items.add(ItemStack.EMPTY);
+        }
+        return Optional.of(CraftingInput.of(width, height, items));
     }
 
     @GameTest(template = "empty")

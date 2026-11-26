@@ -44,7 +44,7 @@ public final class Fish {
         boolean raw = !data.getBoolean("Cooked");
         double poisoning = stack.has(Things.SPAWNED_OUT.get()) ? 1 : 0;
         return Optional.of(new Nutrition(kg * fish.kcalPerKg(), kg * fish.fatGPerKg(), kg * fish.proteinGPerKg(), 0, raw ? kg * fish.vitaminCMgPerKg() : 0,
-                raw && !frozenThrough(stack), poisoning, Optional.of(raw ? fish.rawDays() : fish.cookedDays()), 0));
+                raw && !frozenThrough(stack), poisoning, Optional.of(raw ? fish.rawDays() : fish.cookedDays()), kg * (raw ? fish.rawWaterLPerKg() : fish.cookedWaterLPerKg())));
     }
 
     public static boolean frozenThrough(ItemStack stack) {

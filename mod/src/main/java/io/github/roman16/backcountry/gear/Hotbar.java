@@ -105,7 +105,8 @@ public final class Hotbar {
             if (locked()) {
                 return ItemStack.EMPTY;
             }
-            return contents(Metabolism.body(inventory.player).pack).get(packIndex());
+            Body body = Metabolism.body(inventory.player);
+            return body.packRows.items(body.pack).get(packIndex());
         }
 
         @Override
@@ -116,11 +117,18 @@ public final class Hotbar {
             }
             if (!locked()) {
                 Body body = Metabolism.body(inventory.player);
-                NonNullList<ItemStack> items = contents(body.pack);
-                items.set(packIndex(), stack);
-                store(body.pack, items);
+                body.packRows.items(body.pack).set(packIndex(), stack);
             }
             setChanged();
+        }
+
+        @Override
+        public void setChanged() {
+            if (!open() && !locked()) {
+                Body body = Metabolism.body(inventory.player);
+                body.packRows.save(body.pack);
+            }
+            super.setChanged();
         }
 
         @Override
@@ -128,9 +136,8 @@ public final class Hotbar {
             if (open()) {
                 return super.remove(amount);
             }
-            ItemStack held = getItem().copy();
-            ItemStack taken = held.split(amount);
-            set(held);
+            ItemStack taken = getItem().split(amount);
+            setChanged();
             return taken;
         }
 
@@ -222,7 +229,8 @@ public final class Hotbar {
         Body body = Metabolism.body(player);
         ItemEntity entity = event.getItemEntity();
         ItemStack stack = entity.getItem();
-        if (player.level().isClientSide || player.isCreative() || body.pack.isEmpty() || stack.getItem() instanceof PackItem) {
+        if (player.level().isClientSide || player.isCreative() || body.pack.isEmpty() || stack.getItem() instanceof PackItem || entity.hasPickUpDelay()
+                || entity.getTarget() != null && !entity.getTarget().equals(player.getUUID())) {
             return;
         }
         int over = stack.getCount() - hotbarRoom(player.getInventory(), stack);

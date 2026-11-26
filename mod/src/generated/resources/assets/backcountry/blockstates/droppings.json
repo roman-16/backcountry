@@ -1,0 +1,814 @@
+{
+  "variants": {
+    "facing=north,kind=moose,snow=0": {
+      "model": "backcountry:block/droppings_pellets_0"
+    },
+    "facing=north,kind=moose,snow=1": {
+      "model": "backcountry:block/droppings_pellets_1"
+    },
+    "facing=north,kind=moose,snow=2": {
+      "model": "backcountry:block/droppings_pellets_2"
+    },
+    "facing=north,kind=moose,snow=3": {
+      "model": "backcountry:block/droppings_pellets_3"
+    },
+    "facing=north,kind=moose,snow=4": {
+      "model": "backcountry:block/droppings_pellets_4"
+    },
+    "facing=north,kind=moose,snow=5": {
+      "model": "backcountry:block/droppings_pellets_5"
+    },
+    "facing=north,kind=moose,snow=6": {
+      "model": "backcountry:block/droppings_pellets_6"
+    },
+    "facing=north,kind=moose,snow=7": {
+      "model": "backcountry:block/droppings_pellets_7"
+    },
+    "facing=north,kind=moose,snow=8": {
+      "model": "backcountry:block/droppings_pellets_8"
+    },
+    "facing=east,kind=moose,snow=0": {
+      "model": "backcountry:block/droppings_pellets_0",
+      "y": 90
+    },
+    "facing=east,kind=moose,snow=1": {
+      "model": "backcountry:block/droppings_pellets_1",
+      "y": 90
+    },
+    "facing=east,kind=moose,snow=2": {
+      "model": "backcountry:block/droppings_pellets_2",
+      "y": 90
+    },
+    "facing=east,kind=moose,snow=3": {
+      "model": "backcountry:block/droppings_pellets_3",
+      "y": 90
+    },
+    "facing=east,kind=moose,snow=4": {
+      "model": "backcountry:block/droppings_pellets_4",
+      "y": 90
+    },
+    "facing=east,kind=moose,snow=5": {
+      "model": "backcountry:block/droppings_pellets_5",
+      "y": 90
+    },
+    "facing=east,kind=moose,snow=6": {
+      "model": "backcountry:block/droppings_pellets_6",
+      "y": 90
+    },
+    "facing=east,kind=moose,snow=7": {
+      "model": "backcountry:block/droppings_pellets_7",
+      "y": 90
+    },
+    "facing=east,kind=moose,snow=8": {
+      "model": "backcountry:block/droppings_pellets_8",
+      "y": 90
+    },
+    "facing=south,kind=moose,snow=0": {
+      "model": "backcountry:block/droppings_pellets_0",
+      "y": 180
+    },
+    "facing=south,kind=moose,snow=1": {
+      "model": "backcountry:block/droppings_pellets_1",
+      "y": 180
+    },
+    "facing=south,kind=moose,snow=2": {
+      "model": "backcountry:block/droppings_pellets_2",
+      "y": 180
+    },
+    "facing=south,kind=moose,snow=3": {
+      "model": "backcountry:block/droppings_pellets_3",
+      "y": 180
+    },
+    "facing=south,kind=moose,snow=4": {
+      "model": "backcountry:block/droppings_pellets_4",
+      "y": 180
+    },
+    "facing=south,kind=moose,snow=5": {
+      "model": "backcountry:block/droppings_pellets_5",
+      "y": 180
+    },
+    "facing=south,kind=moose,snow=6": {
+      "model": "backcountry:block/droppings_pellets_6",
+      "y": 180
+    },
+    "facing=south,kind=moose,snow=7": {
+      "model": "backcountry:block/droppings_pellets_7",
+      "y": 180
+    },
+    "facing=south,kind=moose,snow=8": {
+      "model": "backcountry:block/droppings_pellets_8",
+      "y": 180
+    },
+    "facing=west,kind=moose,snow=0": {
+      "model": "backcountry:block/droppings_pellets_0",
+      "y": 270
+    },
+    "facing=west,kind=moose,snow=1": {
+      "model": "backcountry:block/droppings_pellets_1",
+      "y": 270
+    },
+    "facing=west,kind=moose,snow=2": {
+      "model": "backcountry:block/droppings_pellets_2",
+      "y": 270
+    },
+    "facing=west,kind=moose,snow=3": {
+      "model": "backcountry:block/droppings_pellets_3",
+      "y": 270
+    },
+    "facing=west,kind=moose,snow=4": {
+      "model": "backcountry:block/droppings_pellets_4",
+      "y": 270
+    },
+    "facing=west,kind=moose,snow=5": {
+      "model": "backcountry:block/droppings_pellets_5",
+      "y": 270
+    },
+    "facing=west,kind=moose,snow=6": {
+      "model": "backcountry:block/droppings_pellets_6",
+      "y": 270
+    },
+    "facing=west,kind=moose,snow=7": {
+      "model": "backcountry:block/droppings_pellets_7",
+      "y": 270
+    },
+    "facing=west,kind=moose,snow=8": {
+      "model": "backcountry:block/droppings_pellets_8",
+      "y": 270
+    },
+    "facing=north,kind=caribou,snow=0": {
+      "model": "backcountry:block/droppings_pellets_0"
+    },
+    "facing=north,kind=caribou,snow=1": {
+      "model": "backcountry:block/droppings_pellets_1"
+    },
+    "facing=north,kind=caribou,snow=2": {
+      "model": "backcountry:block/droppings_pellets_2"
+    },
+    "facing=north,kind=caribou,snow=3": {
+      "model": "backcountry:block/droppings_pellets_3"
+    },
+    "facing=north,kind=caribou,snow=4": {
+      "model": "backcountry:block/droppings_pellets_4"
+    },
+    "facing=north,kind=caribou,snow=5": {
+      "model": "backcountry:block/droppings_pellets_5"
+    },
+    "facing=north,kind=caribou,snow=6": {
+      "model": "backcountry:block/droppings_pellets_6"
+    },
+    "facing=north,kind=caribou,snow=7": {
+      "model": "backcountry:block/droppings_pellets_7"
+    },
+    "facing=north,kind=caribou,snow=8": {
+      "model": "backcountry:block/droppings_pellets_8"
+    },
+    "facing=east,kind=caribou,snow=0": {
+      "model": "backcountry:block/droppings_pellets_0",
+      "y": 90
+    },
+    "facing=east,kind=caribou,snow=1": {
+      "model": "backcountry:block/droppings_pellets_1",
+      "y": 90
+    },
+    "facing=east,kind=caribou,snow=2": {
+      "model": "backcountry:block/droppings_pellets_2",
+      "y": 90
+    },
+    "facing=east,kind=caribou,snow=3": {
+      "model": "backcountry:block/droppings_pellets_3",
+      "y": 90
+    },
+    "facing=east,kind=caribou,snow=4": {
+      "model": "backcountry:block/droppings_pellets_4",
+      "y": 90
+    },
+    "facing=east,kind=caribou,snow=5": {
+      "model": "backcountry:block/droppings_pellets_5",
+      "y": 90
+    },
+    "facing=east,kind=caribou,snow=6": {
+      "model": "backcountry:block/droppings_pellets_6",
+      "y": 90
+    },
+    "facing=east,kind=caribou,snow=7": {
+      "model": "backcountry:block/droppings_pellets_7",
+      "y": 90
+    },
+    "facing=east,kind=caribou,snow=8": {
+      "model": "backcountry:block/droppings_pellets_8",
+      "y": 90
+    },
+    "facing=south,kind=caribou,snow=0": {
+      "model": "backcountry:block/droppings_pellets_0",
+      "y": 180
+    },
+    "facing=south,kind=caribou,snow=1": {
+      "model": "backcountry:block/droppings_pellets_1",
+      "y": 180
+    },
+    "facing=south,kind=caribou,snow=2": {
+      "model": "backcountry:block/droppings_pellets_2",
+      "y": 180
+    },
+    "facing=south,kind=caribou,snow=3": {
+      "model": "backcountry:block/droppings_pellets_3",
+      "y": 180
+    },
+    "facing=south,kind=caribou,snow=4": {
+      "model": "backcountry:block/droppings_pellets_4",
+      "y": 180
+    },
+    "facing=south,kind=caribou,snow=5": {
+      "model": "backcountry:block/droppings_pellets_5",
+      "y": 180
+    },
+    "facing=south,kind=caribou,snow=6": {
+      "model": "backcountry:block/droppings_pellets_6",
+      "y": 180
+    },
+    "facing=south,kind=caribou,snow=7": {
+      "model": "backcountry:block/droppings_pellets_7",
+      "y": 180
+    },
+    "facing=south,kind=caribou,snow=8": {
+      "model": "backcountry:block/droppings_pellets_8",
+      "y": 180
+    },
+    "facing=west,kind=caribou,snow=0": {
+      "model": "backcountry:block/droppings_pellets_0",
+      "y": 270
+    },
+    "facing=west,kind=caribou,snow=1": {
+      "model": "backcountry:block/droppings_pellets_1",
+      "y": 270
+    },
+    "facing=west,kind=caribou,snow=2": {
+      "model": "backcountry:block/droppings_pellets_2",
+      "y": 270
+    },
+    "facing=west,kind=caribou,snow=3": {
+      "model": "backcountry:block/droppings_pellets_3",
+      "y": 270
+    },
+    "facing=west,kind=caribou,snow=4": {
+      "model": "backcountry:block/droppings_pellets_4",
+      "y": 270
+    },
+    "facing=west,kind=caribou,snow=5": {
+      "model": "backcountry:block/droppings_pellets_5",
+      "y": 270
+    },
+    "facing=west,kind=caribou,snow=6": {
+      "model": "backcountry:block/droppings_pellets_6",
+      "y": 270
+    },
+    "facing=west,kind=caribou,snow=7": {
+      "model": "backcountry:block/droppings_pellets_7",
+      "y": 270
+    },
+    "facing=west,kind=caribou,snow=8": {
+      "model": "backcountry:block/droppings_pellets_8",
+      "y": 270
+    },
+    "facing=north,kind=bear,snow=0": {
+      "model": "backcountry:block/droppings_scat_0"
+    },
+    "facing=north,kind=bear,snow=1": {
+      "model": "backcountry:block/droppings_scat_1"
+    },
+    "facing=north,kind=bear,snow=2": {
+      "model": "backcountry:block/droppings_scat_2"
+    },
+    "facing=north,kind=bear,snow=3": {
+      "model": "backcountry:block/droppings_scat_3"
+    },
+    "facing=north,kind=bear,snow=4": {
+      "model": "backcountry:block/droppings_scat_4"
+    },
+    "facing=north,kind=bear,snow=5": {
+      "model": "backcountry:block/droppings_scat_5"
+    },
+    "facing=north,kind=bear,snow=6": {
+      "model": "backcountry:block/droppings_scat_6"
+    },
+    "facing=north,kind=bear,snow=7": {
+      "model": "backcountry:block/droppings_scat_7"
+    },
+    "facing=north,kind=bear,snow=8": {
+      "model": "backcountry:block/droppings_scat_8"
+    },
+    "facing=east,kind=bear,snow=0": {
+      "model": "backcountry:block/droppings_scat_0",
+      "y": 90
+    },
+    "facing=east,kind=bear,snow=1": {
+      "model": "backcountry:block/droppings_scat_1",
+      "y": 90
+    },
+    "facing=east,kind=bear,snow=2": {
+      "model": "backcountry:block/droppings_scat_2",
+      "y": 90
+    },
+    "facing=east,kind=bear,snow=3": {
+      "model": "backcountry:block/droppings_scat_3",
+      "y": 90
+    },
+    "facing=east,kind=bear,snow=4": {
+      "model": "backcountry:block/droppings_scat_4",
+      "y": 90
+    },
+    "facing=east,kind=bear,snow=5": {
+      "model": "backcountry:block/droppings_scat_5",
+      "y": 90
+    },
+    "facing=east,kind=bear,snow=6": {
+      "model": "backcountry:block/droppings_scat_6",
+      "y": 90
+    },
+    "facing=east,kind=bear,snow=7": {
+      "model": "backcountry:block/droppings_scat_7",
+      "y": 90
+    },
+    "facing=east,kind=bear,snow=8": {
+      "model": "backcountry:block/droppings_scat_8",
+      "y": 90
+    },
+    "facing=south,kind=bear,snow=0": {
+      "model": "backcountry:block/droppings_scat_0",
+      "y": 180
+    },
+    "facing=south,kind=bear,snow=1": {
+      "model": "backcountry:block/droppings_scat_1",
+      "y": 180
+    },
+    "facing=south,kind=bear,snow=2": {
+      "model": "backcountry:block/droppings_scat_2",
+      "y": 180
+    },
+    "facing=south,kind=bear,snow=3": {
+      "model": "backcountry:block/droppings_scat_3",
+      "y": 180
+    },
+    "facing=south,kind=bear,snow=4": {
+      "model": "backcountry:block/droppings_scat_4",
+      "y": 180
+    },
+    "facing=south,kind=bear,snow=5": {
+      "model": "backcountry:block/droppings_scat_5",
+      "y": 180
+    },
+    "facing=south,kind=bear,snow=6": {
+      "model": "backcountry:block/droppings_scat_6",
+      "y": 180
+    },
+    "facing=south,kind=bear,snow=7": {
+      "model": "backcountry:block/droppings_scat_7",
+      "y": 180
+    },
+    "facing=south,kind=bear,snow=8": {
+      "model": "backcountry:block/droppings_scat_8",
+      "y": 180
+    },
+    "facing=west,kind=bear,snow=0": {
+      "model": "backcountry:block/droppings_scat_0",
+      "y": 270
+    },
+    "facing=west,kind=bear,snow=1": {
+      "model": "backcountry:block/droppings_scat_1",
+      "y": 270
+    },
+    "facing=west,kind=bear,snow=2": {
+      "model": "backcountry:block/droppings_scat_2",
+      "y": 270
+    },
+    "facing=west,kind=bear,snow=3": {
+      "model": "backcountry:block/droppings_scat_3",
+      "y": 270
+    },
+    "facing=west,kind=bear,snow=4": {
+      "model": "backcountry:block/droppings_scat_4",
+      "y": 270
+    },
+    "facing=west,kind=bear,snow=5": {
+      "model": "backcountry:block/droppings_scat_5",
+      "y": 270
+    },
+    "facing=west,kind=bear,snow=6": {
+      "model": "backcountry:block/droppings_scat_6",
+      "y": 270
+    },
+    "facing=west,kind=bear,snow=7": {
+      "model": "backcountry:block/droppings_scat_7",
+      "y": 270
+    },
+    "facing=west,kind=bear,snow=8": {
+      "model": "backcountry:block/droppings_scat_8",
+      "y": 270
+    },
+    "facing=north,kind=wolf,snow=0": {
+      "model": "backcountry:block/droppings_scat_0"
+    },
+    "facing=north,kind=wolf,snow=1": {
+      "model": "backcountry:block/droppings_scat_1"
+    },
+    "facing=north,kind=wolf,snow=2": {
+      "model": "backcountry:block/droppings_scat_2"
+    },
+    "facing=north,kind=wolf,snow=3": {
+      "model": "backcountry:block/droppings_scat_3"
+    },
+    "facing=north,kind=wolf,snow=4": {
+      "model": "backcountry:block/droppings_scat_4"
+    },
+    "facing=north,kind=wolf,snow=5": {
+      "model": "backcountry:block/droppings_scat_5"
+    },
+    "facing=north,kind=wolf,snow=6": {
+      "model": "backcountry:block/droppings_scat_6"
+    },
+    "facing=north,kind=wolf,snow=7": {
+      "model": "backcountry:block/droppings_scat_7"
+    },
+    "facing=north,kind=wolf,snow=8": {
+      "model": "backcountry:block/droppings_scat_8"
+    },
+    "facing=east,kind=wolf,snow=0": {
+      "model": "backcountry:block/droppings_scat_0",
+      "y": 90
+    },
+    "facing=east,kind=wolf,snow=1": {
+      "model": "backcountry:block/droppings_scat_1",
+      "y": 90
+    },
+    "facing=east,kind=wolf,snow=2": {
+      "model": "backcountry:block/droppings_scat_2",
+      "y": 90
+    },
+    "facing=east,kind=wolf,snow=3": {
+      "model": "backcountry:block/droppings_scat_3",
+      "y": 90
+    },
+    "facing=east,kind=wolf,snow=4": {
+      "model": "backcountry:block/droppings_scat_4",
+      "y": 90
+    },
+    "facing=east,kind=wolf,snow=5": {
+      "model": "backcountry:block/droppings_scat_5",
+      "y": 90
+    },
+    "facing=east,kind=wolf,snow=6": {
+      "model": "backcountry:block/droppings_scat_6",
+      "y": 90
+    },
+    "facing=east,kind=wolf,snow=7": {
+      "model": "backcountry:block/droppings_scat_7",
+      "y": 90
+    },
+    "facing=east,kind=wolf,snow=8": {
+      "model": "backcountry:block/droppings_scat_8",
+      "y": 90
+    },
+    "facing=south,kind=wolf,snow=0": {
+      "model": "backcountry:block/droppings_scat_0",
+      "y": 180
+    },
+    "facing=south,kind=wolf,snow=1": {
+      "model": "backcountry:block/droppings_scat_1",
+      "y": 180
+    },
+    "facing=south,kind=wolf,snow=2": {
+      "model": "backcountry:block/droppings_scat_2",
+      "y": 180
+    },
+    "facing=south,kind=wolf,snow=3": {
+      "model": "backcountry:block/droppings_scat_3",
+      "y": 180
+    },
+    "facing=south,kind=wolf,snow=4": {
+      "model": "backcountry:block/droppings_scat_4",
+      "y": 180
+    },
+    "facing=south,kind=wolf,snow=5": {
+      "model": "backcountry:block/droppings_scat_5",
+      "y": 180
+    },
+    "facing=south,kind=wolf,snow=6": {
+      "model": "backcountry:block/droppings_scat_6",
+      "y": 180
+    },
+    "facing=south,kind=wolf,snow=7": {
+      "model": "backcountry:block/droppings_scat_7",
+      "y": 180
+    },
+    "facing=south,kind=wolf,snow=8": {
+      "model": "backcountry:block/droppings_scat_8",
+      "y": 180
+    },
+    "facing=west,kind=wolf,snow=0": {
+      "model": "backcountry:block/droppings_scat_0",
+      "y": 270
+    },
+    "facing=west,kind=wolf,snow=1": {
+      "model": "backcountry:block/droppings_scat_1",
+      "y": 270
+    },
+    "facing=west,kind=wolf,snow=2": {
+      "model": "backcountry:block/droppings_scat_2",
+      "y": 270
+    },
+    "facing=west,kind=wolf,snow=3": {
+      "model": "backcountry:block/droppings_scat_3",
+      "y": 270
+    },
+    "facing=west,kind=wolf,snow=4": {
+      "model": "backcountry:block/droppings_scat_4",
+      "y": 270
+    },
+    "facing=west,kind=wolf,snow=5": {
+      "model": "backcountry:block/droppings_scat_5",
+      "y": 270
+    },
+    "facing=west,kind=wolf,snow=6": {
+      "model": "backcountry:block/droppings_scat_6",
+      "y": 270
+    },
+    "facing=west,kind=wolf,snow=7": {
+      "model": "backcountry:block/droppings_scat_7",
+      "y": 270
+    },
+    "facing=west,kind=wolf,snow=8": {
+      "model": "backcountry:block/droppings_scat_8",
+      "y": 270
+    },
+    "facing=north,kind=wolverine,snow=0": {
+      "model": "backcountry:block/droppings_scat_0"
+    },
+    "facing=north,kind=wolverine,snow=1": {
+      "model": "backcountry:block/droppings_scat_1"
+    },
+    "facing=north,kind=wolverine,snow=2": {
+      "model": "backcountry:block/droppings_scat_2"
+    },
+    "facing=north,kind=wolverine,snow=3": {
+      "model": "backcountry:block/droppings_scat_3"
+    },
+    "facing=north,kind=wolverine,snow=4": {
+      "model": "backcountry:block/droppings_scat_4"
+    },
+    "facing=north,kind=wolverine,snow=5": {
+      "model": "backcountry:block/droppings_scat_5"
+    },
+    "facing=north,kind=wolverine,snow=6": {
+      "model": "backcountry:block/droppings_scat_6"
+    },
+    "facing=north,kind=wolverine,snow=7": {
+      "model": "backcountry:block/droppings_scat_7"
+    },
+    "facing=north,kind=wolverine,snow=8": {
+      "model": "backcountry:block/droppings_scat_8"
+    },
+    "facing=east,kind=wolverine,snow=0": {
+      "model": "backcountry:block/droppings_scat_0",
+      "y": 90
+    },
+    "facing=east,kind=wolverine,snow=1": {
+      "model": "backcountry:block/droppings_scat_1",
+      "y": 90
+    },
+    "facing=east,kind=wolverine,snow=2": {
+      "model": "backcountry:block/droppings_scat_2",
+      "y": 90
+    },
+    "facing=east,kind=wolverine,snow=3": {
+      "model": "backcountry:block/droppings_scat_3",
+      "y": 90
+    },
+    "facing=east,kind=wolverine,snow=4": {
+      "model": "backcountry:block/droppings_scat_4",
+      "y": 90
+    },
+    "facing=east,kind=wolverine,snow=5": {
+      "model": "backcountry:block/droppings_scat_5",
+      "y": 90
+    },
+    "facing=east,kind=wolverine,snow=6": {
+      "model": "backcountry:block/droppings_scat_6",
+      "y": 90
+    },
+    "facing=east,kind=wolverine,snow=7": {
+      "model": "backcountry:block/droppings_scat_7",
+      "y": 90
+    },
+    "facing=east,kind=wolverine,snow=8": {
+      "model": "backcountry:block/droppings_scat_8",
+      "y": 90
+    },
+    "facing=south,kind=wolverine,snow=0": {
+      "model": "backcountry:block/droppings_scat_0",
+      "y": 180
+    },
+    "facing=south,kind=wolverine,snow=1": {
+      "model": "backcountry:block/droppings_scat_1",
+      "y": 180
+    },
+    "facing=south,kind=wolverine,snow=2": {
+      "model": "backcountry:block/droppings_scat_2",
+      "y": 180
+    },
+    "facing=south,kind=wolverine,snow=3": {
+      "model": "backcountry:block/droppings_scat_3",
+      "y": 180
+    },
+    "facing=south,kind=wolverine,snow=4": {
+      "model": "backcountry:block/droppings_scat_4",
+      "y": 180
+    },
+    "facing=south,kind=wolverine,snow=5": {
+      "model": "backcountry:block/droppings_scat_5",
+      "y": 180
+    },
+    "facing=south,kind=wolverine,snow=6": {
+      "model": "backcountry:block/droppings_scat_6",
+      "y": 180
+    },
+    "facing=south,kind=wolverine,snow=7": {
+      "model": "backcountry:block/droppings_scat_7",
+      "y": 180
+    },
+    "facing=south,kind=wolverine,snow=8": {
+      "model": "backcountry:block/droppings_scat_8",
+      "y": 180
+    },
+    "facing=west,kind=wolverine,snow=0": {
+      "model": "backcountry:block/droppings_scat_0",
+      "y": 270
+    },
+    "facing=west,kind=wolverine,snow=1": {
+      "model": "backcountry:block/droppings_scat_1",
+      "y": 270
+    },
+    "facing=west,kind=wolverine,snow=2": {
+      "model": "backcountry:block/droppings_scat_2",
+      "y": 270
+    },
+    "facing=west,kind=wolverine,snow=3": {
+      "model": "backcountry:block/droppings_scat_3",
+      "y": 270
+    },
+    "facing=west,kind=wolverine,snow=4": {
+      "model": "backcountry:block/droppings_scat_4",
+      "y": 270
+    },
+    "facing=west,kind=wolverine,snow=5": {
+      "model": "backcountry:block/droppings_scat_5",
+      "y": 270
+    },
+    "facing=west,kind=wolverine,snow=6": {
+      "model": "backcountry:block/droppings_scat_6",
+      "y": 270
+    },
+    "facing=west,kind=wolverine,snow=7": {
+      "model": "backcountry:block/droppings_scat_7",
+      "y": 270
+    },
+    "facing=west,kind=wolverine,snow=8": {
+      "model": "backcountry:block/droppings_scat_8",
+      "y": 270
+    },
+    "facing=north,kind=hare,snow=0": {
+      "model": "backcountry:block/droppings_pellets_0"
+    },
+    "facing=north,kind=hare,snow=1": {
+      "model": "backcountry:block/droppings_pellets_1"
+    },
+    "facing=north,kind=hare,snow=2": {
+      "model": "backcountry:block/droppings_pellets_2"
+    },
+    "facing=north,kind=hare,snow=3": {
+      "model": "backcountry:block/droppings_pellets_3"
+    },
+    "facing=north,kind=hare,snow=4": {
+      "model": "backcountry:block/droppings_pellets_4"
+    },
+    "facing=north,kind=hare,snow=5": {
+      "model": "backcountry:block/droppings_pellets_5"
+    },
+    "facing=north,kind=hare,snow=6": {
+      "model": "backcountry:block/droppings_pellets_6"
+    },
+    "facing=north,kind=hare,snow=7": {
+      "model": "backcountry:block/droppings_pellets_7"
+    },
+    "facing=north,kind=hare,snow=8": {
+      "model": "backcountry:block/droppings_pellets_8"
+    },
+    "facing=east,kind=hare,snow=0": {
+      "model": "backcountry:block/droppings_pellets_0",
+      "y": 90
+    },
+    "facing=east,kind=hare,snow=1": {
+      "model": "backcountry:block/droppings_pellets_1",
+      "y": 90
+    },
+    "facing=east,kind=hare,snow=2": {
+      "model": "backcountry:block/droppings_pellets_2",
+      "y": 90
+    },
+    "facing=east,kind=hare,snow=3": {
+      "model": "backcountry:block/droppings_pellets_3",
+      "y": 90
+    },
+    "facing=east,kind=hare,snow=4": {
+      "model": "backcountry:block/droppings_pellets_4",
+      "y": 90
+    },
+    "facing=east,kind=hare,snow=5": {
+      "model": "backcountry:block/droppings_pellets_5",
+      "y": 90
+    },
+    "facing=east,kind=hare,snow=6": {
+      "model": "backcountry:block/droppings_pellets_6",
+      "y": 90
+    },
+    "facing=east,kind=hare,snow=7": {
+      "model": "backcountry:block/droppings_pellets_7",
+      "y": 90
+    },
+    "facing=east,kind=hare,snow=8": {
+      "model": "backcountry:block/droppings_pellets_8",
+      "y": 90
+    },
+    "facing=south,kind=hare,snow=0": {
+      "model": "backcountry:block/droppings_pellets_0",
+      "y": 180
+    },
+    "facing=south,kind=hare,snow=1": {
+      "model": "backcountry:block/droppings_pellets_1",
+      "y": 180
+    },
+    "facing=south,kind=hare,snow=2": {
+      "model": "backcountry:block/droppings_pellets_2",
+      "y": 180
+    },
+    "facing=south,kind=hare,snow=3": {
+      "model": "backcountry:block/droppings_pellets_3",
+      "y": 180
+    },
+    "facing=south,kind=hare,snow=4": {
+      "model": "backcountry:block/droppings_pellets_4",
+      "y": 180
+    },
+    "facing=south,kind=hare,snow=5": {
+      "model": "backcountry:block/droppings_pellets_5",
+      "y": 180
+    },
+    "facing=south,kind=hare,snow=6": {
+      "model": "backcountry:block/droppings_pellets_6",
+      "y": 180
+    },
+    "facing=south,kind=hare,snow=7": {
+      "model": "backcountry:block/droppings_pellets_7",
+      "y": 180
+    },
+    "facing=south,kind=hare,snow=8": {
+      "model": "backcountry:block/droppings_pellets_8",
+      "y": 180
+    },
+    "facing=west,kind=hare,snow=0": {
+      "model": "backcountry:block/droppings_pellets_0",
+      "y": 270
+    },
+    "facing=west,kind=hare,snow=1": {
+      "model": "backcountry:block/droppings_pellets_1",
+      "y": 270
+    },
+    "facing=west,kind=hare,snow=2": {
+      "model": "backcountry:block/droppings_pellets_2",
+      "y": 270
+    },
+    "facing=west,kind=hare,snow=3": {
+      "model": "backcountry:block/droppings_pellets_3",
+      "y": 270
+    },
+    "facing=west,kind=hare,snow=4": {
+      "model": "backcountry:block/droppings_pellets_4",
+      "y": 270
+    },
+    "facing=west,kind=hare,snow=5": {
+      "model": "backcountry:block/droppings_pellets_5",
+      "y": 270
+    },
+    "facing=west,kind=hare,snow=6": {
+      "model": "backcountry:block/droppings_pellets_6",
+      "y": 270
+    },
+    "facing=west,kind=hare,snow=7": {
+      "model": "backcountry:block/droppings_pellets_7",
+      "y": 270
+    },
+    "facing=west,kind=hare,snow=8": {
+      "model": "backcountry:block/droppings_pellets_8",
+      "y": 270
+    }
+  }
+}

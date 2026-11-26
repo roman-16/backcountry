@@ -93,7 +93,7 @@ public final class FirewoodItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("tooltip.backcountry.seasoned", percent(seasoning(stack))).withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.backcountry.seasoned", percent(seasoning(stack)), percent(Balance.get().firewood().catches())).withStyle(ChatFormatting.GRAY));
         if (!catches(stack)) {
             tooltip.add(Component.translatable("tooltip.backcountry.too_green").withStyle(ChatFormatting.RED));
         }

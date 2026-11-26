@@ -2,6 +2,7 @@ package io.github.roman16.backcountry.client;
 
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Nutrition;
 import io.github.roman16.backcountry.fire.Lights;
 import io.github.roman16.backcountry.food.Fish;
@@ -29,11 +30,13 @@ import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ContainerScreenEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 @EventBusSubscriber(modid = Backcountry.MODID, value = Dist.CLIENT)
 public final class ClientEvents {
+    private static final double WATER_SHOWN = 0.005;
     private static final String ADVANCEMENTS = "gui.advancements";
     private static final String STATISTICS = "gui.stats";
     private static final ResourceLocation SLOT_SPRITE = ResourceLocation.withDefaultNamespace("container/slot");
@@ -112,7 +115,14 @@ public final class ClientEvents {
         ItemStack stack = event.getItemStack();
         Nutrition.of(stack).ifPresent(food -> {
             List<Component> lines = new ArrayList<>();
-            lines.add(Component.translatable("tooltip.backcountry.food", Words.kcal(food.kcal()), Words.grams(food.fat())).withStyle(ChatFormatting.GRAY));
+            lines.add((food.water() >= WATER_SHOWN ? Component.translatable("tooltip.backcountry.food_water", Words.kcal(food.kcal()), Words.grams(food.fat()), Words.litres(food.water()))
+                    : Component.translatable("tooltip.backcountry.food", Words.kcal(food.kcal()), Words.grams(food.fat()))).withStyle(ChatFormatting.GRAY));
+            if (food.raw()) {
+                lines.add(Component.translatable("tooltip.backcountry.raw").withStyle(ChatFormatting.GRAY));
+            }
+            if (stack.is(Things.ANIMAL_FAT.get())) {
+                lines.add(Component.translatable("tooltip.backcountry.render_fat").withStyle(ChatFormatting.GRAY));
+            }
             double air = ClientState.weather.airC();
             if (Spoilage.spoiled(stack)) {
                 lines.add(Component.translatable("tooltip.backcountry.spoiled").withStyle(ChatFormatting.RED));
@@ -137,6 +147,14 @@ public final class ClientEvents {
             }
             event.getToolTip().addAll(Math.min(1, event.getToolTip().size()), lines);
         });
+    }
+
+    @SubscribeEvent
+    static void tooFull(LivingEntityUseItemEvent.Start event) {
+        if (event.getEntity() == Minecraft.getInstance().player && !Minecraft.getInstance().player.isCreative() && !Minecraft.getInstance().player.isSpectator()
+                && Metabolism.tooFull(ClientState.stomachKcal(), event.getItem())) {
+            event.setCanceled(true);
+        }
     }
 
     @SubscribeEvent

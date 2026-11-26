@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Locale;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -27,8 +29,12 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 public class WaterVesselItem extends Item {
+    private static final double POUR_REACH = 0.75;
+    private static final int POUR_PARTICLES = 16;
+    private static final double POUR_SPREAD = 0.25;
     private static final int DRINK_TICKS = 32;
     private final double capacity;
 
@@ -48,6 +54,18 @@ public class WaterVesselItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+        if (player.isSecondaryUseActive() && !water(stack).empty()) {
+            if (!level.isClientSide) {
+                player.displayClientMessage(Component.translatable("message.backcountry.poured_out", litres(water(stack))), true);
+                stack.set(Things.WATER.get(), Water.EMPTY);
+                if (level instanceof ServerLevel server) {
+                    Vec3 front = player.getEyePosition().add(player.getLookAngle().scale(POUR_REACH));
+                    server.sendParticles(ParticleTypes.SPLASH, front.x, front.y, front.z, POUR_PARTICLES, POUR_SPREAD, POUR_SPREAD, POUR_SPREAD, 0);
+                }
+            }
+            level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BUCKET_EMPTY, SoundSource.NEUTRAL, 1.0F, 1.2F);
+            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+        }
         BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
         if (hit.getType() == HitResult.Type.BLOCK) {
             BlockPos at = hit.getBlockPos();

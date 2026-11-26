@@ -1,5 +1,6 @@
 package io.github.roman16.backcountry.food;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.roman16.backcountry.Things;
@@ -18,7 +19,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
-public record StewRecipe(List<Ingredient> ingredients, ItemStack result) implements Recipe<StewRecipe.Pot> {
+public record StewRecipe(List<Ingredient> ingredients, ItemStack result, int servings) implements Recipe<StewRecipe.Pot> {
     public record Pot(List<ItemStack> items) implements RecipeInput {
         @Override
         public ItemStack getItem(int index) {
@@ -84,9 +85,11 @@ public record StewRecipe(List<Ingredient> ingredients, ItemStack result) impleme
     public static final class Serializer implements RecipeSerializer<StewRecipe> {
         private static final MapCodec<StewRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Ingredient.CODEC_NONEMPTY.listOf().fieldOf("ingredients").forGetter(StewRecipe::ingredients),
-                ItemStack.STRICT_CODEC.fieldOf("result").forGetter(StewRecipe::result)).apply(instance, StewRecipe::new));
+                ItemStack.STRICT_CODEC.fieldOf("result").forGetter(StewRecipe::result),
+                Codec.INT.optionalFieldOf("servings", 1).forGetter(StewRecipe::servings)).apply(instance, StewRecipe::new));
         private static final StreamCodec<RegistryFriendlyByteBuf, StewRecipe> STREAM_CODEC = StreamCodec.composite(
-                Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()), StewRecipe::ingredients, ItemStack.STREAM_CODEC, StewRecipe::result, StewRecipe::new);
+                Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()), StewRecipe::ingredients, ItemStack.STREAM_CODEC, StewRecipe::result, ByteBufCodecs.VAR_INT,
+                StewRecipe::servings, StewRecipe::new);
 
         @Override
         public MapCodec<StewRecipe> codec() {

@@ -4,7 +4,7 @@ What Backcountry is, decided before anything is built. Each document keeps its *
 
 ## Now
 
-**M1 Repo, tooling, world** to **M18 The team's positions** are built, M1 to M12 balanced by automated playthroughs (`playthrough` skill) and by the team's first play on the server, which set walking by distance, water by its source, small game's meat and the berries' season. The rest of the `playtest` skill's rows wait for the next play. M16's title panorama waits until the island's terrain is settled.
+**M1 Repo, tooling, world** to **M19 Reading the land** are built, M1 to M12 balanced by automated playthroughs (`playthrough` skill) and by the team's plays on the server, which set walking by distance, water by its source and from food, the Camp Pot's size, wary wolves, hypothermia apart from frostbite, the meat of every animal and the berries' season. The rest of the `playtest` skill's rows wait for the next play. M16's title panorama waits until the island's terrain is settled.
 
 ## Milestones
 
@@ -30,6 +30,7 @@ Each milestone ends playable, with `just lint` and `just test` green.
 | M16 Clearer screens | Water as droplets above the bolts, the body panel's words and every HUD element named on hover, frost at the screen's edges when cold, no vanilla tutorial or recipe book, the Messenger by the movement keys and SOS to tap out, the Backcountry Preset in Video Settings with Complementary Reimagined, the island on the title screen (`interface.md` I1, I2, I7, I8, `systems.md` S10, `production.md`) |
 | M17 Binoculars | The Binoculars in the kit, worn in the neck slot above the pack and looked through with C or in hand at 8× (`systems.md` S1, S8, S10, `interface.md` I8) |
 | M18 The team's positions | The Messenger shares each teammate's position on the locator bar at the top of the screen (`systems.md` S4, `interface.md` I1) |
+| M19 Reading the land | Sign: prints and droppings that age, back-trails behind placed big game; scent on the wind with Plant Fibre to read it; hare runs for snares; the Messenger's Guide and the why said at the moment; offal cooked and moose-head soup; the 4 L Camp Pot boiling by the fire's heat (`systems.md` S1, S4, S7, S8, S9, S11, `interface.md` I1, I2, I3) |
 
 ## Documents
 

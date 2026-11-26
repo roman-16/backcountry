@@ -43,7 +43,6 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
@@ -53,6 +52,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 @EventBusSubscriber(modid = Backcountry.MODID)
 public final class Metabolism {
     public static final ResourceKey<DamageType> FROSTBITE = ResourceKey.create(Registries.DAMAGE_TYPE, Backcountry.id("frostbite"));
+    public static final ResourceKey<DamageType> HYPOTHERMIA = ResourceKey.create(Registries.DAMAGE_TYPE, Backcountry.id("hypothermia"));
     public static final ResourceKey<DamageType> INFECTION = ResourceKey.create(Registries.DAMAGE_TYPE, Backcountry.id("infection"));
     public static final ResourceKey<DamageType> THIRST = ResourceKey.create(Registries.DAMAGE_TYPE, Backcountry.id("thirst"));
     public static final int STEP_TICKS = 20;
@@ -258,7 +258,8 @@ public final class Metabolism {
 
     private static void hold(ServerPlayer player, Body body) {
         Balance.Energy energy = Balance.get().energy();
-        boolean tired = body.energy < energy.sprintBelow() || body.has(Condition.BLISTERS) || body.has(Condition.FROSTBITE) || body.has(Condition.SEVERE_FROSTBITE);
+        boolean tired = body.energy < energy.sprintBelow() || body.has(Condition.BLISTERS) || body.has(Condition.FROSTBITE) || body.has(Condition.SEVERE_FROSTBITE)
+                || body.has(Condition.HYPOTHERMIA) || body.has(Condition.SEVERE_HYPOTHERMIA);
         player.getFoodData().setFoodLevel(tired ? TIRED_FOOD : HELD_FOOD);
         player.getFoodData().setSaturation(0);
         player.getFoodData().setExhaustion(0);
@@ -470,14 +471,14 @@ public final class Metabolism {
             event.setCanceled(true);
             return;
         }
-        if (!player.level().isClientSide && player instanceof ServerPlayer server && lives(server)) {
-            Body body = body(player);
-            double kcal = Nutrition.of(event.getItem()).get().kcal();
-            if (body.stomachKcal > 0 && body.stomachKcal + kcal > Balance.get().body().stomachKcal()) {
-                player.displayClientMessage(Component.translatable("message.backcountry.too_full"), true);
-                event.setCanceled(true);
-            }
+        if (!player.level().isClientSide && player instanceof ServerPlayer server && lives(server) && tooFull(body(player).stomachKcal, event.getItem())) {
+            player.displayClientMessage(Component.translatable("message.backcountry.too_full"), true);
+            event.setCanceled(true);
         }
+    }
+
+    public static boolean tooFull(double stomachKcal, ItemStack food) {
+        return Nutrition.of(food).map(nutrition -> stomachKcal > 0 && stomachKcal + nutrition.kcal() > Balance.get().body().stomachKcal()).orElse(false);
     }
 
     @SubscribeEvent

@@ -95,7 +95,7 @@ public final class WildTests {
         BlockPos at = new BlockPos(5, 1, 5);
         helper.setBlock(at, Things.CARCASS.get().defaultBlockState());
         var carcass = (CarcassEntity) helper.getLevel().getBlockEntity(helper.absolutePos(at));
-        carcass.hold(BuiltInRegistries.ENTITY_TYPE.get(HuntTests.MOOSE), List.of());
+        carcass.hold(BuiltInRegistries.ENTITY_TYPE.get(HuntTests.MOOSE), List.of(), 0);
         player.setShiftKeyDown(true);
         BlockPos abs = helper.absolutePos(at);
         helper.getLevel().getBlockState(abs).useWithoutItem(helper.getLevel(), player, new BlockHitResult(Vec3.atCenterOf(abs), Direction.UP, abs, false));

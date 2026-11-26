@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class CookingPotEntity extends BlockEntity {
+    private static final double SPILL = 1e-6;
     public static final int FOODS = 6;
     private static final int STEP_TICKS = 20;
     private static final double TICKS_AN_HOUR = 1000;
@@ -106,8 +107,9 @@ public final class CookingPotEntity extends BlockEntity {
         cookedHours += hours;
         if (cookedHours >= cooking.stewHours()) {
             stew = recipe.get().value().assemble(new StewRecipe.Pot(foods), level.registryAccess());
+            stew.setCount(Math.min(recipe.get().value().servings(), (int) Math.floor(waterL / cooking.servingL() + SPILL)));
             foods.clear();
-            waterL -= cooking.servingL() * stew.getCount();
+            waterL = Math.max(0, waterL - cooking.servingL() * stew.getCount());
             cookedHours = 0;
         }
         setChanged();

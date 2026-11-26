@@ -3,15 +3,21 @@ package io.github.roman16.backcountry.fire;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.gear.CampPotEntity;
+import io.github.roman16.backcountry.mixin.CampfireCookingAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -130,9 +136,10 @@ public final class Fire implements INBTSerializable<CompoundTag> {
         coalHours = 0;
     }
 
-    public void advance(double hours, boolean wet) {
+    public double advance(double hours, boolean wet) {
         Balance.Fire fire = Balance.get().fire();
         double left = hours;
+        double burned = 0;
         while (left > SPENT) {
             if (lit()) {
                 double rate = rate(wet);
@@ -140,6 +147,7 @@ public final class Fire implements INBTSerializable<CompoundTag> {
                 pieceHours -= spent * rate;
                 coalHours = Math.min(fire.mostCoalsHours(), coalHours + spent);
                 left -= spent;
+                burned += spent;
                 if (pieceHours <= SPENT) {
                     pieceHours = 0;
                     catchNext();
@@ -156,12 +164,13 @@ public final class Fire implements INBTSerializable<CompoundTag> {
                     coalHours = 0;
                 }
             } else {
-                return;
+                return burned;
             }
         }
         if (coals()) {
             catchNext();
         }
+        return burned;
     }
 
     private boolean catchNext() {
@@ -206,14 +215,41 @@ public final class Fire implements INBTSerializable<CompoundTag> {
                 fire.catchNext();
             }
         }
-        double hours = Math.max(0, now - fire.clock) / TICKS_AN_HOUR;
+        long elapsed = Math.max(0, now - fire.clock);
         fire.clock = now;
-        fire.advance(hours, rainedOn(level, pos));
+        double hours = elapsed / TICKS_AN_HOUR;
+        double burned = fire.advance(hours, rainedOn(level, pos));
+        long slept = Math.min(elapsed - STEP_TICKS, Math.round(burned * TICKS_AN_HOUR));
+        if (slept > 0) {
+            slept(level, pos, campfire, fire, (int) slept);
+        }
         if (fire.packed()) {
             spark(level, pos, hours);
         }
         show(level, pos, state, fire);
         campfire.setChanged();
+    }
+
+    public static void slept(Level level, BlockPos pos, CampfireBlockEntity campfire, Fire fire, int ticks) {
+        CampfireCookingAccessor cooking = (CampfireCookingAccessor) campfire;
+        int[] progress = cooking.backcountry$progress();
+        for (int slot = 0; slot < campfire.getItems().size(); slot++) {
+            ItemStack raw = campfire.getItems().get(slot);
+            if (raw.isEmpty()) {
+                continue;
+            }
+            progress[slot] += ticks;
+            if (progress[slot] >= cooking.backcountry$time()[slot]) {
+                SingleRecipeInput input = new SingleRecipeInput(raw);
+                level.getRecipeManager().getRecipeFor(RecipeType.CAMPFIRE_COOKING, input, level)
+                        .ifPresent(recipe -> Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), recipe.value().assemble(input, level.registryAccess())));
+                campfire.getItems().set(slot, ItemStack.EMPTY);
+                level.sendBlockUpdated(pos, campfire.getBlockState(), campfire.getBlockState(), Block.UPDATE_ALL);
+            }
+        }
+        if (level.getBlockEntity(pos.above()) instanceof CampPotEntity pot) {
+            pot.slept(level, pos.above(), ticks, fire.setting.burn());
+        }
     }
 
     public static void show(Level level, BlockPos pos, BlockState state, Fire fire) {

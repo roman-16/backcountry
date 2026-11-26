@@ -86,7 +86,7 @@ public final class Hud {
     static float frostShare(float coreC) {
         Balance balance = Balance.get();
         double shiver = balance.warmth().shiverCoreC();
-        return (float) Mth.clamp((shiver - coreC) / (shiver - balance.conditions().frostCoreC()), 0, 1);
+        return (float) Mth.clamp((shiver - coreC) / (shiver - balance.conditions().hypothermiaCoreC()), 0, 1);
     }
 
     private static void frost(GuiGraphics graphics, DeltaTracker delta) {
@@ -198,7 +198,7 @@ public final class Hud {
             lines.add(new Line(WET, wet, Look.TEXT, () -> List.of(wet, Component.translatable("messenger.backcountry.help.wet").withStyle(ChatFormatting.GRAY))));
         }
         for (Condition condition : view.conditions()) {
-            lines.add(new Line(condition.icon(), condition.title(), condition == Condition.SEVERE_FROSTBITE ? Look.DANGER : Look.TEXT, () -> List.of(condition.title(),
+            lines.add(new Line(condition.icon(), condition.title(), condition.deadly() ? Look.DANGER : Look.TEXT, () -> List.of(condition.title(),
                     Component.translatable("hud.backcountry.hover.cure", Component.translatable("condition.backcountry." + condition.id() + ".cure"))
                             .withStyle(ChatFormatting.GRAY))));
         }
@@ -234,7 +234,7 @@ public final class Hud {
 
     private static int coreColour(float core) {
         Balance.Warmth warmth = Balance.get().warmth();
-        if (core < Balance.get().conditions().frostCoreC()) {
+        if (core < Balance.get().conditions().hypothermiaCoreC()) {
             return Look.FREEZING;
         }
         if (core < warmth.shiverCoreC()) {

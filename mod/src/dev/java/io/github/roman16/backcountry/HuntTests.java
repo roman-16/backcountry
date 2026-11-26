@@ -8,7 +8,14 @@ import io.github.roman16.backcountry.hunt.CarcassBlock;
 import io.github.roman16.backcountry.hunt.CarcassEntity;
 import io.github.roman16.backcountry.hunt.CarcassItem;
 import io.github.roman16.backcountry.hunt.Hunting;
+import io.github.roman16.backcountry.hunt.Track;
+import io.github.roman16.backcountry.hunt.TrackBlock;
+import io.github.roman16.backcountry.hunt.TrackEntity;
+import io.github.roman16.backcountry.hunt.Tracks;
+import io.github.roman16.backcountry.hunt.Wolves;
 import io.github.roman16.backcountry.hunt.Wound;
+import io.github.roman16.backcountry.mixin.TargetTypeAccessor;
+import io.github.roman16.backcountry.weather.Day;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -24,7 +31,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -32,6 +42,8 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SnowLayerBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -44,6 +56,7 @@ public final class HuntTests {
     static final ResourceLocation MOOSE = ResourceLocation.fromNamespaceAndPath("alexsmobs", "moose");
     private static final int ANIMALS = 16;
     private static final float ARROW_DAMAGE = 2;
+    private static final int SCAVENGE_STEP = 40;
 
     private HuntTests() {}
 
@@ -118,7 +131,7 @@ public final class HuntTests {
         helper.setBlock(pos, Things.CARCASS.get().defaultBlockState());
         BlockPos at = helper.absolutePos(pos);
         CarcassEntity carcass = (CarcassEntity) helper.getLevel().getBlockEntity(at);
-        carcass.hold(BuiltInRegistries.ENTITY_TYPE.get(MOOSE), List.of(new ItemStack(Things.BROADHEAD_ARROW.get())));
+        carcass.hold(BuiltInRegistries.ENTITY_TYPE.get(MOOSE), List.of(new ItemStack(Things.BROADHEAD_ARROW.get())), 0);
         ServerPlayer player = BackcountryTests.survivor(helper);
         BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(at), Direction.UP, at, false);
         ItemStack stick = new ItemStack(Items.STICK);
@@ -144,7 +157,7 @@ public final class HuntTests {
         helper.setBlock(pos.below(), Blocks.STONE);
         helper.setBlock(pos, Things.CARCASS.get().defaultBlockState());
         BlockPos at = helper.absolutePos(pos);
-        ((CarcassEntity) helper.getLevel().getBlockEntity(at)).hold(EntityType.RABBIT, List.of());
+        ((CarcassEntity) helper.getLevel().getBlockEntity(at)).hold(EntityType.RABBIT, List.of(), 0);
         ServerPlayer player = BackcountryTests.survivor(helper);
         player.setShiftKeyDown(true);
         helper.getLevel().getBlockState(at).useWithoutItem(helper.getLevel(), player, new BlockHitResult(Vec3.atCenterOf(at), Direction.UP, at, false));
@@ -188,6 +201,85 @@ public final class HuntTests {
         check(helper, DeepSnow.deep(helper.getLevel(), helper.absolutePos(pos)), "a snow block underfoot was not deep snow");
         helper.setBlock(pos.below(), Blocks.STONE);
         check(helper, !DeepSnow.deep(helper.getLevel(), helper.absolutePos(pos)), "bare stone was deep snow");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void wolvesNeverHuntSurvivors(GameTestHelper helper) {
+        helper.setBlock(new BlockPos(3, 0, 3), Blocks.STONE);
+        if (!(BuiltInRegistries.ENTITY_TYPE.get(Wolves.TIMBER_WOLF).spawn(helper.getLevel(), helper.absolutePos(new BlockPos(3, 1, 3)), MobSpawnType.EVENT) instanceof Mob wolf)) {
+            throw new IllegalStateException("no timber wolf");
+        }
+        boolean hunts = wolf.targetSelector.getAvailableGoals().stream().anyMatch(goal -> goal.getGoal() instanceof NearestAttackableTargetGoal<?> hunt
+                && Player.class.isAssignableFrom(((TargetTypeAccessor) hunt).backcountry$targetType()));
+        boolean keepsOff = wolf.goalSelector.getAvailableGoals().stream().anyMatch(goal -> goal.getGoal() instanceof AvoidEntityGoal<?>);
+        wolf.discard();
+        check(helper, !hunts && keepsOff, "a timber wolf hunts survivors (" + hunts + ") or keeps no distance (" + !keepsOff + ")");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void bigGameLeavesSignThatFades(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        helper.setBlock(new BlockPos(2, 0, 2), Blocks.MUD);
+        helper.setBlock(new BlockPos(4, 0, 2), Blocks.GRASS_BLOCK);
+        helper.setBlock(new BlockPos(2, 0, 4), Blocks.STONE);
+        helper.setBlock(new BlockPos(2, 1, 4), Blocks.SNOW.defaultBlockState().setValue(SnowLayerBlock.LAYERS, 3));
+        long now = level.getDayTime();
+        Tracks.mark(level, helper.absolutePos(new BlockPos(2, 1, 2)), Track.MOOSE, Direction.NORTH, now, false);
+        Tracks.mark(level, helper.absolutePos(new BlockPos(4, 1, 2)), Track.MOOSE, Direction.NORTH, now, false);
+        Tracks.mark(level, helper.absolutePos(new BlockPos(2, 1, 4)), Track.HARE, Direction.NORTH, now, false);
+        check(helper, helper.getBlockState(new BlockPos(2, 1, 2)).is(Things.TRACKS.get()), "a moose left no print in mud");
+        check(helper, helper.getBlockState(new BlockPos(4, 1, 2)).isAir(), "a moose printed on grass");
+        BlockState hare = helper.getBlockState(new BlockPos(2, 1, 4));
+        check(helper, hare.is(Things.TRACKS.get()) && hare.getValue(TrackBlock.SNOW) == 3, "a hare's print in snow is " + hare);
+        Tracks.mark(level, helper.absolutePos(new BlockPos(2, 1, 2)), Track.MOOSE, Direction.NORTH, now, true);
+        check(helper, helper.getBlockState(new BlockPos(2, 1, 2)).is(Things.DROPPINGS.get()), "the moose dropped nothing");
+        if (!(level.getBlockEntity(helper.absolutePos(new BlockPos(2, 1, 4))) instanceof TrackEntity print)) {
+            throw new IllegalStateException("the print has no block entity");
+        }
+        check(helper, Tracks.Age.of(print.age()) == Tracks.Age.FRESH, "a print just laid reads " + Tracks.Age.of(print.age()));
+        print.laid(now - (long) (Balance.get().tracking().signDays() * 24000));
+        Tracks.weather(level, helper.absolutePos(new BlockPos(2, 1, 4)), hare);
+        BlockState after = helper.getBlockState(new BlockPos(2, 1, 4));
+        check(helper, after.is(Blocks.SNOW) && after.getValue(SnowLayerBlock.LAYERS) == 3, "a faded print in snow left " + after);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void scentCarriesDownwind(GameTestHelper helper) {
+        Day northerly = new Day(1, 0, 0, 20, 0, Day.DRY, 0, 0, false);
+        Day calm = new Day(1, 0, 0, 0, 0, Day.DRY, 0, 0, false);
+        Vec3 survivor = Vec3.ZERO;
+        check(helper, Tracks.carries(northerly, survivor, new Vec3(0, 0, 48)), "a moose downwind did not smell the survivor");
+        check(helper, !Tracks.carries(northerly, survivor, new Vec3(0, 0, -48)), "a moose upwind smelled the survivor");
+        check(helper, !Tracks.carries(northerly, survivor, new Vec3(0, 0, 96)), "the scent carried past its reach");
+        check(helper, Tracks.carries(calm, survivor, new Vec3(8, 0, 0)) && !Tracks.carries(calm, survivor, new Vec3(32, 0, 0)), "calm air carried the scent wrong");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void scavengersTakeAnUndressedCarcass(GameTestHelper helper) {
+        BlockPos pos = new BlockPos(2, 1, 2);
+        helper.setBlock(pos.below(), Blocks.STONE);
+        helper.setBlock(pos, Things.CARCASS.get().defaultBlockState());
+        CarcassEntity carcass = (CarcassEntity) helper.getLevel().getBlockEntity(helper.absolutePos(pos));
+        carcass.hold(EntityType.RABBIT, List.of(), 0);
+        check(helper, carcass.ticksLeft() > 0, "a fresh carcass was already scavenged");
+        carcass.hold(EntityType.RABBIT, List.of(), (long) (Balance.get().hunting().scavengedDays() * 24000));
+        ItemStack carried = carcass.item();
+        check(helper, carried.getOrDefault(Things.LAIN.get(), 0L) >= (long) (Balance.get().hunting().scavengedDays() * 24000), "a carried carcass forgot how long it lay");
+        helper.runAfterDelay(SCAVENGE_STEP, () -> {
+            check(helper, helper.getBlockState(pos).isAir(), "an old carcass was never scavenged");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = "empty")
+    public static void aWolfGivesItsShareOfMeat(GameTestHelper helper) {
+        Animal wolf = Animal.of(BuiltInRegistries.ENTITY_TYPE.get(Wolves.TIMBER_WOLF)).orElseThrow();
+        int pieces = wolf.cuts().stream().filter(cut -> cut.item() == BuiltInRegistries.ITEM.get(ResourceLocation.parse("cnc:raw_game"))).mapToInt(Animal.Cut::count).sum();
+        check(helper, pieces == 12, "a timber wolf gives " + pieces + " pieces of Raw Game");
         helper.succeed();
     }
 }

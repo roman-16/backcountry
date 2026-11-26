@@ -111,6 +111,10 @@ wet_cooling = 2
 "backcountry:blunt_arrow" = 32
 "backcountry:bone_arrow" = 32
 "backcountry:broadhead_arrow" = 32
+"backcountry:cooked_heart" = 8
+"backcountry:cooked_kidney" = 8
+"backcountry:cooked_liver" = 8
+"backcountry:cooked_tongue" = 8
 "backcountry:cricket" = 32
 "backcountry:cured_hide" = 4
 "backcountry:game_guts" = 4
@@ -121,6 +125,7 @@ wet_cooling = 2
 "backcountry:kidney" = 8
 "backcountry:liver" = 8
 "backcountry:moose_head" = 1
+"backcountry:moose_head_soup" = 1
 "backcountry:mouse_droppings" = 64
 "backcountry:pelt" = 4
 "backcountry:pilot_bread" = 64
@@ -229,7 +234,6 @@ dry_wetness = 0.25
 exhausted_awake_days = 2
 exhausted_energy = 0.5
 fever_burn = 0.1
-frost_core_c = 35
 frost_stage_hours = 2
 gut_absorb = 0.5
 gut_days = 2
@@ -237,12 +241,14 @@ gut_lake_chance = 0.25
 gut_onset_days = 1
 gut_stream_chance = 0.0625
 gut_water = 2.0
+hypothermia_core_c = 35
 infection_chance = 0.15
 infection_days = 2
 parasites_absorb = 0.75
 parasites_chance = 0.6
 poisoning_days = 1
 scurvy_burn = 0.2
+severe_hypothermia_core_c = 32
 vomit_l = 1.0
 
 [cooking]
@@ -319,16 +325,18 @@ dry_per_day = 0.125
 fresh_hardwood = 0.25
 fresh_softwood = 0.5
 frozen_drying = 0.5
-pile_pieces = 8
+pile_pieces = 16
 
 [fish]
 cooked_days = 4
+cooked_water_l_per_kg = 0.31
 fat_g_per_kg = 50
 frozen_c = -16
 frozen_days = 1
 kcal_per_kg = 482
 protein_g_per_kg = 200
 raw_days = 2.5
+raw_water_l_per_kg = 0.43
 spawned_out_months = [9, 10]
 vitamin_c_mg_per_kg = 20
 
@@ -354,6 +362,7 @@ simulation_chunks = [6, 10, 12, 12]
 [headlamp]
 charge_hours = 8
 crank_hours_per_second = 0.25
+dark_below = 8
 dim_from_c = -20
 dimmest_c = -40
 dimmest_share = 0.25
@@ -380,8 +389,10 @@ carry_kg = 64
 dress_clicks_per_kg = 0.125
 heavy_power = 1.25
 organ_kg = 16
+scavenged_days = 2
 strong_bmi = 21
 strong_energy = 0.5
+wolf_keep_off_blocks = 16
 wound_share = 0.5
 
 [ice]
@@ -449,7 +460,6 @@ chance = 0.25
 kcal = 256
 
 [mining]
-open_blocks = 3
 speed = 0.05
 
 [mosquitoes]
@@ -519,14 +529,33 @@ stack_days = 0.25
 quiet_seconds = 8
 
 [tasks]
+cache_from_camp_blocks = 16
 dry_firewood = 16
 food_days = 16
+
+[tracking]
+age_hours = [2, 8, 16]
+back_trail_blocks = 64
+back_trail_hours = 8
+calm_kmh = 4.8
+calm_scent_blocks = 16
+droppings_blocks = 32
+flee_blocks = 32
+print_blocks = 2
+rain_fade = 2
+read_hours = 8
+scent_blocks = 64
+scent_degrees = 90
+sign_days = 1
+stalk_blocks = 32
 
 [traps]
 bait_share = 2
 fish_per_day = 4
 fish_share = 0.5
 mice_blocks = 8
+run_blocks = 2
+run_share = 2
 share = 0.5
 
 [walking]
@@ -578,7 +607,7 @@ boil_seconds = 240
 bottle_l = 1.0
 knockout_seconds = 60
 need_l_day = 3.0
-pot_l = 2.0
+pot_l = 4.0
 sip_l = 0.25
 thirst_damage = 2
 

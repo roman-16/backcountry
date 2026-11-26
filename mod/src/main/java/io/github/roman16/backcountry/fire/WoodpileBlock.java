@@ -40,8 +40,7 @@ public final class WoodpileBlock extends BaseEntityBlock {
     public static final int ROW = 4;
     public static final IntegerProperty PIECES = IntegerProperty.create("pieces", 1, Balance.get().firewood().pilePieces());
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
-    private static final VoxelShape LOW = Block.box(0, 0, 0, 16, 4, 16);
-    private static final VoxelShape HIGH = Block.box(0, 0, 0, 16, 8, 16);
+    private static final int LAYER = 4;
     private static final int BURN_ODDS = 5;
 
     public WoodpileBlock(Properties properties) {
@@ -71,7 +70,12 @@ public final class WoodpileBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return state.getValue(PIECES) > ROW ? HIGH : LOW;
+        int layers = (state.getValue(PIECES) + ROW - 1) / ROW;
+        return Block.box(0, 0, 0, 16, layers * LAYER, 16);
+    }
+
+    public static boolean full(BlockState state) {
+        return state.getValue(PIECES) >= Balance.get().firewood().pilePieces();
     }
 
     @Override
@@ -96,8 +100,11 @@ public final class WoodpileBlock extends BaseEntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!(stack.getItem() instanceof FirewoodItem) || state.getValue(PIECES) >= Balance.get().firewood().pilePieces()) {
+        if (!(stack.getItem() instanceof FirewoodItem)) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+        if (full(state)) {
+            return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         }
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof WoodpileEntity woodpile) {
             woodpile.add(stack.split(1));
@@ -109,9 +116,13 @@ public final class WoodpileBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof WoodpileEntity woodpile) {
+        BlockPos top = pos;
+        while (level.getBlockState(top.above()).is(this)) {
+            top = top.above();
+        }
+        if (!level.isClientSide && level.getBlockEntity(top) instanceof WoodpileEntity woodpile) {
             ItemStack piece = woodpile.take();
-            level.playSound(null, pos, SoundEvents.WOOD_HIT, SoundSource.BLOCKS, 1, 0.8F);
+            level.playSound(null, top, SoundEvents.WOOD_HIT, SoundSource.BLOCKS, 1, 0.8F);
             woodpile.tell(player);
             if (!player.getInventory().add(piece)) {
                 player.drop(piece, false);

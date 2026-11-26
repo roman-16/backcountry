@@ -116,7 +116,7 @@ public final class Rations {
         String when = dawn ? "dawn" : "dusk";
         Component told;
         if (eaten <= 0) {
-            told = Component.translatable("ration.backcountry." + when + "_none");
+            told = Component.translatable("ration.backcountry." + when + "_none", Balance.get().rations().reachBlocks());
         } else if (full) {
             told = Component.translatable("ration.backcountry." + when + "_full", eatenList(bites), Words.kcal(eaten));
         } else if (eaten < meal) {
@@ -125,6 +125,11 @@ public final class Rations {
             told = Component.translatable("ration.backcountry." + when, eatenList(bites), Words.kcal(eaten));
         }
         player.sendSystemMessage(told);
+        Body body = Metabolism.body(player);
+        if (!body.rationsTold) {
+            body.rationsTold = true;
+            player.sendSystemMessage(Component.translatable("ration.backcountry.how"));
+        }
         return eaten;
     }
 

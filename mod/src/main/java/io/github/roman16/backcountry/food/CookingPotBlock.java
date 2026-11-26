@@ -5,10 +5,13 @@ import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.client.Words;
 import io.github.roman16.backcountry.gear.Water;
 import io.github.roman16.backcountry.gear.WaterVesselItem;
+import io.github.roman16.backcountry.guide.Deed;
+import io.github.roman16.backcountry.guide.Guide;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
@@ -102,6 +105,9 @@ public final class CookingPotBlock extends BaseEntityBlock {
                 stack.shrink(1);
                 if (!player.getInventory().add(served)) {
                     player.drop(served, false);
+                }
+                if (player instanceof ServerPlayer survivor) {
+                    Guide.did(survivor, Deed.SERVED_STEW);
                 }
                 tell(player, pot);
             }

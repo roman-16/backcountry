@@ -39,7 +39,7 @@ Make a stone axe · 1 of 4        ━━━━●━━━━━━━━▲━�
 ▸ Pick up a Rock                      Paul · 340 m
 ```
 
-What comes into the inventory is listed at the top right for a few seconds, a line an item, counting up while more of it arrives ("4x Stick", Pick Up Notifier). The hotbar's items bounce as they land, are used, eaten or placed, the selected slot grows, a tool near breaking glows and the selected item's name pops in (Immersive Hotbar). While a survivor sneaks, a box at the top centre names what they look at and, under the name, the mod it comes from, in vanilla's tooltip look (Jade), with no health, state or contents, so a forager crouching at a bush still has to tell a baneberry by its look. Two things also tell their state under the name: the Camp Pot ("Boiling · 1 min 40 s left", "Fire out · 1 min 40 s left", "Boiled water · safe to drink · 2.00 L", "Lake water · 2.00 L" off the fire, "Spruce tea · steeping · 1 min left", "Birch sap · syrup in 12 min", "Empty") and the campfire (its time line as on its screen, I4, and a line for each piece cooking on it: "Raw Grouse · 20 s left"). Every item's tooltip ends with its mod in blue italics. Chat lines slide in (Chat Animation). Simple Voice Chat draws its own icon at the bottom left: a speaker struck through while voice is off or no device is found.
+What comes into the inventory is listed at the top right for a few seconds, a line an item, counting up while more of it arrives ("4x Stick", Pick Up Notifier). The hotbar's items bounce as they land, are used, eaten or placed, the selected slot grows, a tool near breaking glows and the selected item's name pops in (Immersive Hotbar). While a survivor sneaks, a box at the top centre names what they look at and, under the name, the mod it comes from, in vanilla's tooltip look (Jade), with no health, state or contents, so a forager crouching at a bush still has to tell a baneberry by its look. A few things also tell their state under the name: the Camp Pot ("Boiling · 1 min 40 s left", "Fire out · 1 min 40 s left", "Boiled water · safe to drink · 2.00 L", "Lake water · 2.00 L" off the fire, "Spruce tea · steeping · 1 min left", "Birch sap · syrup in 12 min", "Empty") the campfire (its time line as on its screen, I4, and a line for each piece cooking on it: "Raw Grouse · 20 s left") and a carcass ("Scavengers take it in 1 day 6 h"). Sign and water say what they are in place of the name: "Moose tracks · fresh", "Caribou droppings · half a day old", "Sea water · salt", "Lake water", "Stream water". Every item's tooltip ends with its mod in blue italics. Chat lines slide in (Chat Animation). Simple Voice Chat draws its own icon at the bottom left: a speaker struck through while voice is off or no device is found.
 
 ```text
                     ┌─────────────┐               [■] Spruce Log x4
@@ -53,7 +53,7 @@ What comes into the inventory is listed at the top right for a few seconds, a li
 
 Right-click opens it, drawn as the device itself: an orange case with a green-on-dark screen, the only screen with a skin of its own, as vanilla's book has its page. It fills the screen up to 640 by 360 GUI pixels (GUI scale 3 at 1080p) and stands centred on anything larger; it still fits vanilla's smallest screen, 320 by 240. While it is open the survivor stands still, since it covers the world (I8).
 
-The case carries the device's name at the top left and a red SOS button at the top right. The header shows the day and date on the left and the time of day on the right. Under it five tabs, each with its icon and name: Tasks, Weather, Warmth, Food, Body, switched by a click, 1 to 5, A and D or the ← → keys; E or Esc closes it. The letters are the survivor's own movement keys, so a rebound layout moves through it the same way. A strip of alerts sits under every page, two lines at most, "and N more" past them, "No alerts" when there are none. Every value has its icon and a meter or gauge; warnings turn amber or red, and a value in warning carries one dim line under it saying what helps.
+The case carries the device's name at the top left and a red SOS button at the top right. The header shows the day and date on the left and the time of day on the right. Under it six tabs, each with its icon and name: Tasks, Weather, Warmth, Food, Body, Guide, switched by a click, 1 to 6, A and D or the ← → keys; E or Esc closes it. The letters are the survivor's own movement keys, so a rebound layout moves through it the same way. A strip of alerts sits under every page, two lines at most, "and N more" past them, "No alerts" when there are none. Every value has its icon and a meter or gauge; warnings turn amber or red, and a value in warning carries one dim line under it saying what helps.
 
 ```text
 ┌ SATELLITE MESSENGER ───────────────────────────────────────────────────────── [SOS] ┐
@@ -82,6 +82,20 @@ The case carries the device's name at the top left and a red SOS button at the t
 - **Warmth:** the core temperature with how it feels and its trend on a gauge banded freezing, cold, comfortable and hot, then what sets it: fire, shelter, clothing and wetness.
 - **Food:** the day's kcal eaten and burned, the burn by cause in a dim line ("Rest 2,170 · Move 190 (5.1 km) · Load 40 · Work 620 · Cold 250 · Digest 320") and protein, carbs and fat; the stomach; the ration, the next meal and the team's food stores in days.
 - **Body:** the weight on a BMI gauge with extraction marked at 17, energy, water and the load carried, hours awake, the conditions each with what cures it, and the four skills, each with its name and five steps lit to its level.
+- **Guide** (`systems.md` S4): on the left the topics, the chosen one lit; on the right its title and its text. A click or W and S or ↑ ↓ choose a topic.
+
+```text
+│  Rations              │ Caches and scent                       │
+│ ▸Caches and scent     │ A cache holding 1,024 kcal of meat or  │
+│  Wolves and bears     │ fish smells: bears, wolves and         │
+│  Water                │ wolverines come twice as often within  │
+│  Fire and firewood    │ 64 blocks, and a bear at it charges    │
+│  Cold                 │ anyone within 8. Keep it out of camp,  │
+│  Health               │ but within 64 blocks of where you are  │
+│  Food and cooking     │ at 06:00 and 18:00 for the rations.    │
+│  Hunting and tracking │                                        │
+│  Rock and iron        │                                        │
+```
 
 ```text
 Warmth    Core                          35.6 °C · very cold · cooling
@@ -114,7 +128,7 @@ Raw Moose Meat
 Spoils in 2.3 days here (9 °C)
 ```
 
-A spoiled food reads "Spoiled" in red instead, a smoked one adds "Smoked", and one the mice reached adds "Contaminated by mice" in red.
+A food holding water names it on the first line ("30 kcal · 0.2 g fat · 0.04 L water"); a raw one adds "Raw: parasites 3 times in 5. Cook it on a fire.", and Animal Fat "Render 2 in the Cooking Pot.". A spoiled food reads "Spoiled" in red instead, a smoked one adds "Smoked", and one the mice reached adds "Contaminated by mice" in red.
 
 ### I4 The campfire
 
@@ -153,14 +167,14 @@ Both stand on vanilla's panel above the survivor's inventory.
 │ Batch ██████░░░░░░░░░░            │
 │ 5 h of 12 h                       │
 └───────────────────────────────────┘
-┌ Food Cache ───────────────────────┐
-│ Food 12,400 kcal · 6.1 days on Normal │
-│ Fat reserve 169,400 kcal          │
-│ Spoils ×0.5 here (3 °C)           │
-│ Scent attracts scavengers         │
-│ [ Lean ] [Normal] [ Feast ]       │
-│ [ 18 slots ]                      │
-└───────────────────────────────────┘
+┌ Food Cache ────────────────────────────────────┐
+│ Food 12,400 kcal · 6.1 days on Normal          │
+│ Fat reserve 169,400 kcal                       │
+│ Spoils ×0.5 here (3 °C)                        │
+│ Scent attracts scavengers: keep it out of camp │
+│ [ Lean ] [Normal] [ Feast ]                    │
+│ [ 18 slots ]                                   │
+└────────────────────────────────────────────────┘
 ```
 
 The shown ration is the pressed button; the scent line is red and shows only with 1,024 kcal of meat or fish.

@@ -1,6 +1,8 @@
 package io.github.roman16.backcountry.hunt;
 
+import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Metabolism;
+import java.util.List;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -10,6 +12,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -31,7 +34,9 @@ public final class MooseCallItem extends Item {
         player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
         if (level instanceof ServerLevel server && player instanceof ServerPlayer survivor && Metabolism.lives(survivor)) {
             EntityType<?> moose = BuiltInRegistries.ENTITY_TYPE.get(MOOSE);
-            boolean answered = Hunting.season(level, Animal.Season.RUT) && Animal.of(moose).map(animal -> Director.spawn(server, survivor, moose, animal) > 0).orElse(false);
+            List<Entity> bulls = Hunting.season(level, Animal.Season.RUT) ? Animal.of(moose).map(animal -> Director.spawn(server, survivor, moose, animal)).orElse(List.of()) : List.of();
+            bulls.forEach(bull -> bull.setData(Things.ANSWERING, true));
+            boolean answered = !bulls.isEmpty();
             survivor.displayClientMessage(Component.translatable(answered ? "message.backcountry.moose_answers" : "message.backcountry.no_answer"), true);
             stack.hurtAndBreak(1, survivor, hand == InteractionHand.MAIN_HAND ? net.minecraft.world.entity.EquipmentSlot.MAINHAND : net.minecraft.world.entity.EquipmentSlot.OFFHAND);
         }

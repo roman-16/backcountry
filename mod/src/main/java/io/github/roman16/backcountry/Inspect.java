@@ -3,6 +3,8 @@ package io.github.roman16.backcountry;
 import io.github.roman16.backcountry.fire.Fire;
 import io.github.roman16.backcountry.gear.CampPotEntity;
 import io.github.roman16.backcountry.gear.Water;
+import io.github.roman16.backcountry.hunt.CarcassEntity;
+import io.github.roman16.backcountry.hunt.TrackEntity;
 import io.github.roman16.backcountry.mixin.CampfireCookingAccessor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -18,8 +20,12 @@ import snownee.jade.api.IServerDataProvider;
 public final class Inspect {
     public static final ResourceLocation POT = Backcountry.id("camp_pot");
     public static final ResourceLocation CAMPFIRE = Backcountry.id("campfire");
+    public static final ResourceLocation SIGN = Backcountry.id("sign");
+    public static final ResourceLocation CARCASS = Backcountry.id("carcass");
+    public static final ResourceLocation WATER_KIND = Backcountry.id("water");
+    public static final String AGE = "age";
     public static final String WATER = "water";
-    public static final String BOIL_TICKS = "boil_ticks";
+    public static final String STARTED = "started";
     public static final String NEEDLES = "needles";
     public static final String LIT = "lit";
     public static final String BURNING = "burning";
@@ -37,7 +43,8 @@ public final class Inspect {
         public void appendServerData(CompoundTag data, BlockAccessor accessor) {
             if (accessor.getBlockEntity() instanceof CampPotEntity pot) {
                 Water.CODEC.encodeStart(NbtOps.INSTANCE, pot.water()).ifSuccess(water -> data.put(WATER, water));
-                data.putInt(BOIL_TICKS, pot.boilTicks());
+                data.putInt(TICKS_LEFT, pot.ticksLeft(CampPotEntity.heat(accessor.getLevel(), accessor.getPosition())));
+                data.putBoolean(STARTED, pot.started());
                 data.putBoolean(NEEDLES, pot.needles());
                 data.putBoolean(LIT, CampfireBlock.isLitCampfire(accessor.getLevel().getBlockState(accessor.getPosition().below())));
             }
@@ -78,6 +85,34 @@ public final class Inspect {
         @Override
         public ResourceLocation getUid() {
             return CAMPFIRE;
+        }
+    };
+
+    public static final IServerDataProvider<BlockAccessor> SIGN_DATA = new IServerDataProvider<>() {
+        @Override
+        public void appendServerData(CompoundTag data, BlockAccessor accessor) {
+            if (accessor.getBlockEntity() instanceof TrackEntity sign) {
+                data.putLong(AGE, sign.age());
+            }
+        }
+
+        @Override
+        public ResourceLocation getUid() {
+            return SIGN;
+        }
+    };
+
+    public static final IServerDataProvider<BlockAccessor> CARCASS_DATA = new IServerDataProvider<>() {
+        @Override
+        public void appendServerData(CompoundTag data, BlockAccessor accessor) {
+            if (accessor.getBlockEntity() instanceof CarcassEntity carcass) {
+                data.putLong(TICKS_LEFT, carcass.ticksLeft());
+            }
+        }
+
+        @Override
+        public ResourceLocation getUid() {
+            return CARCASS;
         }
     };
 

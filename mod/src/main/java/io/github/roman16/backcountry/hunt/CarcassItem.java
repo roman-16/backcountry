@@ -39,7 +39,7 @@ public final class CarcassItem extends Item {
         }
         if (!level.isClientSide && level.setBlockAndUpdate(at, Things.CARCASS.get().defaultBlockState()) && level.getBlockEntity(at) instanceof CarcassEntity carcass) {
             ItemStack stack = context.getItemInHand();
-            carcass.hold(animal(stack), stack.getOrDefault(Things.ARROWS.get(), List.of()));
+            carcass.hold(animal(stack), stack.getOrDefault(Things.ARROWS.get(), List.of()), stack.getOrDefault(Things.LAIN.get(), 0L));
             stack.shrink(1);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);

@@ -1,5 +1,6 @@
 package io.github.roman16.backcountry.client;
 
+import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.body.BodyView;
 import io.github.roman16.backcountry.guide.GuideView;
 import io.github.roman16.backcountry.survivor.Summary;
@@ -21,6 +22,10 @@ public final class ClientState {
     private static boolean readSent;
 
     private ClientState() {}
+
+    public static double stomachKcal() {
+        return view.stomach() * Balance.get().body().stomachKcal();
+    }
 
     public static boolean stomachEmpty() {
         return view != BodyView.NONE && view.stomach() <= 0;

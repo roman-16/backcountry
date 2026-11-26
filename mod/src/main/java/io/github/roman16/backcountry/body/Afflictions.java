@@ -3,7 +3,9 @@ package io.github.roman16.backcountry.body;
 import io.github.roman16.backcountry.Balance;
 import java.util.Iterator;
 import java.util.Map;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageType;
 
 public final class Afflictions {
     private static final double HOURS_A_DAY = 24;
@@ -40,7 +42,7 @@ public final class Afflictions {
                 case FOOD_POISONING -> (affliction.days += days) >= rules.poisoningDays();
                 case SCURVY -> body.vitaminCMg >= balance.body().vitaminCMgDay();
                 case EXHAUSTED -> body.awakeTicks < rules.exhaustedAwakeDays() * HOURS_A_DAY * 1000;
-                case SEVERE_FROSTBITE -> {
+                case SEVERE_FROSTBITE, SEVERE_HYPOTHERMIA -> {
                     affliction.days += days;
                     drains += wholeHours(before, affliction.days);
                     yield false;
@@ -72,9 +74,11 @@ public final class Afflictions {
             body.afflict(Condition.EXHAUSTED);
         }
         frost(player, body, hours);
+        hypothermia(body);
         for (int i = 0; i < drains && player.isAlive(); i++) {
-            boolean frozen = body.has(Condition.SEVERE_FROSTBITE);
-            player.hurt(player.damageSources().source(frozen ? Metabolism.FROSTBITE : Metabolism.INFECTION), DRAIN);
+            ResourceKey<DamageType> cause = body.has(Condition.SEVERE_HYPOTHERMIA) ? Metabolism.HYPOTHERMIA
+                    : body.has(Condition.SEVERE_FROSTBITE) ? Metabolism.FROSTBITE : Metabolism.INFECTION;
+            player.hurt(player.damageSources().source(cause), DRAIN);
         }
         tell(player, body);
     }
@@ -94,7 +98,7 @@ public final class Afflictions {
 
     private static void frost(ServerPlayer player, Body body, double hours) {
         Balance.Conditions rules = Balance.get().conditions();
-        boolean exposed = body.coreC < rules.frostCoreC() || body.effectiveC <= rules.bareSkinC() && Warmth.bareHead(player);
+        boolean exposed = body.effectiveC <= rules.bareSkinC() && Warmth.bareHead(player);
         if (exposed && !body.fire) {
             body.warmHours = 0;
             body.frostHours += hours;
@@ -109,6 +113,20 @@ public final class Afflictions {
                 body.warmHours -= rules.frostStageHours();
                 stage(body, stage(body) - 1);
             }
+        }
+    }
+
+    private static void hypothermia(Body body) {
+        Balance.Conditions rules = Balance.get().conditions();
+        Condition now = body.coreC < rules.severeHypothermiaCoreC() ? Condition.SEVERE_HYPOTHERMIA
+                : body.coreC < rules.hypothermiaCoreC() ? Condition.HYPOTHERMIA : null;
+        for (Condition cold : new Condition[] {Condition.HYPOTHERMIA, Condition.SEVERE_HYPOTHERMIA}) {
+            if (cold != now) {
+                body.conditions.remove(cold);
+            }
+        }
+        if (now != null) {
+            body.afflict(now);
         }
     }
 

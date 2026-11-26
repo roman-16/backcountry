@@ -3,6 +3,7 @@ package io.github.roman16.backcountry;
 import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.body.Metabolism;
+import io.github.roman16.backcountry.body.Nutrition;
 import io.github.roman16.backcountry.fire.FirewoodItem;
 import io.github.roman16.backcountry.food.Age;
 import io.github.roman16.backcountry.food.CacheEntity;
@@ -13,6 +14,8 @@ import io.github.roman16.backcountry.food.Rations;
 import io.github.roman16.backcountry.food.Seasons;
 import io.github.roman16.backcountry.food.SmokerEntity;
 import io.github.roman16.backcountry.food.Spoilage;
+import io.github.roman16.backcountry.gear.Water;
+import io.github.roman16.backcountry.gear.WaterVesselItem;
 import io.github.roman16.backcountry.survivor.Team;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -22,8 +25,11 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
@@ -171,6 +177,46 @@ public final class FoodTests {
         helper.getLevel().getBlockState(at).useItemOn(bowl, helper.getLevel(), player, InteractionHand.MAIN_HAND,
                 new BlockHitResult(Vec3.atCenterOf(at), Direction.UP, at, false));
         check(helper, player.getInventory().contains(new ItemStack(Items.MUSHROOM_STEW)), "the bowl took no stew");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aMooseHeadMakesSoupForTheWaterThereIs(GameTestHelper helper) {
+        BlockPos fire = new BlockPos(2, 1, 2);
+        FireTests.burning(helper, fire);
+        helper.setBlock(fire.above(), Things.COOKING_POT_BLOCK.get().defaultBlockState());
+        if (!(helper.getLevel().getBlockEntity(helper.absolutePos(fire.above())) instanceof CookingPotEntity pot)) {
+            throw new IllegalStateException("the cooking pot has no block entity");
+        }
+        Balance.Cooking cooking = Balance.get().cooking();
+        pot.pour(cooking.servingL() * 3);
+        check(helper, pot.add(new ItemStack(Things.MOOSE_HEAD.get())), "the pot refused the moose head");
+        pot.advance(cooking.stewHours() + CLOSE, true);
+        check(helper, pot.stew().is(Things.MOOSE_HEAD_SOUP.get()) && pot.stew().getCount() == 3 && pot.waterL() < CLOSE,
+                "three servings of water made " + pot.stew() + " and left " + pot.waterL() + " L");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void offalCooksOnTheFire(GameTestHelper helper) {
+        for (Item raw : List.of(Things.HEART.get(), Things.LIVER.get(), Things.TONGUE.get(), Things.KIDNEY.get())) {
+            SingleRecipeInput input = new SingleRecipeInput(new ItemStack(raw));
+            ItemStack cooked = helper.getLevel().getRecipeManager().getRecipeFor(RecipeType.CAMPFIRE_COOKING, input, helper.getLevel())
+                    .map(recipe -> recipe.value().assemble(input, helper.getLevel().registryAccess())).orElse(ItemStack.EMPTY);
+            check(helper, Nutrition.of(cooked).map(food -> !food.raw()).orElse(false), raw + " cooked into " + cooked);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aVesselPoursOut(GameTestHelper helper) {
+        ServerPlayer player = BackcountryTests.survivor(helper);
+        ItemStack bottle = new ItemStack(Things.WATER_BOTTLE.get());
+        bottle.set(Things.WATER.get(), Water.drawn(Water.Source.LAKE, 1));
+        player.setItemInHand(InteractionHand.MAIN_HAND, bottle);
+        player.setShiftKeyDown(true);
+        bottle.use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
+        check(helper, WaterVesselItem.water(player.getMainHandItem()).empty(), "pouring left " + WaterVesselItem.water(player.getMainHandItem()));
         helper.succeed();
     }
 

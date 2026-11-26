@@ -2,6 +2,7 @@ package io.github.roman16.backcountry;
 
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Metabolism;
+import io.github.roman16.backcountry.food.CacheBlock;
 import io.github.roman16.backcountry.food.Fish;
 import io.github.roman16.backcountry.gear.Water;
 import io.github.roman16.backcountry.guide.Deed;
@@ -132,6 +133,13 @@ public final class GuideTests {
         check(helper, guide.reached(Task.DRY_FIREWOOD), "16 pieces of dry firewood on a woodpile did not reach the goal");
         check(helper, guide.reached(Task.HIDE_CLOTHING), "a hide hat, coat and snowshoes made did not reach the goal");
         check(helper, view(helper, player).done(Task.HIDE_CLOTHING), "the team's clothing goal does not show done");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aCacheBesideTheFireIsInCamp(GameTestHelper helper) {
+        FireTests.campfire(helper, new BlockPos(1, 1, 1));
+        check(helper, CacheBlock.inCamp(helper.getLevel(), helper.absolutePos(new BlockPos(4, 1, 4))), "a cache 3 blocks from the campfire stood out of camp");
         helper.succeed();
     }
 }

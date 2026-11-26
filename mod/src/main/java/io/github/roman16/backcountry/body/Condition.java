@@ -5,9 +5,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public enum Condition {
+    SEVERE_HYPOTHERMIA(false, false),
     SEVERE_FROSTBITE(false, false),
     INFECTED_WOUND(true, true),
     FROSTBITE(false, false),
+    HYPOTHERMIA(false, false),
     BURNS(true, true),
     GUT_INFECTION(true, false),
     FOOD_POISONING(true, false),
@@ -47,12 +49,12 @@ public enum Condition {
 
     public ResourceLocation icon() {
         return Backcountry.id("hud/" + switch (this) {
-            case FROSTNIP, FROSTBITE, SEVERE_FROSTBITE -> "frost";
+            case FROSTNIP, FROSTBITE, SEVERE_FROSTBITE, HYPOTHERMIA, SEVERE_HYPOTHERMIA -> "frost";
             default -> id();
         });
     }
 
-    public boolean frost() {
-        return this == FROSTNIP || this == FROSTBITE || this == SEVERE_FROSTBITE;
+    public boolean deadly() {
+        return this == SEVERE_FROSTBITE || this == SEVERE_HYPOTHERMIA;
     }
 }

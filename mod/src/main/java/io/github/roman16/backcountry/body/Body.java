@@ -1,6 +1,7 @@
 package io.github.roman16.backcountry.body;
 
 import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.gear.PackRows;
 import io.github.roman16.backcountry.survivor.Summary;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +49,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
     public long lastHurt;
     public double metresToday;
     public ItemStack pack = ItemStack.EMPTY;
+    public final PackRows packRows = new PackRows();
     public double proteinToday;
     public final EnumMap<Skill, Integer> skills = new EnumMap<>(Skill.class);
     public double stomachCarbs;
@@ -57,6 +59,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
     public double stomachVitaminC;
     public int stumbleTicks;
     public double thirstSeconds;
+    public boolean rationsTold;
     public boolean unread;
     public double vitaminCMg;
     public double warmHours;
@@ -127,6 +130,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
         stomachVitaminC = 0;
         stumbleTicks = 0;
         thirstSeconds = 0;
+        rationsTold = false;
         unread = false;
         vitaminCMg = balance.body().vitaminCMgDay() * balance.body().vitaminCStoreDays();
         warmHours = 0;
@@ -234,6 +238,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
         tag.putDouble("stomach_protein", stomachProtein);
         tag.putDouble("stomach_vitamin_c", stomachVitaminC);
         tag.putDouble("thirst_seconds", thirstSeconds);
+        tag.putBoolean("rations_told", rationsTold);
         tag.putBoolean("unread", unread);
         tag.putDouble("vitamin_c_mg", vitaminCMg);
         tag.putDouble("warm_hours", warmHours);
@@ -311,6 +316,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
         stomachProtein = tag.getDouble("stomach_protein");
         stomachVitaminC = tag.getDouble("stomach_vitamin_c");
         thirstSeconds = tag.getDouble("thirst_seconds");
+        rationsTold = tag.getBoolean("rations_told");
         unread = tag.getBoolean("unread");
         vitaminCMg = tag.getDouble("vitamin_c_mg");
         warmHours = tag.getDouble("warm_hours");

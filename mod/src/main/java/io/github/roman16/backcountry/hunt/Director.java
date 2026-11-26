@@ -8,6 +8,7 @@ import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.food.CacheEntity;
 import io.github.roman16.backcountry.food.Seasons;
 import io.github.roman16.backcountry.survivor.Team;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -104,19 +105,19 @@ public final class Director {
         return false;
     }
 
-    public static int spawn(ServerLevel level, ServerPlayer player, EntityType<?> type, Animal animal) {
+    public static List<Entity> spawn(ServerLevel level, ServerPlayer player, EntityType<?> type, Animal animal) {
         Balance.Director director = Balance.get().director();
         AABB around = player.getBoundingBox().inflate(director.countBlocks());
         if (level.getEntities(type, around, Entity::isAlive).size() >= animal.cap()) {
-            return 0;
+            return List.of();
         }
         Optional<BlockPos> spot = spot(level, player, type, animal);
         if (spot.isEmpty()) {
-            return 0;
+            return List.of();
         }
         List<Integer> group = animal.group();
         int count = group.get(0) + level.random.nextInt(group.get(1) - group.get(0) + 1);
-        int spawned = 0;
+        List<Entity> spawned = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             BlockPos at = spot.get().offset(level.random.nextInt(3) - 1, 0, level.random.nextInt(3) - 1);
             at = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, at);
@@ -131,8 +132,11 @@ public final class Director {
                     }
                     Bears.cubs(level, bear);
                 }
-                spawned++;
+                spawned.add(entity);
             }
+        }
+        if (!spawned.isEmpty()) {
+            animal.track().filter(Track::trails).ifPresent(track -> Tracks.backTrail(level, spawned.getFirst(), track));
         }
         return spawned;
     }

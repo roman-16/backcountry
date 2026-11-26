@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:coarse_dirt",
+    "minecraft:dirt",
+    "minecraft:dirt_path",
+    "minecraft:gravel",
+    "minecraft:mud",
+    "minecraft:podzol",
+    "minecraft:red_sand",
+    "minecraft:rooted_dirt",
+    "minecraft:sand",
+    "minecraft:snow_block"
+  ]
+}

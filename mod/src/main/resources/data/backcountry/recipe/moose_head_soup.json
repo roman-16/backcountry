@@ -1,0 +1,13 @@
+{
+  "type": "backcountry:stewing",
+  "ingredients": [
+    {
+      "item": "backcountry:moose_head"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:moose_head_soup"
+  },
+  "servings": 8
+}

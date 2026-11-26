@@ -5,6 +5,8 @@ import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.food.Seasons;
 import io.github.roman16.backcountry.hunt.Animal;
+import io.github.roman16.backcountry.hunt.Track;
+import io.github.roman16.backcountry.hunt.TrackBlock;
 import io.github.roman16.backcountry.survivor.Team;
 import java.util.List;
 import java.util.Optional;
@@ -98,7 +100,8 @@ public final class TrapEntity extends BlockEntity {
                     || !level.getBiome(worldPosition).is(animal.get().habitat())) {
                 continue;
             }
-            if (level.random.nextDouble() < animal.get().perDay() * traps.share() * share) {
+            double run = kind() == Kind.SMALL_SNARE && animal.get().track().map(track -> onRun(level, track)).orElse(false) ? traps.runShare() : 1;
+            if (level.random.nextDouble() < animal.get().perDay() * traps.share() * share * run) {
                 ItemStack carcass = new ItemStack(Things.CARCASS_ITEM.get());
                 carcass.set(Things.ANIMAL_TYPE.get(), id);
                 caught = carcass;
@@ -108,6 +111,17 @@ public final class TrapEntity extends BlockEntity {
                 return;
             }
         }
+    }
+
+    public boolean onRun(ServerLevel level, Track track) {
+        int reach = Balance.get().traps().runBlocks();
+        for (BlockPos near : BlockPos.betweenClosed(worldPosition.offset(-reach, -1, -reach), worldPosition.offset(reach, 1, reach))) {
+            BlockState state = level.getBlockState(near);
+            if (state.is(Things.TRACKS.get()) && state.getValue(TrackBlock.KIND) == track) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static ItemStack fish(ServerLevel level) {

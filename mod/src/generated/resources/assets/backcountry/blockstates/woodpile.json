@@ -55,6 +55,62 @@
     "axis=z,pieces=8": {
       "model": "backcountry:block/woodpile_8",
       "y": 90
+    },
+    "axis=x,pieces=9": {
+      "model": "backcountry:block/woodpile_9"
+    },
+    "axis=z,pieces=9": {
+      "model": "backcountry:block/woodpile_9",
+      "y": 90
+    },
+    "axis=x,pieces=10": {
+      "model": "backcountry:block/woodpile_10"
+    },
+    "axis=z,pieces=10": {
+      "model": "backcountry:block/woodpile_10",
+      "y": 90
+    },
+    "axis=x,pieces=11": {
+      "model": "backcountry:block/woodpile_11"
+    },
+    "axis=z,pieces=11": {
+      "model": "backcountry:block/woodpile_11",
+      "y": 90
+    },
+    "axis=x,pieces=12": {
+      "model": "backcountry:block/woodpile_12"
+    },
+    "axis=z,pieces=12": {
+      "model": "backcountry:block/woodpile_12",
+      "y": 90
+    },
+    "axis=x,pieces=13": {
+      "model": "backcountry:block/woodpile_13"
+    },
+    "axis=z,pieces=13": {
+      "model": "backcountry:block/woodpile_13",
+      "y": 90
+    },
+    "axis=x,pieces=14": {
+      "model": "backcountry:block/woodpile_14"
+    },
+    "axis=z,pieces=14": {
+      "model": "backcountry:block/woodpile_14",
+      "y": 90
+    },
+    "axis=x,pieces=15": {
+      "model": "backcountry:block/woodpile_15"
+    },
+    "axis=z,pieces=15": {
+      "model": "backcountry:block/woodpile_15",
+      "y": 90
+    },
+    "axis=x,pieces=16": {
+      "model": "backcountry:block/woodpile_16"
+    },
+    "axis=z,pieces=16": {
+      "model": "backcountry:block/woodpile_16",
+      "y": 90
     }
   }
 }

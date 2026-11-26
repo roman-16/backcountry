@@ -17,7 +17,7 @@ Every mod in the pack and why, and what was left out. "His" marks a mod in one o
 | Distant Horizons (his) | The far view |
 | Sodium, Iris, Complementary Reimagined | Drawing and the shader; the mod's Backcountry page in Video Settings sets them with the far view through one Preset (`production.md`) |
 | Euphoria Patches | Reimagined's added options, kept at their defaults; no pop-up, messages or update check |
-| Distant Horizons SeedGen | The far land from the seed; its chat lines go to the log (`SeedGenGreetingMixin`, and `SeedGenSharingMixin` on the client alone, since its class names the client's) and it loads within Distant Horizons' share of a frame (`SeedGenBudgetMixin`) |
+| Distant Horizons SeedGen | The far land from the seed; its chat lines go to the log (`SeedGenGreetingMixin`, and `SeedGenSharingMixin` on the client alone, since its class names the client's) and it loads within Distant Horizons' share of a frame (`SeedGenBudgetMixin`); a worldgen namespace with no mod of its own (Tectonic's `lithosphere`, WWOO's `wythers`) reads as an empty version on both sides, so it is not taken for a mod the player lacks (`SeedGenVersionMixin`) |
 | Lithium, FerriteCore, ModernFix, ImmediatelyFast, ScalableLux, C2ME, Noisiumed, Entity Culling, More Culling | Speed (`production.md`); Lithium's campfire sleeping is off, since a campfire it puts to sleep stops the pack's fire burning (`pack/config/lithium.properties`) |
 | Dynamic FPS | 10 frames a second in the background; off in every dev instance, whose driver waits on drawn frames |
 | Packet Fixer, spark | Longer time-outs between friends and the server; `/spark` profiles it |
@@ -38,7 +38,7 @@ Every mod in the pack and why, and what was left out. "His" marks a mod in one o
 | InvMove | Walking with a screen open, except the bow-drill game, the summary and JEI's search (`InvMoveLink`) |
 | Pick Up Notifier | What comes in, at the top right |
 | Immersive Hotbar | The hotbar's animations, with its XP bar effects off |
-| Jade | The name of what a sneaking survivor looks at and the mod it comes from, in vanilla's tooltip look, with the Camp Pot's and the campfire's state (`JadeLink`); every item's tooltip ends with its mod |
+| Jade | The name of what a sneaking survivor looks at and the mod it comes from, in vanilla's tooltip look, with the Camp Pot's, the campfire's and a carcass's state, and sign and water named for what they are (`JadeLink`); every item's tooltip ends with its mod |
 | Cut Through | A swing passes through grass and other blocks without collision to hit what stands behind; client only |
 | Chat Animation | Chat lines slide in |
 | Default Options, with Balm | The first launch's settings and every key of the pack (`pack/config/defaultoptions/`) |
@@ -51,7 +51,7 @@ Every mod in the pack and why, and what was left out. "His" marks a mod in one o
 | 3D Skin Layers, Not Enough Animations, Detailed Animations, Fresh Animations | Survivors and rabbits that move as they look; the two packs through Entity Model Features and Entity Texture Features |
 | Leggings Fix | Leggings closed at the ankle |
 | Alex's Mobs (Unofficial Port) and Citadel (Unofficial Port) | Moose, grizzly, bald eagle, seal, orca; of their items only moose ribs stay |
-| Critters n' Crawlers (his) | Wolverine, beaver, caribou, mouse, black bear, timber wolf, goose; of its items only the meats, stews and pemmican stay |
+| Critters n' Crawlers (his) | Wolverine, beaver, caribou, mouse, black bear, timber wolf, goose; of its items only the meats, stews and pemmican stay; its timber wolf hunts no survivor and keeps its distance (`hunt/Wolves`) |
 | [Let's Do] Wilder Nature (his) | Squirrel; none of its items or hazelnut bushes |
 | Fowl Play | Raven, chickadee, Canada goose, gulls, mallard, hawk; its bird feeder, registered with no recipe, name or look, is cut |
 | River Fishing | Fishing with Alaska's species and the tackle the island makes (`systems.md` S9) |

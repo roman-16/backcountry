@@ -23,6 +23,21 @@ public final class Words {
         return String.format(Locale.ROOT, "%.1f", number);
     }
 
+    static String lifetime(long ticks) {
+        long hours = (ticks + TICKS_AN_HOUR - 1) / TICKS_AN_HOUR;
+        long days = hours / HOURS;
+        long rest = hours % HOURS;
+        if (days == 0) {
+            return rest + " h";
+        }
+        String whole = days == 1 ? "1 day" : days + " days";
+        return rest == 0 ? whole : whole + " " + rest + " h";
+    }
+
+    static String litres(double litres) {
+        return String.format(Locale.ROOT, "%.2f", litres);
+    }
+
     static String grams(double grams) {
         return Math.abs(grams - Math.round(grams)) < 0.05 ? Long.toString(Math.round(grams)) : one(grams);
     }

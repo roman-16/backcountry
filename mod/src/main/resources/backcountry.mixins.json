@@ -41,10 +41,12 @@
     "SeasonalBushMixin",
     "SeedGenBudgetMixin",
     "SeedGenGreetingMixin",
+    "SeedGenVersionMixin",
     "SplineCoordinateMixin",
     "StructuresMixin",
     "SweetBerryBushMixin",
     "TamableAnimalMixin",
+    "TargetTypeAccessor",
     "WeatherEffectMixin"
   ],
   "package": "io.github.roman16.backcountry.mixin",
