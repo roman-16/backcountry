@@ -74,6 +74,7 @@ Libraries they bring: Architectury, Cloth Config, CoroUtil, CreativeCore, Fzzy C
 | Chunky | Distant Horizons 3.3.3 binds to it while the server prepares its spawn, before Chunky is loaded, and the server crashes |
 | Immersive UI | Its trails mark rarity, which the island has none of, and the inventory with its dark rows is the pack's own |
 | JourneyMap | Maps are made on the island from paper and the compass, and coordinates are hidden (`systems.md` S12) |
+| Locator Bar | The Messenger shares the team's positions on a bar of the pack's own in vanilla's look (`systems.md` S4); the mod's vanilla-style bar takes the XP bar's row, where the hearts and energy sit, and its other bar has a look of its own |
 | Auroras | Complementary Reimagined draws its own aurora |
 | Particle Rain, Windy | They draw rain, snow and wind of their own, where the mod's weather decides them (`systems.md` S3) |
 | Simple Grass Flowers | Flowers painted on the grass all year, through autumn |

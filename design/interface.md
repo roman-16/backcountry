@@ -32,6 +32,13 @@ Light a fire · 2 of 7
   [Stick] 2/2  [Cordage] 0/1  [Softwood] 2/1
 ```
 
+The locator bar (`systems.md` S4) runs across the top centre in vanilla's locator-bar look, 182 pixels wide, spanning 120° of what lies ahead: a dot for each teammate in their own colour, ▲ or ▼ beside it when they are well above or below, fading with distance; a teammate behind the survivor sits at the nearer end of the bar as a half dot. The dot nearest where the survivor faces, within 16°, carries the teammate's name and distance in a line under the bar. It shows only while the survivor carries a Messenger and a teammate is in the world; F1 hides it, and Jade's box (below) opens under it.
+
+```text
+Make a stone axe · 1 of 4        ━━━━●━━━━━━━━▲━━━━        4x Stick
+▸ Pick up a Rock                      Paul · 340 m
+```
+
 What comes into the inventory is listed at the top right for a few seconds, a line an item, counting up while more of it arrives ("4x Stick", Pick Up Notifier). The hotbar's items bounce as they land, are used, eaten or placed, the selected slot grows, a tool near breaking glows and the selected item's name pops in (Immersive Hotbar). While a survivor sneaks, a box at the top centre names what they look at and, under the name, the mod it comes from, in vanilla's tooltip look (Jade), with no health, state or contents, so a forager crouching at a bush still has to tell a baneberry by its look. Two things also tell their state under the name: the Camp Pot ("Boiling · 1 min 40 s left", "Fire out · 1 min 40 s left", "Boiled water · safe to drink · 2.00 L", "Lake water · 2.00 L" off the fire, "Spruce tea · steeping · 1 min left", "Birch sap · syrup in 12 min", "Empty") and the campfire (its time line as on its screen, I4, and a line for each piece cooking on it: "Raw Grouse · 20 s left"). Every item's tooltip ends with its mod in blue italics. Chat lines slide in (Chat Animation). Simple Voice Chat draws its own icon at the bottom left: a speaker struck through while voice is off or no device is found.
 
 ```text

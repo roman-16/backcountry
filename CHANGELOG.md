@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-11-26
+
+### Highlights
+
+- **Finding your teammates** - While you both carry a Satellite Messenger, a bar at the top of the screen shows which way each teammate is, and facing them shows their name and distance.
+
+### Added
+
+- A locator bar at the top of the screen shows where each teammate is while you both carry a Satellite Messenger: a dot in their colour, an arrow when they are above or below, and their name and distance when you face them.
+
 ## [2.4.0] - 2026-11-26
 
 ### Highlights

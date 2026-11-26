@@ -643,6 +643,26 @@ rows = ["....b....", "...bab...", "...bab...", "..bakab..", "..bakAb..", ".baaka
 palette = { b = "000000", p = "e8e4d8", P = "bdb8a8", l = "7a7568", g = "3c9c2c" }
 rows = [".bbbbbbb.", ".bpppppPb", ".bgpllpPb", ".bpppppPb", ".bgpllpPb", ".bpppppPb", ".blpllpPb", ".bPPPPPPb", ".bbbbbbbb"]
 
+[hud.locator_arrow_down]
+palette = { a = "3a3a3a", b = "f0f0f0" }
+rows = [".........", ".........", ".........", ".aaaaaaa.", "..abbba..", "...aba...", "....a....", ".........", "........."]
+
+[hud.locator_arrow_up]
+palette = { a = "3a3a3a", b = "f0f0f0" }
+rows = [".........", ".........", "....a....", "...aba...", "..abbba..", ".aaaaaaa.", ".........", ".........", "........."]
+
+[hud.locator_dot]
+palette = { a = "3a3a3a", b = "d8d8d8", c = "ffffff", d = "a8a8a8" }
+rows = [".........", "...aaa...", "..abbba..", ".abccbba.", ".abcbbda.", ".abbbdda.", "..addda..", "...aaa...", "........."]
+
+[hud.locator_dot_east]
+palette = { a = "3a3a3a", b = "d8d8d8", c = "ffffff", d = "a8a8a8" }
+rows = [".........", "....aa...", "....bba..", "....cbba.", "....bbda.", "....bdda.", "....dda..", "....aa...", "........."]
+
+[hud.locator_dot_west]
+palette = { a = "3a3a3a", b = "d8d8d8", c = "ffffff", d = "a8a8a8" }
+rows = [".........", "...aa....", "..abb....", ".abcc....", ".abcb....", ".abbb....", "..add....", "...aa....", "........."]
+
 [hud.ration]
 palette = { k = "3c2410", s = "c8823c", S = "a0642a", w = "8b5a2b", W = "6b4220", b = "d0d0d0" }
 rows = [".........", "..b.b.b..", "...b.b...", "kkkkkkkkk", "kssssssSk", ".kwwwwwk.", ".kwwwwWk.", "..kkkkk..", "........."]

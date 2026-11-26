@@ -24,10 +24,22 @@ final class TaskTracker {
     private static final int NEED_GAP = 6;
     private static final int MOST_WIDTH = 192;
     private static final int INDENT = 8;
+    private static int right;
+    private static int bottom;
 
     private TaskTracker() {}
 
+    static int right() {
+        return right;
+    }
+
+    static int bottom() {
+        return bottom;
+    }
+
     static void render(GuiGraphics graphics, DeltaTracker delta) {
+        right = 0;
+        bottom = 0;
         Minecraft minecraft = Minecraft.getInstance();
         if (!Hud.shows() || minecraft.getDebugOverlay().showDebugScreen()) {
             return;
@@ -55,6 +67,8 @@ final class TaskTracker {
                 INDENT + Math.max(needsWidth, progress.map(font::width).orElse(0)))));
         int height = LINE + stepLines.size() * LINE + (progress.isPresent() ? LINE : 0) + (needs.isEmpty() ? 0 : ITEM_ROW);
         graphics.fill(EDGE - PAD, EDGE - PAD, EDGE + width + PAD, EDGE + height + PAD - 1, Look.PLATE);
+        right = EDGE + width + PAD;
+        bottom = EDGE + height + PAD - 1;
         int y = EDGE;
         graphics.drawString(font, font.plainSubstrByWidth(heading.getString(), MOST_WIDTH), EDGE, y, Look.TEXT);
         y += LINE;

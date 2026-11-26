@@ -16,6 +16,7 @@ import io.github.roman16.backcountry.guide.GuideView;
 import io.github.roman16.backcountry.guide.Task;
 import io.github.roman16.backcountry.survivor.Arrival;
 import io.github.roman16.backcountry.survivor.Ending;
+import io.github.roman16.backcountry.survivor.Locator;
 import io.github.roman16.backcountry.survivor.Summary;
 import io.github.roman16.backcountry.survivor.Team;
 import io.github.roman16.backcountry.weather.Day;
@@ -135,6 +136,17 @@ public final class Messages {
         }
     }
 
+    public record Marks(boolean shown, List<Locator.Mark> marks) implements CustomPacketPayload {
+        public static final Type<Marks> TYPE = new Type<>(Backcountry.id("marks"));
+        static final StreamCodec<ByteBuf, Marks> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.BOOL, Marks::shown, Locator.Mark.STREAM_CODEC.apply(ByteBufCodecs.list()),
+                Marks::marks, Marks::new);
+
+        @Override
+        public Type<Marks> type() {
+            return TYPE;
+        }
+    }
+
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("1");
         registrar.playToClient(View.TYPE, View.STREAM_CODEC, (payload, context) -> ClientMessages.view(payload.body(), payload.weather(), payload.guide()));
@@ -146,6 +158,7 @@ public final class Messages {
             }
         });
         registrar.playToClient(Shown.TYPE, Shown.STREAM_CODEC, (payload, context) -> ClientMessages.summary(payload.summary()));
+        registrar.playToClient(Marks.TYPE, Marks.STREAM_CODEC, (payload, context) -> ClientMessages.marks(payload.shown(), payload.marks()));
         registrar.playToServer(Arrive.TYPE, Arrive.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player) {
                 arrive(player);
@@ -189,6 +202,12 @@ public final class Messages {
                 (float) body.metresToday, Skill.levels(body));
         if (!(player instanceof FakePlayer) && player.connection.hasChannel(View.TYPE)) {
             PacketDistributor.sendToPlayer(player, new View(view, Forecast.view(player, body), Guide.get(player.server).view(player)));
+        }
+    }
+
+    public static void marks(ServerPlayer player, Optional<List<Locator.Mark>> seen) {
+        if (!(player instanceof FakePlayer) && player.connection.hasChannel(Marks.TYPE)) {
+            PacketDistributor.sendToPlayer(player, new Marks(seen.isPresent(), seen.orElse(List.of())));
         }
     }
 

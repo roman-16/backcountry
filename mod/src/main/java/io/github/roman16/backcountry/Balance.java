@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpray, Bears bears, Berries berries, Binoculars binoculars, Body body, BowDrill bowDrill, Map<String, Double> bulk, Cache cache, Climate climate,
         Conditions conditions, Cooking cooking, Director director, DropOff dropOff, Effort effort, Energy energy, Farming farming, Fire fire, Firewood firewood, Fish fish, Forage forage,
-        Graphics graphics, Headlamp headlamp, Healing healing, Map<String, Double> heat, Hunting hunting, Ice ice, Map<String, Double> insulation, Kit kit, Lights lights, Load load, Map<String, Double> met, Mice mice,
+        Graphics graphics, Headlamp headlamp, Healing healing, Map<String, Double> heat, Hunting hunting, Ice ice, Map<String, Double> insulation, Kit kit, Lights lights, Load load, Locator locator, Map<String, Double> met, Mice mice,
         Mining mining, Mosquitoes mosquitoes, PlantFibre plantFibre, Raft raft, Rations rations, Seasons seasons, Skills skills, Sky sky, Sled sled, Smoker smoker, Snow snow, Spoilage spoilage,
         Survivor survivor, Tasks tasks, Traps traps, Warmth warmth, Walking walking, Water water, Weather weather, World world, Year year) {
     private static final Pattern WORD_START = Pattern.compile("([A-Z])");
@@ -99,6 +99,8 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
     public record Kit(int hooks, int pilotBread) {}
 
     public record Lights(double lanternHours, double torchHours) {}
+
+    public record Locator(double elevationBlocks, double faintBlocks, double faintShare, double fullBlocks, double nameDegrees, int sendTicks, double spanDegrees) {}
 
     public record Load(double blockKg, int canvasPackRows, double capacityKg, double clothingKg, double firewoodKg, double foodKgPerKcal, int hidePackRows, double itemKg, double logKg, double stoneKg, double toolKg,
             int warnSeconds) {}

@@ -48,6 +48,7 @@ public final class Look {
     static final int SOS = 0xFFC42A1E;
     static final int SOS_DARK = 0xFF7E1610;
     static final int SOS_LIGHT = 0xFFE65A48;
+    static final int[] TEAM = {0xE04848, 0x48A8E8, 0xE8C840, 0x58D058, 0xC060E0, 0xE88838, 0x40D0C0, 0xE878B8};
     static final int TEXT = 0xFFFFFFFF;
     static final int TEXT_QUIET = 0xFFA0A0A0;
     static final int TOAST_TITLE = 0xFFFFFF00;

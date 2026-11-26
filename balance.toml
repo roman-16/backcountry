@@ -420,6 +420,15 @@ stone_kg = 2.0
 tool_kg = 1.0
 warn_seconds = 4
 
+[locator]
+elevation_blocks = 8
+faint_blocks = 1024
+faint_share = 0.25
+full_blocks = 128
+name_degrees = 16
+send_ticks = 8
+span_degrees = 120
+
 [met]
 bow_drill = 6.0
 build = 4.0

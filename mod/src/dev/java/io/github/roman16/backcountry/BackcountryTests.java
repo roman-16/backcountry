@@ -26,6 +26,7 @@ import io.github.roman16.backcountry.gear.Water;
 import io.github.roman16.backcountry.gear.WaterVesselItem;
 import io.github.roman16.backcountry.survivor.Arrival;
 import io.github.roman16.backcountry.survivor.Ending;
+import io.github.roman16.backcountry.survivor.Locator;
 import io.github.roman16.backcountry.survivor.Summary;
 import io.github.roman16.backcountry.survivor.Team;
 import io.github.roman16.backcountry.weather.Day;
@@ -170,6 +171,22 @@ public final class BackcountryTests {
         body.workKcal = body.weightKg * Balance.get().energy().workKcalPerKgToEmpty();
         Metabolism.step(player, body, Metabolism.STEP_TICKS, false);
         check(helper, body.blackoutTicks > 0, "energy at " + body.energy + " did not black out");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void theMessengerSharesTeammatesPositions(GameTestHelper helper) {
+        ServerPlayer viewer = survivor(helper);
+        ServerPlayer mate = survivor(helper);
+        List<ServerPlayer> team = List.of(viewer, mate);
+        check(helper, Locator.seen(viewer, team).isEmpty(), "a survivor without a Messenger saw the locator bar");
+        viewer.getInventory().setItem(0, new ItemStack(Things.SATELLITE_MESSENGER.get()));
+        check(helper, Locator.seen(viewer, team).map(List::isEmpty).orElse(false), "a teammate without a Messenger showed, or the bar did not show");
+        mate.getInventory().setItem(0, new ItemStack(Things.SATELLITE_MESSENGER.get()));
+        check(helper, Locator.seen(viewer, team).map(marks -> marks.size() == 1 && marks.getFirst().id().equals(mate.getUUID())).orElse(false),
+                "a teammate carrying a Messenger did not show on the bar");
+        mate.setGameMode(GameType.SPECTATOR);
+        check(helper, Locator.seen(viewer, team).isEmpty(), "the bar showed with the only teammate spectating");
         helper.succeed();
     }
 

@@ -5,6 +5,7 @@ import io.github.roman16.backcountry.guide.GuideView;
 import io.github.roman16.backcountry.survivor.Summary;
 import io.github.roman16.backcountry.weather.Weather;
 import io.github.roman16.backcountry.weather.WeatherView;
+import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 public final class ClientState {
@@ -50,5 +51,6 @@ public final class ClientState {
         year = null;
         blackout = 0;
         readSent = false;
+        LocatorBar.received(false, List.of());
     }
 }

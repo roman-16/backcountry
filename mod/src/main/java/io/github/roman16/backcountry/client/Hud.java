@@ -72,6 +72,7 @@ public final class Hud {
         event.registerAbove(VanillaGuiLayers.FOOD_LEVEL, Backcountry.id("water"), Hud::water);
         event.registerAbove(VanillaGuiLayers.HOTBAR, Backcountry.id("body"), Hud::body);
         event.registerBelow(VanillaGuiLayers.CHAT, Backcountry.id("tasks"), TaskTracker::render);
+        event.registerBelow(VanillaGuiLayers.CHAT, Backcountry.id("locator"), LocatorBar::render);
         event.registerBelow(VanillaGuiLayers.CHAT, Backcountry.id("blackout"), Hud::blackout);
         event.registerBelowAll(Backcountry.id("whiteout"), Blizzard::whiteout);
     }

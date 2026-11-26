@@ -31,6 +31,7 @@ import snownee.jade.api.ui.IElement;
 public final class JadeLink implements IWailaPlugin {
     private static final int LAST = Integer.MAX_VALUE;
     private static final int TICKS_A_SECOND = 20;
+    private static final int BELOW_BAR = 2;
 
     @Override
     public void register(IWailaCommonRegistration registration) {
@@ -42,8 +43,13 @@ public final class JadeLink implements IWailaPlugin {
     public void registerClient(IWailaClientRegistration registration) {
         registration.registerBlockComponent(new Lines(Inspect.POT, JadeLink::pot), CampPotBlock.class);
         registration.registerBlockComponent(new Lines(Inspect.CAMPFIRE, JadeLink::campfire), FireBlock.class);
-        registration.addBeforeRenderCallback((box, rect, graphics, accessor) -> Minecraft.getInstance().player == null
-                || !Minecraft.getInstance().player.isCrouching());
+        registration.addBeforeRenderCallback((box, rect, graphics, accessor) -> {
+            if (Minecraft.getInstance().player == null || !Minecraft.getInstance().player.isCrouching()) {
+                return true;
+            }
+            rect.rect.setY(Math.max(rect.rect.getY(), LocatorBar.bottom() + BELOW_BAR));
+            return false;
+        });
         registration.addTooltipCollectedCallback(LAST, (box, accessor) -> {
             ITooltip tooltip = box.getTooltip();
             List<IElement> name = List.copyOf(tooltip.get(JadeIds.CORE_OBJECT_NAME));

@@ -2,6 +2,7 @@ package io.github.roman16.backcountry.client;
 
 import io.github.roman16.backcountry.body.BodyView;
 import io.github.roman16.backcountry.guide.GuideView;
+import io.github.roman16.backcountry.survivor.Locator;
 import io.github.roman16.backcountry.survivor.Summary;
 import io.github.roman16.backcountry.weather.Day;
 import io.github.roman16.backcountry.weather.Weather;
@@ -27,6 +28,10 @@ public final class ClientMessages {
 
     public static void bowDrill(BlockPos fire, boolean wet) {
         Minecraft.getInstance().setScreen(new BowDrillScreen(fire, wet));
+    }
+
+    public static void marks(boolean shown, List<Locator.Mark> marks) {
+        LocatorBar.received(shown, marks);
     }
 
     public static void sky(List<Day> days) {

@@ -4,7 +4,7 @@ What Backcountry is, decided before anything is built. Each document keeps its *
 
 ## Now
 
-**M1 Repo, tooling, world** to **M17 Binoculars** are built, M1 to M12 balanced by automated playthroughs (`playthrough` skill) and by the team's first play on the server, which set walking by distance, water by its source, small game's meat and the berries' season. The rest of the `playtest` skill's rows wait for the next play. M16's title panorama waits until the island's terrain is settled.
+**M1 Repo, tooling, world** to **M18 The team's positions** are built, M1 to M12 balanced by automated playthroughs (`playthrough` skill) and by the team's first play on the server, which set walking by distance, water by its source, small game's meat and the berries' season. The rest of the `playtest` skill's rows wait for the next play. M16's title panorama waits until the island's terrain is settled.
 
 ## Milestones
 
@@ -29,6 +29,7 @@ Each milestone ends playable, with `just lint` and `just test` green.
 | M15 The Messenger and the tasks | The Messenger full screen with five named pages and what helps under each warning, the clock; the year's tasks in seven chapters of steps with items, the tracker and the toasts; the Canvas Pack, the Sleeping Bag, line and hooks in the kit; lashed stone tools, hewn planks and bulk by stack size; Create New World as the pack plays (`systems.md` S1, S4, S6, S9, S10, S11, `interface.md` I1, I2, I8) |
 | M16 Clearer screens | Water as droplets above the bolts, the body panel's words and every HUD element named on hover, frost at the screen's edges when cold, no vanilla tutorial or recipe book, the Messenger by the movement keys and SOS to tap out, the Backcountry Preset in Video Settings with Complementary Reimagined, the island on the title screen (`interface.md` I1, I2, I7, I8, `systems.md` S10, `production.md`) |
 | M17 Binoculars | The Binoculars in the kit, worn in the neck slot above the pack and looked through with C or in hand at 8× (`systems.md` S1, S8, S10, `interface.md` I8) |
+| M18 The team's positions | The Messenger shares each teammate's position on the locator bar at the top of the screen (`systems.md` S4, `interface.md` I1) |
 
 ## Documents
 
