@@ -50,7 +50,15 @@ public class WaterVesselItem extends Item {
         BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
         if (hit.getType() == HitResult.Type.BLOCK) {
             BlockPos at = hit.getBlockPos();
-            if (level.getFluidState(at).is(FluidTags.WATER) && water(stack).litres() < capacity) {
+            boolean aimedAtWater = level.getFluidState(at).is(FluidTags.WATER);
+            boolean salt = aimedAtWater && level.getBiome(at).is(Things.SALT_WATER);
+            if (salt && water(stack).empty()) {
+                if (!level.isClientSide) {
+                    player.displayClientMessage(Component.translatable("message.backcountry.salt_water"), true);
+                }
+                return InteractionResultHolder.fail(stack);
+            }
+            if (aimedAtWater && !salt && water(stack).litres() < capacity) {
                 stack.set(Things.WATER.get(), water(stack).add(Water.of(false, capacity()), capacity(), capacity()));
                 if (player instanceof ServerPlayer server) {
                     Guide.did(server, stack.is(Things.CAMP_POT.get()) ? Deed.FILLED_POT : Deed.FILLED_BOTTLE);

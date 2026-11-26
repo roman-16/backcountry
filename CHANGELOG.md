@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-11-26
+
+### Highlights
+
+- **Arriving on the coast** - Every survivor arrives on the island's ocean shore, facing the sea, and the sea is salt, so the first fresh water is a walk inland. Start a new world to see it.
+
+### Changed
+
+- Survivors arrive on the main island's ocean coast, facing the sea, at a spot each world draws from its seed. A new world is needed to see it.
+- The sea is salt: the Water Bottle and the Camp Pot fill only at lakes and rivers.
+
 ## [2.2.1] - 2026-11-26
 
 ### Fixed

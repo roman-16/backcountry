@@ -13,10 +13,10 @@ The `finish` skill comes first, so this list keeps only what play alone shows. P
 
 | Area | Check |
 |---|---|
-| Arrival | You stand on the drop-off lake's shore wearing a Canvas Pack and the Binoculars, with Satellite Messenger, Bear Spray, Water Bottle (boiled), Pilot Bread ×38 and Camp Pot in the hotbar and the Sleeping Bag, a Mono Line, 4 hooks, the Med Kit and the Headlamp in the pack, a Supply Crate a few blocks off; no mod gives anything else, greets you in chat or pops up a toast |
+| Arrival | You stand on the coast facing the sea, wearing a Canvas Pack and the Binoculars, with Satellite Messenger, Bear Spray, Water Bottle (boiled), Pilot Bread ×38 and Camp Pot in the hotbar and the Sleeping Bag, a Mono Line, 4 hooks, the Med Kit and the Headlamp in the pack, a Supply Crate a few blocks off; no mod gives anything else, greets you in chat or pops up a toast |
 | HUD | Bolts where hunger was, shaking when too tired to sprint; a blue water bar where the XP bar was, blinking below a quarter, and no XP anywhere; the body panel right of the hotbar with the core temperature, wetness and conditions; all readable at interface scales 2, 3 and 4 |
 | Eating | Every food's tooltip shows kcal and fat; eating stops at "Too full to eat" and starts again a few hours later |
-| Water | The Camp Pot fills at a lake, boils on a lit campfire in about 4 minutes and steams meanwhile; the bottle fills from it; drinking stops at "Not thirsty" |
+| Water | The Camp Pot fills at a lake but not at the sea ("Sea water is salt: fill it at a lake or river"), boils on a lit campfire in about 4 minutes and steams meanwhile; the bottle fills from it; drinking stops at "Not thirsty" |
 | Cold | A May night in base clothes is cold but survivable; a winter night without fire, roof or hide clothing brings frostnip; a fire undoes it |
 | Energy | A day of chopping drains the bolts; "Too tired to sprint" below a fifth; a night's sleep refills them |
 | Inventory | The Canvas Pack opens the row above the hotbar and the next reads "Needs a hide pack"; the Hide Pack in the back slot opens two; a pack's items stay in it when it comes off; logs stack to 4 and sticks to 32 while fibre and hooks stack to 64; a stone axe is a rock, a stick and a cordage, and planks come only from a stripped log and an axe |

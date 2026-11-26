@@ -258,10 +258,6 @@ tries = 16
 white_months = [11, 4]
 
 [drop_off]
-highest_lake_y = 128
-inland_blocks = 512
-lake_cells = 16
-search_blocks = 3072
 shore_rise_blocks = 8
 step_blocks = 32
 

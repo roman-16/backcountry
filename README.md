@@ -1,6 +1,6 @@
 # Backcountry
 
-A Minecraft modpack about a year alone in the Alaskan wilderness, for Minecraft 1.21.1 on NeoForge, solo or as a team. You arrive at a lake on 3 May with a small kit, and calories, cold, fire, hunting and fishing decide whether you last. Its rules ship in the Backcountry mod.
+A Minecraft modpack about a year alone in the Alaskan wilderness, for Minecraft 1.21.1 on NeoForge, solo or as a team. You arrive on the coast on 3 May with a small kit, and calories, cold, fire, hunting and fishing decide whether you last. Its rules ship in the Backcountry mod.
 
 ## Setup
 

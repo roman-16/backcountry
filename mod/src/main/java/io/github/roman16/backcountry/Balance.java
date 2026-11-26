@@ -63,7 +63,7 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
     public record Director(int checkSeconds, int countBlocks, double eventShare, int farBlocks, int nearBlocks, double rainShare, double scentShare, int tries,
             List<Double> whiteMonths) {}
 
-    public record DropOff(int highestLakeY, int inlandBlocks, int lakeCells, int searchBlocks, int shoreRiseBlocks, int stepBlocks) {}
+    public record DropOff(int shoreRiseBlocks, int stepBlocks) {}
 
     public record Effort(double attackMinutes, double buildMinutes, double dressMinutes, double scrapeMinutes, double splitMinutes, double strokeMinutes) {}
 

@@ -207,7 +207,7 @@ Options › Video Settings › Backcountry › Graphics
 - **The pause menu** has Statistics across the whole row where Advancements and Statistics stood.
 - **F3** shows no coordinates, facing or biome.
 - **Sodium's donation prompt and Iris's update notice** never show.
-- **The title screen** shows the island, photographed in the game at the drop-off lake at dawn, noon, dusk and night, one set at random each start (`python3 scripts/client.py panorama`); until the island's terrain is settled it shows vanilla's panorama.
+- **The title screen** shows the island, photographed in the game at the drop-off at dawn, noon, dusk and night, one set at random each start (`python3 scripts/client.py panorama`); until the island's terrain is settled it shows vanilla's panorama.
 - **Edge cases:** a player who launched the pack before keeps their own settings and keys, Reset Keys giving them the pack's; a key a player rebinds stays theirs through updates.
 
 ## Open

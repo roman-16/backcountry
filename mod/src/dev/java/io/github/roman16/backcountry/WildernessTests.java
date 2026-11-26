@@ -1,14 +1,23 @@
 package io.github.roman16.backcountry;
 
 import io.github.roman16.backcountry.fire.Lights;
+import io.github.roman16.backcountry.gear.WaterVesselItem;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -27,11 +36,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
+import net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterLists;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.LanternBlock;
+import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
+import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -44,6 +63,8 @@ public final class WildernessTests {
     private static final int FRAME_HEIGHT = 5;
     private static final ResourceLocation KEPT_FISH = ResourceLocation.fromNamespaceAndPath("riverfishing", "northern_pike");
     private static final ResourceLocation CUT_FISH = ResourceLocation.fromNamespaceAndPath("riverfishing", "bluegill");
+    private static final int BIOME_REACH = 8;
+    private static final long DROP_OFF_SEED = 1;
 
     private WildernessTests() {}
 
@@ -227,6 +248,70 @@ public final class WildernessTests {
         Method score = engine.getMethod("environmentScore", profile.getClass(), context);
         check(helper, (double) score.invoke(null, profile, context.getConstructor().newInstance()) == 0, "a bluegill finds water to live in");
         check(helper, Cuts.cut(BuiltInRegistries.ITEM.get(CUT_FISH)), "a bluegill still shows in JEI");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void theSeaIsSalt(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        Registry<Biome> biomes = level.registryAccess().registryOrThrow(Registries.BIOME);
+        for (ResourceKey<Biome> sea : List.of(Biomes.BEACH, Biomes.COLD_OCEAN, Biomes.DEEP_COLD_OCEAN, Biomes.SNOWY_BEACH, Biomes.STONY_SHORE)) {
+            check(helper, biomes.getHolderOrThrow(sea).is(Things.SALT_WATER), sea.location() + " is not salt");
+        }
+        for (ResourceKey<Biome> fresh : List.of(Biomes.FROZEN_RIVER, Biomes.RIVER, Biomes.TAIGA)) {
+            check(helper, !biomes.getHolderOrThrow(fresh).is(Things.SALT_WATER), fresh.location() + " is salt");
+        }
+        BlockPos water = new BlockPos(1, 1, 1);
+        helper.setBlock(water, Blocks.WATER.defaultBlockState());
+        ServerPlayer survivor = BackcountryTests.survivor(helper);
+        Vec3 above = helper.absoluteVec(new Vec3(1.5, 2, 1.5));
+        survivor.moveTo(above.x, above.y, above.z, 0, 90);
+        survivor.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Things.WATER_BOTTLE.get()));
+        biome(helper, water, Biomes.COLD_OCEAN);
+        survivor.getMainHandItem().use(level, survivor, InteractionHand.MAIN_HAND);
+        check(helper, WaterVesselItem.water(survivor.getMainHandItem()).empty(), "the bottle filled from the sea");
+        biome(helper, water, Biomes.RIVER);
+        survivor.getMainHandItem().use(level, survivor, InteractionHand.MAIN_HAND);
+        check(helper, !WaterVesselItem.water(survivor.getMainHandItem()).empty(), "the bottle did not fill from a river");
+        helper.succeed();
+    }
+
+    private static void biome(GameTestHelper helper, BlockPos at, ResourceKey<Biome> biome) {
+        BlockPos from = helper.absolutePos(at).offset(-BIOME_REACH, 0, -BIOME_REACH).atY(helper.getLevel().getMinBuildHeight());
+        BlockPos to = helper.absolutePos(at).offset(BIOME_REACH, BIOME_REACH, BIOME_REACH);
+        MinecraftServer server = helper.getLevel().getServer();
+        server.getCommands().performPrefixedCommand(server.createCommandSourceStack().withSuppressedOutput(), String.format(Locale.ROOT, "fillbiome %d %d %d %d %d %d %s",
+                from.getX(), from.getY(), from.getZ(), to.getX(), to.getY(), to.getZ(), biome.location()));
+    }
+
+    @GameTest(template = "empty")
+    public static void theDropOffIsOnTheIslandsCoast(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        RegistryAccess access = level.registryAccess();
+        Holder<NoiseGeneratorSettings> settings = access.registryOrThrow(Registries.NOISE_SETTINGS).getHolderOrThrow(NoiseGeneratorSettings.OVERWORLD);
+        NoiseBasedChunkGenerator generator = new NoiseBasedChunkGenerator(MultiNoiseBiomeSource.createFromPreset(
+                access.registryOrThrow(Registries.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST).getHolderOrThrow(MultiNoiseBiomeSourceParameterLists.OVERWORLD)), settings);
+        RandomState state = RandomState.create(settings.value(), access.lookupOrThrow(Registries.NOISE), DROP_OFF_SEED);
+        Optional<DropOff.Found> found = DropOff.find(level, generator, state);
+        check(helper, found.isPresent(), "seed " + DROP_OFF_SEED + " has no drop-off");
+        BlockPos shore = found.get().shore();
+        Direction seaward = found.get().seaward();
+        int seaLevel = generator.getSeaLevel();
+        check(helper, generator.getBaseHeight(shore.getX(), shore.getZ(), Heightmap.Types.OCEAN_FLOOR_WG, level, state) == shore.getY()
+                && generator.getBaseHeight(shore.getX(), shore.getZ(), Heightmap.Types.WORLD_SURFACE_WG, level, state) == shore.getY(), "the drop-off " + shore.toShortString() + " is not on dry ground");
+        check(helper, shore.getY() <= seaLevel + Balance.get().dropOff().shoreRiseBlocks(), "the drop-off stands " + (shore.getY() - seaLevel) + " blocks above the sea");
+        BlockPos ahead = shore.relative(seaward);
+        check(helper, generator.getBaseHeight(ahead.getX(), ahead.getZ(), Heightmap.Types.WORLD_SURFACE_WG, level, state) == seaLevel
+                && generator.getBaseHeight(ahead.getX(), ahead.getZ(), Heightmap.Types.OCEAN_FLOOR_WG, level, state) < seaLevel, "the drop-off " + shore.toShortString() + " does not face the sea");
+        DensityFunction continents = state.router().continents();
+        boolean ocean = false;
+        for (int step = 1; step <= Balance.get().dropOff().stepBlocks(); step++) {
+            BlockPos out = shore.relative(seaward, step);
+            ocean |= continents.compute(new DensityFunction.SinglePointContext(out.getX(), 0, out.getZ())) <= IslandShape.LAND;
+        }
+        check(helper, ocean, "the water the drop-off " + shore.toShortString() + " faces is not the ocean");
+        check(helper, DropOff.find(level, generator, RandomState.create(settings.value(), access.lookupOrThrow(Registries.NOISE), DROP_OFF_SEED)).equals(found),
+                "seed " + DROP_OFF_SEED + " drew a second drop-off");
         helper.succeed();
     }
 }

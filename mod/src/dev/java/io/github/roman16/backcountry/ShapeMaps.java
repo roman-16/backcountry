@@ -106,7 +106,8 @@ public final class ShapeMaps {
                 .map(entry -> String.format("%s %.0f%%", entry.getKey(), 100.0 * entry.getValue().get() / total)).collect(Collectors.joining(", "));
         LOGGER.info("shape {}: scale {}, land {} km² (a circle {} blocks across), farthest land {} blocks out, drop-off {}, {} s; land biomes: {}", seed,
                 String.format("%.3f", scale(state)), String.format("%.1f", area / 1e6), Math.round(2 * Math.sqrt(area / Math.PI)), Math.round(farthest),
-                dropOff.map(found -> found.shore().getX() + " " + found.shore().getY() + " " + found.shore().getZ() + (found.lake() ? " by a lake of " : " by a bank of ") + found.waterCells() + " cells").orElse("none"),
+                dropOff.map(found -> found.shore().getX() + " " + found.shore().getY() + " " + found.shore().getZ() + " facing " + found.seaward().getName() + ", "
+                        + Math.round(Math.hypot(found.shore().getX(), found.shore().getZ())) + " blocks out").orElse("none"),
                 (System.nanoTime() - started) / 1_000_000_000, common);
     }
 

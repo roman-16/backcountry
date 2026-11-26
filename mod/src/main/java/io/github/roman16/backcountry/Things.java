@@ -87,6 +87,7 @@ import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -125,6 +126,7 @@ public final class Things {
 
     public static final DataMapType<EntityType<?>, Animal> ANIMAL = DataMapType.builder(Backcountry.id("animal"), Registries.ENTITY_TYPE, Animal.CODEC).build();
     public static final TagKey<Item> KNIVES = TagKey.create(Registries.ITEM, Backcountry.id("knives"));
+    public static final TagKey<Biome> SALT_WATER = TagKey.create(Registries.BIOME, Backcountry.id("salt_water"));
     public static final DataMapType<Item, Nutrition> FOOD = DataMapType.builder(Backcountry.id("food"), Registries.ITEM, Nutrition.CODEC).synced(Nutrition.CODEC, true).build();
 
     public static final Supplier<AttachmentType<Body>> BODY = ATTACHMENTS.register("body", () -> AttachmentType.serializable(Body::new).build());

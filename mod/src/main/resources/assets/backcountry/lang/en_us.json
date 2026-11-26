@@ -212,6 +212,7 @@
   "message.backcountry.pot": "Cooking Pot: %s L water, %s of %s foods",
   "message.backcountry.pot_ready": "%s ready: %s, take it with a bowl",
   "message.backcountry.queued": "Fuel queue %s/%s",
+  "message.backcountry.salt_water": "Sea water is salt: fill it at a lake or river",
   "message.backcountry.sap_stopped": "The sap has stopped",
   "message.backcountry.skill_up": "%s %s",
   "message.backcountry.stumble": "You stumble",
