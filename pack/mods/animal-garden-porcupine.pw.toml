@@ -1,0 +1,13 @@
+name = "Animal Garden - Porcupine"
+filename = "animalgarden_porcupine-1.0.2-neoforge-1.21.1-21.1.213.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/m0TRBPCH/versions/b2xPel7m/animalgarden_porcupine-1.0.2-neoforge-1.21.1-21.1.213.jar"
+hash-format = "sha512"
+hash = "6e8bcc52d0412c280d5e231bd3b696aed45b806866e0594d92363777bdaa8ecb8dcab78c5a980bdb78e477a18ccc211125caf7a00c2bacc51a7c5719b2e1e99b"
+
+[update]
+[update.modrinth]
+mod-id = "m0TRBPCH"
+version = "b2xPel7m"

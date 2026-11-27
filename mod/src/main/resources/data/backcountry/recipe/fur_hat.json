@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": {
+      "item": "backcountry:fox_pelt"
+    },
+    "L": {
+      "item": "backcountry:cured_hide"
+    }
+  },
+  "pattern": [
+    "FLF",
+    "F F"
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:fur_hat"
+  }
+}

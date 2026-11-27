@@ -1,8 +1,6 @@
 package io.github.roman16.backcountry.gear;
 
 import io.github.roman16.backcountry.Things;
-import io.github.roman16.backcountry.body.Body;
-import io.github.roman16.backcountry.body.Metabolism;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
@@ -24,17 +22,16 @@ public class SupplyCrateBlock extends Block {
         if (player.getInventory().contains(new ItemStack(Things.SATELLITE_MESSENGER.get()))) {
             return true;
         }
-        return Metabolism.body(player).pack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyStream()
+        return Worn.BACK.get(player).getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyStream()
                 .anyMatch(stack -> stack.is(Things.SATELLITE_MESSENGER.get()));
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide) {
-            Body body = Metabolism.body(player);
-            boolean packless = body.pack.isEmpty() && !player.isCreative();
+            boolean packless = Worn.BACK.get(player).isEmpty() && !player.isCreative();
             if (packless) {
-                body.pack = new ItemStack(Things.CANVAS_PACK.get());
+                Worn.BACK.set(player, new ItemStack(Things.CANVAS_PACK.get()));
                 player.displayClientMessage(Component.translatable("message.backcountry.canvas_pack"), true);
             }
             if (!carriesMessenger(player)) {

@@ -20,7 +20,7 @@
 
 - No structures: villages, ruins, outposts, portals and every mod's structures are cut. No monsters spawn (the spawn director, `systems.md` S8), and no dungeon with its spawner and chest generates. The Nether stays unreachable: an obsidian frame lit with flint and steel burns and opens no portal. The End has no portal frame to reach, since its strongholds are cut.
 - **No caves.** A survivalist in Alaska does not go underground: the rock under the island is solid, with no cave openings, ravines, lush or dripstone caves or underground rivers.
-- **No ore in the rock.** Coal, iron, copper, gold, redstone, lapis, diamond, emerald, amethyst geodes and infested stone never generate. Iron is found only on the surface: in stream beds and cliff faces, and as iron-flecked gravel in the birch forests' gravel pits (Project: Vibrant Journeys), whose gold-flecked gravel is the island's only gold. Solid rock and ore break at 0.05× speed with every tool, wherever they sit (stone about 12 s and iron ore about 23 s with a stone pickaxe), so loose rocks are the way to cobblestone.
+- **No ore anywhere.** Coal, iron, copper, gold, redstone, lapis, diamond, emerald, amethyst geodes and infested stone never generate, in the rock or on the surface. **Iron is dug, not mined:** iron-flecked gravel lies in the birch forests' gravel pits (Project: Vibrant Journeys) and in patches on the beds of streams and lakes, and a shovel in it turns up Raw Iron one dig in 4, which the furnace smelts; the gold-flecked gravel never generates (`systems.md` S12). Solid rock breaks at 0.05× speed with every tool, wherever it sits (stone about 12 s with a stone pickaxe), so loose rocks are the way to cobblestone.
 - **Nothing that Alaska lacks:** no wild pumpkins, no lava lakes or lava falls on the surface (lava lies only deep in the rock), no hazelnut bushes by the rivers (Wilder Nature's), no honeybees: the nests in the birches stand empty.
 - **Edge cases:** land a world generated before keeps its caves, ores and dungeons; new land comes without.
 
@@ -35,6 +35,14 @@
 - Anything that walks presses footprints into snow layers and sand, which fade (Soft Imprints, drawn on each player's own screen).
 - Grass, dirt, sand, short plants and snow wear into a path where survivors and animals walk often, and grow back when left (The Roads More Travelled): a year at one camp wears a trail to the water and the woodpile. Leaves and berry bushes never wear, and a path makes no one faster, since a survivor's speed is the body's (energy, snow, load).
 - **Edge cases:** footprints show in snow layers, not in the snow Ecliptic Seasons draws over the ground's own blocks; a path left alone grows back whether or not anyone is near.
+
+### W6 The coast and the streams
+
+- **Driftwood** washes up on sandy beaches beside the sea: a log lying on the sand, grey with salt, already seasoned through (`systems.md` S6). About 2 pieces a day wash up near each survivor on the coast, 8 at most within 64 blocks, and four times as many on a gale's day and the day after (wind of 48 km/h or more).
+- **Clams** live in beach sand: a shovel in it turns up Clams one dig in 4. **Mussels** grow in beds on stony shores at the waterline, where stone or gravel lies a block or two under the sea; a right-click picks 2 to 4 off a bed. New beds settle about twice a day, 8 at most within 64 blocks. Shellfish poison 1 in 32, 1 in 8 from June to August when the blooms come, cooked or not: shellfish poisoning, 4 hours of slowness and hearts draining with no cure (`systems.md` S1). The JEI pages say where each comes from.
+- **Goose nests** appear in May on the grass and dirt beside lakes and rivers, away from the sea, about one a day near a survivor, each with 2 to 4 eggs; a right-click takes an egg, and the last takes the nest. A Goose Egg (266 kcal, 19 g fat) is eaten raw, with a small chance of food poisoning, or cooked on a campfire.
+- **Streams** turn the Fish Wheel (`systems.md` S9) where they run two blocks deep; still water never does.
+- **Edge cases:** driftwood, beds and nests come only near a living survivor, never within 24 blocks of one, so they seem to have been there; land nobody visits gains none; broken driftwood and picked beds do not come back in place, new ones settling elsewhere.
 
 ## Open
 

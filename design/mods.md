@@ -32,7 +32,7 @@ Every mod in the pack and why, and what was left out. "His" marks a mod in one o
 | The Roads More Travelled | Paths that wear and grow back; leaves never wear and paths give no speed (`world.md` W5) |
 | Wakes Reforged | Wakes behind the Raft and swimmers |
 | LambDynamicLights | Light from what is held, and the headlamp, with the shader on and off; its quality follows the Preset, and the shader's own held light is off so a torch never lights twice |
-| JEI | Recipes; it lists only what the island gives (`cuts.toml`) |
+| JEI | Recipes, and the pack's own pages for every way the island gives things: gathering, dressing, the pots, the smoker, the rack, salting, the birch tap, the woodpile, traps and the fish wheel (`JeiLink`); it lists only what the island gives (`cuts.toml`) |
 | Controlling, with Searchables | A search box in Controls |
 | Mouse Tweaks (his), Inventory Sorter (his) | Dragging and scrolling items; a middle click sorts, never into a dark row |
 | InvMove | Walking with a screen open, except the bow-drill game, the summary and JEI's search (`InvMoveLink`) |
@@ -50,10 +50,12 @@ Every mod in the pack and why, and what was left out. "His" marks a mod in one o
 | Sit | Seats on slabs and stairs |
 | 3D Skin Layers, Not Enough Animations, Detailed Animations, Fresh Animations | Survivors and rabbits that move as they look; the two packs through Entity Model Features and Entity Texture Features |
 | Leggings Fix | Leggings closed at the ankle |
-| Alex's Mobs (Unofficial Port) and Citadel (Unofficial Port) | Moose, grizzly, bald eagle, seal, orca; of their items only moose ribs stay |
-| Critters n' Crawlers (his) | Wolverine, beaver, caribou, mouse, black bear, timber wolf, goose; of its items only the meats, stews and pemmican stay; its timber wolf hunts no survivor and keeps its distance (`hunt/Wolves`) |
+| Alex's Mobs (Unofficial Port) and Citadel (Unofficial Port) | Moose, grizzly, bald eagle, seal, orca, sperm whale; of their items only moose ribs stay; its moose keeps the pack's temper (`hunt/Moose`) |
+| Critters n' Crawlers (his) | Wolverine, beaver, caribou, mouse, black bear, timber wolf, coyote, hoary marmot, goose; of its items only the meats, stews and pemmican stay; its timber wolf and coyote hunt no survivor and keep their distance (`hunt/Wolves`) |
 | [Let's Do] Wilder Nature (his) | Squirrel; none of its items or hazelnut bushes |
-| Fowl Play | Raven, chickadee, Canada goose, gulls, mallard, hawk; its bird feeder, registered with no recipe, name or look, is cut |
+| Fowl Play | Raven, chickadee, Canada goose, gulls, mallard, hawk, robin, sparrow, crow; its bird feeder, registered with no recipe, name or look, is cut |
+| Animal Garden - Porcupine | The porcupine, whose quills punish a bare hand (`systems.md` S8); never tamed |
+| Curios API | The worn slots, back, neck and hands, in its own panel on G, drawn on the survivor; their drop rule keeps them on the survivor (`ALWAYS_KEEP`), since the left pack takes them at death or extraction (`systems.md` S1, S10) |
 | River Fishing | Fishing with Alaska's species and the tackle the island makes (`systems.md` S9) |
 | Sleeping Bags (his) | Sleeping out |
 
@@ -71,9 +73,17 @@ Libraries they bring: Architectury, Cloth Config, CoroUtil, CreativeCore, Fzzy C
 | Weather, Storms & Tornadoes | The mod's weather (S3); tornadoes are not Alaska |
 | Regions Unexplored | WWOO dresses the vanilla biomes instead |
 | Variety Birds | Version 0.1.0, two weeks old when weighed (11.2026) |
+| Just Enough Resources, Advanced Loot Info | They list loot tables, full of creatures that never come; the pack's own JEI pages say how the island gives things |
+| Field Guide | The Messenger's Notes page keeps each player's field notes (`systems.md` S13) |
+| Fish 'N' Ships | The Fish Wheel and the canoe are the pack's own (S9) |
+| Advanced Chimneys | The Stone Chimney vents the pack's rooms (S6) |
+| Rack It Up | The Drying Rack is the pack's own (S7) |
+| Salt: Renewed | Sea salt boils out of the Camp Pot (S7) |
+| Animal Garden - Sea Otter | Weighed beside the porcupine and left for later |
+| Insanity, sanity and mental-health mods | Spirits are the mod's (S1), and nothing ends at the bottom |
 | Chunky | Distant Horizons 3.3.3 binds to it while the server prepares its spawn, before Chunky is loaded, and the server crashes |
 | Immersive UI | Its trails mark rarity, which the island has none of, and the inventory with its dark rows is the pack's own |
-| JourneyMap | Maps are made on the island from paper and the compass, and coordinates are hidden (`systems.md` S12) |
+| JourneyMap, Antique Atlas 4, Mapwright | The Birch-Bark Map draws only what a survivor surveys (`systems.md` S13), and coordinates are hidden (S12) |
 | Locator Bar | The Messenger shares the team's positions on a bar of the pack's own in vanilla's look (`systems.md` S4); the mod's vanilla-style bar takes the XP bar's row, where the hearts and energy sit, and its other bar has a look of its own |
 | Auroras | Complementary Reimagined draws its own aurora |
 | Particle Rain, Windy | They draw rain, snow and wind of their own, where the mod's weather decides them (`systems.md` S3) |
@@ -86,7 +96,7 @@ Libraries they bring: Architectury, Cloth Config, CoroUtil, CreativeCore, Fzzy C
 | Serene Seasons, Terralith, Geophilic, Terraphilic | Ecliptic Seasons keeps the year; WWOO dresses the land |
 | Naturalist, Friends & Foes, Respawning Animals, Improved Mobs, The Hordes, Spawn Animations, No Hostiles Around Campfire, Attract to Sound | The spawn director owns every animal and no monster spawns; a hearing AI would fight the bears' seasonal temper (`systems.md` S8) |
 | Artifacts, Better Combat, Combat Roll, Simply Swords, Silent Gear, Hang Glider, Yori3o's Grappling Hooks, Small Ships, Waystones, Horseman, Enhanced Celestials, RarityCore, Enchantment Descriptions, Enchant Icons, Supplementaries, Amendments, Easy NPC, Simply Tooltips, Traveler's Titles | No exotic gear, magic, XP or labels on the land (`systems.md` S12); Amendments' wall lanterns would never burn down |
-| Sophisticated Backpacks, Curios API, Spyglass Improvements, Nomadic Tents, GraveStone, HT's TreeChop, Farmer's Delight | The mod builds them: the hotbar and the Hide Pack, the back and neck slots, the binoculars' zoom (Spyglass Improvements zooms only the vanilla spyglass, which the island cannot make), the camp, the fallen survivor's pack, felling, the pots and every food's numbers |
+| Sophisticated Backpacks, Spyglass Improvements, Nomadic Tents, GraveStone, HT's TreeChop, Farmer's Delight | The mod builds them: the hotbar and the Hide Pack, the binoculars' zoom (Spyglass Improvements zooms only the vanilla spyglass, which the island cannot make), the camp, the fallen survivor's pack, felling, the pots and every food's numbers |
 
 ## Open
 

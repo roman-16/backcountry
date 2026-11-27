@@ -1,0 +1,147 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "backcountry:block/goose_nest",
+    "nest": "backcountry:block/goose_nest",
+    "egg": "backcountry:block/goose_egg_shell"
+  },
+  "elements": [
+    {
+      "from": [
+        2,
+        0,
+        2
+      ],
+      "to": [
+        14,
+        3,
+        14
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ],
+          "texture": "#nest",
+          "cullface": "down"
+        },
+        "east": {
+          "uv": [
+            2,
+            13,
+            14,
+            16
+          ],
+          "texture": "#nest"
+        },
+        "north": {
+          "uv": [
+            2,
+            13,
+            14,
+            16
+          ],
+          "texture": "#nest"
+        },
+        "south": {
+          "uv": [
+            2,
+            13,
+            14,
+            16
+          ],
+          "texture": "#nest"
+        },
+        "up": {
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ],
+          "texture": "#nest"
+        },
+        "west": {
+          "uv": [
+            2,
+            13,
+            14,
+            16
+          ],
+          "texture": "#nest"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        3,
+        4
+      ],
+      "to": [
+        7,
+        6,
+        7
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            4,
+            4,
+            7,
+            7
+          ],
+          "texture": "#egg"
+        },
+        "east": {
+          "uv": [
+            4,
+            10,
+            7,
+            13
+          ],
+          "texture": "#egg"
+        },
+        "north": {
+          "uv": [
+            4,
+            10,
+            7,
+            13
+          ],
+          "texture": "#egg"
+        },
+        "south": {
+          "uv": [
+            4,
+            10,
+            7,
+            13
+          ],
+          "texture": "#egg"
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            7,
+            7
+          ],
+          "texture": "#egg"
+        },
+        "west": {
+          "uv": [
+            4,
+            10,
+            7,
+            13
+          ],
+          "texture": "#egg"
+        }
+      }
+    }
+  ]
+}

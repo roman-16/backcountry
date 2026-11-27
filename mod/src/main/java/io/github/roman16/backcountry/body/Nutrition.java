@@ -2,6 +2,7 @@ package io.github.roman16.backcountry.body;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.food.Fish;
 import java.util.Optional;
@@ -22,7 +23,14 @@ public record Nutrition(double kcal, double fat, double protein, double carbs, d
 
     public static Optional<Nutrition> of(ItemStack stack) {
         Optional<Nutrition> food = Fish.is(stack.getItem()) ? Fish.nutrition(stack) : Optional.ofNullable(stack.getItemHolder().getData(Things.FOOD));
+        if (stack.has(Things.DRIED.get())) {
+            food = food.map(Nutrition::dried);
+        }
         return stack.has(Things.POISONED.get()) ? food.map(Nutrition::poisoned) : food;
+    }
+
+    public Nutrition dried() {
+        return new Nutrition(kcal, fat, protein, carbs, vitaminC, false, poisoning, days, water * Balance.get().drying().waterShare());
     }
 
     public Nutrition poisoned() {

@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "particle": "backcountry:block/overflow",
+    "slush": "backcountry:block/overflow"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        1,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#slush"
+        },
+        "east": {
+          "texture": "#slush"
+        },
+        "north": {
+          "texture": "#slush"
+        },
+        "south": {
+          "texture": "#slush"
+        },
+        "up": {
+          "texture": "#slush"
+        },
+        "west": {
+          "texture": "#slush"
+        }
+      }
+    }
+  ]
+}

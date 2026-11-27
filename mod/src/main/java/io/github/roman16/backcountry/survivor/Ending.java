@@ -6,6 +6,7 @@ import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.gear.LeftPackEntity;
+import io.github.roman16.backcountry.gear.Worn;
 import io.github.roman16.backcountry.net.Messages;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -91,13 +92,11 @@ public final class Ending {
                 carried.add(stack);
             }
         }
-        if (!body.binoculars.isEmpty()) {
-            carried.add(body.binoculars);
-            body.binoculars = ItemStack.EMPTY;
-        }
-        if (!body.pack.isEmpty()) {
-            carried.add(body.pack);
-            body.pack = ItemStack.EMPTY;
+        for (Worn worn : Worn.values()) {
+            ItemStack taken = worn.take(player);
+            if (!taken.isEmpty()) {
+                carried.add(taken);
+            }
         }
         if (carried.isEmpty()) {
             return;

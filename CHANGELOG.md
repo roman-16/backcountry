@@ -6,6 +6,66 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-11-27
+
+### Highlights
+
+- **Ten items of your own** - You arrive with the safety gear and choose ten items of eighteen, as on *Alone*; every new survivor chooses again.
+- **A homestead for winter** - Sealed rooms hold a fire's heat, tall caches keep raiders out, and drying racks, salt and pemmican store the summer's food; lean meat alone now brings rabbit starvation.
+- **Spirits and winter** - Spirits rise and fall with the day's comforts, and winter brings thin ice, numb hands, smothered fires and charging moose.
+- **Knowing the island** - The Messenger's Year page shows the seasons ahead and its Notes page what you have found; draw a birch-bark map, blaze your trails, paddle a canoe and set a fish wheel among new animals and a coast full of food.
+
+### Added
+
+- A ten-items screen on arrival: the Satellite Messenger, Bear Spray, Med Kit, Water Bottle, Binoculars, Canvas Pack and Headlamp are issued, and you pick up to ten of 18 items, among them an Axe, a Bow Saw, a Ferro Rod, a Gill Net, a Hunting Bow, Tarps, a Sleeping Pad and Pemmican.
+- G opens the worn slots for the back, neck and hands, and the pack, binoculars and mittens show on your body.
+- JEI pages for every way the island gives things: gathering, dressing, the pots, the smoker, the drying rack, salting, the birch tap, the woodpile, traps and the fish wheel.
+- Sealed rooms hold a fire's heat, and the Warmth page names the room and its air; a fire inside needs a smoke hole straight above it, or the room fills with smoke.
+- The Stone Fireplace burns half the wood and the Stone Chimney carries its smoke; a snow shelter keeps you alive on your own heat, and a cellar dug into the ground stays near 4 °C.
+- Rabbit starvation from lean meat without fat, with animals fattest in their season; Bone Marrow, Akutaq and Pemmican make up the fat.
+- The Drying Rack dries meat and fish to keep for months, faster over a fire; sea water boils down to Salt in the Camp Pot, and salted meat keeps 8 times as long.
+- Spirits, with a body line when high or low, a meter on the Body page and an SOS button that glows at the bottom.
+- Bears and wolverines raid caches on the ground; a cache on 3 stripped logs is out of their reach and the mice's.
+- Moose cows with calves in May and June and bulls in the rut may charge, mostly bluffing; a tree between you stops them.
+- New ice is thin and breaks under a heavy load or a sled until it thickens; overflow slush on rivers, and breakup in April with an alert.
+- Bare hands go numb in hard cold; Hide and Fur Mittens keep them warm.
+- Snow sliding off spruce branches can smother a fire beneath them.
+- The Fur Parka, its hood warm under a headlamp, the Fur Hat, and Fox and Wolverine Pelts.
+- The Messenger's Year page: the usual temperatures, daylight and wet days for the months around now, and when berries, salmon, bears, the rut, mosquitoes, lake ice, migrations and birch sap come.
+- The Messenger's Notes page keeps your field notes of animals watched through the binoculars or taken, fish landed and plants picked; sneaking at something not yet noted names it only "Unknown animal", "Unknown berries" or "Unknown mushroom".
+- The Birch-Bark Map draws what you can see when you survey with charcoal in daylight, and copies share the drawing.
+- Blaze trees with an axe while sneaking and pile rocks into cairns up to 3 high; a spruce blaze weeps Spruce Pitch for Pitch Tinder that catches in rain, torches, and Pitch Salve that heals a wound or burns within a day.
+- Mountain goats, hoary marmots, red and Arctic foxes, coyotes, porcupines whose quills punish a bare hand, robins, sparrows, crows and sperm whales.
+- Driftwood on the beaches, already seasoned; clams dug from sand and mussels on stony shores, which can poison, most in summer; goose nests by the lakes in May.
+- A bark mushroom held to a fire smoulders for 2 hours and lights a cold fire without the bow drill.
+- The Birch-Bark Canoe, faster than the raft, from birch bark, spruce roots and pitch.
+- The Fish Wheel catches fish in a stream two blocks deep, up to 4 salmon a day in the run.
+- Caribou migrate in big herds in late April and September with an alert, geese come twice as often in May and September, and hares follow a 4-year cycle.
+- The Camp Pot is also made from 3 iron ingots and a stick.
+- A Homestead chapter of tasks, and Guide topics on fat, spirits, shelter, ice, finding the way and the coast.
+
+### Changed
+
+- Start a new world for 3.0.0: survivors in an older world lose what they wore on the back and at the neck, and its land keeps the old iron ore and gold.
+- The arrival kit is the issued gear and your picks; the Camp Pot, Pilot Bread, Sleeping Bag, line and hooks no longer come to everyone.
+- Iron is dug, not mined: a shovel in iron-flecked gravel in birch pits and stream beds turns up Raw Iron.
+- Light things weigh what they do: a hook 4 g, an arrow about 30 g, a square of Tarp 125 g.
+- The moose rut lasts through October.
+- Rabbit stew is cooked rabbit and a brown mushroom.
+- Item frames and River Fishing's small tackle box and fishing journal take Scraped Hide.
+- The first task is "Get an axe", and the kit's Axe counts.
+
+### Removed
+
+- Farming: seeds, crops, bread, hay, beetroot, potatoes, carrots, hoes and the composter.
+- Sugar cane, paper, books, bookshelves and the lectern.
+- The compass, the clock, vanilla's maps and the cartography table; the Birch-Bark Map replaces them.
+- Gold, and leather with its armour.
+
+### Fixed
+
+- The Messenger's Tasks and Guide lists scroll to keep the chosen line in sight on small screens.
+
 ## [2.6.0] - 2026-11-26
 
 ### Highlights

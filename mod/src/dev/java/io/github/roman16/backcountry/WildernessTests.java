@@ -47,7 +47,7 @@ import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterLists;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -161,10 +161,8 @@ public final class WildernessTests {
     }
 
     @GameTest(template = "empty")
-    public static void theCompassClockAndLeadAreMadeOnTheIsland(GameTestHelper helper) {
+    public static void theLeadIsMadeFromRope(GameTestHelper helper) {
         MinecraftServer server = helper.getLevel().getServer();
-        check(helper, uses(server, "compass", Items.GLASS_PANE) && uses(server, "compass", Items.IRON_INGOT), "the compass is not iron around a glass pane");
-        check(helper, uses(server, "clock", Items.GLASS_PANE) && uses(server, "clock", Items.GOLD_INGOT), "the clock is not gold around a glass pane");
         check(helper, uses(server, "lead", Things.ROPE.get()), "the lead is not made from rope");
         helper.succeed();
     }
@@ -207,11 +205,12 @@ public final class WildernessTests {
 
     @GameTest(template = "empty")
     public static void boneMealGrowsNothing(GameTestHelper helper) {
-        helper.setBlock(new BlockPos(2, 0, 2), Blocks.FARMLAND.defaultBlockState());
-        helper.setBlock(new BlockPos(2, 1, 2), Blocks.WHEAT.defaultBlockState());
-        BlockPos wheat = helper.absolutePos(new BlockPos(2, 1, 2));
-        BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), helper.getLevel(), wheat, BackcountryTests.survivor(helper));
-        check(helper, helper.getLevel().getBlockState(wheat).getValue(CropBlock.AGE) == 0, "bone meal grew the wheat");
+        helper.setBlock(new BlockPos(2, 0, 2), Blocks.GRASS_BLOCK.defaultBlockState());
+        helper.setBlock(new BlockPos(2, 1, 2), Blocks.SPRUCE_SAPLING.defaultBlockState());
+        BlockPos sapling = helper.absolutePos(new BlockPos(2, 1, 2));
+        BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), helper.getLevel(), sapling, BackcountryTests.survivor(helper));
+        check(helper, helper.getLevel().getBlockState(sapling).is(Blocks.SPRUCE_SAPLING) && helper.getLevel().getBlockState(sapling).getValue(SaplingBlock.STAGE) == 0,
+                "bone meal grew the sapling");
         helper.succeed();
     }
 

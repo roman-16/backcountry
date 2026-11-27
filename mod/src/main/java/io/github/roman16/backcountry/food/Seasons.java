@@ -9,23 +9,20 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.BonemealEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.block.CropGrowEvent;
 
 @EventBusSubscriber(modid = Backcountry.MODID)
 public final class Seasons {
     private static final int MONTHS = 12;
-    private static final int BARE = 1;
-    private static final int KEPT = 2;
-    private static final int RIPE = 3;
+    public static final int BARE = 1;
+    public static final int KEPT = 2;
+    public static final int RIPE = 3;
 
     private Seasons() {}
 
@@ -72,39 +69,13 @@ public final class Seasons {
             if (air < 0 || !within(level, months.get(0).intValue(), months.get(1).intValue())) {
                 event.setResult(CropGrowEvent.Pre.Result.DO_NOT_GROW);
             }
-            return;
         }
-        if (!(state.getBlock() instanceof CropBlock crop)) {
-            return;
-        }
-        Balance.Farming farming = Balance.get().farming();
-        Farmland farmland = Farmland.get(level);
-        if (farmland.dud(pos) || air < 0 && !crop.isMaxAge(state)) {
-            farmland.forget(pos);
-            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-            event.setResult(CropGrowEvent.Pre.Result.DO_NOT_GROW);
-            return;
-        }
-        boolean season = within(level, farming.firstMonth(), farming.lastMonth()) && air >= farming.warmC();
-        event.setResult(season && level.random.nextDouble() < farming.growthShare() ? CropGrowEvent.Pre.Result.DEFAULT : CropGrowEvent.Pre.Result.DO_NOT_GROW);
     }
 
     @SubscribeEvent
     static void boneMeal(BonemealEvent event) {
         if (event.isValidBonemealTarget()) {
             event.setSuccessful(false);
-        }
-    }
-
-    @SubscribeEvent
-    static void sown(BlockEvent.EntityPlaceEvent event) {
-        if (!(event.getLevel() instanceof ServerLevel level) || !(event.getPlacedBlock().getBlock() instanceof CropBlock)) {
-            return;
-        }
-        if (level.random.nextDouble() < Balance.get().farming().germination()) {
-            Farmland.get(level).forget(event.getPos());
-        } else {
-            Farmland.get(level).sow(event.getPos());
         }
     }
 

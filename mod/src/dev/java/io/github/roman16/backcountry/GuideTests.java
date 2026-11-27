@@ -52,8 +52,8 @@ public final class GuideTests {
     public static void aNewSurvivorFollowsTheFirstTask(GameTestHelper helper) {
         ServerPlayer player = BackcountryTests.survivor(helper);
         GuideView view = view(helper, player);
-        check(helper, Task.values()[0] == Task.STONE_AXE && !view.done(Task.STONE_AXE), "a new survivor has made a stone axe");
-        check(helper, view.following(JUNE).equals(Optional.of(Task.STONE_AXE)), "a new survivor follows " + view.following(JUNE));
+        check(helper, Task.values()[0] == Task.AXE && !view.done(Task.AXE), "a new survivor has made a stone axe");
+        check(helper, view.following(JUNE).equals(Optional.of(Task.AXE)), "a new survivor follows " + view.following(JUNE));
         helper.succeed();
     }
 
@@ -85,13 +85,13 @@ public final class GuideTests {
         player.getInventory().setItem(0, new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("projectvibrantjourneys", "rocks"))));
         Guide.sense(player);
         GuideView view = view(helper, player);
-        check(helper, view.stepsDone(Task.STONE_AXE) == 1 && !view.done(Task.STONE_AXE), "a rock held ticked " + view.stepsDone(Task.STONE_AXE) + " steps of the stone axe");
+        check(helper, view.stepsDone(Task.AXE) == 1 && !view.done(Task.AXE), "a rock held ticked " + view.stepsDone(Task.AXE) + " steps of the stone axe");
         player.getInventory().setItem(1, new ItemStack(Items.STONE_AXE));
         Guide.sense(player);
-        check(helper, view(helper, player).done(Task.STONE_AXE), "a stone axe held did not finish Make a stone axe");
+        check(helper, view(helper, player).done(Task.AXE), "a stone axe held did not finish Make a stone axe");
         player.getInventory().clearContent();
         Guide.sense(player);
-        check(helper, view(helper, player).done(Task.STONE_AXE), "Make a stone axe came undone when the axe was gone");
+        check(helper, view(helper, player).done(Task.AXE), "Make a stone axe came undone when the axe was gone");
         helper.succeed();
     }
 
@@ -103,7 +103,7 @@ public final class GuideTests {
         Metabolism.body(player).reset(day, Calendar.year(day));
         GuideView view = view(helper, player);
         check(helper, view.stepsDone(Task.LIGHT_FIRE) == 1, "a new survivor lost the player's lit fire");
-        check(helper, view.following(JUNE).equals(Optional.of(Task.STONE_AXE)), "a half-lit fire jumped the queue");
+        check(helper, view.following(JUNE).equals(Optional.of(Task.AXE)), "a half-lit fire jumped the queue");
         helper.succeed();
     }
 

@@ -26,7 +26,11 @@ public final class Look {
     public static final int GREEN_WOOD = 0x55FF55;
     static final int GRID = 0xFF303030;
     static final int HOT = 0xFFFFAA44;
+    static final int JEI_NOTE = 0xFF404040;
     static final int KEY = 0xFF6A3412;
+    static final int KIT_HOVER = 0x80FFFFFF;
+    static final int KIT_OUTLINE = 0xFFFFE080;
+    static final int KIT_PICKED = 0x8080E060;
     static final int LCD = 0xFF1A2618;
     static final int LCD_COLD = 0xFF8FD0FF;
     static final int LCD_COLD_DIM = 0xFF2C4A5C;

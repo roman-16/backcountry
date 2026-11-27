@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:cobblestone"
+    },
+    "F": {
+      "item": "backcountry:campfire"
+    },
+    "K": {
+      "item": "minecraft:clay_ball"
+    }
+  },
+  "pattern": [
+    " K ",
+    "CFC",
+    "CCC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:stone_fireplace"
+  }
+}

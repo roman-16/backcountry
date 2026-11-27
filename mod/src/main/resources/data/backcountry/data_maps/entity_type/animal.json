@@ -13,6 +13,13 @@
         }
       ]
     },
+    "alexsmobs:cachalot_whale": {
+      "habitat": "#minecraft:is_deep_ocean",
+      "per_day": 0.0625,
+      "cap": 1,
+      "kg": 40000,
+      "near_water": true
+    },
     "alexsmobs:grizzly_bear": {
       "habitat": "#minecraft:is_taiga",
       "months": [
@@ -56,7 +63,21 @@
           "count": 2
         }
       ],
-      "track": "bear"
+      "track": "bear",
+      "fat": [
+        8,
+        8,
+        8,
+        4,
+        4,
+        6,
+        8,
+        12,
+        16,
+        16,
+        8,
+        8
+      ]
     },
     "alexsmobs:moose": {
       "habitat": "#minecraft:is_taiga",
@@ -107,7 +128,21 @@
         }
       ],
       "track": "moose",
-      "scents": true
+      "scents": true,
+      "fat": [
+        2,
+        1,
+        1,
+        1,
+        2,
+        3,
+        4,
+        6,
+        8,
+        4,
+        3,
+        2
+      ]
     },
     "alexsmobs:orca": {
       "habitat": "#minecraft:is_ocean",
@@ -138,6 +173,22 @@
         {
           "item": "backcountry:pelt",
           "count": 2
+        }
+      ]
+    },
+    "animalgarden_porcupine:porcupine": {
+      "habitat": "#minecraft:is_taiga",
+      "per_day": 0.25,
+      "cap": 2,
+      "kg": 9,
+      "rest_days": 1,
+      "cuts": [
+        {
+          "item": "cnc:raw_game",
+          "count": 3
+        },
+        {
+          "item": "backcountry:animal_fat"
         }
       ]
     },
@@ -266,7 +317,21 @@
           "count": 2
         }
       ],
-      "track": "bear"
+      "track": "bear",
+      "fat": [
+        4,
+        4,
+        4,
+        2,
+        2,
+        3,
+        4,
+        6,
+        8,
+        8,
+        4,
+        4
+      ]
     },
     "cnc:caribou": {
       "habitat": "#c:is_snowy",
@@ -313,7 +378,84 @@
         }
       ],
       "track": "caribou",
-      "scents": true
+      "scents": true,
+      "fat": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        3,
+        4,
+        3,
+        2,
+        1
+      ]
+    },
+    "cnc:coyote": {
+      "habitat": "#minecraft:is_taiga",
+      "group": [
+        1,
+        2
+      ],
+      "per_day": 0.25,
+      "cap": 2,
+      "kg": 14,
+      "scavenger": true,
+      "cuts": [
+        {
+          "item": "cnc:raw_game",
+          "count": 4
+        },
+        {
+          "item": "backcountry:pelt"
+        },
+        {
+          "item": "minecraft:bone"
+        }
+      ]
+    },
+    "cnc:marmot": {
+      "habitat": "#minecraft:is_mountain",
+      "months": [
+        5,
+        9
+      ],
+      "group": [
+        1,
+        3
+      ],
+      "per_day": 0.5,
+      "cap": 4,
+      "kg": 6,
+      "cuts": [
+        {
+          "item": "cnc:raw_game",
+          "count": 2
+        },
+        {
+          "item": "backcountry:animal_fat"
+        },
+        {
+          "item": "backcountry:pelt"
+        }
+      ],
+      "fat": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        2,
+        1,
+        1
+      ]
     },
     "cnc:timber_wolf": {
       "habitat": "#minecraft:is_taiga",
@@ -357,7 +499,7 @@
           "count": 5
         },
         {
-          "item": "backcountry:pelt"
+          "item": "backcountry:wolverine_pelt"
         }
       ],
       "track": "wolverine"
@@ -370,6 +512,23 @@
       "cuts": [
         {
           "item": "minecraft:feather"
+        }
+      ]
+    },
+    "fowlplay:crow": {
+      "habitat": "#minecraft:is_beach",
+      "group": [
+        1,
+        3
+      ],
+      "per_day": 0.5,
+      "cap": 3,
+      "kg": 0.45,
+      "scavenger": true,
+      "cuts": [
+        {
+          "item": "minecraft:feather",
+          "count": 2
         }
       ]
     },
@@ -456,6 +615,107 @@
           "item": "minecraft:feather",
           "count": 2
         }
+      ]
+    },
+    "fowlplay:robin": {
+      "habitat": "#minecraft:is_taiga",
+      "months": [
+        4,
+        9
+      ],
+      "per_day": 1,
+      "cap": 3,
+      "kg": 0.08,
+      "cuts": [
+        {
+          "item": "minecraft:feather"
+        }
+      ]
+    },
+    "fowlplay:sparrow": {
+      "habitat": "#minecraft:is_taiga",
+      "group": [
+        1,
+        3
+      ],
+      "per_day": 1,
+      "cap": 4,
+      "kg": 0.03,
+      "cuts": [
+        {
+          "item": "minecraft:feather"
+        }
+      ]
+    },
+    "minecraft:fox": {
+      "habitat": "#minecraft:is_taiga",
+      "per_day": 0.25,
+      "cap": 2,
+      "kg": 5,
+      "scavenger": true,
+      "cuts": [
+        {
+          "item": "cnc:raw_game"
+        },
+        {
+          "item": "backcountry:fox_pelt"
+        }
+      ]
+    },
+    "minecraft:goat": {
+      "habitat": "#minecraft:is_mountain",
+      "group": [
+        2,
+        4
+      ],
+      "per_day": 0.25,
+      "cap": 4,
+      "kg": 70,
+      "rest_days": 1,
+      "cuts": [
+        {
+          "item": "cnc:raw_game",
+          "count": 16
+        },
+        {
+          "item": "backcountry:heart"
+        },
+        {
+          "item": "backcountry:liver"
+        },
+        {
+          "item": "backcountry:kidney",
+          "count": 2
+        },
+        {
+          "item": "backcountry:animal_fat",
+          "count": 2
+        },
+        {
+          "item": "backcountry:game_guts"
+        },
+        {
+          "item": "backcountry:pelt",
+          "count": 2
+        },
+        {
+          "item": "minecraft:bone",
+          "count": 2
+        }
+      ],
+      "fat": [
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        3,
+        4,
+        3,
+        2
       ]
     },
     "minecraft:rabbit": {

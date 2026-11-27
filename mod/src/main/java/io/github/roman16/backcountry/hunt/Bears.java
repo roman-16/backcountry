@@ -67,7 +67,7 @@ public final class Bears {
     }
 
     public static boolean salmonRun(ServerLevel level) {
-        List<Double> months = Balance.get().bears().salmonMonths();
+        List<Double> months = Balance.get().fish().runMonths();
         return Seasons.within(level, months.get(0).intValue(), months.get(1).intValue());
     }
 

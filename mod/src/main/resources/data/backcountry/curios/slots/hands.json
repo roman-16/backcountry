@@ -1,0 +1,6 @@
+{
+  "add_cosmetic": false,
+  "drop_rule": "ALWAYS_KEEP",
+  "icon": "backcountry:slot/hands",
+  "render_toggle": false
+}

@@ -45,7 +45,6 @@ flee_blocks = 16
 leftover_grams = 1024
 leftover_hours = 4
 most_cubs = 2
-salmon_months = [7, 9]
 spring_months = [5, 6]
 surprise_blocks = 5
 
@@ -59,6 +58,8 @@ salmonberry_months = [6, 7]
 
 [binoculars]
 magnification = 8
+study_blocks = 256
+study_ticks = 40
 
 [body]
 arrival_kg = 77.0
@@ -105,6 +106,7 @@ wet_cooling = 2
 "backcountry:*" = 16
 "backcountry:animal_fat" = 8
 "backcountry:baneberries" = 64
+"backcountry:bark_map" = 1
 "backcountry:beaver_tail" = 4
 "backcountry:birch_bark" = 32
 "backcountry:blueberries" = 64
@@ -146,7 +148,6 @@ wet_cooling = 2
 "minecraft:beef" = 4
 "minecraft:bone" = 16
 "minecraft:bowl" = 16
-"minecraft:bread" = 16
 "minecraft:charcoal" = 32
 "minecraft:chest" = 1
 "minecraft:clay_ball" = 16
@@ -162,7 +163,6 @@ wet_cooling = 2
 "minecraft:gravel" = 8
 "minecraft:iron_ingot" = 16
 "minecraft:iron_nugget" = 64
-"minecraft:leather" = 16
 "minecraft:mossy_cobblestone" = 8
 "minecraft:rabbit" = 4
 "minecraft:rabbit_hide" = 16
@@ -178,7 +178,6 @@ wet_cooling = 2
 "minecraft:string" = 64
 "minecraft:sweet_berries" = 64
 "minecraft:torch" = 32
-"minecraft:wheat_seeds" = 64
 "projectvibrantjourneys:*" = 16
 "projectvibrantjourneys:birch_twigs" = 32
 "projectvibrantjourneys:mossy_rocks" = 16
@@ -216,6 +215,11 @@ wet_cooling = 2
 [cache]
 scent_kcal = 1024
 
+[canoe]
+calm_kmh = 40
+fall_chance = 0.0625
+speed_share = 0.5
+
 [climate]
 biome_c_per_temperature = 8
 biome_reference_temperature = 0.25
@@ -224,6 +228,19 @@ highs_c = [-3.5, -2.0, 1.4, 7.4, 13.6, 17.6, 19.0, 17.9, 13.4, 5.6, -0.9, -3.0]
 lapse_c_per_block = 0.0065
 lows_c = [-10.4, -9.5, -6.6, -0.6, 4.9, 9.6, 12.1, 11.0, 6.3, -0.4, -7.0, -9.6]
 sea_level = 63
+
+[coast]
+clam_chance = 0.25
+driftwood_per_day = 2
+gale_kmh = 48
+gale_share = 4
+most = 8
+mussels_per_day = 2
+nest_month = 5
+nests_per_day = 1
+reach_blocks = 64
+tries = 16
+unseen_blocks = 24
 
 [conditions]
 bare_skin_c = -15
@@ -244,11 +261,22 @@ gut_water = 2.0
 hypothermia_core_c = 35
 infection_chance = 0.15
 infection_days = 2
+numb_onset_hours = 1
 parasites_absorb = 0.75
 parasites_chance = 0.6
 poisoning_days = 1
+rabbit_absorb = 0.625
+rabbit_cure_days = 2
+rabbit_fat_share = 0.25
+rabbit_onset_days = 2
+rabbit_protein_g = 300
+rabbit_water = 2
 scurvy_burn = 0.2
 severe_hypothermia_core_c = 32
+shellfish_chance = 0.03125
+shellfish_hours = 4
+shellfish_months = [6, 8]
+shellfish_summer_chance = 0.125
 vomit_l = 1.0
 
 [cooking]
@@ -261,6 +289,7 @@ check_seconds = 30
 count_blocks = 128
 event_share = 2
 far_blocks = 64
+hare_cycle = [1, 2, 1, 0.5]
 near_blocks = 32
 rain_share = 0.5
 scent_share = 2
@@ -270,6 +299,16 @@ white_months = [11, 4]
 [drop_off]
 shore_rise_blocks = 8
 step_blocks = 32
+
+[drying]
+days = 2
+life = 64
+salt_per_l = 1
+salt_seconds = 960
+salted_life = 8
+smoke_factor = 2
+water_share = 0.25
+weight_share = 0.5
 
 [effort]
 attack_minutes = 0.5
@@ -293,16 +332,12 @@ stumble_share = 0.125
 wake_energy = 0.125
 work_kcal_per_kg_to_empty = 32
 
-[farming]
-first_month = 5
-germination = 0.75
-growth_share = 0.125
-last_month = 8
-warm_c = 8
-
 [fire]
 banked_hours = 2
+branch_blocks = 4
 coals_c = 4
+fireplace_burn = 0.5
+fungus_hours = 2
 hardwood_heat = 1.25
 hardwood_hours = 2
 hot_burn = 2
@@ -314,6 +349,7 @@ low_burn = 0.5
 low_c = 8
 most_coals_hours = 8
 rain_burn = 2
+smother_per_hour = 0.125
 softwood_hours = 1
 spark_blocks = 2
 spark_chance = 0.5
@@ -337,11 +373,18 @@ kcal_per_kg = 482
 protein_g_per_kg = 200
 raw_days = 2.5
 raw_water_l_per_kg = 0.43
+run_months = [7, 9]
 spawned_out_months = [9, 10]
 vitamin_c_mg_per_kg = 20
 
+[fish_wheel]
+most = 4
+others_per_day = 1
+run_per_day = 4
+
 [forage]
 needles_a_leaf = 2
+roots_chance = 0.5
 sap_chance = 0.75
 sap_kcal_per_l = 40
 sap_l_per_step = 0.25
@@ -389,6 +432,7 @@ carry_kg = 64
 dress_clicks_per_kg = 0.125
 heavy_power = 1.25
 organ_kg = 16
+quill_damage = 2
 scavenged_days = 2
 strong_bmi = 21
 strong_energy = 0.5
@@ -396,22 +440,42 @@ wolf_keep_off_blocks = 16
 wound_share = 0.5
 
 [ice]
+breakup_months = [4, 4]
+crack_chance = 0.125
 freeze_below_c = -4
+overflow_chance = 0.0625
+overflow_wetness = 0.5
+rot_chance = 0.25
 thaw_above_c = 1
+thick_sled_kg = 64
+thicken_days = 1
+thin_load_kg = 16
 
 [insulation]
+"backcountry:fur_hat" = 0.5
+"backcountry:fur_mittens" = 0.25
+"backcountry:fur_parka" = 2
 "backcountry:hide_coat" = 1.5
 "backcountry:hide_hat" = 0.25
+"backcountry:hide_mittens" = 0.125
 "backcountry:hide_pants" = 0.75
 "backcountry:hide_poncho" = 0.75
-"minecraft:leather_boots" = 0.25
-"minecraft:leather_chestplate" = 1.0
-"minecraft:leather_helmet" = 0.25
-"minecraft:leather_leggings" = 0.5
 
 [kit]
-hooks = 4
+bow_saw_speed = 2
+broadheads = 8
+ferro_rod_strikes = 256
+hooks = 25
+mono_lines = 2
+pemmican = 4
+picks = 10
 pilot_bread = 38
+rope = 8
+sharpen_share = 0.25
+sharpening_stone_uses = 64
+sleeping_pad_clo = 1
+snare_wire = 16
+tarps = 9
 
 [lights]
 lantern_hours = 72
@@ -459,8 +523,27 @@ swim = 6.0
 chance = 0.25
 kcal = 256
 
+[migration]
+caribou_autumn_month = 9
+caribou_spring_month = 4
+from_day_of_month = 16
+geese_autumn_month = 9
+geese_share = 2
+geese_spring_month = 5
+herd_share = 4
+
 [mining]
+raw_iron_chance = 0.25
 speed = 0.05
+
+[moose]
+bluff_share = 0.75
+bluff_stop_blocks = 2.5
+calf_months = [5, 6]
+charge_blocks = 16
+charge_chance = 0.25
+cow_share = 0.5
+tree_blocks = 3
 
 [mosquitoes]
 calm_kmh = 12
@@ -478,6 +561,16 @@ chance = 0.25
 calm_kmh = 24
 fall_chance = 0.0625
 
+[raids]
+bear_kcal = 1024
+fouling = ["cnc:wolverine"]
+raid_blocks = 16
+raid_hours = 4
+raiders = ["alexsmobs:grizzly_bear", "cnc:black_bear", "cnc:wolverine"]
+scare_blocks = 16
+tall_poles = 3
+wolverine_kcal = 512
+
 [rations]
 dawn_hour = 6
 dusk_hour = 18
@@ -486,9 +579,35 @@ lean_kcal = 1280
 normal_kcal = 1600
 reach_blocks = 64
 
+[rooms]
+across_blocks = 16
+body_gain_c = 32
+body_volume = 8
+cellar_share = 0.5
+chimney_blocks = 16
+fire_gain = 2
+fire_volume = 128
+ground_c = 4
+high_blocks = 8
+radiant_share = 0.5
+recheck_ticks = 100
+remembered = 1024
+smoky_sleep = 0.5
+snow_share = 0.5
+warm_hours = 1
+
+[rooms.insulation]
+glass = 0.5
+ground = 1
+log = 1
+other = 0.75
+planks = 0.75
+snow = 1.25
+stone = 0.75
+
 [seasons]
 feeding_months = [8, 9]
-rut_months = [9, 9]
+rut_months = [9, 10]
 
 [skills]
 level_share = 0.125
@@ -517,6 +636,38 @@ deep_layers = 4
 frostbite_blocks = 256
 slow_share = 0.5
 
+[spirits]
+arrival_share = 0.5
+aurora_months = [10, 3]
+aurora_per_hour = 0.0625
+big_catch = 0.125
+big_catch_kg = 64
+bottom_share = 0.0625
+cold_per_hour = 0.03125
+company_blocks = 48
+company_per_hour = 0.015625
+dark_light = 7
+dark_per_hour = 0.00390625
+fire_per_hour = 0.00390625
+food_memory_days = 3
+high_healing = 1.5
+high_share = 0.75
+high_work = 0.875
+hot_meal = 0.03125
+hunger_per_hour = 0.0078125
+low_share = 0.25
+low_sleep = 0.75
+low_work_speed = 0.875
+new_food = 0.0625
+room_per_hour = 0.0078125
+same_food = 0.03125
+same_food_times = 4
+smoky_per_hour = 0.03125
+sun_per_hour = 0.0078125
+task_done = 0.0625
+warm_room_c = 10
+wet_per_hour = 0.0078125
+
 [spoilage]
 doubling_c = 10
 frozen_below_c = 0
@@ -524,6 +675,13 @@ frozen_share = 0.03125
 reference_c = 10
 smoked_life = 64
 stack_days = 0.25
+
+[survey]
+base_blocks = 64
+blocks_a_pixel = 8
+blocks_per_height = 4
+minutes = 15
+most_blocks = 512
 
 [survivor]
 quiet_seconds = 8
@@ -548,6 +706,10 @@ scent_blocks = 64
 scent_degrees = 90
 sign_days = 1
 stalk_blocks = 32
+
+[trail]
+cairn_height = 3
+pitch_days = 2
 
 [traps]
 bait_share = 2
@@ -652,6 +814,19 @@ storm_last_month = 8
 storm_share = 0.25
 wet_shares = [0.5, 1.0, 2.0]
 wet_wind_kmh = 40
+
+[weight]
+"backcountry:*_arrow" = 0.03125
+"backcountry:birch_bark" = 0.0625
+"backcountry:cordage" = 0.03125
+"backcountry:plant_fibre" = 0.015625
+"backcountry:snare_wire" = 0.015625
+"backcountry:tarp" = 0.125
+"backcountry:tinder_bundle" = 0.03125
+"minecraft:feather" = 0.00390625
+"minecraft:iron_nugget" = 0.0078125
+"riverfishing:hook_*" = 0.00390625
+"riverfishing:line_*" = 0.0625
 
 [world]
 across_blocks = 6144

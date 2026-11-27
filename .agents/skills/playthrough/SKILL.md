@@ -9,7 +9,7 @@ The user's own play (`playtest` skill) judges how the pack feels; a playthrough 
 
 ## Body runs
 
-`/backcountry playthrough <name> <first_day> <days> <kcal_a_day> <work_kcal_a_day>` (dev runs) lives a survivor hour by hour through the island's calendar where the command runs: the body, the climate, the weather, shelter and fire there, in the hide clothing, eating half the kcal at 06:00 and half at 18:00 (pilot bread and three lingonberries a meal), working the work kcal over the waking hours and sleeping 22:00 to 06:00. It writes one line a day (weight, BMI, energy, core temperature, kcal eaten and burned, conditions) to `build/devservers/playthroughs/<name>.csv` and replies with the end weight.
+`/backcountry playthrough <name> <first_day> <days> <kcal_a_day> <work_kcal_a_day>` (dev runs) lives a survivor hour by hour through the island's calendar where the command runs: the body, the climate, the weather, shelter and fire there, in the hide clothing, eating half the kcal at 06:00 and half at 18:00 (pilot bread and three lingonberries a meal), working the work kcal over the waking hours and sleeping 22:00 to 06:00. It writes one line a day (weight, BMI, energy, spirits, core temperature, kcal eaten and burned, conditions) to `build/devservers/playthroughs/<name>.csv` and replies with the end weight.
 
 Build the place first with commands, then run it there: a camp is a roof, a fire on netherrack two blocks off and solid ground, `forceload` around it.
 

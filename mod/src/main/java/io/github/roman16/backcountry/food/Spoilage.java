@@ -3,12 +3,11 @@ package io.github.roman16.backcountry.food;
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
-import io.github.roman16.backcountry.body.Body;
-import io.github.roman16.backcountry.body.Calendar;
-import io.github.roman16.backcountry.body.Climate;
+import io.github.roman16.backcountry.body.Rooms;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Nutrition;
 import io.github.roman16.backcountry.gear.Hotbar;
+import io.github.roman16.backcountry.gear.Worn;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +16,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
-import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
@@ -26,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -44,7 +43,9 @@ public final class Spoilage {
     }
 
     public static Optional<Double> life(ItemStack stack) {
-        return Nutrition.of(stack).flatMap(Nutrition::days).map(days -> stack.has(Things.SMOKED.get()) ? days * Balance.get().spoilage().smokedLife() : days);
+        Balance balance = Balance.get();
+        return Nutrition.of(stack).flatMap(Nutrition::days).map(days -> days * (stack.has(Things.SMOKED.get()) ? balance.spoilage().smokedLife() : 1)
+                * (stack.has(Things.DRIED.get()) ? balance.drying().life() : 1) * (stack.has(Things.SALTED.get()) ? balance.drying().saltedLife() : 1));
     }
 
     public static double age(ItemStack stack) {
@@ -79,7 +80,7 @@ public final class Spoilage {
     }
 
     public static double airC(Level level, BlockPos pos) {
-        return Climate.airC(level, pos, Calendar.day(level));
+        return Rooms.airC(level, pos);
     }
 
     public static void ageContainer(BlockEntity entity) {
@@ -121,15 +122,15 @@ public final class Spoilage {
             Fish.land(player, stack);
             age(stack, days, air);
         });
-        Body body = Metabolism.body(player);
-        if (!body.pack.isEmpty()) {
-            NonNullList<ItemStack> packed = Hotbar.contents(body.pack);
+        ItemStack pack = Worn.BACK.get(player);
+        if (!pack.isEmpty()) {
+            NonNullList<ItemStack> packed = Hotbar.contents(pack);
             boolean aged = false;
             for (ItemStack stack : packed) {
                 aged |= age(stack, days, air);
             }
             if (aged) {
-                Hotbar.store(body.pack, packed);
+                Hotbar.store(pack, packed);
             }
         }
     }

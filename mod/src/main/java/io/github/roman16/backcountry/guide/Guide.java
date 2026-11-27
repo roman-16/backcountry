@@ -5,9 +5,14 @@ import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Metabolism;
+import io.github.roman16.backcountry.body.Rooms;
+import io.github.roman16.backcountry.body.Spirits;
 import io.github.roman16.backcountry.fire.FirewoodItem;
+import io.github.roman16.backcountry.food.CacheEntity;
 import io.github.roman16.backcountry.food.Pantry;
 import io.github.roman16.backcountry.gear.Hotbar;
+import io.github.roman16.backcountry.gear.MapSheets;
+import io.github.roman16.backcountry.gear.Worn;
 import io.github.roman16.backcountry.hunt.Animal;
 import io.github.roman16.backcountry.survivor.Team;
 import java.util.ArrayList;
@@ -141,6 +146,7 @@ public final class Guide extends SavedData {
                     changed = true;
                     if (step == task.steps().getLast()) {
                         task.steps().forEach(earlier -> ticks.add(key(task, earlier)));
+                        Spirits.add(Metabolism.body(player), Balance.get().spirits().taskDone());
                     }
                 }
             }
@@ -218,6 +224,7 @@ public final class Guide extends SavedData {
             return;
         }
         Item result = event.getCrafting().getItem();
+        tick(player, check -> check instanceof Check.Made item && item.item().get() == result);
         boolean clothing = Task.HIDE_CLOTHING.steps().stream().anyMatch(step -> step.check() instanceof Check.Made item && item.item().get() == result);
         Guide guide = get(player.server);
         if (clothing && guide.made.add(key(result))) {
@@ -250,6 +257,10 @@ public final class Guide extends SavedData {
     static void killed(LivingDeathEvent event) {
         if (event.getSource().getEntity() instanceof ServerPlayer player && Animal.of(event.getEntity().getType()).isPresent()) {
             did(player, Deed.KILLED_ANIMAL);
+            FieldNotes.note(player, event.getEntity());
+            if (Animal.of(event.getEntity().getType()).get().kg() >= Balance.get().spirits().bigCatchKg()) {
+                Spirits.add(Metabolism.body(player), Balance.get().spirits().bigCatch());
+            }
         }
     }
 
@@ -294,10 +305,24 @@ public final class Guide extends SavedData {
         tick(player, check -> switch (check) {
             case Check.Held held -> carried.stream().filter(held.thing()::matches).mapToInt(ItemStack::getCount).sum() >= held.count();
             case Check.Sheltered ignored -> Metabolism.body(player).sheltered;
-            case Check.WearsHidePack ignored -> Metabolism.body(player).pack.is(Things.HIDE_PACK.get());
+            case Check.WearsHidePack ignored -> Worn.BACK.get(player).is(Things.HIDE_PACK.get());
             case Check.FoodInACache ignored -> stores > 0;
+            case Check.InCabin ignored -> Metabolism.body(player).room == Rooms.Kind.CABIN;
+            case Check.WarmCabin ignored -> Metabolism.body(player).room == Rooms.Kind.CABIN && Metabolism.body(player).fire;
+            case Check.TallCache ignored -> tallCache(player);
+            case Check.Surveys surveys -> carried.stream().anyMatch(stack -> stack.is(Things.BARK_MAP.get()) && MapSheets.surveys(player.serverLevel(), stack) >= surveys.count());
+            case Check.Noted noted -> FieldNotes.get(player.server).of(player).size() >= noted.count();
             default -> false;
         });
+    }
+
+    private static boolean tallCache(ServerPlayer player) {
+        for (BlockPos pos : Team.get(player.server).caches()) {
+            if (player.serverLevel().isLoaded(pos) && player.serverLevel().getBlockEntity(pos) instanceof CacheEntity cache && cache.reach() != CacheEntity.Reach.GROUND) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void reach(Task goal) {

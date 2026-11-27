@@ -3,6 +3,7 @@ package io.github.roman16.backcountry.trap;
 import com.mojang.serialization.MapCodec;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.guide.Deed;
+import io.github.roman16.backcountry.guide.FieldNotes;
 import io.github.roman16.backcountry.guide.Guide;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -150,6 +151,7 @@ public final class TrapBlock extends BaseEntityBlock implements SimpleWaterlogge
                 player.displayClientMessage(Component.translatable("message.backcountry.trap_took", taken.getHoverName()), true);
                 if (player instanceof ServerPlayer server) {
                     Guide.did(server, kind == Kind.TIP_UP ? Deed.TIP_UP_CATCH : Deed.TRAP_CATCH);
+                    FieldNotes.caught(server, taken);
                 }
                 if (!player.getInventory().add(taken)) {
                     player.drop(taken, false);

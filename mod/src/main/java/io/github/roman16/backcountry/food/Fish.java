@@ -5,6 +5,7 @@ import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Nutrition;
 import io.github.roman16.backcountry.guide.Deed;
+import io.github.roman16.backcountry.guide.FieldNotes;
 import io.github.roman16.backcountry.guide.Guide;
 import io.github.roman16.backcountry.hunt.Hunting;
 import io.github.roman16.backcountry.survivor.Team;
@@ -12,7 +13,9 @@ import java.util.Optional;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,6 +35,26 @@ public final class Fish {
 
     private static CompoundTag data(ItemStack stack) {
         return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+    }
+
+    public static final Catch GRAYLING = new Catch("grayling", 200, 1200);
+    public static final Catch WHITEFISH = new Catch("whitefish", 400, 2000);
+    public static final Catch SOCKEYE = new Catch("sockeye_salmon", 1500, 4000);
+    public static final Catch COHO = new Catch("coho_salmon", 2000, 5000);
+    public static final Catch PINK = new Catch("pink_salmon", 1200, 2500);
+
+    public record Catch(String species, int fromG, int toG) {
+        public ItemStack stack(RandomSource random) {
+            ItemStack fish = new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(MOD, species)));
+            int grams = fromG + random.nextInt(toG - fromG + 1);
+            CompoundTag data = new CompoundTag();
+            data.putString("Species", MOD + ":" + species);
+            data.putInt("WeightG", grams);
+            data.putInt("LengthCm", (int) Math.round(Math.cbrt(grams) * 4));
+            data.putBoolean("Legal", true);
+            fish.set(DataComponents.CUSTOM_DATA, CustomData.of(data));
+            return fish;
+        }
     }
 
     public static Optional<Nutrition> nutrition(ItemStack stack) {
@@ -69,6 +92,7 @@ public final class Fish {
             Metabolism.body(player).animals.merge(CAUGHT, stack.getCount(), Integer::sum);
             Team.get(player.server).caught(stack.getCount());
             Guide.did(player, Deed.LANDED_FISH);
+            FieldNotes.note(player, FieldNotes.item(FieldNotes.Kind.FISH, stack.getItem()));
         }
     }
 }

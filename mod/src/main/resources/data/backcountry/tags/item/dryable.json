@@ -1,0 +1,99 @@
+{
+  "values": [
+    "alexsmobs:moose_ribs",
+    "backcountry:beaver_tail",
+    "cnc:raw_game",
+    "cnc:raw_venison",
+    "cnc:raw_waterfowl",
+    "minecraft:beef",
+    "minecraft:rabbit",
+    {
+      "id": "riverfishing:burbot",
+      "required": false
+    },
+    {
+      "id": "riverfishing:char",
+      "required": false
+    },
+    {
+      "id": "riverfishing:chinook_salmon",
+      "required": false
+    },
+    {
+      "id": "riverfishing:chum_salmon",
+      "required": false
+    },
+    {
+      "id": "riverfishing:cod",
+      "required": false
+    },
+    {
+      "id": "riverfishing:coho_salmon",
+      "required": false
+    },
+    {
+      "id": "riverfishing:cutthroat_trout",
+      "required": false
+    },
+    {
+      "id": "riverfishing:dolly_varden",
+      "required": false
+    },
+    {
+      "id": "riverfishing:flounder",
+      "required": false
+    },
+    {
+      "id": "riverfishing:grayling",
+      "required": false
+    },
+    {
+      "id": "riverfishing:halibut",
+      "required": false
+    },
+    {
+      "id": "riverfishing:herring",
+      "required": false
+    },
+    {
+      "id": "riverfishing:lake_trout",
+      "required": false
+    },
+    {
+      "id": "riverfishing:nelma",
+      "required": false
+    },
+    {
+      "id": "riverfishing:northern_pike",
+      "required": false
+    },
+    {
+      "id": "riverfishing:pink_salmon",
+      "required": false
+    },
+    {
+      "id": "riverfishing:pollock",
+      "required": false
+    },
+    {
+      "id": "riverfishing:rainbow_trout",
+      "required": false
+    },
+    {
+      "id": "riverfishing:sculpin",
+      "required": false
+    },
+    {
+      "id": "riverfishing:smelt",
+      "required": false
+    },
+    {
+      "id": "riverfishing:sockeye_salmon",
+      "required": false
+    },
+    {
+      "id": "riverfishing:whitefish",
+      "required": false
+    }
+  ]
+}

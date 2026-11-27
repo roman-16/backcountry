@@ -8,7 +8,6 @@ import io.github.roman16.backcountry.fire.FirewoodItem;
 import io.github.roman16.backcountry.food.Age;
 import io.github.roman16.backcountry.food.CacheEntity;
 import io.github.roman16.backcountry.food.CookingPotEntity;
-import io.github.roman16.backcountry.food.Farmland;
 import io.github.roman16.backcountry.food.Pantry;
 import io.github.roman16.backcountry.food.Rations;
 import io.github.roman16.backcountry.food.Seasons;
@@ -31,13 +30,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.SweetBerryBushBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.level.block.CropGrowEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -82,10 +78,10 @@ public final class FoodTests {
     @GameTest(template = "empty")
     public static void spoiledFoodPoisons(GameTestHelper helper) {
         ServerPlayer player = BackcountryTests.survivor(helper);
-        ItemStack bread = new ItemStack(Items.BREAD);
-        Spoilage.age(bread, 1024, Balance.get().spoilage().referenceC());
-        Metabolism.eat(player, bread);
-        check(helper, Metabolism.body(player).has(Condition.FOOD_POISONING), "spoiled bread did not poison");
+        ItemStack rabbit = new ItemStack(Items.COOKED_RABBIT);
+        Spoilage.age(rabbit, 1024, Balance.get().spoilage().referenceC());
+        Metabolism.eat(player, rabbit);
+        check(helper, Metabolism.body(player).has(Condition.FOOD_POISONING), "spoiled rabbit did not poison");
         helper.succeed();
     }
 
@@ -126,7 +122,7 @@ public final class FoodTests {
     @GameTest(template = "empty")
     public static void miceRaidACache(GameTestHelper helper) {
         CacheEntity cache = cache(helper, new BlockPos(3, 1, 3));
-        cache.setItem(0, new ItemStack(Items.BREAD, 16));
+        cache.setItem(0, new ItemStack(Items.COOKED_RABBIT, 4));
         double before = Pantry.usableKcal(cache.stacks());
         check(helper, cache.raid(helper.getLevel().random), "the mice found no food");
         check(helper, Pantry.usableKcal(cache.stacks()) < before, "the mice ate nothing");
@@ -217,18 +213,6 @@ public final class FoodTests {
         player.setShiftKeyDown(true);
         bottle.use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
         check(helper, WaterVesselItem.water(player.getMainHandItem()).empty(), "pouring left " + WaterVesselItem.water(player.getMainHandItem()));
-        helper.succeed();
-    }
-
-    @GameTest(template = "empty")
-    public static void aDudSeedNeverSprouts(GameTestHelper helper) {
-        BlockPos pos = new BlockPos(2, 2, 2);
-        helper.setBlock(pos.below(), Blocks.FARMLAND);
-        helper.setBlock(pos, Blocks.WHEAT.defaultBlockState());
-        BlockPos at = helper.absolutePos(pos);
-        Farmland.get(helper.getLevel()).sow(at);
-        NeoForge.EVENT_BUS.post(new CropGrowEvent.Pre(helper.getLevel(), at, helper.getLevel().getBlockState(at)));
-        check(helper, !(helper.getBlockState(pos).getBlock() instanceof CropBlock), "a seed that did not germinate grew");
         helper.succeed();
     }
 

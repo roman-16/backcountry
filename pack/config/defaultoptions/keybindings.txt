@@ -6,6 +6,7 @@ key_key.advancements:key.keyboard.unknown
 key_key.backcountry.binoculars:key.keyboard.c
 key_key.cnc.caribou_dash:key.keyboard.unknown
 key_key.cnc.whistle:key.keyboard.unknown
+key_key.curios.open.desc:key.keyboard.g
 key_key.disable_voice_chat:key.keyboard.unknown
 key_key.dynamic_fps.toggle_disabled:key.keyboard.unknown
 key_key.dynamic_fps.toggle_forced:key.keyboard.unknown
@@ -22,11 +23,11 @@ key_key.jade.show_recipes:key.keyboard.unknown
 key_key.jade.show_uses:key.keyboard.unknown
 key_key.jade.toggle_liquid:key.keyboard.unknown
 key_key.jei.bookmark:key.keyboard.a
-key_key.jei.cheatItemStack:key.mouse.left:SHIFT
 key_key.jei.cheatItemStack2:key.mouse.middle
+key_key.jei.cheatItemStack:key.mouse.left:SHIFT
 key_key.jei.cheatItemStackToInventory:key.keyboard.unknown
-key_key.jei.cheatOneItem:key.mouse.left
 key_key.jei.cheatOneItem2:key.mouse.right
+key_key.jei.cheatOneItem:key.mouse.left
 key_key.jei.cheatOneItemToInventory:key.keyboard.unknown
 key_key.jei.clearSearchBar:key.mouse.right
 key_key.jei.closeRecipeGui:key.keyboard.escape
@@ -47,10 +48,10 @@ key_key.jei.quickMove:key.mouse.left:SHIFT
 key_key.jei.recipeBack:key.keyboard.backspace
 key_key.jei.recipeForward:key.keyboard.unknown
 key_key.jei.shareToChat:key.keyboard.unknown
-key_key.jei.showRecipe:key.keyboard.r
 key_key.jei.showRecipe2:key.mouse.left
-key_key.jei.showUses:key.keyboard.u
+key_key.jei.showRecipe:key.keyboard.r
 key_key.jei.showUses2:key.mouse.right
+key_key.jei.showUses:key.keyboard.u
 key_key.jei.toggleBookmarkOverlay:key.keyboard.unknown
 key_key.jei.toggleCheatMode:key.keyboard.unknown
 key_key.jei.toggleCheatModeConfigButton:key.mouse.left:CONTROL

@@ -59,7 +59,8 @@ public class CampPotEntity extends BlockEntity {
 
     public int ticksLeft(double heat) {
         Balance balance = Balance.get();
-        double seconds = water.drink() == Water.Drink.BIRCH_SAP ? balance.forage().syrupSeconds() : balance.water().boilSeconds();
+        double seconds = water.drink() == Water.Drink.BIRCH_SAP ? balance.forage().syrupSeconds()
+                : water.drink() == Water.Drink.SEA_WATER ? balance.drying().saltSeconds() : balance.water().boilSeconds();
         return (int) Math.ceil(Math.max(0, seconds * TICKS_A_SECOND - boilTicks) / heat);
     }
 
@@ -74,7 +75,7 @@ public class CampPotEntity extends BlockEntity {
     }
 
     public boolean heating() {
-        return !water.empty() && (!water.boiled() || needles || water.drink() == Water.Drink.BIRCH_SAP);
+        return !water.empty() && (!water.boiled() || needles || water.drink() == Water.Drink.BIRCH_SAP || water.drink() == Water.Drink.SEA_WATER);
     }
 
     public ItemStack item() {
@@ -106,6 +107,18 @@ public class CampPotEntity extends BlockEntity {
     private void boil(Level level, BlockPos pos, double heat) {
         Balance balance = Balance.get();
         boilTicks += heat;
+        if (water.drink() == Water.Drink.SEA_WATER) {
+            if (boilTicks >= balance.drying().saltSeconds() * TICKS_A_SECOND) {
+                int made = (int) Math.floor(water.litres() * balance.drying().saltPerL() + 1e-6);
+                if (made > 0) {
+                    Block.popResource(level, pos, new ItemStack(Things.SALT.get(), made));
+                }
+                water = Water.EMPTY;
+                boilTicks = 0;
+            }
+            setChanged();
+            return;
+        }
         if ((!water.boiled() || needles) && boilTicks >= balance.water().boilSeconds() * TICKS_A_SECOND) {
             water = needles ? new Water(Water.Drink.SPRUCE_TEA, true, water.source(), water.litres()) : water.boil();
             needles = false;

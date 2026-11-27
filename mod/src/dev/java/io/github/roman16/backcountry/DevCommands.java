@@ -12,6 +12,7 @@ import io.github.roman16.backcountry.body.Climate;
 import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.net.Messages;
+import io.github.roman16.backcountry.survivor.Arrival;
 import io.github.roman16.backcountry.weather.Day;
 import io.github.roman16.backcountry.weather.Kind;
 import io.github.roman16.backcountry.weather.Sky;
@@ -68,6 +69,10 @@ public final class DevCommands {
                                 .executes(context -> Pretend.join(context.getSource(), StringArgumentType.getString(context, "name")))))
                         .then(Commands.literal("leave").then(Commands.argument("name", StringArgumentType.word())
                                 .executes(context -> Pretend.leave(context.getSource(), StringArgumentType.getString(context, "name"))))))
+                .then(Commands.literal("arrive").requires(source -> source.hasPermission(OWNER)).executes(context -> {
+                    Arrival.await(context.getSource().getPlayerOrException());
+                    return 1;
+                }))
                 .then(Commands.literal("registries").requires(source -> source.hasPermission(OWNER))
                         .then(Commands.argument("folder", StringArgumentType.greedyString())
                                 .executes(context -> Reports.write(context.getSource(), StringArgumentType.getString(context, "folder"))))));

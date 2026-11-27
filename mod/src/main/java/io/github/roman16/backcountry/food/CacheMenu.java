@@ -37,7 +37,8 @@ public final class CacheMenu extends AbstractContainerMenu {
     private static final int SPOILING = 6;
     private static final int AIR = 7;
     private static final int SCENT = 8;
-    private static final int VALUES = 9;
+    private static final int REACH = 9;
+    private static final int VALUES = 10;
 
     private final Container cache;
     private final ContainerData data;
@@ -102,6 +103,10 @@ public final class CacheMenu extends AbstractContainerMenu {
         return data.get(SCENT) != 0;
     }
 
+    public CacheEntity.Reach reach() {
+        return CacheEntity.Reach.values()[Math.floorMod(data.get(REACH), CacheEntity.Reach.values().length)];
+    }
+
     @Override
     public boolean clickMenuButton(Player player, int id) {
         if (!(player.level() instanceof ServerLevel level) || id < 0 || id >= Ration.values().length) {
@@ -161,6 +166,7 @@ public final class CacheMenu extends AbstractContainerMenu {
                 case SPOILING -> (int) Math.round(Spoilage.rate(cache.airC()) * HUNDREDTHS);
                 case AIR -> (int) Math.round(cache.airC());
                 case SCENT -> cache.scented() ? 1 : 0;
+                case REACH -> cache.reach().ordinal();
                 default -> 0;
             };
         }

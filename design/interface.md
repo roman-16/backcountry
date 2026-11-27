@@ -6,7 +6,7 @@ Everything read off the screen outside the world. Units are metric: °C, kg, km/
 
 ### I1 The HUD
 
-The hearts stay and the energy bolts, drawn like vanilla's hunger icons over empty slots, take the hunger bar's place; they shake while the survivor is too tired to sprint. Water is a row of droplets drawn the same way above the bolts, and they shake below a quarter. There is no XP (`systems.md` S12), so neither bar nor level shows, and the hearts and bolts sit down in the XP bar's row; air bubbles stack above the droplets. Right of the hotbar, each line on a dark plate with its icon, the body panel shows the core temperature and how the air feels through the clothes ("Body 35.6 °C · feels very cold", blue when the core is cold, orange when hot), the wetness while wet (a wet shirt, so a drop means only water), and above them the conditions by name.
+The hearts stay and the energy bolts, drawn like vanilla's hunger icons over empty slots, take the hunger bar's place; they shake while the survivor is too tired to sprint. Water is a row of droplets drawn the same way above the bolts, and they shake below a quarter. There is no XP (`systems.md` S12), so neither bar nor level shows, and the hearts and bolts sit down in the XP bar's row; air bubbles stack above the droplets. Right of the hotbar, each line on a dark plate with its icon, the body panel shows the core temperature and how the air feels through the clothes ("Body 35.6 °C · feels very cold", blue when the core is cold, orange when hot), the wetness while wet (a wet shirt, so a drop means only water), spirits only while high or low ("High spirits", "Low spirits", and at the bottom "Low spirits: you keep thinking of home"), and above them the conditions by name.
 
 ```text
                            💧💧💧💧💧💧💧💧░░
@@ -39,7 +39,7 @@ Make a stone axe · 1 of 4        ━━━━●━━━━━━━━▲━�
 ▸ Pick up a Rock                      Paul · 340 m
 ```
 
-What comes into the inventory is listed at the top right for a few seconds, a line an item, counting up while more of it arrives ("4x Stick", Pick Up Notifier). The hotbar's items bounce as they land, are used, eaten or placed, the selected slot grows, a tool near breaking glows and the selected item's name pops in (Immersive Hotbar). While a survivor sneaks, a box at the top centre names what they look at and, under the name, the mod it comes from, in vanilla's tooltip look (Jade), with no health, state or contents, so a forager crouching at a bush still has to tell a baneberry by its look. A few things also tell their state under the name: the Camp Pot ("Boiling · 1 min 40 s left", "Fire out · 1 min 40 s left", "Boiled water · safe to drink · 2.00 L", "Lake water · 2.00 L" off the fire, "Spruce tea · steeping · 1 min left", "Birch sap · syrup in 12 min", "Empty") the campfire (its time line as on its screen, I4, and a line for each piece cooking on it: "Raw Grouse · 20 s left") and a carcass ("Scavengers take it in 1 day 6 h"). Sign and water say what they are in place of the name: "Moose tracks · fresh", "Caribou droppings · half a day old", "Sea water · salt", "Lake water", "Stream water". Every item's tooltip ends with its mod in blue italics. Chat lines slide in (Chat Animation). Simple Voice Chat draws its own icon at the bottom left: a speaker struck through while voice is off or no device is found.
+What comes into the inventory is listed at the top right for a few seconds, a line an item, counting up while more of it arrives ("4x Stick", Pick Up Notifier). The hotbar's items bounce as they land, are used, eaten or placed, the selected slot grows, a tool near breaking glows and the selected item's name pops in (Immersive Hotbar). While a survivor sneaks, a box at the top centre names what they look at and, under the name, the mod it comes from, in vanilla's tooltip look (Jade), with no health, state or contents; an animal, berries or a mushroom the survivor has not yet put in their field notes is named only by its kind ("Unknown animal", "Unknown berries", "Unknown mushroom", `systems.md` S13), so a forager crouching at a bush still has to tell a baneberry by its look. A few things also tell their state under the name: the Camp Pot ("Boiling · 1 min 40 s left", "Fire out · 1 min 40 s left", "Boiled water · safe to drink · 2.00 L", "Lake water · 2.00 L" off the fire, "Spruce tea · steeping · 1 min left", "Birch sap · syrup in 12 min", "Empty") the campfire (its time line as on its screen, I4, and a line for each piece cooking on it: "Raw Grouse · 20 s left") and a carcass ("Scavengers take it in 1 day 6 h"). Sign and water say what they are in place of the name: "Moose tracks · fresh", "Caribou droppings · half a day old", "Sea water · salt", "Lake water", "Stream water". Every item's tooltip ends with its mod in blue italics. Chat lines slide in (Chat Animation). Simple Voice Chat draws its own icon at the bottom left: a speaker struck through while voice is off or no device is found.
 
 ```text
                     ┌─────────────┐               [■] Spruce Log x4
@@ -53,7 +53,7 @@ What comes into the inventory is listed at the top right for a few seconds, a li
 
 Right-click opens it, drawn as the device itself: an orange case with a green-on-dark screen, the only screen with a skin of its own, as vanilla's book has its page. It fills the screen up to 640 by 360 GUI pixels (GUI scale 3 at 1080p) and stands centred on anything larger; it still fits vanilla's smallest screen, 320 by 240. While it is open the survivor stands still, since it covers the world (I8).
 
-The case carries the device's name at the top left and a red SOS button at the top right. The header shows the day and date on the left and the time of day on the right. Under it six tabs, each with its icon and name: Tasks, Weather, Warmth, Food, Body, Guide, switched by a click, 1 to 6, A and D or the ← → keys; E or Esc closes it. The letters are the survivor's own movement keys, so a rebound layout moves through it the same way. A strip of alerts sits under every page, two lines at most, "and N more" past them, "No alerts" when there are none. Every value has its icon and a meter or gauge; warnings turn amber or red, and a value in warning carries one dim line under it saying what helps.
+The case carries the device's name at the top left and a red SOS button at the top right. The header shows the day and date on the left and the time of day on the right. Under it eight tabs, each with its icon and name: Tasks, Weather, Year, Warmth, Food, Body, Notes, Guide, switched by a click, 1 to 8, A and D or the ← → keys; where the names don't fit across, the tabs show their icons alone and name themselves on hover; E or Esc closes it. The letters are the survivor's own movement keys, so a rebound layout moves through it the same way. A strip of alerts sits under every page, two lines at most, "and N more" past them, "No alerts" when there are none. Every value has its icon and a meter or gauge; warnings turn amber or red, and a value in warning carries one dim line under it saying what helps.
 
 ```text
 ┌ SATELLITE MESSENGER ───────────────────────────────────────────────────────── [SOS] ┐
@@ -79,22 +79,40 @@ The case carries the device's name at the top left and a red SOS button at the t
 
 - **Tasks** (`systems.md` S11): on the left the chapters, each with its count ("2 of 5", "· team" beside the team's); the chapter of the chosen task is open with its tasks, the others folded to their heading, and a click on a heading opens it. On the right the chosen task: its name, its count, one line on why it matters, and its steps, each with a box filled once done; the first open step shows the items it needs with what the survivor holds of them ("2/2", met in the screen's text colour, unmet dim) and how to get them. Hovering an item names it with "Click for its recipe", and a click opens its recipe in JEI. A task carrying a season reads "From June" while out of it. The tracked task wears ◆ in the list and "◆ Tracked" beside its name; another task shows a Track button there. W and S or ↑ ↓ choose a task, Space or Enter tracks it.
 - **Weather:** the air and how it feels on a gauge from -40 to +30 °C banded at freezing and at -15 °C, the rain or snow now or later today with its hours, the wind on a meter with the blizzard mark at 56 km/h, the cloud, today's high and low; then the next three days a line each: its sky (the icon of the rain or snow when it is likely, else of the cloud), the day and date, the chance ("Snow 80%"), the high and low and the wind.
-- **Warmth:** the core temperature with how it feels and its trend on a gauge banded freezing, cold, comfortable and hot, then what sets it: fire, shelter, clothing and wetness.
+- **Year** (`systems.md` S4): twelve months with today's in the middle, lit, five before it and six after. Under "Usual here", a grid of numbers, a column a month: High °C and Low °C (blue at freezing, red at -15 °C), Daylight h and Wet days. Under it a row for each thing of the season, its name on the left and a bar across its months, bright where it happens and dim for its quiet side; hovering a month of a bar says what it means.
+
+```text
+│ Usual here   Dec Jan Feb Mar Apr [May] Jun Jul Aug Sep Oct Nov │
+│ High °C       -3  -4  -2   1   7 [ 14]  18  19  18  13   6  -1 │
+│ Low °C       -10 -10  -9  -7  -1 [  5]  10  12  11   6   0  -7 │
+│ Daylight h     6   7   9  12  15 [ 18]  19  18  16  13  10   7 │
+│ Wet days      11   8   8   6   5 [  7]   9  12  14  15  12  10 │
+│ Berries      ▒▒▒▒▒▒▒▒▒▒▒▒             ███████████████████▒▒▒▒ │
+│ Salmon run                                ███████████          │
+│ Bears        ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒████████████████████████████▒▒▒▒ │
+│ Moose rut                                        ███████       │
+│ Cows with calves             [████]████                        │
+│ Lake ice     ████████████████▒▒▒▒                       ████ │
+```
+
+- **Warmth:** the core temperature with how it feels and its trend on a gauge banded freezing, cold, comfortable and hot, then what sets it: fire, shelter or the room with its air ("Cabin · 9 °C inside", amber with what helps when smoky), clothing and wetness.
 - **Food:** the day's kcal eaten and burned, the burn by cause in a dim line ("Rest 2,170 · Move 190 (5.1 km) · Load 40 · Work 620 · Cold 250 · Digest 320") and protein, carbs and fat; the stomach; the ration, the next meal and the team's food stores in days.
-- **Body:** the weight on a BMI gauge with extraction marked at 17, energy, water and the load carried, hours awake, the conditions each with what cures it, and the four skills, each with its name and five steps lit to its level.
-- **Guide** (`systems.md` S4): on the left the topics, the chosen one lit; on the right its title and its text. A click or W and S or ↑ ↓ choose a topic.
+- **Body:** the weight on a BMI gauge with extraction marked at 17, energy, water and the load carried, spirits on a meter (High, Even, Low) with a dim line of what moves them now ("a fire, sun, the same food again"), hours awake, the conditions each with what cures it, and the four skills, each with its name and five steps lit to its level.
+- **Notes** (`systems.md` S13): "Field notes" and the count ("27 of 60"); under it three columns, Animals, Fish and Plants, each with its own count and a line for each thing noted, its name and the date. W and S, ↑ ↓ or the mouse wheel scroll them. With nothing noted yet a line says how notes are made.
+- **Guide** (`systems.md` S4): on the left the topics, the chosen one lit, the list scrolling to keep it in sight on a small screen; on the right its title and its text. A click or W and S or ↑ ↓ choose a topic.
 
 ```text
 │  Rations              │ Caches and scent                       │
 │ ▸Caches and scent     │ A cache holding 1,024 kcal of meat or  │
 │  Wolves and bears     │ fish smells: bears, wolves and         │
 │  Water                │ wolverines come twice as often within  │
-│  Fire and firewood    │ 64 blocks, and a bear at it charges    │
-│  Cold                 │ anyone within 8. Keep it out of camp,  │
-│  Health               │ but within 64 blocks of where you are  │
-│  Food and cooking     │ at 06:00 and 18:00 for the rations.    │
-│  Hunting and tracking │                                        │
-│  Rock and iron        │                                        │
+│  Fire and firewood    │ 64 blocks. A bear eats from a ground   │
+│  Cold                 │ cache and a wolverine eats and fouls a │
+│  Health               │ stack, unless you are within 16 blocks.│
+│  Food and cooking     │ Set the cache on 3 stripped logs and   │
+│  Fat                  │ bears, wolverines and mice can't reach │
+│  Spirits              │ it; a ladder beside the poles lets     │
+│  Hunting and tracking │ them up.                               │
 ```
 
 ```text
@@ -108,7 +126,7 @@ Food      Food stores                   0.0 days
 
 A new alert beeps once and lights a small amber light on the Messenger's icon in the hotbar until the Messenger is opened.
 
-**SOS** taps a survivor out, as on *Alone* (`systems.md` S10). A click on it asks on the screen, the tabs unlit:
+**SOS** taps a survivor out, as on *Alone* (`systems.md` S10). At the bottom of a survivor's spirits it glows, blinking slowly, and nothing more. A click on it asks on the screen, the tabs unlit:
 
 ```text
 │ Send SOS and tap out?                                                               │
@@ -144,7 +162,7 @@ A food holding water names it on the first line ("30 kcal · 0.2 g fat · 0.04 L
 └───────────────────────────────────────────────────┘
 ```
 
-It stands on vanilla's panel above the survivor's inventory, its locked rows dark. Each queued piece shows its seasoning under its slot, and the shown setting is the pressed button. Settled to coals, the time line reads "Coals 2 h 30 min: add firewood and it catches"; cold, "Cold: light it with a bow drill"; packed too full, a red line "Packed too full: sparks may catch" joins the checklist. Out of the rain is ticked under a roof.
+It stands on vanilla's panel above the survivor's inventory, its locked rows dark. Each queued piece shows its seasoning under its slot, and the shown setting is the pressed button. Settled to coals, the time line reads "Coals 2 h 30 min: add firewood and it catches"; cold, "Cold: light it with a bow drill or a ferro rod"; packed too full, a red line "Packed too full: sparks may catch" joins the checklist. Out of the rain is ticked under a roof. Under snowy spruce branches "✗ Under snowy branches" joins it, and in a sealed room without a way out for the smoke "✗ Smoke hole" (`systems.md` S6). The Stone Fireplace opens the same screen.
 
 The bow-drill game is a small panel over the world, the friction bar first and then the ember's glow with its band and the flame growing beside it:
 
@@ -177,7 +195,7 @@ Both stand on vanilla's panel above the survivor's inventory.
 └────────────────────────────────────────────────┘
 ```
 
-The shown ration is the pressed button; the scent line is red and shows only with 1,024 kcal of meat or fish.
+The shown ration is the pressed button; the scent line is red and shows only with 1,024 kcal of meat or fish. On 3 stripped poles a line reads "Tall cache: out of reach of bears, wolverines and mice", or "A ladder against the poles lets climbers in" in amber while a ladder stands beside them. The Drying Rack shows its pieces hanging on the frame in the world, with no screen: a right-click hangs a piece or, with an empty hand, takes one back.
 
 ### I6 Hunting
 
@@ -208,11 +226,11 @@ Ana 77.0 → 69.8 kg (tapped out Day 40)
 [ Go on into Year 2 ]
 ```
 
-The inventory shows the rows no pack opens dark ("Needs a pack", and over the second row "Needs a hide pack") and beside the armour the back slot with the neck slot above it, each showing the outline of what it takes while empty.
+The inventory shows the rows no pack opens dark ("Needs a pack", and over the second row "Needs a hide pack"). The worn slots are Curios' own panel, opened with G or the button beside the survivor: Back, Neck and Hands, each showing the outline of what it takes while empty.
 
 ### I8 Controls and the first launch
 
-- **Keys:** Left Shift sprints and Left Ctrl sneaks; every mod's key is unbound unless a player needs it: River Fishing's fight keys on the arrows, Ping Wheel's mark on mouse button 5, JEI's keys inside its own screens (R recipes, U uses, A bookmark, Ctrl+F search), V for the voice menu, U to swap the shoulder in third person, the middle mouse button to sort the inventory under the cursor, C to look through the binoculars. F5 steps from first person to over the shoulder to facing the survivor (Shoulder Surfing Reloaded); the game starts in first person. Iris's, Ecliptic Seasons' debug and Critters n' Crawlers' keys, JEI's cheat-to-inventory keys, Save Hotbar Activator and L for advancements are unbound. Controls has a search box (Controlling). Controls' Reset Keys brings back the pack's keys.
+- **Keys:** Left Shift sprints and Left Ctrl sneaks; every mod's key is unbound unless a player needs it: River Fishing's fight keys on the arrows, Ping Wheel's mark on mouse button 5, JEI's keys inside its own screens (R recipes, U uses, A bookmark, Ctrl+F search), V for the voice menu, U to swap the shoulder in third person, the middle mouse button to sort the inventory under the cursor, C to look through the binoculars, G for the worn slots (Curios). F5 steps from first person to over the shoulder to facing the survivor (Shoulder Surfing Reloaded); the game starts in first person. Iris's, Ecliptic Seasons' debug and Critters n' Crawlers' keys, JEI's cheat-to-inventory keys, Save Hotbar Activator and L for advancements are unbound. Controls has a search box (Controlling). Controls' Reset Keys brings back the pack's keys.
 - **Screens open:** a survivor keeps walking with the inventory, a chest or a cache open, the world showing behind it (InvMove); the Messenger, which covers the world, the bow-drill game, whose A, D and Space saw and blow, the summary and typing in JEI's search hold them still.
 - **Team marks:** mouse button 5 marks a spot for the whole team for a few seconds, with who set it and how far it is (Ping Wheel).
 - **The first launch** (Default Options): FOV 80, GUI scale 3, full screen, VSync on, an unlimited frame rate, sensitivity 67%, Brightness Bright, no splash texts, no accessibility onboarding, no multiplayer warning; the graphics Preset reads High. Each player's own settings stay theirs after that.
@@ -230,6 +248,27 @@ Options › Video Settings › Backcountry › Graphics
 - **Sodium's donation prompt and Iris's update notice** never show.
 - **The title screen** shows the island, photographed in the game at the drop-off at dawn, noon, dusk and night, one set at random each start (`python3 scripts/client.py panorama`); until the island's terrain is settled it shows vanilla's panorama.
 - **Edge cases:** a player who launched the pack before keeps their own settings and keys, Reset Keys giving them the pack's; a key a player rebinds stays theirs through updates.
+
+### I9 The ten items
+
+A survivor arriving at the drop-off first chooses their kit, on a screen over the world in vanilla's look, before anything else shows:
+
+```text
+                      Choose your ten items
+Issued: Satellite Messenger, Bear Spray, Med Kit, Water Bottle, Binoculars, Canvas Pack, Headlamp
+┌ Your picks ───────────────────────────────── 7 of 10 ┐
+│ [Axe] [Bow Saw] [Belt Knife] [Ferro Rod] [Camp Pot] [Gill Net] │
+│ [Snare Wire] [Fishing Kit] [Hunting Bow] [Tarp] [Paracord] [Sleeping Bag] │
+│ [Sleeping Pad] [Ice Auger] [Shovel] [Pilot Bread] [Pemmican] [Sharpening Stone] │
+└──────────────────────────────────────────────────────┘
+                          [ Arrive ]
+```
+
+Each pick is a slot with its item; hovering names it and lists what it holds ("Fishing Kit: 2 Mono Line, 25 Hook"), and a click picks it, filling the slot and outlining it, or puts it back. Past ten, a click picks nothing until one goes back. Arrive takes what is picked, fewer than ten included; Esc does nothing, since a survivor has to arrive. A narrator reads each pick with "picked" when it is.
+
+### I10 The Birch-Bark Map
+
+Use opens it over the world: the sheet of bark drawn in charcoal, blank where nothing was surveyed, the land's colours toned into the bark, a × at each survey and N at the top right; under it "3 surveys · 8 blocks a pixel". A blank map reads "Blank. Climb high, then sneak and hold use to survey: it takes a quarter hour of daylight and a piece of charcoal." There is no arrow and no coordinate. E or Esc closes it, and the survivor stands still while it is open.
 
 ## Open
 

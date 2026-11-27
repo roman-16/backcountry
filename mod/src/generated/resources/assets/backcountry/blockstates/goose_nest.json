@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "eggs=1": {
+      "model": "backcountry:block/goose_nest_1"
+    },
+    "eggs=2": {
+      "model": "backcountry:block/goose_nest_2"
+    },
+    "eggs=3": {
+      "model": "backcountry:block/goose_nest_3"
+    },
+    "eggs=4": {
+      "model": "backcountry:block/goose_nest_4"
+    }
+  }
+}

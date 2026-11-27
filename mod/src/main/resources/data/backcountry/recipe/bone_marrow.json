@@ -1,0 +1,15 @@
+{
+  "type": "backcountry:tool",
+  "ingredients": [
+    {
+      "item": "minecraft:bone"
+    }
+  ],
+  "tool": {
+    "tag": "backcountry:rocks"
+  },
+  "result": {
+    "count": 1,
+    "id": "backcountry:bone_marrow"
+  }
+}

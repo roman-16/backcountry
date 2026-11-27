@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.body.BodyView;
+import io.github.roman16.backcountry.body.Spirits;
 import io.github.roman16.backcountry.body.Condition;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,8 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 @EventBusSubscriber(modid = Backcountry.MODID, value = Dist.CLIENT)
 public final class Hud {
+    private static final ResourceLocation SPIRITS_HIGH = Backcountry.id("hud/spirits_high");
+    private static final ResourceLocation SPIRITS_LOW = Backcountry.id("hud/spirits_low");
     private static final ResourceLocation ENERGY_FULL = Backcountry.id("hud/energy_full");
     private static final ResourceLocation ENERGY_HALF = Backcountry.id("hud/energy_half");
     private static final ResourceLocation ENERGY_EMPTY = Backcountry.id("hud/energy_empty");
@@ -193,6 +196,12 @@ public final class Hud {
             }
             return tip;
         }));
+        if (Spirits.high(view.spirits()) || Spirits.low(view.spirits())) {
+            boolean high = Spirits.high(view.spirits());
+            Component spirits = Component.translatable(high ? "hud.backcountry.spirits_high" : Spirits.bottom(view.spirits()) ? "hud.backcountry.spirits_bottom"
+                    : "hud.backcountry.spirits_low");
+            lines.add(new Line(high ? SPIRITS_HIGH : SPIRITS_LOW, spirits, Look.TEXT, () -> spiritsTip(spirits)));
+        }
         if (view.wetness() >= SHOWN_WETNESS) {
             Component wet = Component.translatable("hud.backcountry.wet", Words.percent(view.wetness()));
             lines.add(new Line(WET, wet, Look.TEXT, () -> List.of(wet, Component.translatable("messenger.backcountry.help.wet").withStyle(ChatFormatting.GRAY))));
@@ -213,6 +222,15 @@ public final class Hud {
             graphics.drawString(font, line.text(), x + ICON + PANEL_PAD, y + 1, line.colour(), true);
             tip(x - PANEL_PAD, y - PANEL_PAD, width + 2 * PANEL_PAD, ICON + 2 * PANEL_PAD - 1, line.tip());
         }
+    }
+
+    static List<Component> spiritsTip(Component title) {
+        List<Component> tip = new ArrayList<>(List.of(title, Component.translatable("hud.backcountry.hover.spirits").withStyle(ChatFormatting.GRAY)));
+        Component causes = Words.spiritCauses(ClientState.view.spiritCauses());
+        if (!causes.getString().isEmpty()) {
+            tip.add(causes.copy().withStyle(ChatFormatting.GRAY));
+        }
+        return tip;
     }
 
     private static void tip(int x, int y, int width, int height, Supplier<List<Component>> lines) {

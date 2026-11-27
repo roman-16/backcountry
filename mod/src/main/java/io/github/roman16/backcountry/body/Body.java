@@ -15,7 +15,6 @@ import net.minecraft.nbt.FloatTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +26,6 @@ public final class Body implements INBTSerializable<CompoundTag> {
     public int arrivedDay;
     public double arrivedKg;
     public long awakeTicks;
-    public ItemStack binoculars = ItemStack.EMPTY;
     public int blackoutTicks;
     public final double[] burned = new double[Burn.values().length];
     public double carbsToday;
@@ -48,9 +46,15 @@ public final class Body implements INBTSerializable<CompoundTag> {
     public int lastDay;
     public long lastHurt;
     public double metresToday;
-    public ItemStack pack = ItemStack.EMPTY;
     public final PackRows packRows = new PackRows();
     public double proteinToday;
+    public int leanDays;
+    public int fattyDays;
+    public double numbHours;
+    public double spirits = 0.5;
+    public int spiritCauses;
+    public final List<String> mealItems = new ArrayList<>();
+    public final List<Long> mealTicks = new ArrayList<>();
     public final EnumMap<Skill, Integer> skills = new EnumMap<>(Skill.class);
     public double stomachCarbs;
     public double stomachFat;
@@ -72,6 +76,9 @@ public final class Body implements INBTSerializable<CompoundTag> {
     public int yearSeen;
 
     public transient double clo;
+    public transient Rooms.Kind room = Rooms.Kind.OPEN;
+    public transient double roomC;
+    public transient boolean smoky;
     public transient double effectiveC;
     public transient double exertedKcal;
     public transient boolean fire;
@@ -107,8 +114,14 @@ public final class Body implements INBTSerializable<CompoundTag> {
         arrived = true;
         arrivedDay = day;
         arrivedKg = balance.body().arrivalKg();
+        spirits = balance.spirits().arrivalShare();
+        spiritCauses = 0;
+        leanDays = 0;
+        fattyDays = 0;
+        numbHours = 0;
+        mealItems.clear();
+        mealTicks.clear();
         awakeTicks = 0;
-        binoculars = ItemStack.EMPTY;
         blackoutTicks = 0;
         conditions.clear();
         coreC = balance.warmth().coreC();
@@ -121,7 +134,6 @@ public final class Body implements INBTSerializable<CompoundTag> {
         kcalEaten = 0;
         animals.clear();
         lastDay = day;
-        pack = ItemStack.EMPTY;
         skills.clear();
         stomachCarbs = 0;
         stomachFat = 0;
@@ -187,9 +199,6 @@ public final class Body implements INBTSerializable<CompoundTag> {
         tag.putInt("arrived_day", arrivedDay);
         tag.putDouble("arrived_kg", arrivedKg);
         tag.putLong("awake_ticks", awakeTicks);
-        if (!binoculars.isEmpty()) {
-            tag.put("binoculars", binoculars.save(provider));
-        }
         tag.putInt("blackout_ticks", blackoutTicks);
         CompoundTag burns = new CompoundTag();
         for (Burn burn : Burn.values()) {
@@ -225,10 +234,19 @@ public final class Body implements INBTSerializable<CompoundTag> {
         tag.putInt("last_day", lastDay);
         tag.putLong("last_hurt", lastHurt);
         tag.putDouble("metres_today", metresToday);
-        if (!pack.isEmpty()) {
-            tag.put("pack", pack.save(provider));
-        }
         tag.putDouble("protein_today", proteinToday);
+        tag.putDouble("spirits", spirits);
+        tag.putInt("lean_days", leanDays);
+        tag.putInt("fatty_days", fattyDays);
+        tag.putDouble("numb_hours", numbHours);
+        ListTag meals = new ListTag();
+        for (int i = 0; i < mealItems.size(); i++) {
+            CompoundTag meal = new CompoundTag();
+            meal.putString("item", mealItems.get(i));
+            meal.putLong("tick", mealTicks.get(i));
+            meals.add(meal);
+        }
+        tag.put("meals", meals);
         CompoundTag practised = new CompoundTag();
         skills.forEach((skill, uses) -> practised.putInt(skill.id(), uses));
         tag.put("skills", practised);
@@ -268,7 +286,6 @@ public final class Body implements INBTSerializable<CompoundTag> {
         arrivedDay = tag.getInt("arrived_day");
         arrivedKg = tag.getDouble("arrived_kg");
         awakeTicks = tag.getLong("awake_ticks");
-        binoculars = tag.contains("binoculars") ? ItemStack.parseOptional(provider, tag.getCompound("binoculars")) : ItemStack.EMPTY;
         blackoutTicks = tag.getInt("blackout_ticks");
         CompoundTag burns = tag.getCompound("burned");
         for (Burn burn : Burn.values()) {
@@ -301,8 +318,17 @@ public final class Body implements INBTSerializable<CompoundTag> {
         lastDay = tag.getInt("last_day");
         lastHurt = tag.getLong("last_hurt");
         metresToday = tag.getDouble("metres_today");
-        pack = tag.contains("pack") ? ItemStack.parseOptional(provider, tag.getCompound("pack")) : ItemStack.EMPTY;
         proteinToday = tag.getDouble("protein_today");
+        spirits = tag.getDouble("spirits");
+        leanDays = tag.getInt("lean_days");
+        fattyDays = tag.getInt("fatty_days");
+        numbHours = tag.getDouble("numb_hours");
+        mealItems.clear();
+        mealTicks.clear();
+        for (Tag meal : tag.getList("meals", Tag.TAG_COMPOUND)) {
+            mealItems.add(((CompoundTag) meal).getString("item"));
+            mealTicks.add(((CompoundTag) meal).getLong("tick"));
+        }
         skills.clear();
         CompoundTag practised = tag.getCompound("skills");
         for (Skill skill : Skill.values()) {

@@ -13,19 +13,21 @@ import io.github.roman16.backcountry.guide.Check.Reach;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.Tags;
 
 public enum Task {
-    STONE_AXE(Chapter.FIRST_DAY, Common.STONE_AXE,
+    AXE(Chapter.FIRST_DAY, Common.STONE_AXE,
             Step.of("rock", new Held(Common.ROCKS, 1)),
             Step.of("stick", new Held(Common.STICK, 1)),
             Step.of("cordage", new Held(Thing.of(Things.CORDAGE), 1), need(Thing.of(Things.PLANT_FIBRE), 4)),
-            Step.of("axe", new Held(Common.STONE_AXE, 1), need(Common.ROCKS, 1), need(Common.STICK, 1), need(Thing.of(Things.CORDAGE), 1))),
+            Step.of("axe", new Held(Common.AXES, 1), need(Common.ROCKS, 1), need(Common.STICK, 1), need(Thing.of(Things.CORDAGE), 1))),
     LIGHT_FIRE(Chapter.FIRST_DAY, Thing.of(Things.CAMPFIRE_ITEM),
             Step.of("log", new Held(Common.SOFTWOOD_LOGS, 1)),
             Step.of("softwood", new Held(Thing.of(Things.SOFTWOOD), 1)),
@@ -49,7 +51,7 @@ public enum Task {
             Step.of("laid", new Did(Deed.LAID_WOODPILE))),
     MAKE_KNIFE(Chapter.CAMP, Thing.of(Things.KNIFE),
             Step.of("flint", new Held(Thing.of("minecraft:flint"), 1)),
-            Step.of("knife", new Held(Thing.of(Things.KNIFE), 1), need(Thing.of("minecraft:flint"), 1), need(Common.STICK, 1), need(Thing.of(Things.CORDAGE), 1))),
+            Step.of("knife", new Held(Common.KNIVES, 1), need(Thing.of("minecraft:flint"), 1), need(Common.STICK, 1), need(Thing.of(Things.CORDAGE), 1))),
     BUILD_CACHE(Chapter.CAMP, Thing.of(Things.FOOD_CACHE_ITEM),
             Step.of("planks", new Held(Thing.of(ItemTags.PLANKS), 7)),
             Step.of("cache", new Did(Deed.CACHE_OUT_OF_CAMP), need(Thing.of(ItemTags.PLANKS), 7), need(Thing.of(Things.CORDAGE), 1)),
@@ -86,11 +88,11 @@ public enum Task {
                     need(Thing.of("minecraft:cobblestone"), 3)),
             Step.of("smoked", new Held(Thing.with(Things.SMOKED, () -> Items.COOKED_BEEF), 1))),
     MAKE_BOW(Chapter.HUNTING, Thing.of(Things.LIGHT_HUNTING_BOW),
-            Step.of("stave", new Held(Thing.of(Things.BOW_STAVE), 1), need(Common.HARDWOOD_LOGS, 1), need(Thing.of(Things.KNIFE), 1)),
+            Step.of("stave", new Held(Thing.of(Things.BOW_STAVE), 1), need(Common.HARDWOOD_LOGS, 1), need(Common.KNIVES, 1)),
             Step.of("seasoned", new Held(Thing.of(Things.SEASONED_BOW_STAVE), 1)),
             Step.of("string", new Held(Thing.of(Things.BOWSTRING), 1), need(Thing.of(Things.CORDAGE), 2)),
             Step.of("bow", new Held(Thing.any(Thing.of(Things.LIGHT_HUNTING_BOW), Thing.of(Things.HEAVY_HUNTING_BOW)), 1),
-                    need(Thing.of(Things.SEASONED_BOW_STAVE), 1), need(Thing.of(Things.BOWSTRING), 1), need(Thing.of(Things.KNIFE), 1))),
+                    need(Thing.of(Things.SEASONED_BOW_STAVE), 1), need(Thing.of(Things.BOWSTRING), 1), need(Common.KNIVES, 1))),
     MAKE_ARROWS(Chapter.HUNTING, Thing.of(Things.BROADHEAD_ARROW),
             Step.of("feather", new Held(Thing.of("minecraft:feather"), 1)),
             Step.of("arrows", new Held(Common.ARROWS, 4), need(Common.STICK, 4), need(Thing.of("minecraft:feather"), 4), need(Thing.of("minecraft:flint"), 4))),
@@ -100,15 +102,43 @@ public enum Task {
             Step.of("stalked", new Did(Deed.STALKED))),
     TAKE_ANIMAL(Chapter.HUNTING, Thing.of(Things.CARCASS_ITEM),
             Step.of("killed", new Did(Deed.KILLED_ANIMAL)),
-            Step.of("dressed", new Did(Deed.DRESSED), need(Thing.of(Things.KNIFE), 1))),
+            Step.of("dressed", new Did(Deed.DRESSED), need(Common.KNIVES, 1))),
     CURE_HIDE(Chapter.HUNTING, Thing.of(Things.CURED_HIDE),
-            Step.of("scraped", new Held(Thing.of(Things.SCRAPED_HIDE), 1), need(Thing.of(Things.PELT), 1), need(Thing.of(Things.KNIFE), 1)),
+            Step.of("scraped", new Held(Thing.of(Things.SCRAPED_HIDE), 1), need(Thing.of(Things.PELT), 1), need(Common.KNIVES, 1)),
             Step.of("pot", new Held(Thing.of(Things.COOKING_POT), 1), need(Thing.of("minecraft:iron_ingot"), 5)),
             Step.of("fat", new Held(Thing.of(Things.RENDERED_FAT), 1), need(Thing.of(Things.ANIMAL_FAT), 2)),
             Step.of("cured", new Held(Thing.of(Things.CURED_HIDE), 1), need(Thing.of(Things.SCRAPED_HIDE), 1), need(Thing.of(Things.RENDERED_FAT), 1))),
     HIDE_PACK(Chapter.HUNTING, Thing.of(Things.HIDE_PACK),
             Step.of("pack", new Held(Thing.of(Things.HIDE_PACK), 1)),
             Step.of("worn", new Check.WearsHidePack())),
+    BUILD_CABIN(Chapter.HOMESTEAD, Thing.of(Things.STONE_FIREPLACE_ITEM),
+            Step.of("room", new Check.InCabin()),
+            Step.of("fire", new Check.WarmCabin()),
+            Step.of("slept", new Did(Deed.SLEPT_IN_CABIN))),
+    TALL_CACHE(Chapter.HOMESTEAD, Thing.of(Things.FOOD_CACHE_ITEM),
+            Step.of("poles", new Held(Thing.of(Tags.Items.STRIPPED_LOGS), 3)),
+            Step.of("cache", new Check.TallCache(), need(Thing.of(Tags.Items.STRIPPED_LOGS), 3), need(Thing.of(Things.FOOD_CACHE_ITEM), 1))),
+    DRY_FISH(Chapter.HOMESTEAD, Thing.of(Things.DRYING_RACK_ITEM),
+            Step.of("rack", new Placed(Things.DRYING_RACK)),
+            Step.of("dried", new Did(Deed.DRIED_FISH))),
+    MAKE_PEMMICAN(Chapter.HOMESTEAD, Thing.of("cnc:pemmican"),
+            Step.of("fat", new Held(Thing.of(Things.RENDERED_FAT), 1)),
+            Step.of("pemmican", new Made(() -> BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("cnc", "pemmican"))))),
+    DRAW_MAP(Chapter.HOMESTEAD, Thing.of(Things.BARK_MAP),
+            Step.of("map", new Held(Thing.of(Things.BARK_MAP), 1), need(Thing.of(Things.BIRCH_BARK), 4), need(Thing.of(Things.CORDAGE), 1)),
+            Step.of("surveyed", new Check.Surveys(4), need(Thing.of("minecraft:charcoal"), 4))),
+    FIELD_NOTES(Chapter.HOMESTEAD, Thing.of("minecraft:writable_book"),
+            Step.of("noted", new Check.Noted(16))),
+    BUILD_CANOE(Chapter.HOMESTEAD, Thing.of(Things.CANOE),
+            Step.of("roots", new Held(Thing.of(Things.SPRUCE_ROOTS), 1)),
+            Step.of("pitch", new Held(Thing.of(Things.SPRUCE_PITCH), 1)),
+            Step.of("canoe", new Made(Things.CANOE), need(Thing.of(Things.BIRCH_BARK), 4), need(Thing.of(Things.SPRUCE_ROOTS), 1), need(Thing.of(Things.SPRUCE_PITCH), 1))),
+    FISH_WHEEL(Chapter.HOMESTEAD, Thing.of(Things.FISH_WHEEL_ITEM),
+            Step.of("wheel", new Placed(Things.FISH_WHEEL), need(Thing.of(Things.ROPE), 4), need(Common.STICK, 4), need(Thing.of(ItemTags.LOGS), 1)),
+            Step.of("catch", new Did(Deed.FISH_WHEEL_CATCH))),
+    FUR_PARKA(Chapter.HOMESTEAD, Thing.of(Things.FUR_PARKA),
+            Step.of("pelt", new Held(Thing.of(Things.WOLVERINE_PELT), 1)),
+            Step.of("parka", new Made(Things.FUR_PARKA), need(Thing.of(Things.CURED_HIDE), 8), need(Thing.of(Things.WOLVERINE_PELT), 1))),
     FOOD_STORES(Chapter.BEFORE_SNOW, Thing.of(Things.FOOD_CACHE_ITEM), true,
             Step.of("stored", new Check.FoodStores())),
     DRY_FIREWOOD(Chapter.BEFORE_SNOW, Thing.of(Things.HARDWOOD), true,
@@ -138,6 +168,8 @@ public enum Task {
     }
 
     private static final class Common {
+        static final Thing AXES = Thing.of(ItemTags.AXES);
+        static final Thing KNIVES = Thing.of(Things.KNIVES);
         static final Thing ARROWS = Thing.any(Thing.of(Things.BROADHEAD_ARROW), Thing.of(Things.BONE_ARROW), Thing.of(Things.BLUNT_ARROW));
         static final Thing FIREWOOD = Thing.any(Thing.of(Things.SOFTWOOD), Thing.of(Things.HARDWOOD));
         static final Thing HARDWOOD_LOGS = Thing.of(ItemTags.create(ResourceLocation.fromNamespaceAndPath(Backcountry.MODID, "hardwood_logs")));

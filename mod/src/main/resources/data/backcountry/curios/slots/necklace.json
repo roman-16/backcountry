@@ -1,0 +1,6 @@
+{
+  "add_cosmetic": false,
+  "drop_rule": "ALWAYS_KEEP",
+  "icon": "backcountry:slot/neck",
+  "render_toggle": false
+}

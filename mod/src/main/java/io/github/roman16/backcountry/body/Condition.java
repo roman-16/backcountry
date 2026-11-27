@@ -15,6 +15,9 @@ public enum Condition {
     FOOD_POISONING(true, false),
     SCURVY(false, false),
     PARASITES(true, false),
+    RABBIT_STARVATION(false, false),
+    SHELLFISH_POISONING(false, false),
+    NUMB_HANDS(false, false),
     EXHAUSTED(false, false),
     FROSTNIP(false, false),
     BLISTERS(true, true);
@@ -55,6 +58,6 @@ public enum Condition {
     }
 
     public boolean deadly() {
-        return this == SEVERE_FROSTBITE || this == SEVERE_HYPOTHERMIA;
+        return this == SEVERE_FROSTBITE || this == SEVERE_HYPOTHERMIA || this == SHELLFISH_POISONING;
     }
 }

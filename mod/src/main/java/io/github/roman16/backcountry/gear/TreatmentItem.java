@@ -16,22 +16,33 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
-public abstract class TreatmentItem extends Item {
+public final class TreatmentItem extends Item {
     private static final int TREAT_TICKS = 32;
-    private final boolean medKit;
+    private final Treatment treatment;
 
-    protected TreatmentItem(Properties properties, boolean medKit) {
+    public enum Treatment {
+        BANDAGE,
+        MED_KIT,
+        SALVE
+    }
+
+    public TreatmentItem(Properties properties, Treatment treatment) {
         super(properties);
-        this.medKit = medKit;
+        this.treatment = treatment;
     }
 
     private boolean treats(Body body) {
-        if (medKit && Afflictions.incubating(body)) {
+        if (treatment == Treatment.MED_KIT && Afflictions.incubating(body)) {
             return true;
         }
         for (var entry : body.conditions.entrySet()) {
             Condition condition = entry.getKey();
-            if (medKit ? condition.curedByMedKit() : condition == Condition.BLISTERS || condition.takesBandage() && !entry.getValue().bandaged) {
+            boolean treated = switch (treatment) {
+                case BANDAGE -> condition == Condition.BLISTERS || condition.takesBandage() && !entry.getValue().bandaged;
+                case MED_KIT -> condition.curedByMedKit();
+                case SALVE -> Afflictions.salves(condition);
+            };
+            if (treated) {
                 return true;
             }
         }
@@ -51,8 +62,8 @@ public abstract class TreatmentItem extends Item {
 
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
-        if (entity instanceof ServerPlayer player && Afflictions.treat(Metabolism.body(player), medKit)) {
-            if (medKit) {
+        if (entity instanceof ServerPlayer player && Afflictions.treat(Metabolism.body(player), treatment)) {
+            if (treatment == Treatment.MED_KIT) {
                 stack.hurtAndBreak(1, player, player.getUsedItemHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
             } else {
                 stack.consume(1, player);

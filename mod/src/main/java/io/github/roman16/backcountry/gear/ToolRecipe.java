@@ -41,8 +41,10 @@ public final class ToolRecipe extends ShapelessRecipe {
             ItemStack used = input.getItem(slot);
             if (tool.test(used)) {
                 ItemStack worn = used.copyWithCount(1);
-                worn.setDamageValue(worn.getDamageValue() + 1);
-                remaining.set(slot, worn.getDamageValue() >= worn.getMaxDamage() ? ItemStack.EMPTY : worn);
+                if (worn.isDamageableItem()) {
+                    worn.setDamageValue(worn.getDamageValue() + 1);
+                }
+                remaining.set(slot, worn.isDamageableItem() && worn.getDamageValue() >= worn.getMaxDamage() ? ItemStack.EMPTY : worn);
                 break;
             }
         }

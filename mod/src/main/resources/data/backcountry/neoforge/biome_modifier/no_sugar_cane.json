@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:remove_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": [
+    "minecraft:patch_sugar_cane",
+    "wythers:vegetation/local/patch/sugar_cane_desert"
+  ]
+}

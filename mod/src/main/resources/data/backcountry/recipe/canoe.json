@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "backcountry:birch_bark"
+    },
+    "P": {
+      "item": "backcountry:spruce_pitch"
+    },
+    "R": {
+      "item": "backcountry:spruce_roots"
+    }
+  },
+  "pattern": [
+    "BRB",
+    "BPB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:canoe"
+  }
+}

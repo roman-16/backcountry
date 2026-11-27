@@ -7,23 +7,32 @@ import io.github.roman16.backcountry.body.BodyView;
 import io.github.roman16.backcountry.body.Burn;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Condition;
+import io.github.roman16.backcountry.body.Rooms;
 import io.github.roman16.backcountry.body.Skill;
+import io.github.roman16.backcountry.body.Spirits;
 import io.github.roman16.backcountry.food.Ration;
 import io.github.roman16.backcountry.gear.Hotbar;
 import io.github.roman16.backcountry.guide.Chapter;
+import io.github.roman16.backcountry.guide.FieldNotes;
 import io.github.roman16.backcountry.guide.GuideView;
 import io.github.roman16.backcountry.guide.Step;
 import io.github.roman16.backcountry.guide.Task;
+import io.github.roman16.backcountry.guide.Year;
 import io.github.roman16.backcountry.net.Messages;
 import io.github.roman16.backcountry.weather.Kind;
 import io.github.roman16.backcountry.weather.Outlook;
 import io.github.roman16.backcountry.weather.WeatherView;
+import java.time.Month;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.IntUnaryOperator;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -31,6 +40,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.biome.Biome;
 import net.neoforged.fml.ModList;
 import org.lwjgl.glfw.GLFW;
 
@@ -38,6 +48,7 @@ public class MessengerScreen extends Screen {
     private static final ResourceLocation TEMPERATURE = Backcountry.id("hud/temperature");
     private static final ResourceLocation WET = Backcountry.id("hud/wet");
     private static final ResourceLocation FIRE = Backcountry.id("hud/burns");
+    private static final ResourceLocation SPIRITS = Backcountry.id("hud/spirits_high");
     private static final ResourceLocation SHELTER = Backcountry.id("hud/shelter");
     private static final ResourceLocation LOAD = Backcountry.id("hud/load");
     private static final ResourceLocation ENERGY = Backcountry.id("hud/energy_full");
@@ -51,6 +62,8 @@ public class MessengerScreen extends Screen {
     private static final ResourceLocation RATION = Backcountry.id("hud/ration");
     private static final ResourceLocation TASKS = Backcountry.id("hud/tasks");
     private static final ResourceLocation GUIDE = Backcountry.id("hud/guide");
+    private static final ResourceLocation NOTES = Backcountry.id("hud/notes");
+    private static final ResourceLocation YEAR = Backcountry.id("hud/year");
     private static final String JEI = "jei";
     private static final int MOST_WIDTH = 640;
     private static final int MOST_HEIGHT = 360;
@@ -100,13 +113,20 @@ public class MessengerScreen extends Screen {
     private static final int BURNS_A_LINE = 3;
     private static final float METRES_A_KM = 1000;
     private static final int SKILL_STEP = 4;
+    private static final int GLOW_TICKS = 10;
+    private static final float KCAL_A_GRAM_OF_FAT = 9;
     private static final int SOS_TOP = 3;
     private static final int SOS_HEIGHT = 12;
+    private static final int MONTHS_BACK = 5;
+    private static final int YEAR_ROWS = 15;
+    private static final int LEAST_ROW = 9;
+    private static final int BAR = 5;
     private static final List<String> SOS_LINES = List.of("boat", "pack", "arrival");
     private static Page page = Page.TASKS;
     private static Optional<Task> chosen = Optional.empty();
     private static Optional<Chapter> opened = Optional.empty();
     private static Topic topic = Topic.RATIONS;
+    private static int notesScroll;
     private final List<Hit> hits = new ArrayList<>();
     private final List<Shown> items = new ArrayList<>();
     private int left;
@@ -116,13 +136,16 @@ public class MessengerScreen extends Screen {
     private int line;
     private int meterRow;
     private boolean asking;
+    private Component hover;
 
     private enum Page {
         TASKS(MessengerScreen.TASKS),
         WEATHER(Kind.PARTLY_CLOUDY.icon()),
+        YEAR(MessengerScreen.YEAR),
         WARMTH(FIRE),
         FOOD(MessengerScreen.FOOD),
         BODY(HEART),
+        NOTES(MessengerScreen.NOTES),
         GUIDE(MessengerScreen.GUIDE);
 
         private final ResourceLocation icon;
@@ -145,7 +168,13 @@ public class MessengerScreen extends Screen {
         COLD,
         HEALTH,
         FOOD,
+        FAT,
+        SPIRITS,
         HUNTING,
+        ROOMS,
+        ICE,
+        WAYFINDING,
+        COAST,
         ROCK;
 
         Component title() {
@@ -258,6 +287,10 @@ public class MessengerScreen extends Screen {
             opened = Optional.of(next.chapter());
             return true;
         }
+        if (page == Page.NOTES && (up || key == GLFW.GLFW_KEY_DOWN || minecraft.options.keyDown.matches(key, scan))) {
+            notesScroll = Math.max(0, notesScroll + (up ? -1 : 1));
+            return true;
+        }
         if (page == Page.GUIDE && (up || key == GLFW.GLFW_KEY_DOWN || minecraft.options.keyDown.matches(key, scan))) {
             topic = Topic.values()[Math.floorMod(topic.ordinal() + (up ? -1 : 1), Topic.values().length)];
             return true;
@@ -286,6 +319,15 @@ public class MessengerScreen extends Screen {
         return super.mouseClicked(x, y, button);
     }
 
+    @Override
+    public boolean mouseScrolled(double x, double y, double scrollX, double scrollY) {
+        if (page == Page.NOTES && !asking && scrollY != 0) {
+            notesScroll = Math.max(0, notesScroll - (int) Math.signum(scrollY));
+            return true;
+        }
+        return super.mouseScrolled(x, y, scrollX, scrollY);
+    }
+
     private static void track(Task task) {
         GuideView guide = ClientState.guide;
         ClientState.guide = new GuideView(guide.steps(), guide.storesDays(), guide.dryFirewood(), Optional.of(task));
@@ -297,6 +339,7 @@ public class MessengerScreen extends Screen {
         super.render(graphics, mouseX, mouseY, partialTick);
         hits.clear();
         items.clear();
+        hover = null;
         casing(graphics);
         sosButton(graphics, mouseX, mouseY);
         BodyView view = ClientState.view;
@@ -312,14 +355,19 @@ public class MessengerScreen extends Screen {
             switch (page) {
                 case TASKS -> tasks(graphics, y, mouseX, mouseY);
                 case WEATHER -> weather(graphics, y, ClientState.weather);
+                case YEAR -> year(graphics, y, mouseX, mouseY);
                 case WARMTH -> warmth(graphics, y, view);
                 case FOOD -> food(graphics, y, view);
                 case BODY -> body(graphics, y, view);
+                case NOTES -> notes(graphics, y);
                 case GUIDE -> guide(graphics, y, mouseX, mouseY);
             }
         }
         graphics.disableScissor();
         alerts(graphics, view.alerts());
+        if (hover != null) {
+            graphics.renderTooltip(font, hover, mouseX, mouseY);
+        }
         for (Shown shown : items) {
             if (shown.inside(mouseX, mouseY)) {
                 List<Component> lines = new ArrayList<>(List.of(shown.stack().getHoverName()));
@@ -360,7 +408,8 @@ public class MessengerScreen extends Screen {
         boolean live = canTapOut();
         boolean hovered = live && mouseX >= x && mouseX < right && mouseY >= y && mouseY < bottom;
         graphics.fill(x, y, right, bottom, Look.CASE_EDGE);
-        graphics.fill(x + 1, y + 1, right - 1, bottom - 1, live ? hovered ? Look.SOS_LIGHT : Look.SOS : Look.CASE_DARK);
+        boolean glowing = live && Spirits.bottom(ClientState.view.spirits()) && minecraft.gui.getGuiTicks() / GLOW_TICKS % 2 == 0;
+        graphics.fill(x + 1, y + 1, right - 1, bottom - 1, live ? hovered || glowing ? Look.SOS_LIGHT : Look.SOS : Look.CASE_DARK);
         if (live) {
             graphics.fill(x + 1, y + 1, right - 1, y + 2, Look.SOS_LIGHT);
             graphics.fill(x + 1, bottom - 2, right - 1, bottom - 1, Look.SOS_DARK);
@@ -402,8 +451,13 @@ public class MessengerScreen extends Screen {
     private void tabs(GuiGraphics graphics, int mouseX, int mouseY) {
         int y = lcdTop() + TABS_Y;
         int x = x0() - TAB_PAD;
+        int named = -TAB_GAP;
         for (Page shown : Page.values()) {
-            int tabWidth = TAB_PAD + ICON + ICON_GAP + font.width(shown.title()) + TAB_PAD;
+            named += TAB_PAD + ICON + ICON_GAP + font.width(shown.title()) + TAB_PAD + TAB_GAP;
+        }
+        boolean iconsOnly = named > x1() - x0() + TAB_PAD;
+        for (Page shown : Page.values()) {
+            int tabWidth = iconsOnly ? TAB_PAD + ICON + TAB_PAD : TAB_PAD + ICON + ICON_GAP + font.width(shown.title()) + TAB_PAD;
             boolean hovered = mouseX >= x && mouseX < x + tabWidth && mouseY >= y - 2 && mouseY < y + line - 1;
             boolean selected = shown == page && !asking;
             if (selected) {
@@ -412,7 +466,11 @@ public class MessengerScreen extends Screen {
                 graphics.fill(x, y - 2, x + tabWidth, y + line - 1, Look.LCD_TRACK);
             }
             graphics.blitSprite(shown.icon, x + TAB_PAD, y - 1, ICON, ICON);
-            graphics.drawString(font, shown.title(), x + TAB_PAD + ICON + ICON_GAP, y, selected ? Look.LCD : Look.LCD_DIM, false);
+            if (!iconsOnly) {
+                graphics.drawString(font, shown.title(), x + TAB_PAD + ICON + ICON_GAP, y, selected ? Look.LCD : Look.LCD_DIM, false);
+            } else if (hovered) {
+                hover = shown.title();
+            }
             hits.add(new Hit(x, y - 2, tabWidth, line + 1, () -> {
                 asking = false;
                 show(shown);
@@ -548,7 +606,9 @@ public class MessengerScreen extends Screen {
         Optional<Task> following = guide.following(month());
         int listWidth = Mth.clamp(Math.round((x1() - x0()) * LIST_SHARE), LIST_LEAST, LIST_MOST);
         int split = x0() + listWidth;
-        int listY = y;
+        int rows = Math.max(1, (contentBottom() - y) / line);
+        int chosenRow = open.ordinal() + 1 + open.tasks().indexOf(task);
+        int listY = y - Math.max(0, chosenRow - rows + 1) * line;
         for (Chapter chapter : Chapter.values()) {
             boolean expanded = chapter == open;
             Component heading = chapter.team() ? Component.translatable("messenger.backcountry.tasks.team", chapter.title()) : chapter.title();
@@ -556,7 +616,7 @@ public class MessengerScreen extends Screen {
             boolean hovered = mouseX >= x0() && mouseX < split && mouseY >= listY && mouseY < listY + line;
             graphics.drawString(font, heading, x0(), listY + 1, expanded || hovered ? Look.LCD_TEXT : Look.LCD_DIM, false);
             graphics.drawString(font, count, split - PAD - font.width(count), listY + 1, Look.LCD_DIM, false);
-            hits.add(new Hit(x0(), listY, listWidth, line, () -> {
+            hits.add(new Hit(x0(), Math.max(listY, y), listWidth, listY >= y ? line : 0, () -> {
                 opened = Optional.of(chapter);
                 chosen = Optional.of(chapter.tasks().stream().filter(item -> !ClientState.guide.done(item)).findFirst().orElse(chapter.tasks().getFirst()));
             }));
@@ -577,7 +637,7 @@ public class MessengerScreen extends Screen {
                 int textLeft = boxLeft + BOX + ICON_GAP;
                 String title = font.plainSubstrByWidth(item.title().getString(), split - PAD - textLeft);
                 graphics.drawString(font, title, textLeft, listY + 1, done || !item.inSeason(month()) ? Look.LCD_DIM : Look.LCD_TEXT, false);
-                hits.add(new Hit(x0(), listY, listWidth, line, () -> chosen = Optional.of(item)));
+                hits.add(new Hit(x0(), Math.max(listY, y), listWidth, listY >= y ? line : 0, () -> chosen = Optional.of(item)));
                 listY += line;
             }
         }
@@ -588,8 +648,10 @@ public class MessengerScreen extends Screen {
     private void guide(GuiGraphics graphics, int y, int mouseX, int mouseY) {
         int listWidth = Mth.clamp(Math.round((x1() - x0()) * LIST_SHARE), LIST_LEAST, LIST_MOST);
         int split = x0() + listWidth;
+        int rows = Math.max(1, (contentBottom() - y) / line);
+        int first = Math.max(0, Math.min(topic.ordinal() - rows + 1, Topic.values().length - rows));
         int listY = y;
-        for (Topic item : Topic.values()) {
+        for (Topic item : Arrays.asList(Topic.values()).subList(first, Topic.values().length)) {
             boolean hovered = mouseX >= x0() && mouseX < split && mouseY >= listY && mouseY < listY + line;
             if (item == topic) {
                 graphics.fill(x0() - 2, listY, split - PAD + 2, listY + line - 1, Look.LCD_TRACK);
@@ -752,6 +814,109 @@ public class MessengerScreen extends Screen {
         }
     }
 
+    private void year(GuiGraphics graphics, int y, int mouseX, int mouseY) {
+        BlockPos pos = minecraft.player.blockPosition();
+        Biome biome = minecraft.level.getBiome(pos).value();
+        List<Year.Month> climate = Year.climate(biome, pos);
+        List<Year.Row> events = Year.events(biome, pos);
+        int now = month();
+        int rowHeight = Mth.clamp((contentBottom() - y) / YEAR_ROWS, LEAST_ROW, line);
+        List<Component> labels = new ArrayList<>(List.of(Component.translatable("messenger.backcountry.year.high"), Component.translatable("messenger.backcountry.year.low"),
+                Component.translatable("messenger.backcountry.year.daylight"), Component.translatable("messenger.backcountry.year.wet_days")));
+        events.forEach(row -> labels.add(Component.translatable("messenger.backcountry.year." + row.id())));
+        int labelWidth = labels.stream().mapToInt(font::width).max().orElse(0) + GAP;
+        int column = (x1() - x0() - labelWidth) / Year.MONTHS;
+        boolean shortNames = column >= font.width("May") + 2;
+        int gridLeft = x0() + labelWidth;
+        int nowLeft = gridLeft + MONTHS_BACK * column;
+        graphics.fill(nowLeft, y, nowLeft + column, y + YEAR_ROWS * rowHeight + GAP, Look.LCD_TRACK);
+        graphics.drawString(font, Component.translatable("messenger.backcountry.year.usual"), x0(), y + 1, Look.LCD_DIM, false);
+        for (int i = 0; i < Year.MONTHS; i++) {
+            int month = shown(now, i);
+            String name = Month.of(month).getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+            String label = shortNames ? name : name.substring(0, 1);
+            int left = gridLeft + i * column;
+            graphics.drawString(font, label, left + (column - font.width(label)) / 2, y + 1, month == now ? Look.LCD_TEXT : Look.LCD_DIM, false);
+        }
+        y += rowHeight;
+        y = numbers(graphics, y, rowHeight, labels.get(0), gridLeft, column, now, month -> (int) Math.round(climate.get(month - 1).highC()),
+                month -> temperatureColour((float) climate.get(month - 1).highC()));
+        y = numbers(graphics, y, rowHeight, labels.get(1), gridLeft, column, now, month -> (int) Math.round(climate.get(month - 1).lowC()),
+                month -> temperatureColour((float) climate.get(month - 1).lowC()));
+        y = numbers(graphics, y, rowHeight, labels.get(2), gridLeft, column, now, month -> (int) Math.round(climate.get(month - 1).daylightHours()), month -> Look.LCD_TEXT);
+        y = numbers(graphics, y, rowHeight, labels.get(3), gridLeft, column, now, month -> (int) Math.round(climate.get(month - 1).wetDays()), month -> Look.LCD_TEXT);
+        y += GAP;
+        for (int r = 0; r < events.size(); r++) {
+            Year.Row row = events.get(r);
+            graphics.drawString(font, labels.get(r + 4), x0(), y + 1, Look.LCD_DIM, false);
+            for (int i = 0; i < Year.MONTHS; i++) {
+                int month = shown(now, i);
+                int state = row.at(month);
+                int left = gridLeft + i * column;
+                int barTop = y + (rowHeight - BAR) / 2;
+                if (state != Year.NONE) {
+                    graphics.fill(left, barTop, left + column, barTop + BAR, state == Year.FULL ? Look.LCD_TEXT : Look.LCD_DIM);
+                }
+                if (state != Year.NONE && mouseX >= left && mouseX < left + column && mouseY >= y && mouseY < y + rowHeight) {
+                    hover = Component.translatable("messenger.backcountry.year." + row.id() + (state == Year.FULL ? ".full" : ".quiet"));
+                }
+            }
+            y += rowHeight;
+        }
+    }
+
+    private static int shown(int now, int column) {
+        return Math.floorMod(now - 1 - MONTHS_BACK + column, Year.MONTHS) + 1;
+    }
+
+    private int numbers(GuiGraphics graphics, int y, int rowHeight, Component label, int gridLeft, int column, int now, IntUnaryOperator value, IntUnaryOperator colour) {
+        graphics.drawString(font, label, x0(), y + 1, Look.LCD_DIM, false);
+        for (int i = 0; i < Year.MONTHS; i++) {
+            int month = shown(now, i);
+            String text = String.valueOf(value.applyAsInt(month));
+            int left = gridLeft + i * column;
+            graphics.drawString(font, text, left + (column - font.width(text)) / 2, y + 1, colour.applyAsInt(month), false);
+        }
+        return y + rowHeight;
+    }
+
+    private void notes(GuiGraphics graphics, int y) {
+        List<String> catalogue = FieldNotes.catalogue();
+        long found = catalogue.stream().filter(ClientState::noted).count();
+        graphics.drawString(font, Component.translatable("messenger.backcountry.notes.title"), x0(), y + 1, Look.LCD_TEXT, false);
+        Component count = Component.translatable("messenger.backcountry.notes.count", found, catalogue.size());
+        graphics.drawString(font, count, x1() - font.width(count), y + 1, Look.LCD_DIM, false);
+        y += line + GAP;
+        if (found == 0) {
+            for (FormattedCharSequence wrapped : font.split(Component.translatable("messenger.backcountry.notes.none"), x1() - x0())) {
+                graphics.drawString(font, wrapped, x0(), y + 1, Look.LCD_DIM, false);
+                y += line;
+            }
+            return;
+        }
+        FieldNotes.Kind[] kinds = FieldNotes.Kind.values();
+        int column = (x1() - x0() + GAP) / kinds.length;
+        int rows = Math.max(1, (contentBottom() - y) / line - 1);
+        int longest = 0;
+        for (FieldNotes.Kind kind : kinds) {
+            List<String> ofKind = catalogue.stream().filter(id -> FieldNotes.kind(id) == kind).toList();
+            List<FieldNotes.Note> noted = ofKind.stream().filter(ClientState::noted).map(ClientState.notes::get).toList();
+            longest = Math.max(longest, noted.size());
+            int left = x0() + kind.ordinal() * column;
+            int right = left + column - GAP;
+            graphics.drawString(font, Component.translatable("messenger.backcountry.notes." + kind.id(), noted.size(), ofKind.size()), left, y + 1, Look.LCD_DIM, false);
+            int rowY = y + line;
+            for (FieldNotes.Note note : noted.subList(Math.min(notesScroll, noted.size()), Math.min(notesScroll + rows, noted.size()))) {
+                String date = Calendar.dateText(note.day());
+                String name = font.plainSubstrByWidth(FieldNotes.name(note.id()).getString(), right - left - font.width(date) - GAP);
+                graphics.drawString(font, name, left, rowY + 1, Look.LCD_TEXT, false);
+                graphics.drawString(font, date, right - font.width(date), rowY + 1, Look.LCD_DIM, false);
+                rowY += line;
+            }
+        }
+        notesScroll = Math.min(notesScroll, Math.max(0, longest - rows));
+    }
+
     private void warmth(GuiGraphics graphics, int y, BodyView view) {
         Balance.Warmth warmth = Balance.get().warmth();
         boolean cold = view.coreC() < warmth.shiverCoreC();
@@ -766,11 +931,19 @@ public class MessengerScreen extends Screen {
         y += GAP;
         y = row(graphics, y, FIRE, Component.translatable("messenger.backcountry.fire"),
                 Component.translatable(view.fire() ? "messenger.backcountry.fire.near" : "messenger.backcountry.fire.none"), view.fire() ? Look.LCD_TEXT : Look.LCD_DIM);
-        String shelter = view.sheltered() ? "messenger.backcountry.shelter.roofed" : view.windy() ? "messenger.backcountry.shelter.windy" : "messenger.backcountry.shelter.open";
-        y = row(graphics, y, SHELTER, Component.translatable("messenger.backcountry.shelter"), Component.translatable(shelter),
-                view.sheltered() ? Look.LCD_TEXT : view.windy() ? Look.LCD_COLD : Look.LCD_DIM);
-        if (view.windy() && !view.sheltered()) {
+        Rooms.Kind room = Rooms.Kind.values()[Math.floorMod(view.room(), Rooms.Kind.values().length)];
+        Component shelter = room != Rooms.Kind.OPEN
+                ? Component.translatable("messenger.backcountry.shelter.room", Component.translatable("messenger.backcountry.room." + room.id()), Words.degrees(view.roomC()))
+                : Component.translatable(view.sheltered() ? "messenger.backcountry.shelter.roofed" : view.windy() ? "messenger.backcountry.shelter.windy"
+                        : "messenger.backcountry.shelter.open");
+        y = row(graphics, y, SHELTER, Component.translatable("messenger.backcountry.shelter"), shelter,
+                view.smoky() ? Look.LCD_WARN : view.sheltered() ? Look.LCD_TEXT : view.windy() ? Look.LCD_COLD : Look.LCD_DIM);
+        if (view.smoky()) {
+            y = advice(graphics, y, Component.translatable("messenger.backcountry.help.smoky"));
+        } else if (view.windy() && !view.sheltered()) {
             y = advice(graphics, y, Component.translatable("messenger.backcountry.help.wind"));
+        } else if (room == Rooms.Kind.OPEN && view.sheltered()) {
+            y = advice(graphics, y, Component.translatable("messenger.backcountry.help.room"));
         }
         y += GAP;
         y = row(graphics, y, CLOTHING, Component.translatable("messenger.backcountry.clothing"), clothing(), Look.LCD_TEXT);
@@ -800,9 +973,16 @@ public class MessengerScreen extends Screen {
                 y += line;
             }
         }
-        Component nutrients = Component.translatable("messenger.backcountry.nutrients", Words.grams(view.protein()), Words.grams(view.carbs()), Words.grams(view.fat()));
-        graphics.drawString(font, nutrients, x0() + LABEL, y + 1, Look.LCD_DIM, false);
-        y += line + GAP;
+        float fatShare = view.kcalEaten() <= 0 ? 0 : view.fat() * KCAL_A_GRAM_OF_FAT / view.kcalEaten();
+        Component nutrients = Component.translatable("messenger.backcountry.nutrients", Words.grams(view.protein()), Words.grams(view.carbs()), Words.grams(view.fat()),
+                Words.percent(fatShare));
+        boolean lean = view.protein() > Balance.get().conditions().rabbitProteinG() && fatShare < Balance.get().conditions().rabbitFatShare();
+        graphics.drawString(font, nutrients, x0() + LABEL, y + 1, lean ? Look.LCD_WARN : Look.LCD_DIM, false);
+        y += line;
+        if (lean) {
+            y = advice(graphics, y, Component.translatable("messenger.backcountry.help.lean", Math.round(Balance.get().conditions().rabbitProteinG())));
+        }
+        y += GAP;
         y = row(graphics, y, FOOD, Component.translatable("messenger.backcountry.stomach"), Component.translatable("messenger.backcountry.full", Words.percent(view.stomach())),
                 Look.LCD_TEXT);
         y = meter(graphics, y, view.stomach(), Look.LCD_TEXT);
@@ -851,6 +1031,16 @@ public class MessengerScreen extends Screen {
         y = meter(graphics, y, view.loadKg() / view.capacityKg(), over ? Look.LCD_DANGER : Look.LCD_TEXT);
         if (over) {
             y = advice(graphics, y, Component.translatable("messenger.backcountry.help.load"));
+        }
+        boolean down = Spirits.low(view.spirits());
+        y = row(graphics, y, SPIRITS, Component.translatable("messenger.backcountry.spirits"),
+                Component.translatable(Spirits.high(view.spirits()) ? "messenger.backcountry.spirits.high" : down ? "messenger.backcountry.spirits.low"
+                        : "messenger.backcountry.spirits.even"), down ? Look.LCD_WARN : Look.LCD_TEXT);
+        y = meter(graphics, y, view.spirits(), down ? Look.LCD_WARN : Look.LCD_TEXT);
+        Component causes = Words.spiritCauses(view.spiritCauses());
+        if (!causes.getString().isEmpty()) {
+            graphics.drawString(font, font.plainSubstrByWidth(causes.getString(), x1() - x0() - LABEL), x0() + LABEL, y + 1, Look.LCD_DIM, false);
+            y += line;
         }
         float awakeShare = view.awakeHours() / AWAKE_FULL_HOURS;
         y = row(graphics, y, AWAKE, Component.translatable("messenger.backcountry.awake"), Component.translatable("messenger.backcountry.hours", Math.round(view.awakeHours())),

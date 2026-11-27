@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "backcountry:birch_bark"
+    },
+    {
+      "item": "backcountry:birch_bark"
+    },
+    {
+      "item": "backcountry:birch_bark"
+    },
+    {
+      "item": "backcountry:birch_bark"
+    },
+    {
+      "item": "backcountry:cordage"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:bark_map"
+  }
+}

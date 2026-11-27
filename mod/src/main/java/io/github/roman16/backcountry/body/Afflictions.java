@@ -1,6 +1,8 @@
 package io.github.roman16.backcountry.body;
 
 import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.gear.TreatmentItem;
+import io.github.roman16.backcountry.gear.Worn;
 import java.util.Iterator;
 import java.util.Map;
 import net.minecraft.resources.ResourceKey;
@@ -8,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageType;
 
 public final class Afflictions {
+    private static final double KCAL_A_GRAM_OF_FAT = 9;
     private static final double HOURS_A_DAY = 24;
     private static final float DRAIN = 1;
 
@@ -42,6 +45,13 @@ public final class Afflictions {
                 case FOOD_POISONING -> (affliction.days += days) >= rules.poisoningDays();
                 case SCURVY -> body.vitaminCMg >= balance.body().vitaminCMgDay();
                 case EXHAUSTED -> body.awakeTicks < rules.exhaustedAwakeDays() * HOURS_A_DAY * 1000;
+                case RABBIT_STARVATION -> body.fattyDays >= rules.rabbitCureDays();
+                case NUMB_HANDS -> body.numbHours <= 0;
+                case SHELLFISH_POISONING -> {
+                    affliction.days += days;
+                    drains += wholeHours(before, affliction.days);
+                    yield affliction.days * HOURS_A_DAY >= rules.shellfishHours();
+                }
                 case SEVERE_FROSTBITE, SEVERE_HYPOTHERMIA -> {
                     affliction.days += days;
                     drains += wholeHours(before, affliction.days);
@@ -75,9 +85,10 @@ public final class Afflictions {
         }
         frost(player, body, hours);
         hypothermia(body);
+        numbHands(player, body, hours);
         for (int i = 0; i < drains && player.isAlive(); i++) {
             ResourceKey<DamageType> cause = body.has(Condition.SEVERE_HYPOTHERMIA) ? Metabolism.HYPOTHERMIA
-                    : body.has(Condition.SEVERE_FROSTBITE) ? Metabolism.FROSTBITE : Metabolism.INFECTION;
+                    : body.has(Condition.SEVERE_FROSTBITE) ? Metabolism.FROSTBITE : body.has(Condition.SHELLFISH_POISONING) ? Metabolism.SHELLFISH : Metabolism.INFECTION;
             player.hurt(player.damageSources().source(cause), DRAIN);
         }
         tell(player, body);
@@ -150,7 +161,15 @@ public final class Afflictions {
         return body.gutOnsetDays > 0;
     }
 
-    public static boolean treat(Body body, boolean medKit) {
+    public static boolean salves(Condition condition) {
+        return condition == Condition.INFECTED_WOUND || condition == Condition.BURNS;
+    }
+
+    public static boolean treat(Body body, TreatmentItem.Treatment treatment) {
+        if (treatment == TreatmentItem.Treatment.SALVE) {
+            return salve(body);
+        }
+        boolean medKit = treatment == TreatmentItem.Treatment.MED_KIT;
         boolean treated = medKit && incubating(body);
         if (treated) {
             body.gutOnsetDays = 0;
@@ -171,5 +190,52 @@ public final class Afflictions {
             }
         }
         return treated;
+    }
+
+    private static boolean salve(Body body) {
+        Balance.Conditions rules = Balance.get().conditions();
+        boolean treated = false;
+        for (Map.Entry<Condition, Body.Affliction> entry : body.conditions.entrySet()) {
+            Body.Affliction affliction = entry.getValue();
+            if (entry.getKey() == Condition.INFECTED_WOUND) {
+                affliction.bandaged = true;
+                affliction.days = Math.max(affliction.days, rules.infectionDays() - 1);
+                treated = true;
+            } else if (entry.getKey() == Condition.BURNS) {
+                affliction.bandaged = true;
+                affliction.days = Math.max(affliction.days, rules.burnsDays() - 2);
+                treated = true;
+            }
+        }
+        return treated;
+    }
+
+    private static void numbHands(ServerPlayer player, Body body, double hours) {
+        Balance.Conditions rules = Balance.get().conditions();
+        boolean bare = Worn.HANDS.get(player).isEmpty() && !player.isCreative();
+        if (bare && body.effectiveC <= rules.bareSkinC() && !body.fire) {
+            body.numbHours += hours;
+        } else {
+            body.numbHours = Math.max(0, body.numbHours - 2 * hours);
+        }
+        if (body.numbHours >= rules.numbOnsetHours()) {
+            body.afflict(Condition.NUMB_HANDS);
+        }
+    }
+
+    public static void day(Body body) {
+        Balance.Conditions rules = Balance.get().conditions();
+        double kcal = Math.max(1, body.kcalEatenToday);
+        double fatShare = body.fatToday * KCAL_A_GRAM_OF_FAT / kcal;
+        if (body.proteinToday > rules.rabbitProteinG() && fatShare < rules.rabbitFatShare()) {
+            body.leanDays++;
+            body.fattyDays = 0;
+        } else if (fatShare >= rules.rabbitFatShare()) {
+            body.fattyDays++;
+            body.leanDays = 0;
+        }
+        if (body.leanDays >= rules.rabbitOnsetDays()) {
+            body.afflict(Condition.RABBIT_STARVATION);
+        }
     }
 }

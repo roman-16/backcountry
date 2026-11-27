@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "L": {
+      "item": "backcountry:cured_hide"
+    },
+    "W": {
+      "item": "backcountry:wolverine_pelt"
+    }
+  },
+  "pattern": [
+    "LWL",
+    "LLL",
+    "LLL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:fur_parka"
+  }
+}

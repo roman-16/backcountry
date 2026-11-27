@@ -34,7 +34,7 @@ public final class Backcountry {
         Things.register(bus);
         bus.addListener(RegisterDataMapTypesEvent.class, event -> event.register(Things.FOOD));
         bus.addListener(Messages::register);
-        bus.addListener(BlockEntityTypeAddBlocksEvent.class, event -> event.modify(BlockEntityType.CAMPFIRE, Things.CAMPFIRE.get()));
+        bus.addListener(BlockEntityTypeAddBlocksEvent.class, event -> event.modify(BlockEntityType.CAMPFIRE, Things.CAMPFIRE.get(), Things.STONE_FIREPLACE.get()));
         bus.addListener(RegisterDataMapTypesEvent.class, event -> event.register(Things.ANIMAL));
         bus.addListener(EntityAttributeCreationEvent.class, event -> {
             event.put(Things.GROUSE.get(), Chicken.createAttributes().build());

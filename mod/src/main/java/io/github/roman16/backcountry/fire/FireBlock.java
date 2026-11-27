@@ -3,6 +3,9 @@ package io.github.roman16.backcountry.fire;
 import com.mojang.serialization.MapCodec;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.body.Condition;
+import io.github.roman16.backcountry.body.Metabolism;
+import io.github.roman16.backcountry.gear.CampPotItem;
 import io.github.roman16.backcountry.guide.Deed;
 import io.github.roman16.backcountry.guide.Guide;
 import io.github.roman16.backcountry.net.Messages;
@@ -20,10 +23,8 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import io.github.roman16.backcountry.gear.CampPotItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -117,23 +118,52 @@ public final class FireBlock extends CampfireBlock {
         if (stack.getItem() instanceof FirewoodItem) {
             return feed(stack, level, pos, player, campfire);
         }
+        if (!cold(state) && stack.is(Things.TINDER_FUNGI)) {
+            if (!level.isClientSide) {
+                stack.consume(1, player);
+                ItemStack smouldering = SmoulderingFungusItem.lit(level);
+                if (!player.getInventory().add(smouldering)) {
+                    player.drop(smouldering, false);
+                }
+                level.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 0.4F, 1.6F);
+                player.displayClientMessage(Component.translatable("message.backcountry.fungus_lit"), true);
+            }
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (stack.getItem() instanceof BlockItem || stack.getItem() instanceof CampPotItem) {
             return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         }
-        if (cold(state) && (stack.is(Things.BOW_DRILL.get()) || stack.is(Items.FLINT_AND_STEEL))) {
+        if (cold(state) && stack.is(Things.SMOULDERING_FUNGUS.get())) {
             if (level.isClientSide) {
                 return ItemInteractionResult.SUCCESS;
             }
             ServerPlayer survivor = (ServerPlayer) player;
             if (!Kindling.carried(survivor)) {
                 survivor.displayClientMessage(Component.translatable("message.backcountry.needs_kindling", Balance.get().fire().kindlingSticks()), true);
-            } else if (stack.is(Items.FLINT_AND_STEEL)) {
-                Kindling.use(survivor);
+            } else {
+                Kindling.use(survivor, pos);
+                stack.consume(1, player);
+                level.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 0.5F, 1.2F);
+                light(level, pos, state, campfire);
+                Guide.did(survivor, Deed.LIT_FIRE);
+            }
+            return ItemInteractionResult.CONSUME;
+        }
+        if (cold(state) && (stack.is(Things.BOW_DRILL.get()) || stack.is(Things.STRIKERS))) {
+            if (level.isClientSide) {
+                return ItemInteractionResult.SUCCESS;
+            }
+            ServerPlayer survivor = (ServerPlayer) player;
+            if (!Kindling.carried(survivor)) {
+                survivor.displayClientMessage(Component.translatable("message.backcountry.needs_kindling", Balance.get().fire().kindlingSticks()), true);
+            } else if (stack.is(Things.STRIKERS)) {
+                Kindling.use(survivor, pos);
                 stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
                 level.playSound(null, pos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1, level.random.nextFloat() * 0.4F + 0.8F);
                 light(level, pos, state, campfire);
+                Guide.did(survivor, Deed.LIT_FIRE);
             } else {
-                Messages.bowDrill(survivor, pos, Kindling.wet(survivor, pos));
+                Messages.bowDrill(survivor, pos, Kindling.wet(survivor, pos) || Metabolism.body(survivor).has(Condition.NUMB_HANDS));
             }
             return ItemInteractionResult.CONSUME;
         }

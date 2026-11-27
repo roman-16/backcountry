@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "thickness=0": {
+      "model": "backcountry:block/thin_ice"
+    },
+    "thickness=1": {
+      "model": "backcountry:block/thin_ice"
+    },
+    "thickness=2": {
+      "model": "backcountry:block/thin_ice"
+    }
+  }
+}

@@ -1,0 +1,283 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "backcountry:block/goose_nest",
+    "nest": "backcountry:block/goose_nest",
+    "egg": "backcountry:block/goose_egg_shell"
+  },
+  "elements": [
+    {
+      "from": [
+        2,
+        0,
+        2
+      ],
+      "to": [
+        14,
+        3,
+        14
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ],
+          "texture": "#nest",
+          "cullface": "down"
+        },
+        "east": {
+          "uv": [
+            2,
+            13,
+            14,
+            16
+          ],
+          "texture": "#nest"
+        },
+        "north": {
+          "uv": [
+            2,
+            13,
+            14,
+            16
+          ],
+          "texture": "#nest"
+        },
+        "south": {
+          "uv": [
+            2,
+            13,
+            14,
+            16
+          ],
+          "texture": "#nest"
+        },
+        "up": {
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ],
+          "texture": "#nest"
+        },
+        "west": {
+          "uv": [
+            2,
+            13,
+            14,
+            16
+          ],
+          "texture": "#nest"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        3,
+        4
+      ],
+      "to": [
+        7,
+        6,
+        7
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            4,
+            4,
+            7,
+            7
+          ],
+          "texture": "#egg"
+        },
+        "east": {
+          "uv": [
+            4,
+            10,
+            7,
+            13
+          ],
+          "texture": "#egg"
+        },
+        "north": {
+          "uv": [
+            4,
+            10,
+            7,
+            13
+          ],
+          "texture": "#egg"
+        },
+        "south": {
+          "uv": [
+            4,
+            10,
+            7,
+            13
+          ],
+          "texture": "#egg"
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            7,
+            7
+          ],
+          "texture": "#egg"
+        },
+        "west": {
+          "uv": [
+            4,
+            10,
+            7,
+            13
+          ],
+          "texture": "#egg"
+        }
+      }
+    },
+    {
+      "from": [
+        9,
+        3,
+        5
+      ],
+      "to": [
+        12,
+        6,
+        8
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            9,
+            5,
+            12,
+            8
+          ],
+          "texture": "#egg"
+        },
+        "east": {
+          "uv": [
+            5,
+            10,
+            8,
+            13
+          ],
+          "texture": "#egg"
+        },
+        "north": {
+          "uv": [
+            9,
+            10,
+            12,
+            13
+          ],
+          "texture": "#egg"
+        },
+        "south": {
+          "uv": [
+            9,
+            10,
+            12,
+            13
+          ],
+          "texture": "#egg"
+        },
+        "up": {
+          "uv": [
+            9,
+            5,
+            12,
+            8
+          ],
+          "texture": "#egg"
+        },
+        "west": {
+          "uv": [
+            5,
+            10,
+            8,
+            13
+          ],
+          "texture": "#egg"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        3,
+        9
+      ],
+      "to": [
+        8,
+        6,
+        12
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            5,
+            9,
+            8,
+            12
+          ],
+          "texture": "#egg"
+        },
+        "east": {
+          "uv": [
+            9,
+            10,
+            12,
+            13
+          ],
+          "texture": "#egg"
+        },
+        "north": {
+          "uv": [
+            5,
+            10,
+            8,
+            13
+          ],
+          "texture": "#egg"
+        },
+        "south": {
+          "uv": [
+            5,
+            10,
+            8,
+            13
+          ],
+          "texture": "#egg"
+        },
+        "up": {
+          "uv": [
+            5,
+            9,
+            8,
+            12
+          ],
+          "texture": "#egg"
+        },
+        "west": {
+          "uv": [
+            9,
+            10,
+            12,
+            13
+          ],
+          "texture": "#egg"
+        }
+      }
+    }
+  ]
+}

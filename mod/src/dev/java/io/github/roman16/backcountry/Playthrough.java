@@ -75,7 +75,7 @@ final class Playthrough {
         SolarDataManager solar = SolarDataManager.get(level);
         int solarDay = solar.getSolarTermsDay();
         long time = level.getDayTime();
-        List<String> lines = new ArrayList<>(List.of("day,date,kg,bmi,energy,core_c,eaten_kcal,burned_kcal,conditions"));
+        List<String> lines = new ArrayList<>(List.of("day,date,kg,bmi,energy,spirits,core_c,eaten_kcal,burned_kcal,conditions"));
         String ended = "";
         try {
             for (int offset = 0; offset < days && ended.isEmpty(); offset++) {
@@ -97,8 +97,8 @@ final class Playthrough {
                         meal(player, kcal / 2);
                     }
                 }
-                lines.add(String.format(Locale.ROOT, "%d,%s,%.2f,%.2f,%.2f,%.2f,%.0f,%.0f,%s", day + 1, Calendar.dateText(day), body.weightKg, body.bmi(), body.energy,
-                        body.coreC, body.kcalEatenToday, body.kcalBurnedToday, String.join(" ", Metabolism.shown(body).stream().map(condition -> condition.id()).toList())));
+                lines.add(String.format(Locale.ROOT, "%d,%s,%.2f,%.2f,%.2f,%.2f,%.2f,%.0f,%.0f,%s", day + 1, Calendar.dateText(day), body.weightKg, body.bmi(), body.energy,
+                        body.spirits, body.coreC, body.kcalEatenToday, body.kcalBurnedToday, String.join(" ", Metabolism.shown(body).stream().map(condition -> condition.id()).toList())));
             }
         } finally {
             solar.setSolarTermsDay(solarDay);

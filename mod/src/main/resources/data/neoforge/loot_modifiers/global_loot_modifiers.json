@@ -1,9 +1,12 @@
 {
   "replace": false,
   "entries": [
+    "backcountry:clams",
     "backcountry:cut",
     "backcountry:light",
     "backcountry:plant_fibre",
-    "backcountry:spruce_needles"
+    "backcountry:raw_iron",
+    "backcountry:spruce_needles",
+    "backcountry:spruce_roots"
   ]
 }

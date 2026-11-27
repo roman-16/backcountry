@@ -3,6 +3,7 @@ package io.github.roman16.backcountry.client;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.food.Fish;
 import io.github.roman16.backcountry.body.Calendar;
+import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.net.Messages;
 import io.github.roman16.backcountry.survivor.Summary;
 import java.util.ArrayList;
@@ -133,9 +134,9 @@ public class SummaryScreen extends Screen {
     }
 
     private void stats(GuiGraphics graphics, int x, int y) {
-        y = stat(graphics, x, y, new ItemStack(Items.CLOCK),
+        y = stat(graphics, x, y, new ItemStack(Things.SATELLITE_MESSENGER.get()),
                 Component.translatable(summary.days() == 1 ? "summary.backcountry.day_count_one" : "summary.backcountry.day_count", summary.days()));
-        y = stat(graphics, x, y, new ItemStack(Items.BREAD), Component.translatable("summary.backcountry.kcal", Words.kcal(summary.kcal())));
+        y = stat(graphics, x, y, new ItemStack(Things.PILOT_BREAD.get()), Component.translatable("summary.backcountry.kcal", Words.kcal(summary.kcal())));
         if (summary.animals().isEmpty()) {
             stat(graphics, x, y, new ItemStack(Items.BONE), Component.translatable("summary.backcountry.no_animals"));
             return;

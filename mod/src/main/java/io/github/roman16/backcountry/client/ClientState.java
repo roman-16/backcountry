@@ -2,17 +2,20 @@ package io.github.roman16.backcountry.client;
 
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.body.BodyView;
+import io.github.roman16.backcountry.guide.FieldNotes;
 import io.github.roman16.backcountry.guide.GuideView;
 import io.github.roman16.backcountry.survivor.Summary;
 import io.github.roman16.backcountry.weather.Weather;
 import io.github.roman16.backcountry.weather.WeatherView;
 import java.util.List;
+import java.util.Map;
 import org.jetbrains.annotations.Nullable;
 
 public final class ClientState {
     public static BodyView view = BodyView.NONE;
     public static WeatherView weather = WeatherView.NONE;
     public static GuideView guide = GuideView.NONE;
+    public static Map<String, FieldNotes.Note> notes = Map.of();
     static boolean viewed;
     @Nullable
     static Summary ended;
@@ -29,6 +32,10 @@ public final class ClientState {
 
     public static boolean stomachEmpty() {
         return view != BodyView.NONE && view.stomach() <= 0;
+    }
+
+    public static boolean noted(String id) {
+        return notes.containsKey(id);
     }
 
     static boolean unread() {
@@ -50,6 +57,7 @@ public final class ClientState {
         view = BodyView.NONE;
         weather = WeatherView.NONE;
         guide = GuideView.NONE;
+        notes = Map.of();
         Weather.unshare();
         viewed = false;
         ended = null;

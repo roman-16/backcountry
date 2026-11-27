@@ -1,9 +1,12 @@
 package io.github.roman16.backcountry;
 
 import com.mojang.authlib.GameProfile;
+import io.github.roman16.backcountry.body.Metabolism;
+import io.github.roman16.backcountry.survivor.Arrival;
+import io.github.roman16.backcountry.survivor.Kit;
 import io.netty.channel.embedded.EmbeddedChannel;
-import net.minecraft.core.UUIDUtil;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.chat.Component;
@@ -35,6 +38,9 @@ final class Pretend {
         new EmbeddedChannel(connection);
         NetworkRegistry.configureMockConnection(connection);
         server.getPlayerList().placeNewPlayer(connection, player, new CommonListenerCookie(profile, 0, ClientInformation.createDefault(), false, ConnectionType.NEOFORGE));
+        if (!Metabolism.body(player).arrived) {
+            Arrival.arrive(player, Kit.CHOSEN);
+        }
         source.sendSuccess(() -> Component.literal("%s is online at %.1f %.1f %.1f".formatted(name, player.getX(), player.getY(), player.getZ())), false);
         return 1;
     }

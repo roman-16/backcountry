@@ -4,7 +4,7 @@ What Backcountry is, decided before anything is built. Each document keeps its *
 
 ## Now
 
-**M1 Repo, tooling, world** to **M19 Reading the land** are built, M1 to M12 balanced by automated playthroughs (`playthrough` skill) and by the team's plays on the server, which set walking by distance, water by its source and from food, the Camp Pot's size, wary wolves, hypothermia apart from frostbite, the meat of every animal and the berries' season. The rest of the `playtest` skill's rows wait for the next play. M16's title panorama waits until the island's terrain is settled.
+**M1 Repo, tooling, world** to **M19 Reading the land** are built, M1 to M12 balanced by automated playthroughs (`playthrough` skill) and by the team's plays on the server, which set walking by distance, water by its source and from food, the Camp Pot's size, wary wolves, hypothermia apart from frostbite, the meat of every animal and the berries' season. **M20 What the island gives** to **M26 Island life** are built and wait for the next play and a year's playthrough for the fat, spirits and kit numbers. The rest of the `playtest` skill's rows wait for the next play. M16's title panorama waits until the island's terrain is settled.
 
 ## Milestones
 
@@ -31,6 +31,13 @@ Each milestone ends playable, with `just lint` and `just test` green.
 | M17 Binoculars | The Binoculars in the kit, worn in the neck slot above the pack and looked through with C or in hand at 8× (`systems.md` S1, S8, S10, `interface.md` I8) |
 | M18 The team's positions | The Messenger shares each teammate's position on the locator bar at the top of the screen (`systems.md` S4, `interface.md` I1) |
 | M19 Reading the land | Sign: prints and droppings that age, back-trails behind placed big game; scent on the wind with Plant Fibre to read it; hare runs for snares; the Messenger's Guide and the why said at the moment; offal cooked and moose-head soup; the 4 L Camp Pot boiling by the fire's heat (`systems.md` S1, S4, S7, S8, S9, S11, `interface.md` I1, I2, I3) |
+| M20 What the island gives | The safety gear and ten items of the survivor's choosing on arrival; iron dug from gravel with a shovel; farming, sugar cane, paper and books, the compass, the clock and vanilla's maps, gold and leather cut; the worn slots, back, neck and hands, in Curios' panel; the pack's own JEI pages for every way the island gives things (`systems.md` S1, S6, S7, S10, S12, `interface.md` I8, I9, `world.md` W3) |
+| M21 Rooms and fire | Sealed rooms that hold their heat, the smoke hole, the Stone Fireplace and Chimney, the snow shelter and the root cellar (`systems.md` S5, S6, `interface.md` I2, I4) |
+| M22 Fat and preserving | Rabbit starvation and the animals' fat by season; pemmican, akutaq and bone marrow; the Drying Rack; sea salt and salting (`systems.md` S1, S7) |
+| M23 Spirits | Spirits that rise and fall with the day's comforts and hardships, a body line when high or low, the Messenger's meter and the SOS glow at the bottom (`systems.md` S1, S4, `interface.md` I1, I2) |
+| M24 Raiders and winter dangers | Bears and wolverines at ground caches and the tall cache, moose charges, thin ice, overflow and breakup, numb hands and mittens, snow off the spruce, the Fur Parka and the Fur Hat (`systems.md` S1, S5, S6, S7, S8, S9) |
+| M25 Field notes and maps | The Messenger's Year and Notes pages, names unknown until noted, the Birch-Bark Map, blazes and cairns (`systems.md` S4, S13, `interface.md` I1, I2, I10) |
+| M26 Island life | Goats, marmots, foxes, coyotes, songbirds and crows, whales and porcupines; driftwood, clams, mussels and goose nests on the coast; the tinder fungus, spruce pitch with its salve, tinder and torch; the Birch-Bark Canoe; the Fish Wheel; the caribou and geese migrations and the hare cycle; the Homestead chapter and the Guide's new topics (`systems.md` S6, S7, S8, S9, S11, `world.md` W6) |
 
 ## Documents
 

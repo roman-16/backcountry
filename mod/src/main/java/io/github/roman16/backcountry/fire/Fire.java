@@ -3,21 +3,30 @@ package io.github.roman16.backcountry.fire;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.body.Calendar;
+import io.github.roman16.backcountry.body.Climate;
 import io.github.roman16.backcountry.gear.CampPotEntity;
 import io.github.roman16.backcountry.mixin.CampfireCookingAccessor;
+import io.github.roman16.backcountry.weather.Day;
+import io.github.roman16.backcountry.weather.Weather;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,6 +38,7 @@ public final class Fire implements INBTSerializable<CompoundTag> {
     private static final double TICKS_AN_HOUR = 1000;
     private static final int SPARK_TRIES = 16;
     private static final double SPENT = 1e-6;
+    private static final int SMOTHER_HEARD = 16;
 
     public final NonNullList<ItemStack> queue = NonNullList.withSize(QUEUE, ItemStack.EMPTY);
     public Setting setting = Setting.STEADY;
@@ -37,6 +47,7 @@ public final class Fire implements INBTSerializable<CompoundTag> {
     private double coalHours;
     private long clock;
     private boolean awake;
+    private boolean hearth;
 
     public enum Setting {
         LOW,
@@ -190,7 +201,29 @@ public final class Fire implements INBTSerializable<CompoundTag> {
     }
 
     private double rate(boolean wet) {
-        return setting.burn() * (wet ? Balance.get().fire().rainBurn() : 1);
+        return setting.burn() * (wet ? Balance.get().fire().rainBurn() : 1) * (hearth ? Balance.get().fire().fireplaceBurn() : 1);
+    }
+
+    public static boolean underSnowyBranches(Level level, BlockPos pos) {
+        int day = Calendar.day(level);
+        boolean snowed = snowed(level, Weather.day(level, day), true) || snowed(level, Weather.day(level, day - 1), false);
+        if (!snowed || Climate.airC(level, pos, day) > Balance.get().weather().snowBelowC()) {
+            return false;
+        }
+        for (int up = 1; up <= Balance.get().fire().branchBlocks(); up++) {
+            BlockState above = level.getBlockState(pos.above(up));
+            if (above.is(Blocks.SPRUCE_LEAVES)) {
+                return true;
+            }
+            if (!above.isAir()) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private static boolean snowed(Level level, Day weather, boolean today) {
+        return weather.wet() && (!today || Climate.hour(level) >= weather.fromHour());
     }
 
     public static boolean rainedOn(Level level, BlockPos pos) {
@@ -200,6 +233,7 @@ public final class Fire implements INBTSerializable<CompoundTag> {
 
     public static void tick(Level level, BlockPos pos, BlockState state, CampfireBlockEntity campfire) {
         Fire fire = of(campfire);
+        fire.hearth = state.is(Things.STONE_FIREPLACE.get());
         long now = level.getDayTime();
         if (!fire.awake) {
             fire.awake = true;
@@ -225,6 +259,15 @@ public final class Fire implements INBTSerializable<CompoundTag> {
         }
         if (fire.packed()) {
             spark(level, pos, hours);
+        }
+        if (fire.lit() && underSnowyBranches(level, pos) && level.random.nextDouble() < hours * Balance.get().fire().smotherPerHour()) {
+            fire.putOut();
+            level.playSound(null, pos, SoundEvents.SNOW_BREAK, SoundSource.BLOCKS, 1, 0.8F);
+            for (Player player : level.players()) {
+                if (player.distanceToSqr(pos.getCenter()) <= SMOTHER_HEARD * SMOTHER_HEARD) {
+                    player.displayClientMessage(Component.translatable("message.backcountry.smothered"), true);
+                }
+            }
         }
         show(level, pos, state, fire);
         campfire.setChanged();

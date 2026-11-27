@@ -45,6 +45,10 @@ public final class Calendar {
         return start.plusDays((long) Math.floor((dayOfYear(day) - 1) * (double) DAYS_A_YEAR / year.days()));
     }
 
+    public static boolean monthBegins(int day, int month) {
+        return date(day).getMonthValue() == month && date(day - 1).getMonthValue() != month;
+    }
+
     public static String dateText(int day) {
         LocalDate date = date(day);
         return date.getDayOfMonth() + " " + date.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);

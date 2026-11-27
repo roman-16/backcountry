@@ -3,6 +3,7 @@ package io.github.roman16.backcountry.trap;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Calendar;
+import io.github.roman16.backcountry.food.Fish;
 import io.github.roman16.backcountry.food.Seasons;
 import io.github.roman16.backcountry.hunt.Animal;
 import io.github.roman16.backcountry.hunt.Track;
@@ -12,15 +13,12 @@ import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,15 +27,12 @@ public final class TrapEntity extends BlockEntity {
     private static final int STEP_TICKS = 20;
     private static final double TICKS_AN_HOUR = 1000;
     private static final double HOURS_A_DAY = 24;
-    private static final List<Catch> FISH = List.of(new Catch("grayling", 200, 1200), new Catch("northern_pike", 800, 6000), new Catch("lake_trout", 1000, 8000),
-            new Catch("char", 500, 3000), new Catch("burbot", 500, 3000), new Catch("whitefish", 400, 2000), new Catch("sockeye_salmon", 1500, 4000),
-            new Catch("coho_salmon", 2000, 5000), new Catch("pink_salmon", 1200, 2500));
+    private static final List<Fish.Catch> FISH = List.of(Fish.GRAYLING, new Fish.Catch("northern_pike", 800, 6000), new Fish.Catch("lake_trout", 1000, 8000),
+            new Fish.Catch("char", 500, 3000), new Fish.Catch("burbot", 500, 3000), Fish.WHITEFISH, Fish.SOCKEYE, Fish.COHO, Fish.PINK);
     private ItemStack caught = ItemStack.EMPTY;
     private ItemStack bait = ItemStack.EMPTY;
     private long clock;
     private boolean awake;
-
-    private record Catch(String species, int fromG, int toG) {}
 
     public TrapEntity(BlockPos pos, BlockState state) {
         super(Things.TRAP_ENTITY.get(), pos, state);
@@ -125,17 +120,7 @@ public final class TrapEntity extends BlockEntity {
     }
 
     private static ItemStack fish(ServerLevel level) {
-        Catch kind = FISH.get(level.random.nextInt(FISH.size()));
-        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("riverfishing", kind.species()));
-        ItemStack fish = new ItemStack(item);
-        int grams = kind.fromG() + level.random.nextInt(kind.toG() - kind.fromG() + 1);
-        CompoundTag data = new CompoundTag();
-        data.putString("Species", "riverfishing:" + kind.species());
-        data.putInt("WeightG", grams);
-        data.putInt("LengthCm", (int) Math.round(Math.cbrt(grams) * 4));
-        data.putBoolean("Legal", true);
-        fish.set(DataComponents.CUSTOM_DATA, CustomData.of(data));
-        return fish;
+        return FISH.get(level.random.nextInt(FISH.size())).stack(level.random);
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, TrapEntity trap) {

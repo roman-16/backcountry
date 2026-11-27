@@ -376,6 +376,195 @@ rows = [
   "................",
 ]
 
+[items.belt_knife]
+palette = { a = "1e1a16", b = "3a3028", c = "54463a", d = "6e5c4c", k = "0e0e0e", f = "222020", F = "3d3c3c", g = "565656", G = "7f7f7f", H = "c4c4c4", t = "5e5e5e", T = "9a9a9a" }
+rows = [
+  "................",
+  "................",
+  "............kk..",
+  "...........kHGk.",
+  "..........kHGfk.",
+  ".........kHGFk..",
+  "........kHGFk...",
+  ".......kHGFk....",
+  "......kGgfk.....",
+  ".....tTkkk......",
+  "....TtTt........",
+  "...acTt.........",
+  "..adca..........",
+  ".adca...........",
+  ".aca............",
+  "..a.............",
+]
+
+[items.ferro_rod]
+palette = { k = "141414", G = "707070", g = "3c3c3c", d = "3a2410", c = "a8763e", b = "7a5226", s = "c8b48a" }
+rows = [
+  "................",
+  "................",
+  "...........kk...",
+  "..........kGgk..",
+  ".........kGgk...",
+  "........kGgk....",
+  ".......kGgk.....",
+  "......kGgk......",
+  ".....kGgk.......",
+  "....dkkk........",
+  "...dcbd.........",
+  "..dcbd..........",
+  ".dcbd...........",
+  ".dbd.s..........",
+  "..ds.s..........",
+  "....s...........",
+]
+
+[items.sharpening_stone]
+palette = { o = "2e2e34", H = "a8a8b0", G = "84848c", g = "62626a", d = "48484e" }
+rows = [
+  "................",
+  "................",
+  "................",
+  "................",
+  "................",
+  "......oooooooo..",
+  ".....oHHHHHHGo..",
+  "....oHGGGGGGgo..",
+  "...oHGGGGGGgdo..",
+  "..oHGGGGGGgddo..",
+  "..oggggggggddo..",
+  "..oddddddddddo..",
+  "..oddddddddo....",
+  "...oooooooo.....",
+  "................",
+  "................",
+]
+
+[items.sleeping_pad]
+palette = { o = "1c2a44", L = "7aa2e0", B = "4a74c0", D = "33549a", s = "2a2a2a", S = "5a5a5a" }
+rows = [
+  "................",
+  "................",
+  "................",
+  "................",
+  "....oooooooooo..",
+  "...oLLLLLLLLLLo.",
+  "..oLoooLBSBBSBo.",
+  "..oLoLoLBSBBSBo.",
+  "..oLoooLBSBBSBo.",
+  "..oBLLLBDsDDsDo.",
+  "...oDDDDDsDDsDo.",
+  "....oooooooooo..",
+  "................",
+  "................",
+  "................",
+  "................",
+]
+
+[items.hide_mittens]
+palette = { o = "4a2e16", L = "d8b48a", M = "c09668", d = "8e6a44", C = "a07850", c = "806040" }
+rows = [
+  "................",
+  "................",
+  ".....oooo.......",
+  "....oLLLMo......",
+  "....oLMMMo.oo...",
+  "....oLMMMooLMo..",
+  "....oLMMMoLMMo..",
+  "....oLMMMMMMdo..",
+  "....oLMMMMMMdo..",
+  "....oLMMMMMddo..",
+  ".....oMMMMMdo...",
+  "....oCCCCCCCo...",
+  "....oCcccccCo...",
+  "....ooooooooo...",
+  "................",
+  "................",
+]
+
+[items.fur_mittens]
+palette = { o = "4a1e0a", L = "e2853c", M = "c8642a", d = "8e3e16", C = "f4f0e8", c = "d0c8bc" }
+rows = [
+  "................",
+  "................",
+  ".....oooo.......",
+  "....oLLLMo......",
+  "....oLMMMo.oo...",
+  "....oLMMMooLMo..",
+  "....oLMMMoLMMo..",
+  "....oLMMMMMMdo..",
+  "....oLMMMMMMdo..",
+  "....oLMMMMMddo..",
+  ".....oMMMMMdo...",
+  "....oCCCCCCCo...",
+  "....oCcccccCo...",
+  "....ooooooooo...",
+  "................",
+  "................",
+]
+
+[items.salt]
+palette = { o = "8a8a92", w = "ffffff", l = "e6e6ec", g = "c4c4cc" }
+rows = [
+  "................",
+  "................",
+  "................",
+  "................",
+  "................",
+  "................",
+  ".......oo.......",
+  "......owlo......",
+  ".....owllgo.....",
+  "....owlwlggo....",
+  "...owllglwggo...",
+  "..owlwlggllggo..",
+  "..oggggggggggo..",
+  "...oooooooooo...",
+  "................",
+  "................",
+]
+
+[items.bone_marrow]
+palette = { o = "6e6656", w = "f4f0e2", l = "dcd6c4", g = "b8b0a0", m = "e8b060", M = "c48a40", r = "d07a6a" }
+rows = [
+  "................",
+  "................",
+  "..........ooo...",
+  ".........owwlo..",
+  "........owmMlo..",
+  ".......owmrMo...",
+  "......owlmMo....",
+  ".....owlgoo.....",
+  "....owlgo.......",
+  "...owlgo........",
+  "..owlgo.........",
+  ".owwlgo.........",
+  ".olllgo.........",
+  "..oggo..........",
+  "...oo...........",
+  "................",
+]
+
+[blocks.fish_wheel]
+palette = { a = "3a2a14", d = "5a4020", n = "c8c0a8", w = "8a6a3c" }
+rows = [
+  ".....dddddd.....",
+  "...dd..ww..dd...",
+  "..dn...ww...nd..",
+  ".dnnw..ww..wnnd.",
+  ".d..w..ww..w..d.",
+  "d....w.ww.w....d",
+  "d.....wwww.....d",
+  "dwwwwwwaawwwwwwd",
+  "dwwwwwwaawwwwwwd",
+  "d.....wwww.....d",
+  "d....w.ww.w....d",
+  ".d..w..ww..w..d.",
+  ".dnnw..ww..wnnd.",
+  "..dn...ww...nd..",
+  "...dd..ww..dd...",
+  ".....dddddd.....",
+]
+
 [blocks.supply_crate_side]
 palette = { f = "4d3a1e", F = "67502c", a = "7e6237", b = "967441", c = "9f844d", d = "af8f55", e = "b8945f", n = "5a5a5a", r = "b02a28", R = "6e1a18" }
 rows = [
@@ -767,6 +956,18 @@ rows = [".....bbb.", "....bwwb.", "...bwbbb.", "..bwb....", ".bwb.bbb.", ".bwbbw
 palette = { b = "000000", o = "f0a030", O = "c07010", w = "ffe0a0" }
 rows = [".........", "...bbb...", "..booob..", ".bowowOb.", ".booooOb.", ".bowowOb.", "..bOOOb..", "...bbb...", "........."]
 
+[hud.rabbit_starvation]
+palette = { b = "000000", w = "e8e2d4", g = "b0a894", p = "e8a0a8" }
+rows = ["..b...b..", ".bwb.bwb.", ".bpb.bpb.", ".bwbbbwb.", "..bwwwb..", ".bwbwbwb.", ".bwwwwwb.", "..bgwgb..", "...bbb..."]
+
+[hud.shellfish_poisoning]
+palette = { b = "000000", s = "4a5a78", l = "7a8cb0", g = "8ad04a" }
+rows = [".........", "..bbbbb..", ".bllllsb.", "bllslssgb", "blsllssgb", "bsslsssb.", ".bsssssb.", "..bbbbb..", "........."]
+
+[hud.numb_hands]
+palette = { b = "000000", w = "dceaf4", c = "9fc8e8", d = "6a9ac4" }
+rows = ["...bbb...", "..bwcwb..", "..bwcwbb.", "..bwccbwb", "..bwcccwb", "..bwcccb.", "...bwcdb.", "...bbbbb.", "........."]
+
 [hud.clear]
 palette = { b = "000000", w = "fff3a0", y = "ffd23f", o = "e09a1a" }
 rows = ["....o....", ".o.bbb.o.", "..bwyyb..", ".bwyyyob.", "obyyyyobo", ".byyyoob.", "..booob..", ".o.bbb.o.", "....o...."]
@@ -774,6 +975,14 @@ rows = ["....o....", ".o.bbb.o.", "..bwyyb..", ".bwyyyob.", "obyyyyobo", ".byyyo
 [hud.partly_cloudy]
 palette = { b = "000000", w = "fff3a0", y = "ffd23f", o = "e09a1a", c = "f4f4f4", g = "b8c0c8", G = "8a949e" }
 rows = [".bbb.o...", "bwyyb.o..", "byybbb...", "bybcccbb.", ".bccccccb", "bccccccgb", "bcccccggb", "bggggggGb", ".bbbbbbb."]
+
+[hud.spirits_high]
+palette = { b = "000000", w = "fff3a0", y = "ffd23f", o = "e09a1a" }
+rows = ["....o....", ".o.....o.", "...bbb...", "..bwyyb..", "o.byyob.o", "..byoob..", "...bbb...", ".o.....o.", "....o...."]
+
+[hud.spirits_low]
+palette = { b = "000000", c = "b8c0c8", g = "8a949e", G = "5e6670", d = "5a8ad8" }
+rows = [".........", "...bbb...", "..bcccbb.", ".bccccccb", "bcccccggb", "bggggggGb", ".bbbbbbb.", "..d..d...", ".d..d...."]
 
 [hud.cloudy]
 palette = { b = "000000", c = "f4f4f4", g = "b8c0c8", G = "8a949e" }
@@ -810,6 +1019,14 @@ rows = ["....b....", "...bab...", "...bab...", "..bakab..", "..bakAb..", ".baaka
 [hud.guide]
 palette = { b = "3a2410", c = "8a5a36", C = "c8a070", p = "e8e4d8" }
 rows = [".bbbbbbb.", "bcccccccb", "bcCCCCccb", "bcccccccb", "bcCCCcccb", "bcccccccb", "bcccccccb", "bpppppppb", ".bbbbbbb."]
+
+[hud.notes]
+palette = { b = "14280e", c = "3c7a2c", C = "1e4a14", p = "e8e4d8" }
+rows = [".bbbbbbb.", "bccccCccb", "bccccCccb", "bcppppCcb", "bccccCccb", "bccccCccb", "bccccCccb", "bpppppppb", ".bbbbbbb."]
+
+[hud.year]
+palette = { b = "000000", y = "ffd23f", w = "bfe4ff", k = "3a3a3a" }
+rows = ["..bbbbb..", ".byyywwb.", "byyykwwwb", "byyykwwwb", "byyykwwwb", "byyyywwwb", "byyyywwwb", ".byyywwb.", "..bbbbb.."]
 
 [hud.tasks]
 palette = { b = "000000", p = "e8e4d8", P = "bdb8a8", l = "7a7568", g = "3c9c2c" }
@@ -877,6 +1094,27 @@ rows = [
   ".o....o..o....o.",
   ".o....o..o....o.",
   ".oooooo..oooooo.",
+  "................",
+  "................",
+]
+
+[slots.hands]
+palette = { o = "555555" }
+rows = [
+  "................",
+  "................",
+  ".....oooo.......",
+  "....o....o......",
+  "....o....o.oo...",
+  "....o....oo..o..",
+  "....o.........o.",
+  "....o........o..",
+  "....o.......o...",
+  "....o.......o...",
+  ".....o.....o....",
+  "....oooooooo....",
+  "....o......o....",
+  "....oooooooo....",
   "................",
   "................",
 ]
@@ -949,6 +1187,134 @@ rows = [
   "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
   "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
 ]
+
+[recoloured.bow_saw]
+base = "item/bow"
+kind = "item"
+colours = { "493615" = "6a2208", "281e0b" = "3e1204", "896727" = "f07a32", "684e1e" = "c44e14", "444444" = "9a9a9a", "6b6b6b" = "b0b0b0", "969696" = "d8d8d8" }
+
+[tinted.tarp]
+base = "block/white_wool"
+kind = "block"
+colour = "2e3818,7a8a48"
+
+[recoloured.akutaq]
+base = "item/beetroot_soup"
+kind = "item"
+colours = { "b82a30" = "f4dce2", "84160d" = "dcb0bc", "6d1615" = "b8808f" }
+
+[tinted.blaze]
+base = "block/stripped_spruce_log"
+kind = "block"
+colour = "8a6a3c,f0dcb0"
+
+[tinted.blaze_pitch]
+base = "block/stripped_spruce_log"
+kind = "block"
+colour = "8a4a10,f8b040"
+
+[tinted.spruce_pitch]
+base = "item/honeycomb"
+colour = "6a3a08,e8a030"
+
+[tinted.bark_map]
+base = "item/map"
+colour = "5a5048,f4ecdc"
+
+[tinted.driftwood]
+base = "block/stripped_oak_log"
+kind = "block"
+colour = "6e6a64,d8d4cc"
+
+[tinted.driftwood_top]
+base = "block/stripped_oak_log_top"
+kind = "block"
+colour = "6e6a64,d8d4cc"
+
+[tinted.mussel_bed]
+base = "block/gravel"
+kind = "block"
+colour = "141824,4a5a78"
+
+[tinted.goose_nest]
+base = "block/hay_block_side"
+kind = "block"
+colour = "4a3a20,b09a60"
+
+[tinted.goose_egg_shell]
+base = "block/turtle_egg"
+kind = "block"
+colour = "a8a49c,f4f2ec"
+
+[tinted.clams]
+base = "item/nautilus_shell"
+colour = "6a5a48,e0d4c0"
+
+[tinted.cooked_clams]
+base = "item/nautilus_shell"
+colour = "7a5a38,f0d8a8"
+
+[tinted.mussels]
+base = "item/nautilus_shell"
+colour = "101424,5a6a90"
+
+[tinted.cooked_mussels]
+base = "item/nautilus_shell"
+colour = "201010,e09060"
+
+[tinted.goose_egg]
+base = "item/egg"
+colour = "a8a49c,f8f6f0"
+
+[tinted.cooked_goose_egg]
+base = "item/egg"
+colour = "b08040,f8e8c0"
+
+[tinted.pitch_salve]
+base = "item/slime_ball"
+colour = "5a3a10,e0b060"
+
+[tinted.pitch_tinder]
+base = "item/wheat"
+colour = "4a2a08,d89a40"
+
+[tinted.smouldering_fungus]
+base = "block/brown_mushroom"
+colour = "301008,ff8030"
+
+[tinted.canoe]
+base = "item/birch_boat"
+colour = "3a3028,f0ece0"
+
+[tinted.spruce_roots]
+base = "item/string"
+colour = "3a2410,9a6a3a"
+
+[tinted.thin_ice]
+base = "block/ice"
+kind = "block"
+colour = "8eb4e0,e8f4ff"
+
+[tinted.overflow]
+base = "block/ice"
+kind = "block"
+colour = "3a5a7a,9ab8c8"
+
+[tinted.fur_parka]
+base = "item/leather_chestplate"
+colour = "7a5432"
+
+[tinted.fur_hat]
+base = "item/leather_helmet"
+colour = "c06a2e"
+
+[tinted.fox_pelt]
+base = "item/rabbit_hide"
+colour = "d0742c"
+
+[tinted.wolverine_pelt]
+base = "item/rabbit_hide"
+colour = "4a3424"
 
 [tinted.hide_hat]
 base = "item/leather_helmet"
@@ -1082,6 +1448,9 @@ colour = "2a1a0a,a07848"
 base = "item/spider_eye"
 colour = "101008,5a5a20"
 
+[armour.fur]
+colour = "6e4a2a"
+
 [armour.hide]
 colour = "8a5a36"
 
@@ -1097,6 +1466,10 @@ path = "textures/entity/boat/bamboo.png"
 base = "item/bamboo_raft"
 colour = "2a1a0a,a07848"
 path = "textures/item/bamboo_raft.png"
+
+[entities.canoe]
+base = "entity/boat/birch"
+colour = "3a3028,f0ece0"
 
 [entities.grouse]
 base = "entity/chicken"

@@ -70,6 +70,10 @@ public final class Cuts {
         return SPEC.fish().contains(species.getPath());
     }
 
+    public static List<ItemStack> fish() {
+        return SPEC.fish().stream().sorted().map(name -> new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(Fish.MOD, name)))).toList();
+    }
+
     public static synchronized Set<Item> items() {
         if (items == null) {
             Set<Item> listed = new HashSet<>();

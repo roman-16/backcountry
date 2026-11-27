@@ -46,10 +46,8 @@ absent_creatures = [
   "minecraft:frogspawn",
   "minecraft:glow_ink_sac",
   "minecraft:glow_item_frame",
-  "minecraft:goat_horn",
   "minecraft:gunpowder",
   "minecraft:ink_sac",
-  "minecraft:milk_bucket",
   "minecraft:mutton",
   "minecraft:ochre_froglight",
   "minecraft:pearlescent_froglight",
@@ -198,6 +196,26 @@ end = [
   "minecraft:white_shulker_box",
   "minecraft:yellow_shulker_box",
 ]
+farming = [
+  "fowlplay:scarecrow",
+  "minecraft:baked_potato",
+  "minecraft:beetroot",
+  "minecraft:beetroot_seeds",
+  "minecraft:beetroot_soup",
+  "minecraft:bread",
+  "minecraft:carrot",
+  "minecraft:composter",
+  "minecraft:hay_block",
+  "minecraft:iron_hoe",
+  "minecraft:poisonous_potato",
+  "minecraft:potato",
+  "minecraft:stone_hoe",
+  "minecraft:wheat",
+  "minecraft:wheat_seeds",
+  "riverfishing:bread",
+  "riverfishing:dough",
+  "riverfishing:groundbait_powder",
+]
 fire = [
   "minecraft:arrow",
   "minecraft:campfire",
@@ -276,6 +294,22 @@ gear = [
   "minecraft:wooden_shovel",
   "minecraft:wooden_sword",
 ]
+goats = ["minecraft:goat_horn", "minecraft:milk_bucket"]
+gold = [
+  "minecraft:gold_block",
+  "minecraft:gold_ingot",
+  "minecraft:gold_nugget",
+  "minecraft:raw_gold",
+  "minecraft:raw_gold_block",
+  "projectvibrantjourneys:gilded_gravel",
+]
+leather = [
+  "minecraft:leather",
+  "minecraft:leather_boots",
+  "minecraft:leather_chestplate",
+  "minecraft:leather_helmet",
+  "minecraft:leather_leggings",
+]
 machines = [
   "minecraft:activator_rail",
   "minecraft:chest_minecart",
@@ -341,6 +375,13 @@ magic_food = [
   "minecraft:splash_potion",
   "minecraft:suspicious_stew",
   "minecraft:totem_of_undying",
+]
+navigation = [
+  "minecraft:cartography_table",
+  "minecraft:clock",
+  "minecraft:compass",
+  "minecraft:filled_map",
+  "minecraft:map",
 ]
 nether = [
   "minecraft:ancient_debris",
@@ -736,6 +777,7 @@ ores = [
   "minecraft:infested_mossy_stone_bricks",
   "minecraft:infested_stone",
   "minecraft:infested_stone_bricks",
+  "minecraft:iron_ore",
   "minecraft:lightning_rod",
   "minecraft:oxidized_chiseled_copper",
   "minecraft:oxidized_copper",
@@ -793,6 +835,16 @@ ores = [
   "minecraft:weathered_cut_copper",
   "minecraft:weathered_cut_copper_slab",
   "minecraft:weathered_cut_copper_stairs",
+]
+paper = [
+  "minecraft:book",
+  "minecraft:bookshelf",
+  "minecraft:chiseled_bookshelf",
+  "minecraft:flower_banner_pattern",
+  "minecraft:lectern",
+  "minecraft:paper",
+  "minecraft:sugar",
+  "minecraft:sugar_cane",
 ]
 pumpkins = [
   "minecraft:carved_pumpkin",
@@ -880,6 +932,7 @@ structures = [
 ]
 tackle = [
   "riverfishing:bamboo_rod",
+  "riverfishing:bell_alarm",
   "riverfishing:boat_rod",
   "riverfishing:boilie",
   "riverfishing:bottom_rod",
@@ -983,12 +1036,12 @@ workshop = [
 
 [mods]
 alexsmobs = ["cooked_moose_ribs", "moose_ribs"]
+animalgarden_porcupine = []
 citadel = []
 cnc = [
   "cooked_game",
   "cooked_venison",
   "cooked_waterfowl",
-  "hunters_stew",
   "parcooked_game",
   "pemmican",
   "raw_game",

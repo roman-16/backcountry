@@ -1,9 +1,10 @@
 package io.github.roman16.backcountry.body;
 
 import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.gear.SupplyCrateBlock;
 import io.github.roman16.backcountry.hunt.Animal;
 import io.github.roman16.backcountry.hunt.Hunting;
-import io.github.roman16.backcountry.gear.SupplyCrateBlock;
+import io.github.roman16.backcountry.hunt.Migration;
 import io.github.roman16.backcountry.weather.Forecast;
 import io.github.roman16.backcountry.weather.Outlook;
 import io.github.roman16.backcountry.weather.Weather;
@@ -54,6 +55,12 @@ public final class Alerts {
         }
         if (Hunting.begins(day, Animal.Season.FEEDING)) {
             raised |= raise(body, Alert.BEARS_FEEDING, now);
+        }
+        if (Migration.caribouBegin(day)) {
+            raised |= raise(body, Alert.CARIBOU_MOVING, now);
+        }
+        if (Calendar.monthBegins(day, Balance.get().ice().breakupMonths().getFirst().intValue())) {
+            raised |= raise(body, Alert.BREAKUP, now);
         }
         if (weighed(body)) {
             body.alerts.put(Alert.WEIGHT_DROPPED, now);

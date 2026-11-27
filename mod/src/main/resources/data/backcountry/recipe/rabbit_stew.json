@@ -5,19 +5,8 @@
       "item": "minecraft:cooked_rabbit"
     },
     {
-      "item": "minecraft:carrot"
-    },
-    {
-      "item": "minecraft:baked_potato"
-    },
-    [
-      {
-        "item": "minecraft:brown_mushroom"
-      },
-      {
-        "item": "minecraft:red_mushroom"
-      }
-    ]
+      "item": "minecraft:brown_mushroom"
+    }
   ],
   "result": {
     "count": 1,

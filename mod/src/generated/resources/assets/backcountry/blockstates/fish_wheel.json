@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "axis=x,waterlogged=false": {
+      "model": "backcountry:block/fish_wheel"
+    },
+    "axis=x,waterlogged=true": {
+      "model": "backcountry:block/fish_wheel"
+    },
+    "axis=z,waterlogged=false": {
+      "model": "backcountry:block/fish_wheel",
+      "y": 90
+    },
+    "axis=z,waterlogged=true": {
+      "model": "backcountry:block/fish_wheel",
+      "y": 90
+    }
+  }
+}

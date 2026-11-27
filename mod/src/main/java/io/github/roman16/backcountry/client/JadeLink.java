@@ -7,12 +7,14 @@ import io.github.roman16.backcountry.gear.CampPotBlock;
 import io.github.roman16.backcountry.gear.CampPotEntity;
 import io.github.roman16.backcountry.gear.Water;
 import io.github.roman16.backcountry.gear.WaterVesselItem;
+import io.github.roman16.backcountry.guide.FieldNotes;
 import io.github.roman16.backcountry.hunt.CarcassBlock;
 import io.github.roman16.backcountry.hunt.CarcassEntity;
 import io.github.roman16.backcountry.hunt.TrackBlock;
 import io.github.roman16.backcountry.hunt.TrackEntity;
 import io.github.roman16.backcountry.hunt.Tracks;
 import java.util.List;
+import java.util.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -24,7 +26,9 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.jade.api.Accessor;
 import snownee.jade.api.BlockAccessor;
+import snownee.jade.api.EntityAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.IWailaClientRegistration;
@@ -34,6 +38,7 @@ import snownee.jade.api.JadeIds;
 import snownee.jade.api.WailaPlugin;
 import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.ui.IElement;
+import snownee.jade.api.ui.IElementHelper;
 
 @WailaPlugin
 public final class JadeLink implements IWailaPlugin {
@@ -66,7 +71,8 @@ public final class JadeLink implements IWailaPlugin {
         registration.addTooltipCollectedCallback(LAST, (box, accessor) -> {
             ITooltip tooltip = box.getTooltip();
             boolean named = !(accessor instanceof BlockAccessor block && (block.getBlock() instanceof TrackBlock || block.getBlock() instanceof LiquidBlock));
-            List<IElement> name = named ? List.copyOf(tooltip.get(JadeIds.CORE_OBJECT_NAME)) : List.of();
+            List<IElement> name = named ? unknown(accessor).<List<IElement>>map(unknown -> List.of(IElementHelper.get().text(unknown)))
+                    .orElseGet(() -> List.copyOf(tooltip.get(JadeIds.CORE_OBJECT_NAME))) : List.of();
             List<IElement> state = List.of(Inspect.POT, Inspect.CAMPFIRE, Inspect.SIGN, Inspect.CARCASS, Inspect.WATER_KIND).stream().flatMap(id -> tooltip.get(id).stream()).toList();
             List<IElement> mod = List.copyOf(tooltip.get(JadeIds.CORE_MOD_NAME));
             tooltip.clear();
@@ -75,6 +81,15 @@ public final class JadeLink implements IWailaPlugin {
             tooltip.add(mod);
             box.setIcon(null);
         });
+    }
+
+    private static Optional<Component> unknown(Accessor<?> accessor) {
+        Optional<String> subject = switch (accessor) {
+            case EntityAccessor entity -> Optional.of(FieldNotes.animal(entity.getEntity().getType())).filter(FieldNotes.catalogue()::contains);
+            case BlockAccessor block -> FieldNotes.plant(block.getBlock());
+            default -> Optional.empty();
+        };
+        return subject.filter(id -> !ClientState.noted(id)).map(FieldNotes::unknown);
     }
 
     private static void pot(ITooltip tooltip, BlockAccessor accessor, CompoundTag data) {
@@ -87,6 +102,11 @@ public final class JadeLink implements IWailaPlugin {
         boolean started = data.getBoolean(Inspect.STARTED);
         boolean lit = data.getBoolean(Inspect.LIT);
         boolean needles = data.getBoolean(Inspect.NEEDLES);
+        if (water.drink() == Water.Drink.SEA_WATER) {
+            tooltip.add(lit ? Component.translatable("jade.backcountry.pot.salt", left)
+                    : started ? Component.translatable("jade.backcountry.pot.fire_out", left) : WaterVesselItem.describe(water));
+            return;
+        }
         if (water.drink() == Water.Drink.BIRCH_SAP) {
             tooltip.add(lit ? Component.translatable("jade.backcountry.pot.syrup", left)
                     : started ? Component.translatable("jade.backcountry.pot.fire_out", left) : WaterVesselItem.describe(water));

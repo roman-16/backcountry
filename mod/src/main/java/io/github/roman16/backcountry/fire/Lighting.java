@@ -52,7 +52,7 @@ public final class Lighting {
             player.displayClientMessage(Component.translatable("message.backcountry.needs_kindling", Balance.get().fire().kindlingSticks()), true);
             return;
         }
-        Kindling.use(player);
+        Kindling.use(player, pos);
         ItemStack drill = player.getItemInHand(hand);
         drill.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
         level.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 0.5F, 1.2F);

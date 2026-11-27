@@ -10,8 +10,10 @@ public enum Deed {
     DRANK_BOILED,
     DRANK_TEA,
     DRESSED,
+    DRIED_FISH,
     FED_FIRE,
     FILLED_POT,
+    FISH_WHEEL_CATCH,
     HUNG_POT,
     KILLED_ANIMAL,
     LAID_WOODPILE,
@@ -19,8 +21,10 @@ public enum Deed {
     LIT_FIRE,
     READ_SIGN,
     SERVED_STEW,
+    SLEPT_IN_CABIN,
     SLEPT_ROOFED,
     STALKED,
+    SURVEYED,
     TIP_UP_CATCH,
     TRAP_CATCH
 }

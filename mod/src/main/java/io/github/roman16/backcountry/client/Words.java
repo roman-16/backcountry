@@ -1,7 +1,10 @@
 package io.github.roman16.backcountry.client;
 
+import io.github.roman16.backcountry.body.Spirits;
 import java.time.Month;
 import java.time.format.TextStyle;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import net.minecraft.network.chat.Component;
 
@@ -105,5 +108,21 @@ public final class Words {
 
     static Component trend(int trend) {
         return Component.translatable("messenger.backcountry.trend." + (trend < 0 ? "cooling" : trend > 0 ? "warming" : "steady"));
+    }
+
+    static Component spiritCauses(int causes) {
+        List<String> lifts = new ArrayList<>();
+        List<String> lowers = new ArrayList<>();
+        for (Spirits.Cause cause : Spirits.Cause.values()) {
+            if ((causes & cause.bit()) != 0) {
+                (cause.lifts ? lifts : lowers).add(Component.translatable("spirits.backcountry." + cause.id()).getString());
+            }
+        }
+        if (lifts.isEmpty() && lowers.isEmpty()) {
+            return Component.empty();
+        }
+        String up = lifts.isEmpty() ? "" : "+ " + String.join(", ", lifts);
+        String down = lowers.isEmpty() ? "" : "- " + String.join(", ", lowers);
+        return Component.literal(up.isEmpty() ? down : down.isEmpty() ? up : up + "   " + down);
     }
 }

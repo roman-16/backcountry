@@ -82,7 +82,7 @@ public final class Director {
         if (day - team.lastTaken(BuiltInRegistries.ENTITY_TYPE.getKey(type).toString()) < animal.restDays()) {
             return 0;
         }
-        double chance = animal.perDay() * director.checkSeconds() / SECONDS_A_DAY;
+        double chance = animal.perDay() * director.checkSeconds() / SECONDS_A_DAY * Migration.share(type, day);
         if (level.isRainingAt(player.blockPosition()) || level.isRaining()) {
             chance *= director.rainShare();
         }
@@ -108,7 +108,8 @@ public final class Director {
     public static List<Entity> spawn(ServerLevel level, ServerPlayer player, EntityType<?> type, Animal animal) {
         Balance.Director director = Balance.get().director();
         AABB around = player.getBoundingBox().inflate(director.countBlocks());
-        if (level.getEntities(type, around, Entity::isAlive).size() >= animal.cap()) {
+        int day = Calendar.day(level);
+        if (level.getEntities(type, around, Entity::isAlive).size() >= Migration.herd(type, day, animal.cap())) {
             return List.of();
         }
         Optional<BlockPos> spot = spot(level, player, type, animal);
@@ -116,7 +117,7 @@ public final class Director {
             return List.of();
         }
         List<Integer> group = animal.group();
-        int count = group.get(0) + level.random.nextInt(group.get(1) - group.get(0) + 1);
+        int count = Migration.herd(type, day, group.get(0) + level.random.nextInt(group.get(1) - group.get(0) + 1));
         List<Entity> spawned = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             BlockPos at = spot.get().offset(level.random.nextInt(3) - 1, 0, level.random.nextInt(3) - 1);
@@ -131,6 +132,9 @@ public final class Director {
                         Bears.fishing(bear, spot.get());
                     }
                     Bears.cubs(level, bear);
+                }
+                if (entity instanceof Mob moose && Moose.is(type)) {
+                    Moose.calves(level, moose);
                 }
                 spawned.add(entity);
             }

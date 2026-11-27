@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
 
 public record Animal(TagKey<Biome> habitat, List<Integer> months, List<Integer> group, double perDay, int cap, double kg, List<Double> vital, List<Cut> cuts,
-        boolean nearWater, boolean scavenger, Optional<Season> season, double restDays, Optional<Track> track, boolean scents) {
+        boolean nearWater, boolean scavenger, Optional<Season> season, double restDays, Optional<Track> track, boolean scents, List<Integer> fat) {
     private static final List<Integer> ALL_YEAR = List.of(1, 12);
     private static final List<Integer> ALONE = List.of(1, 1);
     private static final List<Double> CHEST = List.of(0.4, 0.8);
@@ -37,6 +37,8 @@ public record Animal(TagKey<Biome> habitat, List<Integer> months, List<Integer> 
         }
     }
 
+    private static final int MONTHS = 12;
+
     public static final Codec<Animal> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             TagKey.hashedCodec(Registries.BIOME).fieldOf("habitat").forGetter(Animal::habitat),
             Codec.INT.listOf().optionalFieldOf("months", ALL_YEAR).forGetter(Animal::months),
@@ -51,7 +53,16 @@ public record Animal(TagKey<Biome> habitat, List<Integer> months, List<Integer> 
             Season.CODEC.optionalFieldOf("season").forGetter(Animal::season),
             Codec.DOUBLE.optionalFieldOf("rest_days", 0.0).forGetter(Animal::restDays),
             Track.CODEC.optionalFieldOf("track").forGetter(Animal::track),
-            Codec.BOOL.optionalFieldOf("scents", false).forGetter(Animal::scents)).apply(instance, Animal::new));
+            Codec.BOOL.optionalFieldOf("scents", false).forGetter(Animal::scents),
+            Codec.INT.listOf().optionalFieldOf("fat", List.of()).forGetter(Animal::fat)).apply(instance, Animal::new));
+
+    public List<Cut> cutsIn(int month) {
+        if (fat.size() < MONTHS) {
+            return cuts;
+        }
+        int fatCount = fat.get(month - 1);
+        return cuts.stream().map(cut -> cut.item() == Things.ANIMAL_FAT.get() ? new Cut(cut.item(), fatCount) : cut).filter(cut -> cut.count() > 0).toList();
+    }
 
     public static Optional<Animal> of(EntityType<?> type) {
         return Optional.ofNullable(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(type).getData(Things.ANIMAL));

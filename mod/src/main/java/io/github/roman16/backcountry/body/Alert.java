@@ -12,6 +12,10 @@ public enum Alert {
     MICE_IN_CACHE(false),
     MOOSE_RUT(false),
     BEARS_FEEDING(false),
+    BEAR_AT_CACHE(false),
+    WOLVERINE_RAID(false),
+    CARIBOU_MOVING(false),
+    BREAKUP(false),
     BODY_WASTING(false);
 
     private final boolean daily;
@@ -25,7 +29,8 @@ public enum Alert {
     }
 
     public boolean dayLong() {
-        return this == WEIGHT_DROPPED || this == MICE_IN_CACHE || this == MOOSE_RUT || this == BEARS_FEEDING;
+        return this == WEIGHT_DROPPED || this == MICE_IN_CACHE || this == MOOSE_RUT || this == BEARS_FEEDING || this == BEAR_AT_CACHE || this == WOLVERINE_RAID
+                || this == CARIBOU_MOVING || this == BREAKUP;
     }
 
     public boolean danger() {

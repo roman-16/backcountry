@@ -8,6 +8,7 @@ import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.client.Words;
 import io.github.roman16.backcountry.gear.Hotbar;
+import io.github.roman16.backcountry.gear.Worn;
 import io.github.roman16.backcountry.survivor.Team;
 import io.github.roman16.backcountry.trap.TrapBlock;
 import java.util.ArrayList;
@@ -170,12 +171,12 @@ public final class Rations {
                 food.add(new Source(stack, () -> {}, air));
             }
         }
-        Body body = Metabolism.body(player);
-        if (!body.pack.isEmpty()) {
-            NonNullList<ItemStack> packed = Hotbar.contents(body.pack);
+        ItemStack pack = Worn.BACK.get(player);
+        if (!pack.isEmpty()) {
+            NonNullList<ItemStack> packed = Hotbar.contents(pack);
             for (ItemStack stack : packed) {
                 if (Pantry.usable(stack)) {
-                    food.add(new Source(stack, () -> Hotbar.store(body.pack, packed), air));
+                    food.add(new Source(stack, () -> Hotbar.store(pack, packed), air));
                 }
             }
         }
@@ -186,7 +187,8 @@ public final class Rations {
         Team team = Team.get(level.getServer());
         boolean raided = false;
         for (BlockPos pos : team.caches()) {
-            if (level.isLoaded(pos) && level.getBlockEntity(pos) instanceof CacheEntity cache && level.random.nextDouble() < Balance.get().mice().chance()
+            if (level.isLoaded(pos) && level.getBlockEntity(pos) instanceof CacheEntity cache && cache.reach() != CacheEntity.Reach.TALL
+                    && level.random.nextDouble() < Balance.get().mice().chance()
                     && !TrapBlock.guards(level, pos, Balance.get().traps().miceBlocks())) {
                 raided |= cache.raid(level.random);
                 cache.report();

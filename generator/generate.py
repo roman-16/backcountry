@@ -173,7 +173,228 @@ def blocks():
             }
         },
     )
-    for name in ("left_pack", "supply_crate"):
+    write_json(
+        ASSETS / "models/block/tarp.json",
+        {
+            "parent": "minecraft:block/block",
+            "textures": {"particle": "backcountry:block/tarp", "tarp": "backcountry:block/tarp"},
+            "elements": [
+                {
+                    "from": [0, 14, 0],
+                    "to": [16, 16, 16],
+                    "faces": {face: {"texture": "#tarp"} for face in ("down", "east", "north", "south", "up", "west")},
+                }
+            ],
+        },
+    )
+    write_json(ASSETS / "models/item/tarp.json", {"parent": "backcountry:block/tarp"})
+    post = {face: {"texture": "#wood"} for face in ("down", "east", "north", "south", "up", "west")}
+    write_json(
+        ASSETS / "models/block/drying_rack.json",
+        {
+            "parent": "minecraft:block/block",
+            "textures": {
+                "particle": "minecraft:block/stripped_spruce_log",
+                "wood": "minecraft:block/stripped_spruce_log",
+            },
+            "elements": [
+                {"from": [1, 0, 7], "to": [3, 13, 9], "faces": post},
+                {"from": [13, 0, 7], "to": [15, 13, 9], "faces": post},
+                {"from": [0, 13, 7], "to": [16, 15, 9], "faces": post},
+            ],
+        },
+    )
+    write_json(ASSETS / "models/item/drying_rack.json", {"parent": "backcountry:block/drying_rack"})
+    write_json(
+        ASSETS / "models/block/thin_ice.json",
+        {
+            "parent": "minecraft:block/cube_all",
+            "render_type": "minecraft:translucent",
+            "textures": {"all": "backcountry:block/thin_ice"},
+        },
+    )
+    write_json(
+        ASSETS / "blockstates/thin_ice.json",
+        {"variants": {f"thickness={thickness}": {"model": "backcountry:block/thin_ice"} for thickness in range(3)}},
+    )
+    write_json(
+        ASSETS / "models/block/overflow.json",
+        {
+            "parent": "minecraft:block/block",
+            "render_type": "minecraft:translucent",
+            "textures": {"particle": "backcountry:block/overflow", "slush": "backcountry:block/overflow"},
+            "elements": [
+                {
+                    "from": [0, 0, 0],
+                    "to": [16, 1, 16],
+                    "faces": {face: {"texture": "#slush"} for face in ("down", "east", "north", "south", "up", "west")},
+                }
+            ],
+        },
+    )
+    for pitch in ("blaze", "blaze_pitch"):
+        write_json(
+            ASSETS / f"models/block/{pitch}.json",
+            {
+                "parent": "minecraft:block/block",
+                "render_type": "minecraft:cutout",
+                "textures": {"particle": f"backcountry:block/{pitch}", "face": f"backcountry:block/{pitch}"},
+                "elements": [
+                    {
+                        "from": [4, 3, 15.75],
+                        "to": [12, 13, 16],
+                        "faces": {
+                            "north": {"uv": [4, 3, 12, 13], "texture": "#face"},
+                            "south": {"uv": [4, 3, 12, 13], "texture": "#face", "cullface": "south"},
+                        },
+                    }
+                ],
+            },
+        )
+    write_json(
+        ASSETS / "blockstates/blaze.json",
+        {
+            "variants": {
+                f"facing={facing},pitch={pitch}": {
+                    "model": f"backcountry:block/blaze{'_pitch' if pitch == 'true' else ''}",
+                    **({"y": turn} if turn else {}),
+                }
+                for facing, turn in (("north", 0), ("east", 90), ("south", 180), ("west", 270))
+                for pitch in ("false", "true")
+            }
+        },
+    )
+    write_json(
+        ASSETS / "models/block/cairn.json",
+        {
+            "parent": "minecraft:block/block",
+            "textures": {
+                "particle": "minecraft:block/cobblestone",
+                "stone": "minecraft:block/cobblestone",
+                "mossy": "minecraft:block/mossy_cobblestone",
+            },
+            "elements": [
+                {
+                    "from": low,
+                    "to": high,
+                    "faces": {
+                        face: {
+                            "uv": [low[0], 16 - high[1], high[0], 16 - low[1]]
+                            if face not in ("up", "down")
+                            else [low[0], low[2], high[0], high[2]],
+                            "texture": texture,
+                        }
+                        for face in ("down", "east", "north", "south", "up", "west")
+                    },
+                }
+                for low, high, texture in (
+                    ([2, 0, 2], [14, 6, 14], "#mossy"),
+                    ([3, 6, 3], [13, 11, 13], "#stone"),
+                    ([4, 11, 4], [12, 16, 12], "#stone"),
+                )
+            ],
+        },
+    )
+
+    def box(low, high, texture, cull=()):
+        faces = {}
+        for face in ("down", "east", "north", "south", "up", "west"):
+            if face in ("up", "down"):
+                uv = [low[0], low[2], high[0], high[2]]
+            elif face in ("north", "south"):
+                uv = [low[0], 16 - high[1], high[0], 16 - low[1]]
+            else:
+                uv = [low[2], 16 - high[1], high[2], 16 - low[1]]
+            faces[face] = {"uv": uv, "texture": texture} | ({"cullface": face} if face in cull else {})
+        return {"from": low, "to": high, "faces": faces}
+
+    driftwood = box([0, 0, 5], [16, 5, 11], "#bark", ("down",))
+    driftwood["faces"]["east"]["texture"] = "#end"
+    driftwood["faces"]["west"]["texture"] = "#end"
+    write_json(
+        ASSETS / "models/block/driftwood.json",
+        {
+            "parent": "minecraft:block/block",
+            "textures": {
+                "particle": "backcountry:block/driftwood",
+                "bark": "backcountry:block/driftwood",
+                "end": "backcountry:block/driftwood_top",
+            },
+            "elements": [driftwood],
+        },
+    )
+    write_json(
+        ASSETS / "blockstates/driftwood.json",
+        {
+            "variants": {
+                "axis=x": {"model": "backcountry:block/driftwood"},
+                "axis=z": {"model": "backcountry:block/driftwood", "y": 90},
+            }
+        },
+    )
+    write_json(
+        ASSETS / "models/block/mussel_bed.json",
+        {
+            "parent": "minecraft:block/block",
+            "textures": {"particle": "backcountry:block/mussel_bed", "bed": "backcountry:block/mussel_bed"},
+            "elements": [box([0, 0, 0], [16, 2, 16], "#bed", ("down",))],
+        },
+    )
+    egg_spots = ([4, 3, 4], [9, 3, 5], [5, 3, 9], [9, 3, 9])
+    for eggs in range(1, 5):
+        write_json(
+            ASSETS / f"models/block/goose_nest_{eggs}.json",
+            {
+                "parent": "minecraft:block/block",
+                "textures": {
+                    "particle": "backcountry:block/goose_nest",
+                    "nest": "backcountry:block/goose_nest",
+                    "egg": "backcountry:block/goose_egg_shell",
+                },
+                "elements": [box([2, 0, 2], [14, 3, 14], "#nest", ("down",))]
+                + [box(spot, [spot[0] + 3, spot[1] + 3, spot[2] + 3], "#egg") for spot in egg_spots[:eggs]],
+            },
+        )
+    write_json(
+        ASSETS / "blockstates/goose_nest.json",
+        {"variants": {f"eggs={eggs}": {"model": f"backcountry:block/goose_nest_{eggs}"} for eggs in range(1, 5)}},
+    )
+    wheel_plane = {
+        "from": [0, 0, 8],
+        "to": [16, 16, 8],
+        "faces": {
+            "north": {"uv": [0, 0, 16, 16], "texture": "#wheel"},
+            "south": {"uv": [16, 0, 0, 16], "texture": "#wheel"},
+        },
+    }
+    write_json(
+        ASSETS / "models/block/fish_wheel.json",
+        {
+            "parent": "minecraft:block/block",
+            "render_type": "minecraft:cutout",
+            "textures": {
+                "particle": "minecraft:block/spruce_planks",
+                "wheel": "backcountry:block/fish_wheel",
+                "axle": "minecraft:block/stripped_spruce_log",
+            },
+            "elements": [wheel_plane, box([7, 7, 6], [9, 9, 10], "#axle")],
+        },
+    )
+    write_json(
+        ASSETS / "blockstates/fish_wheel.json",
+        {
+            "variants": {
+                f"axis={axis},waterlogged={wet}": {
+                    "model": "backcountry:block/fish_wheel",
+                    **({"y": 90} if axis == "z" else {}),
+                }
+                for axis in ("x", "z")
+                for wet in ("false", "true")
+            }
+        },
+    )
+    write_json(ASSETS / "models/item/fish_wheel.json", {"parent": "backcountry:block/fish_wheel"})
+    for name in ("cairn", "drying_rack", "left_pack", "mussel_bed", "overflow", "supply_crate", "tarp"):
         write_json(ASSETS / f"blockstates/{name}.json", {"variants": {"": {"model": f"backcountry:block/{name}"}}})
     write_json(
         OUT / "assets/fowlplay/blockstates/bird_feeder.json", {"variants": {"": {"model": "minecraft:block/air"}}}
@@ -310,6 +531,56 @@ def campfire(jar):
             )
     write_json(ASSETS / "blockstates/campfire.json", {"variants": variants})
     write_json(ASSETS / "models/item/campfire.json", {"parent": "minecraft:item/campfire"})
+    stone = "minecraft:block/cobblestone"
+    write_json(
+        ASSETS / "models/block/stone_fireplace.json",
+        {
+            "parent": "minecraft:block/template_campfire",
+            "render_type": "minecraft:cutout",
+            "textures": {"fire": "minecraft:block/campfire_fire", "lit_log": stone, "log": stone, "particle": stone},
+        },
+    )
+    write_json(
+        ASSETS / "models/block/stone_fireplace_off.json",
+        {
+            "parent": "minecraft:block/block",
+            "render_type": "minecraft:cutout",
+            "textures": {"lit_log": stone, "log": stone, "particle": stone},
+            "elements": logs,
+        },
+    )
+    variants = {}
+    for facing, turn in FACINGS.items():
+        for state, model in (
+            ("lit=true", "stone_fireplace"),
+            ("coals=true,lit=false", "stone_fireplace_off"),
+            ("coals=false,lit=false", "stone_fireplace_off"),
+        ):
+            variants[f"{state},facing={facing}"] = (
+                {"model": f"backcountry:block/{model}", "y": turn} if turn else {"model": f"backcountry:block/{model}"}
+            )
+    write_json(ASSETS / "blockstates/stone_fireplace.json", {"variants": variants})
+    write_json(ASSETS / "models/item/stone_fireplace.json", {"parent": "backcountry:block/stone_fireplace_off"})
+    walls = [([2, 0, 2], [14, 16, 5]), ([2, 0, 11], [14, 16, 14]), ([2, 0, 5], [5, 16, 11]), ([11, 0, 5], [14, 16, 11])]
+    write_json(
+        ASSETS / "models/block/stone_chimney.json",
+        {
+            "parent": "minecraft:block/block",
+            "textures": {"particle": stone, "stone": stone},
+            "elements": [
+                {
+                    "from": low,
+                    "to": high,
+                    "faces": {face: {"texture": "#stone"} for face in ("down", "east", "north", "south", "up", "west")},
+                }
+                for low, high in walls
+            ],
+        },
+    )
+    write_json(
+        ASSETS / "blockstates/stone_chimney.json", {"variants": {"": {"model": "backcountry:block/stone_chimney"}}}
+    )
+    write_json(ASSETS / "models/item/stone_chimney.json", {"parent": "backcountry:block/stone_chimney"})
 
 
 def woodpile():
@@ -768,7 +1039,7 @@ def main():
     for name, entry in source["hud"].items():
         png.write(ASSETS / f"textures/gui/sprites/hud/{name}.png", grid(name, entry, 9))
     for name, entry in source["slots"].items():
-        png.write(ASSETS / f"textures/item/empty_slot_{name}.png", grid(name, entry, 16))
+        png.write(ASSETS / f"textures/slot/{name}.png", grid(name, entry, 16))
     for name, entry in source["views"].items():
         rows = entry["rows"]
         png.write(ASSETS / f"textures/misc/{name}.png", grid(name, entry, len(rows[0]), len(rows)))

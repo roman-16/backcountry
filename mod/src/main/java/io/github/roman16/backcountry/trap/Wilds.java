@@ -7,6 +7,7 @@ import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.body.Climate;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.food.Seasons;
+import io.github.roman16.backcountry.haul.Canoe;
 import io.github.roman16.backcountry.hunt.Hunting;
 import io.github.roman16.backcountry.weather.Day;
 import io.github.roman16.backcountry.weather.Weather;
@@ -74,12 +75,17 @@ public final class Wilds {
     @SubscribeEvent
     static void rafted(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player) || player.tickCount % TICKS_A_SECOND != 0 || !(player.getVehicle() instanceof Boat boat)
-                || boat.getVariant() != Boat.Type.BAMBOO || boat.getDeltaMovement().horizontalDistance() < MOVING || !Metabolism.lives(player)) {
+                || boat.getDeltaMovement().horizontalDistance() < MOVING || !Metabolism.lives(player)) {
             return;
         }
-        Balance.Raft raft = Balance.get().raft();
+        boolean canoe = boat instanceof Canoe;
+        if (!canoe && boat.getVariant() != Boat.Type.BAMBOO) {
+            return;
+        }
+        double calm = canoe ? Balance.get().canoe().calmKmh() : Balance.get().raft().calmKmh();
+        double fall = canoe ? Balance.get().canoe().fallChance() : Balance.get().raft().fallChance();
         double wind = Weather.day(player.level(), Calendar.day(player.level())).windKmh();
-        if (wind > raft.calmKmh() && player.getRandom().nextDouble() < raft.fallChance() * (wind - raft.calmKmh()) / (HIGHEST_WIND - raft.calmKmh())) {
+        if (wind > calm && player.getRandom().nextDouble() < fall * (wind - calm) / (HIGHEST_WIND - calm)) {
             player.stopRiding();
             player.displayClientMessage(Component.translatable("message.backcountry.fell_off"), true);
         }

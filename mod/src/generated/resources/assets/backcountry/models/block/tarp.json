@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "backcountry:block/tarp",
+    "tarp": "backcountry:block/tarp"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        14,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#tarp"
+        },
+        "east": {
+          "texture": "#tarp"
+        },
+        "north": {
+          "texture": "#tarp"
+        },
+        "south": {
+          "texture": "#tarp"
+        },
+        "up": {
+          "texture": "#tarp"
+        },
+        "west": {
+          "texture": "#tarp"
+        }
+      }
+    }
+  ]
+}

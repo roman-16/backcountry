@@ -26,4 +26,14 @@ public sealed interface Check {
     record Reach(int month) implements Check {}
 
     record YearsEnd() implements Check {}
+
+    record InCabin() implements Check {}
+
+    record WarmCabin() implements Check {}
+
+    record TallCache() implements Check {}
+
+    record Surveys(int count) implements Check {}
+
+    record Noted(int count) implements Check {}
 }

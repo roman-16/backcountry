@@ -13,8 +13,10 @@ import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.client.Binoculars;
 import io.github.roman16.backcountry.client.ClientState;
 import io.github.roman16.backcountry.client.Graphics;
+import io.github.roman16.backcountry.client.KitScreen;
 import io.github.roman16.backcountry.guide.GuideView;
 import io.github.roman16.backcountry.mixin.dev.GuiAccessor;
+import io.github.roman16.backcountry.survivor.Kit;
 import io.github.roman16.backcountry.weather.Outlook;
 import io.github.roman16.backcountry.weather.WeatherView;
 import java.io.IOException;
@@ -25,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
@@ -35,17 +38,16 @@ import java.util.function.BooleanSupplier;
 import net.caffeinemc.mods.sodium.client.render.SodiumWorldRenderer;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.ConnectScreen;
-import net.minecraft.client.multiplayer.ServerData;
-import net.minecraft.client.multiplayer.resolver.ServerAddress;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.multiplayer.resolver.ServerAddress;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
@@ -166,6 +168,9 @@ public final class Driver {
         if (minecraft.screen instanceof ConfirmScreen confirm && !announced) {
             Files.writeString(folder.resolve("failed.txt"), "start failed: a dialog stands: " + confirm.getTitle().getString());
         }
+        if (!announced && minecraft.screen instanceof KitScreen kit) {
+            kit.arrive(Kit.CHOSEN);
+        }
         if (!announced && minecraft.level != null && minecraft.player != null && minecraft.screen == null && ClientState.view != BodyView.NONE) {
             announce(folder, minecraft.getSingleplayerServer() == null ? "server" : minecraft.getSingleplayerServer().getWorldData().getLevelName());
         }
@@ -281,6 +286,7 @@ public final class Driver {
             }
             case "log" -> result.add("log", log(minecraft));
             case "join" -> join(minecraft, argument);
+            case "kit" -> kit(minecraft, argument);
             case "quit" -> minecraft.stop();
             default -> throw new IllegalArgumentException("no step " + words[0]);
         }
@@ -293,7 +299,21 @@ public final class Driver {
         }
         ConnectScreen.startConnecting(new TitleScreen(), minecraft, ServerAddress.parseString(address), new ServerData(address, address, ServerData.Type.OTHER), false,
                 null);
-        until = () -> minecraft.level != null && minecraft.player != null && minecraft.screen == null;
+        until = () -> {
+            if (minecraft.screen instanceof KitScreen kit) {
+                kit.arrive(Kit.CHOSEN);
+            }
+            return minecraft.level != null && minecraft.player != null && minecraft.screen == null;
+        };
+    }
+
+    private static void kit(Minecraft minecraft, String argument) {
+        if (!(minecraft.screen instanceof KitScreen screen)) {
+            throw new IllegalStateException("the ten items' screen is not open; /backcountry arrive opens it");
+        }
+        List<Kit> picks = argument.isBlank() ? Kit.CHOSEN : Arrays.stream(argument.trim().split(" ")).map(name -> Kit.valueOf(name.toUpperCase(Locale.ROOT))).toList();
+        screen.arrive(picks);
+        until = () -> minecraft.player.getInventory().contains(new ItemStack(Things.SATELLITE_MESSENGER.get()));
     }
 
     private static JsonObject seen(Minecraft minecraft) {

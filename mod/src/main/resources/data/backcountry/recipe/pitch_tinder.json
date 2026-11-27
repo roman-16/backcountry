@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "backcountry:spruce_pitch"
+    },
+    {
+      "item": "backcountry:tinder_bundle"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:pitch_tinder"
+  }
+}

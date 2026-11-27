@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "backcountry:softwood",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2,
+                "max": 3
+              }
+            },
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "backcountry:seasoning": 100
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

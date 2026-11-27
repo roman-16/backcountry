@@ -25,8 +25,10 @@ import io.github.roman16.backcountry.gear.Hotbar;
 import io.github.roman16.backcountry.gear.LeftPackEntity;
 import io.github.roman16.backcountry.gear.Water;
 import io.github.roman16.backcountry.gear.WaterVesselItem;
+import io.github.roman16.backcountry.gear.Worn;
 import io.github.roman16.backcountry.survivor.Arrival;
 import io.github.roman16.backcountry.survivor.Ending;
+import io.github.roman16.backcountry.survivor.Kit;
 import io.github.roman16.backcountry.survivor.Locator;
 import io.github.roman16.backcountry.survivor.Summary;
 import io.github.roman16.backcountry.survivor.Team;
@@ -36,6 +38,7 @@ import io.github.roman16.backcountry.weather.Sky;
 import io.github.roman16.backcountry.weather.Weather;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.commands.CommandSource;
@@ -79,6 +82,8 @@ import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.SlotContext;
 
 @GameTestHolder(Backcountry.MODID)
 @PrefixGameTestTemplate(false)
@@ -290,12 +295,12 @@ public final class BackcountryTests {
         Slot row = player.inventoryMenu.getSlot(Hotbar.ROW);
         check(helper, !row.mayPlace(new ItemStack(Items.STICK)), "a locked row took an item");
         Slot second = player.inventoryMenu.getSlot(2 * Hotbar.ROW);
-        Metabolism.body(player).pack = new ItemStack(Things.CANVAS_PACK.get());
+        Worn.BACK.set(player, new ItemStack(Things.CANVAS_PACK.get()));
         check(helper, row.mayPlace(new ItemStack(Items.STICK)) && !second.mayPlace(new ItemStack(Items.STICK)), "the Canvas Pack did not open exactly one row");
-        Metabolism.body(player).pack = new ItemStack(Things.HIDE_PACK.get());
+        Worn.BACK.set(player, new ItemStack(Things.HIDE_PACK.get()));
         check(helper, row.mayPlace(new ItemStack(Items.STICK)) && second.mayPlace(new ItemStack(Items.STICK)), "the Hide Pack did not open two rows");
         row.set(new ItemStack(Items.FLINT, 3));
-        ItemStack pack = Metabolism.body(player).pack.copy();
+        ItemStack pack = Worn.BACK.get(player).copy();
         check(helper, Hotbar.contents(pack).get(0).is(Items.FLINT), "the pack's row did not keep its item in the pack");
         helper.succeed();
     }
@@ -305,18 +310,18 @@ public final class BackcountryTests {
         ServerPlayer player = survivor(helper);
         player.getInventory().clearContent();
         Body body = Metabolism.body(player);
-        body.pack = new ItemStack(Things.CANVAS_PACK.get());
+        Worn.BACK.set(player, new ItemStack(Things.CANVAS_PACK.get()));
         Slot row = player.inventoryMenu.getSlot(Hotbar.ROW);
         row.set(new ItemStack(Items.IRON_INGOT, 4));
         player.getInventory().setItem(0, new ItemStack(Items.IRON_INGOT, 4));
         player.inventoryMenu.quickMoveStack(player, FIRST_HOTBAR_SLOT);
-        int packed = Hotbar.contents(body.pack).get(0).getCount();
+        int packed = Hotbar.contents(Worn.BACK.get(player)).get(0).getCount();
         check(helper, packed == 8 && player.getInventory().getItem(0).isEmpty(), "shifting 4 ingots onto 4 in the pack left " + packed + " in it");
         player.inventoryMenu.clicked(Hotbar.ROW, 0, ClickType.THROW, player);
         List<ItemEntity> thrown = helper.getLevel().getEntitiesOfClass(ItemEntity.class, player.getBoundingBox().inflate(2), item -> item.getItem().is(Items.IRON_INGOT));
-        check(helper, thrown.size() == 1 && Hotbar.contents(body.pack).get(0).getCount() == 7, "throwing from the pack dropped " + thrown.size() + " stacks");
+        check(helper, thrown.size() == 1 && Hotbar.contents(Worn.BACK.get(player)).get(0).getCount() == 7, "throwing from the pack dropped " + thrown.size() + " stacks");
         thrown.getFirst().playerTouch(player);
-        check(helper, !thrown.getFirst().getItem().isEmpty() && Hotbar.contents(body.pack).get(0).getCount() == 7, "the thrown ingot went straight back into the pack");
+        check(helper, !thrown.getFirst().getItem().isEmpty() && Hotbar.contents(Worn.BACK.get(player)).get(0).getCount() == 7, "the thrown ingot went straight back into the pack");
         helper.succeed();
     }
 
@@ -337,14 +342,24 @@ public final class BackcountryTests {
             }
         }
         check(helper, left, "no left pack holds what the survivor carried");
-        Arrival.arrive(player);
+        Arrival.arrive(player, List.of(Kit.PILOT_BREAD, Kit.SLEEPING_BAG, Kit.FISHING_KIT));
         check(helper, !player.isSpectator() && body.ended == null && body.weightKg == Balance.get().body().arrivalKg(), "the new survivor did not arrive fresh");
-        check(helper, player.getInventory().getItem(3).is(Things.PILOT_BREAD.get()) && player.getInventory().getItem(3).getCount() == Balance.get().kit().pilotBread(),
-                "the kit has no " + Balance.get().kit().pilotBread() + " Pilot Bread");
-        List<ItemStack> packed = Hotbar.contents(body.pack);
-        check(helper, body.pack.is(Things.CANVAS_PACK.get()), "the new survivor wears no Canvas Pack");
-        check(helper, packed.stream().anyMatch(stack -> BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath().endsWith("sleeping_bag"))
-                && packed.stream().anyMatch(stack -> stack.is(Things.MED_KIT.get()) || stack.is(Things.HEADLAMP.get())), "the Canvas Pack holds " + packed);
+        List<ItemStack> carried = Hotbar.carried(player);
+        check(helper, carried.stream().anyMatch(stack -> stack.is(Things.PILOT_BREAD.get()) && stack.getCount() == Balance.get().kit().pilotBread()),
+                "the picked Pilot Bread is missing");
+        check(helper, Worn.BACK.get(player).is(Things.CANVAS_PACK.get()), "the new survivor wears no Canvas Pack");
+        check(helper, carried.stream().anyMatch(stack -> BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath().endsWith("sleeping_bag"))
+                && carried.stream().anyMatch(stack -> stack.is(Things.MED_KIT.get())) && carried.stream().anyMatch(stack -> stack.is(Things.HEADLAMP.get()))
+                && carried.stream().noneMatch(stack -> stack.is(Items.IRON_AXE)), "the arrival carries " + carried);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void tenItemsAtMost(GameTestHelper helper) {
+        ServerPlayer player = survivor(helper);
+        Arrival.arrive(player, List.of(Kit.values()));
+        long picked = Arrays.stream(Kit.values()).filter(pick -> Hotbar.carried(player).stream().anyMatch(stack -> ItemStack.isSameItem(stack, pick.icon()))).count();
+        check(helper, picked == Balance.get().kit().picks(), picked + " picks arrived");
         helper.succeed();
     }
 
@@ -352,11 +367,12 @@ public final class BackcountryTests {
     public static void theBinocularsAreWornAtTheNeck(GameTestHelper helper) {
         ServerPlayer player = survivor(helper);
         Body body = Metabolism.body(player);
-        Slot neck = player.inventoryMenu.slots.stream().filter(slot -> slot instanceof Hotbar.WornSlot && slot.y == Hotbar.Worn.NECK.y).findFirst().orElseThrow();
-        check(helper, neck.mayPlace(new ItemStack(Things.BINOCULARS.get())) && !neck.mayPlace(new ItemStack(Items.STICK)), "the neck slot took something other than Binoculars");
+        SlotContext neck = new SlotContext(Worn.NECK.slot, player, 0, false, true);
+        check(helper, CuriosApi.isStackValid(neck, new ItemStack(Things.BINOCULARS.get())) && !CuriosApi.isStackValid(neck, new ItemStack(Items.STICK)),
+                "the neck slot took something other than Binoculars");
+        Worn.NECK.set(player, ItemStack.EMPTY);
         double bare = Load.kg(player, body);
-        neck.set(new ItemStack(Things.BINOCULARS.get()));
-        check(helper, body.binoculars.is(Things.BINOCULARS.get()), "the neck slot did not put the Binoculars on");
+        Worn.NECK.set(player, new ItemStack(Things.BINOCULARS.get()));
         check(helper, Load.kg(player, body) > bare, "worn Binoculars weighed nothing");
         check(helper, Hotbar.carried(player).stream().anyMatch(stack -> stack.is(Things.BINOCULARS.get())), "worn Binoculars were not carried");
         BlockPos stood = player.blockPosition();
@@ -369,9 +385,9 @@ public final class BackcountryTests {
                 }
             }
         }
-        check(helper, left && body.binoculars.isEmpty(), "the worn Binoculars did not go into the left pack");
-        Arrival.arrive(player);
-        check(helper, body.binoculars.is(Things.BINOCULARS.get()), "the new survivor wears no Binoculars");
+        check(helper, left && Worn.NECK.get(player).isEmpty(), "the worn Binoculars did not go into the left pack");
+        Arrival.arrive(player, List.of());
+        check(helper, Worn.NECK.get(player).is(Things.BINOCULARS.get()), "the new survivor wears no Binoculars");
         helper.succeed();
     }
 

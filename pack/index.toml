@@ -22,7 +22,7 @@ hash = "2c235c6311331bc9ff838e15382023c3ea139fd53c03635a6760fe0c04538970"
 
 [[files]]
 file = "config/defaultoptions/keybindings.txt"
-hash = "132ce41f19fbcad34424e37e53275b9cb61cbfd3136afd56930d4ae69c16b937"
+hash = "d419ad333798feefc4859229cadd38d4af6a7ffa6c8c04f468d35165ad957be5"
 
 [[files]]
 file = "config/defaultoptions/options.txt"
@@ -128,6 +128,11 @@ hash = "1801f6f6bf0bd7eaf33544c0ad137f9162aa35239a030efe29a899f5c28bddfa"
 metafile = true
 
 [[files]]
+file = "mods/animal-garden-porcupine.pw.toml"
+hash = "1eb349ed9bd37e526a99ec2a8ed1c8a4410d577f8d3bb059b905a7828ecd6dab"
+metafile = true
+
+[[files]]
 file = "mods/architectury-api.pw.toml"
 hash = "21347d7f9c96cebacb7238dbef2670e2906a11572606016c8184e9485947dacc"
 metafile = true
@@ -195,6 +200,11 @@ metafile = true
 [[files]]
 file = "mods/critters-n-crawlers.pw.toml"
 hash = "115c44c46c06f4ed20e9eacfdc11624f823eb0d87c305a0496a81c55de1d2c32"
+metafile = true
+
+[[files]]
+file = "mods/curios.pw.toml"
+hash = "9ba9429afe373ac3b955325120adfd18d5cb342db0f7e12fb7774839a05c587d"
 metafile = true
 
 [[files]]

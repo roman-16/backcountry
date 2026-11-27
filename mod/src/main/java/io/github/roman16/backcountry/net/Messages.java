@@ -2,31 +2,34 @@ package io.github.roman16.backcountry.net;
 
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.body.Alerts;
 import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.BodyView;
 import io.github.roman16.backcountry.body.Calendar;
-import io.github.roman16.backcountry.body.Alerts;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Skill;
 import io.github.roman16.backcountry.body.Warmth;
 import io.github.roman16.backcountry.client.ClientMessages;
 import io.github.roman16.backcountry.fire.Lighting;
+import io.github.roman16.backcountry.gear.MapSheets;
+import io.github.roman16.backcountry.guide.FieldNotes;
 import io.github.roman16.backcountry.guide.Guide;
 import io.github.roman16.backcountry.guide.GuideView;
 import io.github.roman16.backcountry.guide.Task;
 import io.github.roman16.backcountry.survivor.Arrival;
 import io.github.roman16.backcountry.survivor.Ending;
+import io.github.roman16.backcountry.survivor.Kit;
 import io.github.roman16.backcountry.survivor.Locator;
 import io.github.roman16.backcountry.survivor.Summary;
 import io.github.roman16.backcountry.survivor.Team;
 import io.github.roman16.backcountry.weather.Day;
 import io.github.roman16.backcountry.weather.Forecast;
 import io.github.roman16.backcountry.weather.WeatherView;
+import io.netty.buffer.ByteBuf;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -114,6 +117,27 @@ public final class Messages {
         }
     }
 
+    public record Choose() implements CustomPacketPayload {
+        public static final Type<Choose> TYPE = new Type<>(Backcountry.id("choose"));
+        static final StreamCodec<ByteBuf, Choose> STREAM_CODEC = StreamCodec.unit(new Choose());
+
+        @Override
+        public Type<Choose> type() {
+            return TYPE;
+        }
+    }
+
+    public record Picks(List<Kit> picks) implements CustomPacketPayload {
+        public static final Type<Picks> TYPE = new Type<>(Backcountry.id("picks"));
+        static final StreamCodec<ByteBuf, Picks> STREAM_CODEC = ByteBufCodecs.VAR_INT.<Kit>map(ordinal -> Kit.values()[Math.floorMod(ordinal, Kit.values().length)], Kit::ordinal)
+                .apply(ByteBufCodecs.list()).map(Picks::new, Picks::picks);
+
+        @Override
+        public Type<Picks> type() {
+            return TYPE;
+        }
+    }
+
     public record BowDrill(BlockPos fire, boolean wet) implements CustomPacketPayload {
         public static final Type<BowDrill> TYPE = new Type<>(Backcountry.id("bow_drill"));
         static final StreamCodec<ByteBuf, BowDrill> STREAM_CODEC = StreamCodec.composite(BlockPos.STREAM_CODEC, BowDrill::fire, ByteBufCodecs.BOOL, BowDrill::wet,
@@ -147,6 +171,37 @@ public final class Messages {
         }
     }
 
+    public record Notes(List<FieldNotes.Note> notes) implements CustomPacketPayload {
+        public static final Type<Notes> TYPE = new Type<>(Backcountry.id("notes"));
+        static final StreamCodec<ByteBuf, Notes> STREAM_CODEC = StreamCodec.composite(FieldNotes.Note.STREAM_CODEC.apply(ByteBufCodecs.list()), Notes::notes, Notes::new);
+
+        @Override
+        public Type<Notes> type() {
+            return TYPE;
+        }
+    }
+
+    public record Studied(int entity) implements CustomPacketPayload {
+        public static final Type<Studied> TYPE = new Type<>(Backcountry.id("studied"));
+        static final StreamCodec<ByteBuf, Studied> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.VAR_INT, Studied::entity, Studied::new);
+
+        @Override
+        public Type<Studied> type() {
+            return TYPE;
+        }
+    }
+
+    public record MapShown(int centreX, int centreZ, byte[] colours, List<Long> crosses) implements CustomPacketPayload {
+        public static final Type<MapShown> TYPE = new Type<>(Backcountry.id("map"));
+        static final StreamCodec<ByteBuf, MapShown> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.VAR_INT, MapShown::centreX, ByteBufCodecs.VAR_INT, MapShown::centreZ,
+                ByteBufCodecs.BYTE_ARRAY, MapShown::colours, ByteBufCodecs.VAR_LONG.apply(ByteBufCodecs.list()), MapShown::crosses, MapShown::new);
+
+        @Override
+        public Type<MapShown> type() {
+            return TYPE;
+        }
+    }
+
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("1");
         registrar.playToClient(View.TYPE, View.STREAM_CODEC, (payload, context) -> ClientMessages.view(payload.body(), payload.weather(), payload.guide()));
@@ -162,6 +217,19 @@ public final class Messages {
         registrar.playToServer(Arrive.TYPE, Arrive.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player) {
                 arrive(player);
+            }
+        });
+        registrar.playToClient(Choose.TYPE, Choose.STREAM_CODEC, (payload, context) -> ClientMessages.choose());
+        registrar.playToClient(MapShown.TYPE, MapShown.STREAM_CODEC, (payload, context) -> ClientMessages.map(payload.centreX(), payload.centreZ(), payload.colours(), payload.crosses()));
+        registrar.playToClient(Notes.TYPE, Notes.STREAM_CODEC, (payload, context) -> ClientMessages.notes(payload.notes()));
+        registrar.playToServer(Studied.TYPE, Studied.STREAM_CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player) {
+                FieldNotes.studied(player, payload.entity());
+            }
+        });
+        registrar.playToServer(Picks.TYPE, Picks.STREAM_CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player && !Metabolism.body(player).arrived) {
+                Arrival.arrive(player, payload.picks());
             }
         });
         registrar.playToServer(Track.TYPE, Track.STREAM_CODEC, (payload, context) -> {
@@ -186,7 +254,7 @@ public final class Messages {
         if (player.isDeadOrDying()) {
             player.connection.handleClientCommand(new ServerboundClientCommandPacket(ServerboundClientCommandPacket.Action.PERFORM_RESPAWN));
         } else if (body.ended != null) {
-            Arrival.arrive(player);
+            Arrival.await(player);
         }
     }
 
@@ -199,7 +267,7 @@ public final class Messages {
                 (float) body.fatToday, (float) body.stomachShare(), (float) body.loadKg, (float) balance.load().capacityKg(), Calendar.day(player.level()), body.blackoutTicks,
                 body.fire, body.sheltered, body.windy, (float) body.clo, Alerts.shown(body), body.unread, team.ration().ordinal(),
                 (float) team.storesDays(Team.living(player.server)), Arrays.stream(body.burned).mapToObj(kcal -> (float) kcal).toList(),
-                (float) body.metresToday, Skill.levels(body));
+                (float) body.metresToday, Skill.levels(body), body.room.ordinal(), (float) body.roomC, body.smoky, (float) body.spirits, body.spiritCauses);
         if (!(player instanceof FakePlayer) && player.connection.hasChannel(View.TYPE)) {
             PacketDistributor.sendToPlayer(player, new View(view, Forecast.view(player, body), Guide.get(player.server).view(player)));
         }
@@ -223,6 +291,28 @@ public final class Messages {
                 PacketDistributor.sendToPlayer(player, new Sky(days));
             }
         }
+    }
+
+    public static void map(ServerPlayer player, MapSheets.Sheet sheet) {
+        if (!(player instanceof FakePlayer) && player.connection.hasChannel(MapShown.TYPE)) {
+            PacketDistributor.sendToPlayer(player, new MapShown(sheet.centreX(), sheet.centreZ(), sheet.colours(), List.copyOf(sheet.crosses())));
+        }
+    }
+
+    public static void notes(ServerPlayer player, List<FieldNotes.Note> notes) {
+        if (!(player instanceof FakePlayer) && player.connection.hasChannel(Notes.TYPE)) {
+            PacketDistributor.sendToPlayer(player, new Notes(notes));
+        }
+    }
+
+    public static void kit(ServerPlayer player) {
+        if (!(player instanceof FakePlayer) && player.connection.hasChannel(Choose.TYPE)) {
+            PacketDistributor.sendToPlayer(player, new Choose());
+        }
+    }
+
+    public static void picks(List<Kit> picks) {
+        PacketDistributor.sendToServer(new Picks(picks));
     }
 
     public static void bowDrill(ServerPlayer player, BlockPos fire, boolean wet) {

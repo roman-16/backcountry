@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "backcountry:cured_hide"
+    },
+    {
+      "item": "backcountry:rawhide_strips"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "backcountry:hide_mittens"
+  }
+}

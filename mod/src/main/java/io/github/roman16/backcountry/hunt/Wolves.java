@@ -4,6 +4,7 @@ import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.mixin.TargetTypeAccessor;
+import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,6 +19,7 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 @EventBusSubscriber(modid = Backcountry.MODID)
 public final class Wolves {
     public static final ResourceLocation TIMBER_WOLF = ResourceLocation.fromNamespaceAndPath("cnc", "timber_wolf");
+    private static final Set<ResourceLocation> WARY = Set.of(TIMBER_WOLF, ResourceLocation.fromNamespaceAndPath("cnc", "coyote"));
     private static final double WALK = 1.0;
     private static final double TROT = 1.25;
 
@@ -25,7 +27,7 @@ public final class Wolves {
 
     @SubscribeEvent
     static void joined(EntityJoinLevelEvent event) {
-        if (event.getLevel().isClientSide() || !(event.getEntity() instanceof PathfinderMob wolf) || !BuiltInRegistries.ENTITY_TYPE.getKey(wolf.getType()).equals(TIMBER_WOLF)) {
+        if (event.getLevel().isClientSide() || !(event.getEntity() instanceof PathfinderMob wolf) || !WARY.contains(BuiltInRegistries.ENTITY_TYPE.getKey(wolf.getType()))) {
             return;
         }
         wolf.targetSelector.removeAllGoals(goal -> goal instanceof NearestAttackableTargetGoal<?> hunt && Player.class.isAssignableFrom(((TargetTypeAccessor) hunt).backcountry$targetType()));

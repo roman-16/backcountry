@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "backcountry:birch_bark"
+    },
+    {
+      "item": "backcountry:birch_bark"
+    },
+    {
+      "item": "riverfishing:hook_10"
+    },
+    {
+      "item": "backcountry:scraped_hide"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "riverfishing:fishing_journal"
+  }
+}

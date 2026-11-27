@@ -2,7 +2,10 @@ package io.github.roman16.backcountry.body;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.fire.Fire;
+import io.github.roman16.backcountry.gear.Hotbar;
+import io.github.roman16.backcountry.gear.Worn;
 import io.github.roman16.backcountry.fire.FireBlock;
 import io.github.roman16.backcountry.weather.Weather;
 import net.minecraft.core.BlockPos;
@@ -23,23 +26,37 @@ public final class Warmth {
         Balance.Warmth warmth = Balance.get().warmth();
         Level level = player.level();
         BlockPos feet = player.blockPosition();
-        body.sheltered = roofed(level, feet, warmth.roofBlocks());
+        Rooms.Room room = Rooms.at(level, feet);
+        body.room = room.kind();
+        body.smoky = room.smoky();
+        body.sheltered = room.sealed() || roofed(level, feet, warmth.roofBlocks());
         double heat = heat(level, feet, warmth.heatReachBlocks());
         body.fire = heat > 0;
-        double air = Climate.airC(level, feet, day);
+        double outside = Climate.airC(level, feet, day);
         double wind = Weather.day(level, day).windKmh();
         body.windKmh = wind;
         body.windy = !body.sheltered && wind > Climate.CALM_KMH;
-        body.effectiveC = (body.sheltered ? air + warmth.shelterC() : Climate.feelsC(air, wind)) + heat;
+        if (room.sealed()) {
+            body.roomC = Rooms.airC(level, room, outside);
+            body.effectiveC = body.roomC + heat * Balance.get().rooms().radiantShare();
+        } else {
+            body.roomC = outside;
+            body.effectiveC = (body.sheltered ? outside + warmth.shelterC() : Climate.feelsC(outside, wind)) + heat;
+        }
         double clothing = 0;
         for (EquipmentSlot slot : new EquipmentSlot[] {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
             clothing += Balance.get().insulation().getOrDefault(BuiltInRegistries.ITEM.getKey(player.getItemBySlot(slot).getItem()).toString(), 0.0);
+        }
+        clothing += Balance.get().insulation().getOrDefault(BuiltInRegistries.ITEM.getKey(Worn.HANDS.get(player).getItem()).toString(), 0.0);
+        if (player.isSleeping() && Hotbar.carried(player).stream().anyMatch(stack -> stack.is(Things.SLEEPING_PAD.get()))) {
+            clothing += Balance.get().kit().sleepingPadClo();
         }
         body.clo = (warmth.baseClo() + clothing) * (1 - body.wetness * warmth.wetInsulationLoss());
     }
 
     public static boolean bareHead(ServerPlayer player) {
-        return Balance.get().insulation().getOrDefault(BuiltInRegistries.ITEM.getKey(player.getItemBySlot(EquipmentSlot.HEAD).getItem()).toString(), 0.0) <= 0;
+        return !player.getItemBySlot(EquipmentSlot.CHEST).is(Things.FUR_PARKA.get())
+                && Balance.get().insulation().getOrDefault(BuiltInRegistries.ITEM.getKey(player.getItemBySlot(EquipmentSlot.HEAD).getItem()).toString(), 0.0) <= 0;
     }
 
     public static double comfortLowC(Body body) {

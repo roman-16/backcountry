@@ -1,6 +1,7 @@
 package io.github.roman16.backcountry.fire;
 
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.body.Rooms;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -40,6 +41,8 @@ public final class FireMenu extends AbstractContainerMenu {
     private static final int PACKED = 4;
     private static final int BANKED = 8;
     private static final int QUEUED_ANY = 16;
+    private static final int SNOWY = 32;
+    private static final int SMOKY = 64;
 
     private final Container queue;
     private final ContainerData data;
@@ -109,6 +112,14 @@ public final class FireMenu extends AbstractContainerMenu {
 
     public boolean roofed() {
         return (data.get(FLAGS) & ROOFED) != 0;
+    }
+
+    public boolean snowy() {
+        return (data.get(FLAGS) & SNOWY) != 0;
+    }
+
+    public boolean smoky() {
+        return (data.get(FLAGS) & SMOKY) != 0;
     }
 
     public boolean packed() {
@@ -234,7 +245,8 @@ public final class FireMenu extends AbstractContainerMenu {
                 case HEAT -> (int) Math.round(fire.heatC() * TENTHS);
                 case SETTING -> fire.setting.ordinal();
                 case FLAGS -> (fire.lit() ? LIT : 0) | (campfire.getLevel().canSeeSky(campfire.getBlockPos().above()) ? 0 : ROOFED) | (fire.packed() ? PACKED : 0)
-                        | (fire.banked() ? BANKED : 0) | (fire.queued() ? QUEUED_ANY : 0);
+                        | (fire.banked() ? BANKED : 0) | (fire.queued() ? QUEUED_ANY : 0) | (Fire.underSnowyBranches(campfire.getLevel(), campfire.getBlockPos()) ? SNOWY : 0)
+                        | (Rooms.at(campfire.getLevel(), campfire.getBlockPos()).smoky() ? SMOKY : 0);
                 default -> 0;
             };
         }

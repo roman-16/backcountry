@@ -41,9 +41,13 @@ public final class Climate {
         double low = monthly(climate.lowsC(), date);
         double clock = (hour + MIDNIGHT_HOUR_OFFSET) % Weather.HOURS;
         double swing = -Math.cos(2 * Math.PI * (clock - climate.coldestHour()) / Weather.HOURS) * (1 - cloud * (1 - Balance.get().weather().cloudySwing()));
+        return (high + low) / 2 + swing * (high - low) / 2 + driftC + localC(biome, pos);
+    }
+
+    public static double localC(Biome biome, BlockPos pos) {
+        Balance.Climate climate = Balance.get().climate();
         double shift = (biome.getBaseTemperature() - climate.biomeReferenceTemperature()) * climate.biomeCPerTemperature();
-        double height = -(pos.getY() - climate.seaLevel()) * climate.lapseCPerBlock();
-        return (high + low) / 2 + swing * (high - low) / 2 + driftC + shift + height;
+        return shift - (pos.getY() - climate.seaLevel()) * climate.lapseCPerBlock();
     }
 
     public static boolean snows(Level level, Biome biome, BlockPos pos) {

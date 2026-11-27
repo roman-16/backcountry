@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "backcountry:block/driftwood"
+    },
+    "axis=z": {
+      "model": "backcountry:block/driftwood",
+      "y": 90
+    }
+  }
+}

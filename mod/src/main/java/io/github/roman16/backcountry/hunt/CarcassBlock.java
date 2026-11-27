@@ -3,8 +3,10 @@ package io.github.roman16.backcountry.hunt;
 import com.mojang.serialization.MapCodec;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.food.Seasons;
 import io.github.roman16.backcountry.body.Activity;
 import io.github.roman16.backcountry.body.Body;
+import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Skill;
 import io.github.roman16.backcountry.guide.Deed;
@@ -37,6 +39,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public final class CarcassBlock extends BaseEntityBlock {
+    private static final int NUMB_CLICKS = 2;
     public static final MapCodec<CarcassBlock> CODEC = simpleCodec(CarcassBlock::new);
     private static final VoxelShape SHAPE = Block.box(1, 0, 3, 15, 6, 13);
     private static final int LEAST_CLICKS = 4;
@@ -73,7 +76,8 @@ public final class CarcassBlock extends BaseEntityBlock {
 
     public static int clicks(CarcassEntity carcass, Body body) {
         double kg = carcass.data().map(Animal::kg).orElse(1.0);
-        return Math.max(LEAST_CLICKS, (int) Math.round(kg * Balance.get().hunting().dressClicksPerKg() * Skill.BUTCHERING.effort(body)));
+        return Math.max(LEAST_CLICKS, (int) Math.round(kg * Balance.get().hunting().dressClicksPerKg() * Skill.BUTCHERING.effort(body)
+                * (body.has(Condition.NUMB_HANDS) ? NUMB_CLICKS : 1)));
     }
 
     @Override
@@ -101,7 +105,7 @@ public final class CarcassBlock extends BaseEntityBlock {
         player.displayClientMessage(Component.translatable("message.backcountry.dressing", carcass.animal().getDescription(), "▮".repeat(filled) + "▯".repeat(BAR - filled)), true);
         if (done >= needed) {
             stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
-            carcass.data().ifPresent(animal -> animal.cuts().forEach(cut -> popResource(level, pos, cut.stack())));
+            carcass.data().ifPresent(animal -> animal.cutsIn(Seasons.month(level)).forEach(cut -> popResource(level, pos, cut.stack())));
             carcass.arrows().forEach(arrow -> popResource(level, pos, arrow.copy()));
             level.removeBlock(pos, false);
             if (player instanceof ServerPlayer server) {

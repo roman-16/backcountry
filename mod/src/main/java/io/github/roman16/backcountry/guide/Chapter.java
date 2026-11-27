@@ -10,6 +10,7 @@ public enum Chapter {
     CAMP,
     FOOD,
     HUNTING,
+    HOMESTEAD,
     BEFORE_SNOW,
     WINTER,
     YEAR;

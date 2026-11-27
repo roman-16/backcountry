@@ -1,27 +1,20 @@
 package io.github.roman16.backcountry.gear;
 
-import com.mojang.datafixers.util.Pair;
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Metabolism;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.function.Predicate;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -31,7 +24,6 @@ import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 @EventBusSubscriber(modid = Backcountry.MODID)
 public final class Hotbar {
     public static final int ROW = 9;
-    public static final int WORN_X = 77;
 
     private Hotbar() {}
 
@@ -51,11 +43,50 @@ public final class Hotbar {
         }
         carried.add(player.getOffhandItem());
         inventory.armor.forEach(carried::add);
-        Body body = Metabolism.body(player);
-        carried.add(body.binoculars);
-        carried.add(body.pack);
-        carried.addAll(contents(body.pack));
+        for (Worn worn : Worn.values()) {
+            carried.add(worn.get(player));
+        }
+        carried.addAll(contents(Worn.BACK.get(player)));
         return carried;
+    }
+
+    public static int count(Player player, Predicate<ItemStack> wanted) {
+        int count = 0;
+        Inventory inventory = player.getInventory();
+        for (int slot = 0; slot < ROW; slot++) {
+            count += wanted.test(inventory.getItem(slot)) ? inventory.getItem(slot).getCount() : 0;
+        }
+        count += wanted.test(player.getOffhandItem()) ? player.getOffhandItem().getCount() : 0;
+        for (ItemStack inside : contents(Worn.BACK.get(player))) {
+            count += wanted.test(inside) ? inside.getCount() : 0;
+        }
+        return count;
+    }
+
+    public static void take(Player player, Predicate<ItemStack> wanted, int amount) {
+        int left = amount;
+        Inventory inventory = player.getInventory();
+        for (int slot = 0; slot < ROW && left > 0; slot++) {
+            left -= shrink(inventory.getItem(slot), wanted, left);
+        }
+        left -= shrink(player.getOffhandItem(), wanted, left);
+        ItemStack pack = Worn.BACK.get(player);
+        if (left > 0 && !pack.isEmpty()) {
+            NonNullList<ItemStack> items = contents(pack);
+            for (ItemStack inside : items) {
+                left -= shrink(inside, wanted, left);
+            }
+            store(pack, items);
+        }
+    }
+
+    private static int shrink(ItemStack stack, Predicate<ItemStack> wanted, int left) {
+        if (left <= 0 || !wanted.test(stack)) {
+            return 0;
+        }
+        int taken = Math.min(left, stack.getCount());
+        stack.shrink(taken);
+        return taken;
     }
 
     public static NonNullList<ItemStack> contents(ItemStack pack) {
@@ -85,7 +116,7 @@ public final class Hotbar {
         }
 
         public boolean locked() {
-            return !open() && packIndex() >= PackItem.slots(Metabolism.body(inventory.player).pack);
+            return !open() && packIndex() >= PackItem.slots(Worn.BACK.get(inventory.player));
         }
 
         public Optional<Component> needs() {
@@ -106,7 +137,7 @@ public final class Hotbar {
                 return ItemStack.EMPTY;
             }
             Body body = Metabolism.body(inventory.player);
-            return body.packRows.items(body.pack).get(packIndex());
+            return body.packRows.items(Worn.BACK.get(inventory.player)).get(packIndex());
         }
 
         @Override
@@ -117,7 +148,7 @@ public final class Hotbar {
             }
             if (!locked()) {
                 Body body = Metabolism.body(inventory.player);
-                body.packRows.items(body.pack).set(packIndex(), stack);
+                body.packRows.items(Worn.BACK.get(inventory.player)).set(packIndex(), stack);
             }
             setChanged();
         }
@@ -126,7 +157,7 @@ public final class Hotbar {
         public void setChanged() {
             if (!open() && !locked()) {
                 Body body = Metabolism.body(inventory.player);
-                body.packRows.save(body.pack);
+                body.packRows.save(Worn.BACK.get(inventory.player));
             }
             super.setChanged();
         }
@@ -155,81 +186,13 @@ public final class Hotbar {
         }
     }
 
-    public enum Worn {
-        BACK(44, PackItem.class, body -> body.pack, (body, stack) -> body.pack = stack),
-        NECK(26, BinocularsItem.class, body -> body.binoculars, (body, stack) -> body.binoculars = stack);
-
-        public final int y;
-        private final Class<? extends Item> fits;
-        private final Function<Body, ItemStack> get;
-        private final BiConsumer<Body, ItemStack> set;
-        private final ResourceLocation empty;
-
-        Worn(int y, Class<? extends Item> fits, Function<Body, ItemStack> get, BiConsumer<Body, ItemStack> set) {
-            this.y = y;
-            this.fits = fits;
-            this.get = get;
-            this.set = set;
-            this.empty = Backcountry.id("item/empty_slot_" + name().toLowerCase(Locale.ROOT));
-        }
-    }
-
-    public static final class WornSlot extends Slot {
-        private final Player player;
-        private final Worn worn;
-
-        public WornSlot(Player player, Worn worn) {
-            super(new SimpleContainer(1), 0, WORN_X, worn.y);
-            this.player = player;
-            this.worn = worn;
-        }
-
-        @Override
-        public ItemStack getItem() {
-            return worn.get.apply(Metabolism.body(player));
-        }
-
-        @Override
-        public void set(ItemStack stack) {
-            worn.set.accept(Metabolism.body(player), stack);
-            setChanged();
-        }
-
-        @Override
-        public ItemStack remove(int amount) {
-            ItemStack taken = getItem();
-            worn.set.accept(Metabolism.body(player), ItemStack.EMPTY);
-            return taken;
-        }
-
-        @Override
-        public boolean mayPlace(ItemStack stack) {
-            return worn.fits.isInstance(stack.getItem());
-        }
-
-        @Override
-        public int getMaxStackSize() {
-            return 1;
-        }
-
-        @Override
-        public boolean isActive() {
-            return !player.isCreative();
-        }
-
-        @Override
-        public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-            return Pair.of(InventoryMenu.BLOCK_ATLAS, worn.empty);
-        }
-    }
-
     @SubscribeEvent
     static void pickUp(ItemEntityPickupEvent.Pre event) {
         Player player = event.getPlayer();
-        Body body = Metabolism.body(player);
+        ItemStack pack = Worn.BACK.get(player);
         ItemEntity entity = event.getItemEntity();
         ItemStack stack = entity.getItem();
-        if (player.level().isClientSide || player.isCreative() || body.pack.isEmpty() || stack.getItem() instanceof PackItem || entity.hasPickUpDelay()
+        if (player.level().isClientSide || player.isCreative() || pack.isEmpty() || stack.getItem() instanceof PackItem || entity.hasPickUpDelay()
                 || entity.getTarget() != null && !entity.getTarget().equals(player.getUUID())) {
             return;
         }
@@ -237,7 +200,7 @@ public final class Hotbar {
         if (over <= 0) {
             return;
         }
-        NonNullList<ItemStack> items = contents(body.pack);
+        NonNullList<ItemStack> items = contents(pack);
         int moved = 0;
         for (int i = 0; i < items.size() && moved < over; i++) {
             ItemStack inside = items.get(i);
@@ -252,7 +215,7 @@ public final class Hotbar {
             }
         }
         if (moved > 0) {
-            store(body.pack, items);
+            store(pack, items);
             stack.shrink(moved);
             entity.setItem(stack);
         }

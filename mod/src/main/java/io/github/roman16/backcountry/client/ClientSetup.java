@@ -10,9 +10,7 @@ import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ChickenRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.item.CompassItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.core.GlobalPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.item.Item;
@@ -26,11 +24,11 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterItemDecorationsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 
 @EventBusSubscriber(modid = Backcountry.MODID, value = Dist.CLIENT)
 public final class ClientSetup {
     private static final float DRAW_TICKS = 20;
-    private static final int NORTH_BLOCKS = 30_000_000;
     private static final int BAR_WIDTH = 13;
     private static final int BAR_X = 2;
     private static final int BAR_Y = 13;
@@ -56,13 +54,18 @@ public final class ClientSetup {
         event.registerEntityRenderer(Things.LOON.get(), BirdRenderer::new);
         event.registerEntityRenderer(Things.PTARMIGAN.get(), BirdRenderer::new);
         event.registerEntityRenderer(Things.SLED_ENTITY.get(), SledRenderer::new);
+        event.registerEntityRenderer(Things.CANOE_ENTITY.get(), CanoeRenderer::new);
+        event.registerBlockEntityRenderer(Things.DRYING_RACK_ENTITY.get(), DryingRackRenderer::new);
     }
 
     @SubscribeEvent
     static void setup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            ItemProperties.register(Items.COMPASS, ResourceLocation.withDefaultNamespace("angle"), new CompassItemPropertyFunction((level, stack, entity) ->
-                    GlobalPos.of(level.dimension(), entity.blockPosition().north(NORTH_BLOCKS))));
+            CuriosRendererRegistry.register(Things.CANVAS_PACK.get(), () -> new WornRenderer(WornRenderer.Place.BACK));
+            CuriosRendererRegistry.register(Things.HIDE_PACK.get(), () -> new WornRenderer(WornRenderer.Place.BACK));
+            CuriosRendererRegistry.register(Things.BINOCULARS.get(), () -> new WornRenderer(WornRenderer.Place.CHEST));
+            CuriosRendererRegistry.register(Things.HIDE_MITTENS.get(), () -> new WornRenderer(WornRenderer.Place.HANDS));
+            CuriosRendererRegistry.register(Things.FUR_MITTENS.get(), () -> new WornRenderer(WornRenderer.Place.HANDS));
             for (Item bow : new Item[] {Things.LIGHT_HUNTING_BOW.get(), Things.HEAVY_HUNTING_BOW.get()}) {
                 ItemProperties.register(bow, ResourceLocation.withDefaultNamespace("pull"), (stack, level, entity, seed) -> entity == null || entity.getUseItem() != stack ? 0
                         : (stack.getUseDuration(entity) - entity.getUseItemRemainingTicks()) / DRAW_TICKS);

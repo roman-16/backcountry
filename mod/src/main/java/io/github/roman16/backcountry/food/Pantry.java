@@ -16,7 +16,7 @@ public final class Pantry {
     public static boolean usable(ItemStack stack) {
         Optional<Nutrition> food = Nutrition.of(stack);
         return food.isPresent() && food.get().kcal() > 0 && !food.get().raw() && food.get().poisoning() <= 0 && !Spoilage.spoiled(stack)
-                && !stack.has(Things.CONTAMINATED.get());
+                && !stack.has(Things.CONTAMINATED.get()) && !stack.has(Things.FOULED.get());
     }
 
     public static double kcal(ItemStack stack) {

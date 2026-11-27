@@ -3,13 +3,16 @@ package io.github.roman16.backcountry.body;
 import io.github.roman16.backcountry.Backcountry;
 import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.food.Seasons;
 import io.github.roman16.backcountry.food.Spoilage;
 import io.github.roman16.backcountry.gear.Water;
 import io.github.roman16.backcountry.guide.Deed;
 import io.github.roman16.backcountry.guide.Guide;
+import io.github.roman16.backcountry.hunt.Hunting;
 import io.github.roman16.backcountry.net.Messages;
 import io.github.roman16.backcountry.survivor.Ending;
 import io.github.roman16.backcountry.survivor.Team;
+import io.github.roman16.backcountry.weather.Ice;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +34,10 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.alchemy.PotionContents;
-import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -54,6 +57,7 @@ public final class Metabolism {
     public static final ResourceKey<DamageType> FROSTBITE = ResourceKey.create(Registries.DAMAGE_TYPE, Backcountry.id("frostbite"));
     public static final ResourceKey<DamageType> HYPOTHERMIA = ResourceKey.create(Registries.DAMAGE_TYPE, Backcountry.id("hypothermia"));
     public static final ResourceKey<DamageType> INFECTION = ResourceKey.create(Registries.DAMAGE_TYPE, Backcountry.id("infection"));
+    public static final ResourceKey<DamageType> SHELLFISH = ResourceKey.create(Registries.DAMAGE_TYPE, Backcountry.id("shellfish"));
     public static final ResourceKey<DamageType> THIRST = ResourceKey.create(Registries.DAMAGE_TYPE, Backcountry.id("thirst"));
     public static final int STEP_TICKS = 20;
     private static final double TICKS_AN_HOUR = Exertion.TICKS_AN_HOUR;
@@ -67,6 +71,8 @@ public final class Metabolism {
     private static final double TELEPORT_BLOCKS = 16;
     private static final double SINK_PER_TICK = 0.04;
     private static final ResourceLocation SLOW_HANDS = Backcountry.id("tired_hands");
+    private static final ResourceLocation LOW_SPIRITS = Backcountry.id("low_spirits");
+    private static final ResourceLocation POISONED_LEGS = Backcountry.id("poisoned_legs");
     private static final ResourceLocation STILL = Backcountry.id("blacked_out");
     private static final ResourceLocation STILL_JUMP = Backcountry.id("blacked_out_jump");
     private static final ResourceLocation STUMBLE = Backcountry.id("stumble");
@@ -115,6 +121,9 @@ public final class Metabolism {
                 if (body.sheltered) {
                     Guide.did(player, Deed.SLEPT_ROOFED);
                 }
+                if (body.room == Rooms.Kind.CABIN) {
+                    Guide.did(player, Deed.SLEPT_IN_CABIN);
+                }
             }
         }
     }
@@ -127,9 +136,12 @@ public final class Metabolism {
         if (day != body.lastDay) {
             body.lastDay = day;
             body.weights.add((float) body.weightKg);
+            Afflictions.day(body);
             body.newDay();
         }
         Warmth.sense(player, body, day);
+        Spirits.step(player, body, hours, asleep);
+        Ice.step(player, body);
         body.loadKg = Load.kg(player, body);
         double absorbed = digest(body, hours);
         double burn = Exertion.burn(player, body, hours, asleep, absorbed);
@@ -137,13 +149,14 @@ public final class Metabolism {
         body.kcalBurnedToday += burn;
         body.vitaminCMg = Math.max(0, body.vitaminCMg - balance.body().vitaminCMgDay() * days);
         Balance.Energy energy = balance.energy();
-        body.energy -= body.exertedKcal / (body.weightKg * energy.workKcalPerKgToEmpty());
+        body.energy -= body.exertedKcal / (body.weightKg * energy.workKcalPerKgToEmpty()) * (Spirits.high(body.spirits) ? balance.spirits().highWork() : 1);
         boolean bitten = Mosquitoes.biting(player, body);
         if (bitten) {
             Mosquitoes.swarm(player);
         }
         if (asleep) {
-            body.energy += hours / energy.sleepHoursToFull() * (bitten ? balance.mosquitoes().sleepShare() : 1);
+            body.energy += hours / energy.sleepHoursToFull() * (bitten ? balance.mosquitoes().sleepShare() : 1) * (body.smoky ? balance.rooms().smokySleep() : 1)
+                    * (Spirits.low(body.spirits) ? balance.spirits().lowSleep() : 1);
             body.awakeTicks = 0;
         } else {
             body.energy -= hours / energy.awakeHoursToEmpty() + (bitten ? hours * balance.mosquitoes().energyPerHour() : 0);
@@ -151,7 +164,8 @@ public final class Metabolism {
         }
         body.energy += absorbed / energy.digestKcalToFull();
         body.energy = Math.max(0, Math.min(body.has(Condition.EXHAUSTED) ? balance.conditions().exhaustedEnergy() : 1, body.energy));
-        double thirst = balance.water().needLDay() * days * (body.has(Condition.GUT_INFECTION) ? balance.conditions().gutWater() : 1);
+        double thirst = balance.water().needLDay() * days * (body.has(Condition.GUT_INFECTION) ? balance.conditions().gutWater() : 1)
+                * (body.has(Condition.RABBIT_STARVATION) ? balance.conditions().rabbitWater() : 1);
         if (body.coreC > balance.warmth().sweatCoreC()) {
             thirst += balance.warmth().sweatLPerHour() * hours;
         }
@@ -188,7 +202,8 @@ public final class Metabolism {
         body.stomachProtein -= body.stomachProtein * share;
         body.stomachCarbs -= body.stomachCarbs * share;
         body.stomachKcal -= digested;
-        double absorb = (body.has(Condition.GUT_INFECTION) ? balance.conditions().gutAbsorb() : 1) * (body.has(Condition.PARASITES) ? balance.conditions().parasitesAbsorb() : 1);
+        double absorb = (body.has(Condition.GUT_INFECTION) ? balance.conditions().gutAbsorb() : 1) * (body.has(Condition.PARASITES) ? balance.conditions().parasitesAbsorb() : 1)
+                * (body.has(Condition.RABBIT_STARVATION) ? balance.conditions().rabbitAbsorb() : 1);
         return digested * absorb;
     }
 
@@ -199,7 +214,8 @@ public final class Metabolism {
             body.healHours = 0;
             return;
         }
-        double rate = (asleep ? healing.asleepFactor() : 1) * (body.has(Condition.SCURVY) ? healing.scurvyFactor() : 1) / healing.hoursPerHeart();
+        double rate = (asleep ? healing.asleepFactor() : 1) * (body.has(Condition.SCURVY) ? healing.scurvyFactor() : 1) / healing.hoursPerHeart()
+                * (Spirits.high(body.spirits) ? Balance.get().spirits().highHealing() : 1);
         body.healHours += hours * rate;
         while (body.healHours >= 1 && player.getHealth() < player.getMaxHealth()) {
             player.heal(HEART);
@@ -259,7 +275,7 @@ public final class Metabolism {
     private static void hold(ServerPlayer player, Body body) {
         Balance.Energy energy = Balance.get().energy();
         boolean tired = body.energy < energy.sprintBelow() || body.has(Condition.BLISTERS) || body.has(Condition.FROSTBITE) || body.has(Condition.SEVERE_FROSTBITE)
-                || body.has(Condition.HYPOTHERMIA) || body.has(Condition.SEVERE_HYPOTHERMIA);
+                || body.has(Condition.HYPOTHERMIA) || body.has(Condition.SEVERE_HYPOTHERMIA) || body.has(Condition.SHELLFISH_POISONING);
         player.getFoodData().setFoodLevel(tired ? TIRED_FOOD : HELD_FOOD);
         player.getFoodData().setSaturation(0);
         player.getFoodData().setExhaustion(0);
@@ -285,13 +301,15 @@ public final class Metabolism {
         modify(player.getAttribute(Attributes.MOVEMENT_SPEED), STILL, body.blackoutTicks > 0 ? -1 : 0);
         modify(player.getAttribute(Attributes.JUMP_STRENGTH), STILL_JUMP, body.blackoutTicks > 0 ? -1 : 0);
         modify(player.getAttribute(Attributes.MOVEMENT_SPEED), STUMBLE, body.stumbleTicks > 0 ? -energy.slowSpeed() : 0);
+        modify(player.getAttribute(Attributes.MOVEMENT_SPEED), POISONED_LEGS, body.has(Condition.SHELLFISH_POISONING) ? -energy.slowSpeed() : 0);
+        modify(player.getAttribute(Attributes.BLOCK_BREAK_SPEED), LOW_SPIRITS, Spirits.low(body.spirits) ? Balance.get().spirits().lowWorkSpeed() - 1 : 0);
     }
 
     public static void release(ServerPlayer player) {
         for (var attribute : List.of(Attributes.BLOCK_BREAK_SPEED, Attributes.MOVEMENT_SPEED, Attributes.JUMP_STRENGTH)) {
             AttributeInstance instance = player.getAttribute(attribute);
             if (instance != null) {
-                for (ResourceLocation id : List.of(SLOW_HANDS, STILL, STILL_JUMP, STUMBLE)) {
+                for (ResourceLocation id : List.of(SLOW_HANDS, STILL, STILL_JUMP, STUMBLE, POISONED_LEGS, LOW_SPIRITS)) {
                     instance.removeModifier(id);
                 }
             }
@@ -314,9 +332,17 @@ public final class Metabolism {
         if (food.isEmpty() || !eat(player, food.get())) {
             return false;
         }
-        if (Spoilage.spoiled(stack) || stack.has(Things.CONTAMINATED.get())) {
+        if (Spoilage.spoiled(stack) || stack.has(Things.CONTAMINATED.get()) || stack.has(Things.FOULED.get())) {
             poison(body(player));
         }
+        if (stack.is(Things.SHELLFISH)) {
+            Balance.Conditions rules = Balance.get().conditions();
+            double chance = Hunting.months(Seasons.month(player.level()), rules.shellfishMonths()) ? rules.shellfishSummerChance() : rules.shellfishChance();
+            if (player.getRandom().nextDouble() < chance) {
+                body(player).afflict(Condition.SHELLFISH_POISONING);
+            }
+        }
+        Spirits.ate(player, body(player), stack);
         if (food.get().water() > 0) {
             drink(player, food.get().water(), Water.boiled((float) food.get().water()));
         }
@@ -381,7 +407,7 @@ public final class Metabolism {
                 body.kcalEatenToday += kcal;
                 body.carbsToday += kcal / KCAL_A_GRAM_OF_CARBS;
             }
-            case WATER -> {
+            case WATER, SEA_WATER -> {
             }
         }
         Guide.did(player, Deed.DRANK);

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": {
+      "item": "minecraft:chest"
+    },
+    "H": {
+      "item": "backcountry:scraped_hide"
+    },
+    "I": {
+      "item": "minecraft:iron_nugget"
+    }
+  },
+  "pattern": [
+    "III",
+    "HCH",
+    "HHH"
+  ],
+  "result": {
+    "count": 1,
+    "id": "riverfishing:tackle_box_small"
+  }
+}

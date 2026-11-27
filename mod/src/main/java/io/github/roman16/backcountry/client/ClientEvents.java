@@ -17,7 +17,8 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.DeathScreen;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
@@ -39,8 +40,6 @@ public final class ClientEvents {
     private static final double WATER_SHOWN = 0.005;
     private static final String ADVANCEMENTS = "gui.advancements";
     private static final String STATISTICS = "gui.stats";
-    private static final ResourceLocation SLOT_SPRITE = ResourceLocation.withDefaultNamespace("container/slot");
-    private static final int SLOT = 18;
     private static final int ITEM = 16;
 
     private ClientEvents() {}
@@ -111,6 +110,15 @@ public final class ClientEvents {
     }
 
     @SubscribeEvent
+    static void hint(ItemTooltipEvent event) {
+        ResourceLocation id = BuiltInRegistries.ITEM.getKey(event.getItemStack().getItem());
+        String key = "tooltip.backcountry.hint." + id.getPath();
+        if (id.getNamespace().equals(Backcountry.MODID) && I18n.exists(key)) {
+            event.getToolTip().add(Math.min(1, event.getToolTip().size()), Component.translatable(key).withStyle(ChatFormatting.GRAY));
+        }
+    }
+
+    @SubscribeEvent
     static void tooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
         Nutrition.of(stack).ifPresent(food -> {
@@ -133,8 +141,17 @@ public final class ClientEvents {
             if (stack.has(Things.SMOKED.get())) {
                 lines.add(Component.translatable("tooltip.backcountry.smoked").withStyle(ChatFormatting.GRAY));
             }
+            if (stack.has(Things.DRIED.get())) {
+                lines.add(Component.translatable("tooltip.backcountry.dried").withStyle(ChatFormatting.GRAY));
+            }
+            if (stack.has(Things.SALTED.get())) {
+                lines.add(Component.translatable("tooltip.backcountry.salted").withStyle(ChatFormatting.GRAY));
+            }
             if (stack.has(Things.CONTAMINATED.get())) {
                 lines.add(Component.translatable("tooltip.backcountry.contaminated").withStyle(ChatFormatting.RED));
+            }
+            if (stack.has(Things.FOULED.get())) {
+                lines.add(Component.translatable("tooltip.backcountry.fouled").withStyle(ChatFormatting.RED));
             }
             if (stack.has(Things.SPAWNED_OUT.get())) {
                 lines.add(Component.translatable("tooltip.backcountry.spawned_out").withStyle(ChatFormatting.RED));
@@ -154,15 +171,6 @@ public final class ClientEvents {
         if (event.getEntity() == Minecraft.getInstance().player && !Minecraft.getInstance().player.isCreative() && !Minecraft.getInstance().player.isSpectator()
                 && Metabolism.tooFull(ClientState.stomachKcal(), event.getItem())) {
             event.setCanceled(true);
-        }
-    }
-
-    @SubscribeEvent
-    static void background(ContainerScreenEvent.Render.Background event) {
-        if (event.getContainerScreen() instanceof InventoryScreen screen && !Minecraft.getInstance().player.isCreative()) {
-            for (Hotbar.Worn worn : Hotbar.Worn.values()) {
-                event.getGuiGraphics().blitSprite(SLOT_SPRITE, screen.getGuiLeft() + Hotbar.WORN_X - 1, screen.getGuiTop() + worn.y - 1, SLOT, SLOT);
-            }
         }
     }
 

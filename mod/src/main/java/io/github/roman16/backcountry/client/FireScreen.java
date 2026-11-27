@@ -107,6 +107,11 @@ public final class FireScreen extends AbstractContainerScreen<FireMenu> {
         graphics.drawString(font, Component.translatable("fire.backcountry.cook"), SECOND_COLUMN, CHECKS_Y + LINE, Look.TEXT_QUIET, false);
         if (menu.packed()) {
             graphics.drawString(font, Component.translatable("fire.backcountry.packed"), PAD, CHECKS_Y + 2 * LINE, Look.DANGER, false);
+        } else if (menu.snowy()) {
+            check(graphics, PAD, CHECKS_Y + 2 * LINE, false, Component.translatable("fire.backcountry.snowy_branches"));
+        }
+        if (menu.smoky()) {
+            check(graphics, SECOND_COLUMN, CHECKS_Y + 2 * LINE, false, Component.translatable("fire.backcountry.smoke_hole"));
         }
     }
 

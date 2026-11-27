@@ -71,6 +71,11 @@ public class WaterVesselItem extends Item {
             BlockPos at = hit.getBlockPos();
             boolean aimedAtWater = level.getFluidState(at).is(FluidTags.WATER);
             boolean salt = aimedAtWater && level.getBiome(at).is(Things.SALT_WATER);
+            if (salt && water(stack).empty() && stack.is(Things.CAMP_POT.get())) {
+                stack.set(Things.WATER.get(), new Water(Water.Drink.SEA_WATER, false, Water.Source.LAKE, capacity()));
+                level.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.NEUTRAL, 1.0F, 1.0F);
+                return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+            }
             if (salt && water(stack).empty()) {
                 if (!level.isClientSide) {
                     player.displayClientMessage(Component.translatable("message.backcountry.salt_water"), true);
@@ -89,6 +94,12 @@ public class WaterVesselItem extends Item {
         }
         if (water(stack).empty()) {
             return InteractionResultHolder.pass(stack);
+        }
+        if (water(stack).drink() == Water.Drink.SEA_WATER) {
+            if (!level.isClientSide) {
+                player.displayClientMessage(Component.translatable("message.backcountry.sea_water_in_pot"), true);
+            }
+            return InteractionResultHolder.fail(stack);
         }
         if (!Metabolism.thirsty(player)) {
             if (!level.isClientSide) {
@@ -133,6 +144,7 @@ public class WaterVesselItem extends Item {
         String kind = switch (held.drink()) {
             case SPRUCE_TEA -> "tooltip.backcountry.spruce_tea";
             case BIRCH_SAP -> held.boiled() ? "tooltip.backcountry.boiled_sap" : "tooltip.backcountry.birch_sap";
+            case SEA_WATER -> "tooltip.backcountry.sea_water";
             case WATER -> held.boiled() ? "tooltip.backcountry.boiled_water"
                     : held.source() == Water.Source.STREAM ? "tooltip.backcountry.stream_water" : "tooltip.backcountry.lake_water";
         };

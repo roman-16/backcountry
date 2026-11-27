@@ -1,0 +1,21 @@
+{
+  "type": "backcountry:clams",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:blocks/sand"
+    },
+    {
+      "condition": "minecraft:match_tool",
+      "predicate": {
+        "items": "#minecraft:shovels"
+      }
+    },
+    {
+      "condition": "minecraft:location_check",
+      "predicate": {
+        "biomes": "#minecraft:is_beach"
+      }
+    }
+  ]
+}

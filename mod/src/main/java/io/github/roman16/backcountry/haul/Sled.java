@@ -13,6 +13,7 @@ import net.minecraft.world.entity.vehicle.ChestBoat;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,14 +38,15 @@ public final class Sled extends ChestBoat {
     @Override
     public float getGroundFriction() {
         Balance.Sled sled = Balance.get().sled();
-        return (float) (onSnow() ? sled.snowFriction() : sled.groundFriction());
+        return (float) (gliding() ? sled.snowFriction() : sled.groundFriction());
     }
 
-    public boolean onSnow() {
+    public boolean gliding() {
         BlockPos at = blockPosition();
         BlockState here = level().getBlockState(at);
         BlockState below = level().getBlockState(at.below());
-        return here.getBlock() instanceof SnowLayerBlock || below.is(Blocks.SNOW_BLOCK) || below.is(Blocks.POWDER_SNOW) || below.getBlock() instanceof SnowLayerBlock;
+        return here.getBlock() instanceof SnowLayerBlock || below.is(Blocks.SNOW_BLOCK) || below.is(Blocks.POWDER_SNOW) || below.getBlock() instanceof SnowLayerBlock
+                || below.is(BlockTags.ICE);
     }
 
     public double contentsKg() {
@@ -71,6 +73,6 @@ public final class Sled extends ChestBoat {
 
     public static double pulledKg(ServerPlayer player) {
         Balance.Sled rules = Balance.get().sled();
-        return pulledBy(player).stream().mapToDouble(sled -> (rules.selfKg() + sled.contentsKg()) * (sled.onSnow() ? rules.snowDrag() : rules.groundDrag())).sum();
+        return pulledBy(player).stream().mapToDouble(sled -> (rules.selfKg() + sled.contentsKg()) * (sled.gliding() ? rules.snowDrag() : rules.groundDrag())).sum();
     }
 }

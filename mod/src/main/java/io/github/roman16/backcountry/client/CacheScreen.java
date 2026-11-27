@@ -1,5 +1,6 @@
 package io.github.roman16.backcountry.client;
 
+import io.github.roman16.backcountry.food.CacheEntity;
 import io.github.roman16.backcountry.food.CacheMenu;
 import io.github.roman16.backcountry.food.Ration;
 import java.util.ArrayList;
@@ -79,7 +80,11 @@ public final class CacheScreen extends AbstractContainerScreen<CacheMenu> {
         graphics.drawString(font, Component.translatable("cache.backcountry.spoiling", Words.one(menu.spoiling()), Words.degrees(menu.airC())), PAD, y, Look.TEXT_QUIET,
                 false);
         y += LINE;
-        if (menu.scented()) {
+        if (menu.reach() == CacheEntity.Reach.TALL) {
+            graphics.drawString(font, Component.translatable("cache.backcountry.tall"), PAD, y, Look.GOOD, false);
+        } else if (menu.reach() == CacheEntity.Reach.LADDER) {
+            graphics.drawString(font, Component.translatable("cache.backcountry.ladder"), PAD, y, Look.DANGER, false);
+        } else if (menu.scented()) {
             graphics.drawString(font, Component.translatable("cache.backcountry.scent"), PAD, y, Look.DANGER, false);
         }
     }

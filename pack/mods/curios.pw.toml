@@ -1,0 +1,13 @@
+name = "Curios API"
+filename = "curios-neoforge-9.6.1+1.21.1.jar"
+side = "both"
+
+[download]
+url = "https://cdn.modrinth.com/data/vvuO3ImH/versions/8lywiRts/curios-neoforge-9.6.1%2B1.21.1.jar"
+hash-format = "sha512"
+hash = "da2b98fac6c9c01cddbc37e35392f9ba4ef430b580549297bfbff2f04632d31b63da66f5db281e28bc7828f7a0f31672c0a71008ac8f2f530fe43e78ae0c4bc0"
+
+[update]
+[update.modrinth]
+mod-id = "vvuO3ImH"
+version = "8lywiRts"

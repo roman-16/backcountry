@@ -1,0 +1,20 @@
+{
+  "values": [
+    {
+      "id": "projectvibrantjourneys:bark_mushroom",
+      "required": false
+    },
+    {
+      "id": "projectvibrantjourneys:light_brown_bark_mushroom",
+      "required": false
+    },
+    {
+      "id": "projectvibrantjourneys:orange_bark_mushroom",
+      "required": false
+    },
+    {
+      "id": "projectvibrantjourneys:white_bark_mushroom",
+      "required": false
+    }
+  ]
+}

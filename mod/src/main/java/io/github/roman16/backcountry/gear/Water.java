@@ -16,7 +16,8 @@ public record Water(Drink drink, boolean boiled, Source source, float litres) {
     public enum Drink implements StringRepresentable {
         WATER,
         SPRUCE_TEA,
-        BIRCH_SAP;
+        BIRCH_SAP,
+        SEA_WATER;
 
         public static final Codec<Drink> CODEC = StringRepresentable.fromEnum(Drink::values);
 
