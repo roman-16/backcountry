@@ -74,7 +74,7 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
     public record Energy(double awakeHoursToEmpty, int blackoutSeconds, double digestKcalToFull, double sleepHoursToFull, double slowBelow, double slowSpeed, double sprintBelow,
             double stumbleBelow, int stumbleSeconds, double stumbleShare, double wakeEnergy, double workKcalPerKgToEmpty) {}
 
-    public record Fire(double bankedHours, double branchBlocks, double coalsC, double fireplaceBurn, double fungusHours, double hardwoodHeat, double hardwoodHours, double hotBurn, double hotC, double kindlingHeat, double kindlingHours, int kindlingSticks, double lowBurn, double lowC, double mostCoalsHours, double rainBurn, double smotherPerHour, double softwoodHours, int sparkBlocks, double sparkChance, double steadyC) {}
+    public record Fire(double bankedHours, double branchBlocks, double coalsC, double fireplaceBurn, double fungusHours, double hardwoodHeat, double hardwoodHours, double hotBurn, double hotC, double kindlingHeat, double kindlingHours, int kindlingSticks, double lowBurn, double lowC, double mostCoalsHours, double rainBurn, double smotherPerHour, double softwoodHours, int sparkBlocks, double sparkChance, double steadyC, double touchSeconds) {}
 
     public record Firewood(double catches, double dryPerDay, double freshHardwood, double freshSoftwood, double frozenDrying, int pilePieces) {}
 
@@ -92,13 +92,13 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
 
     public record Healing(double above, double asleepFactor, double hoursPerHeart, double scurvyFactor) {}
 
-    public record Hunting(double bleedHours, double bloodChance, double bloodDays, double carryKg, double dressClicksPerKg, double heavyPower, double organKg, double quillDamage, double scavengedDays, double strongBmi, double strongEnergy, int wolfKeepOffBlocks, double woundShare) {}
+    public record Hunting(double bleedHours, double bloodChance, double bloodDays, double carryKg, double dressClicksPerKg, double fatalHours, double heavyChestHit, double heavyPower, double organKg, double quillDamage, double scavengedDays, double strongBmi, double strongEnergy, int wolfKeepOffBlocks, double woundShare) {}
 
     public record Ice(List<Double> breakupMonths, double crackChance, double freezeBelowC, double overflowChance, double overflowWetness, double rotChance,
             double thawAboveC, double thickSledKg, double thickenDays, double thinLoadKg) {}
 
     public record Kit(double bowSawSpeed, int broadheads, int ferroRodStrikes, int hooks, int monoLines, int pemmican, int picks, int pilotBread, int rope, double sharpenShare,
-            int sharpeningStoneUses, double sleepingPadClo, int snareWire, int tarps) {}
+            int sharpeningStoneUses, double sleepingBagClo, double sleepingPadClo, int snareWire, int tarps) {}
 
     public record Lights(double lanternHours, double torchHours) {}
 
@@ -144,9 +144,9 @@ public record Balance(Alerts alerts, Arrows arrows, Bait bait, BearSpray bearSpr
     public record Snow(int deepLayers, double frostbiteBlocks, double slowShare) {}
 
     public record Spirits(double arrivalShare, List<Double> auroraMonths, double auroraPerHour, double bigCatch, double bigCatchKg, double bottomShare, double coldPerHour,
-            double companyBlocks, double companyPerHour, double darkLight, double darkPerHour, double firePerHour, double foodMemoryDays, double highHealing, double highShare,
-            double highWork, double hotMeal, double hungerPerHour, double lowShare, double lowSleep, double lowWorkSpeed, double newFood, double roomPerHour, double sameFood,
-            int sameFoodTimes, double smokyPerHour, double sunPerHour, double taskDone, double warmRoomC, double wetPerHour) {}
+            double comfortCeiling, double companyBlocks, double companyPerHour, double darkLight, double darkPerHour, double firePerHour, double foodMemoryDays, double highHealing, double highShare,
+            double highWork, double hotMeal, double hungerPerHour, double illPerHour, double lowShare, double lowSleep, double lowWorkSpeed, double newFood, double roomPerHour, double sameFood,
+            int sameFoodTimes, double settlePerDay, double smokyPerHour, double sunPerHour, double taskDone, double warmRoomC, double wetPerHour) {}
 
     public record Spoilage(double doublingC, double frozenBelowC, double frozenShare, double referenceC, double smokedLife, double stackDays) {}
 

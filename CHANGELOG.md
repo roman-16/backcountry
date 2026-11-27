@@ -6,6 +6,46 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-11-27
+
+### Highlights
+
+- **Sleep anywhere** - At night, sneak and right-click the ground to lie down; the Sleeping Bag and Pad now decide how warm the night is, and a night too cold to survive is refused.
+- **Every working block explains itself** - The Cooking Pot, Drying Rack and Woodpile open screens like the campfire's, and sneaking at any working block shows its progress.
+- **Tougher bears** - A bear takes 3 arrows to the chest, 2 from the heavy bow, and charges whoever hit it.
+- **Fat and food that make sense** - Fat roasts on the fire, the pot renders it in pairs, fish dries outdoors in summer, and food that made you sick says so.
+
+### Added
+
+- Sleep without gear: at night, sneak and right-click the ground with an empty hand to lie down where you stand. The Sleeping Bag keeps you warm while asleep and the Sleeping Pad keeps off the cold ground; when it's too cold to sleep through the night, lying down is refused.
+- The Cooking Pot, the Drying Rack and the Woodpile open a screen like the campfire's, and sneaking at any working block shows its progress: pots, the rack, the woodpile, the smoker, the cache, traps and the fish wheel.
+- Roasted Fat: Animal Fat roasts on a campfire in 30 seconds, with no parasites.
+- Game Guts bait River Fishing's hooks and the Tip-Up, which catches twice as often baited.
+- JEI shows each gathering entry's tool, sharpening, copying a map and lighting a fire, each animal's months and where it lives, and an information page for gear whose use isn't a recipe.
+- A smoky room shows on the body panel, with how to clear it.
+- Food poisoning names the food that caused it, and that food reads "Made you sick before" afterwards; a noted plant that poisons reads "Poisonous".
+
+### Changed
+
+- Bears take 3 arrows to the chest to drop, 2 from the heavy bow, and charge whoever hit them; an axe or a stray arrow only angers them.
+- Meat, fish, offal and fat stack to 16.
+- A brush with a campfire no longer burns you: only standing in it for a second does.
+- Comforts hold spirits at the middle and good events lift them higher, settling back over days; illness wears them down.
+- The Sleeping Bag is sewn from 3 cured hides and 2 cordage.
+- Drying slows spoiling, so fish dries outdoors in summer, and the rack warns when a piece will spoil first.
+- The Cooking Pot cooks a recipe's foods twice or three times over in one go, and says when a mix cooks nothing.
+- The Moose Head spoils like raw meat.
+- The Food Cache screen counts the days for everyone online and says how to keep raiders off and the food cool.
+- Blacking out from exhaustion says why in chat, and a bear's raid says how to keep it off.
+
+### Fixed
+
+- Bear meat counts as meat: it smokes, dries and scents a cache.
+- A Camp Pot lifted off the fire keeps how far it boiled.
+- JEI's search box no longer covers the body panel.
+- Voice chat connects on exaroton.
+- Grass no longer drops barley, corn or pea seeds.
+
 ## [3.0.0] - 2026-11-27
 
 ### Highlights

@@ -47,6 +47,9 @@ final class JeiSources {
         birchTap(sources);
         woodpile(sources);
         traps(sources);
+        sharpening(sources);
+        maps(sources);
+        lighting(sources);
         return sources.stream().filter(source -> source.outputs().stream().noneMatch(Cuts::cut)).toList();
     }
 
@@ -73,14 +76,15 @@ final class JeiSources {
                 Component.translatable("jei.backcountry.gathering.bark")));
         sources.add(new Source(Source.Page.GATHERING, List.of(List.of(stack("projectvibrantjourneys:ferrous_gravel")), tagged(ItemTags.SHOVELS)),
                 List.of(new ItemStack(Items.RAW_IRON), new ItemStack(Items.GRAVEL)), Component.translatable("jei.backcountry.gathering.iron", Math.round(balance.mining().rawIronChance() * PERCENT))));
-        sources.add(new Source(Source.Page.GATHERING, List.of(List.of(new ItemStack(Items.GRAVEL))), List.of(new ItemStack(Items.FLINT)),
+        sources.add(new Source(Source.Page.GATHERING, List.of(List.of(new ItemStack(Items.GRAVEL)), tagged(ItemTags.SHOVELS)), List.of(new ItemStack(Items.FLINT)),
                 Component.translatable("jei.backcountry.gathering.flint")));
         sources.add(new Source(Source.Page.GATHERING, List.of(List.of(new ItemStack(Items.GRASS_BLOCK), new ItemStack(Items.DIRT)), tagged(ItemTags.SHOVELS)),
                 List.of(stack("riverfishing:worm")), Component.translatable("jei.backcountry.gathering.worm", Math.round(balance.bait().dryWormChance() * PERCENT),
                         Math.round(balance.bait().rainWormChance() * PERCENT))));
         sources.add(new Source(Source.Page.GATHERING, List.of(grass), List.of(new ItemStack(Things.CRICKET.get())),
                 Component.translatable("jei.backcountry.gathering.cricket", Math.round(balance.bait().cricketChance() * PERCENT))));
-        sources.add(new Source(Source.Page.GATHERING, List.of(List.of(stack("projectvibrantjourneys:natural_cobweb"))), List.of(new ItemStack(Items.STRING)), Component.empty()));
+        sources.add(new Source(Source.Page.GATHERING, List.of(List.of(stack("projectvibrantjourneys:natural_cobweb")), tagged(Things.KNIVES)), List.of(new ItemStack(Items.STRING)),
+                Component.translatable("jei.backcountry.gathering.string")));
         sources.add(new Source(Source.Page.GATHERING, List.of(List.of(new ItemStack(Items.SAND)), tagged(ItemTags.SHOVELS)), List.of(new ItemStack(Things.CLAMS.get())),
                 Component.translatable("jei.backcountry.gathering.clams", Math.round(balance.coast().clamChance() * PERCENT))));
         sources.add(new Source(Source.Page.GATHERING, List.of(), List.of(new ItemStack(Things.MUSSELS.get())), Component.translatable("jei.backcountry.gathering.mussels")));
@@ -108,6 +112,10 @@ final class JeiSources {
                     .toList();
             Component note = animal.kg() >= Balance.get().hunting().carryKg() ? Component.translatable("jei.backcountry.dressing.heavy", Math.round(animal.kg()))
                     : Component.translatable("jei.backcountry.dressing", Math.round(animal.kg()));
+            String habitat = animal.habitat().location().getPath();
+            note = note.copy().append(" ").append(Component.translatable("jei.backcountry.dressing.lives", Component.translatable("jei.backcountry.habitat." + habitat),
+                    animal.months().equals(List.of(1, 12)) ? Component.translatable("jei.backcountry.all_year")
+                            : Component.translatable("jei.backcountry.months", Words.month(animal.months().get(0)), Words.month(animal.months().get(1)))));
             if (fattest > 0) {
                 note = note.copy().append(" ").append(Component.translatable("jei.backcountry.dressing.fat", animal.fat().stream().mapToInt(Integer::intValue).min().orElse(0),
                         fattest));
@@ -188,10 +196,35 @@ final class JeiSources {
         }
     }
 
+    private static void sharpening(List<Source> sources) {
+        for (ItemStack tool : tagged(Things.EDGED)) {
+            ItemStack worn = tool.copy();
+            worn.setDamageValue(worn.getMaxDamage() / 2);
+            ItemStack sharp = worn.copy();
+            sharp.setDamageValue(Math.max(0, worn.getDamageValue() - (int) Math.ceil(worn.getMaxDamage() * Balance.get().kit().sharpenShare())));
+            sources.add(new Source(Source.Page.SHARPENING, List.of(List.of(worn), List.of(new ItemStack(Things.SHARPENING_STONE.get()))), List.of(sharp),
+                    Component.translatable("jei.backcountry.sharpening", Math.round(Balance.get().kit().sharpenShare() * PERCENT), Balance.get().kit().sharpeningStoneUses())));
+        }
+    }
+
+    private static void maps(List<Source> sources) {
+        sources.add(new Source(Source.Page.MAPS, List.of(List.of(new ItemStack(Things.BARK_MAP.get())), List.of(new ItemStack(Things.BARK_MAP.get()))),
+                List.of(new ItemStack(Things.BARK_MAP.get(), 2)), Component.translatable("jei.backcountry.maps")));
+    }
+
+    private static void lighting(List<Source> sources) {
+        List<ItemStack> fire = List.of(new ItemStack(Things.CAMPFIRE_ITEM.get()));
+        List<ItemStack> kindling = List.of(new ItemStack(Items.STICK, Balance.get().fire().kindlingSticks()));
+        sources.add(new Source(Source.Page.LIGHTING, List.of(fire, List.of(new ItemStack(Things.TINDER_BUNDLE.get()), new ItemStack(Things.PITCH_TINDER.get())), kindling,
+                List.of(new ItemStack(Things.BOW_DRILL.get()), new ItemStack(Things.FERRO_ROD.get()))), fire, Component.translatable("jei.backcountry.lighting")));
+        sources.add(new Source(Source.Page.LIGHTING, List.of(fire, List.of(new ItemStack(Things.TINDER_BUNDLE.get())), kindling,
+                List.of(new ItemStack(Things.SMOULDERING_FUNGUS.get()))), fire, Component.translatable("jei.backcountry.lighting.fungus")));
+    }
+
     private static void traps(List<Source> sources) {
         for (Kind kind : Kind.values()) {
             ItemStack trap = new ItemStack(BuiltInRegistries.ITEM.get(Backcountry.id(kind.name().toLowerCase(Locale.ROOT))));
-            List<List<ItemStack>> inputs = kind.baited() ? List.of(List.of(trap), List.of(new ItemStack(Things.CRICKET.get()))) : List.of(List.of(trap));
+            List<List<ItemStack>> inputs = kind.baited() ? List.of(List.of(trap), List.of(new ItemStack(kind.bait()))) : List.of(List.of(trap));
             List<ItemStack> outputs = new ArrayList<>();
             for (ResourceLocation animal : kind.animals()) {
                 ItemStack carcass = new ItemStack(Things.CARCASS_ITEM.get());

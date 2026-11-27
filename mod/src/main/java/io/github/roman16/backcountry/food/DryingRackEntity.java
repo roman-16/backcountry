@@ -1,31 +1,40 @@
 package io.github.roman16.backcountry.food;
 
 import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.Inspectable;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Nutrition;
+import io.github.roman16.backcountry.client.Words;
 import io.github.roman16.backcountry.fire.Fire;
 import io.github.roman16.backcountry.fire.FireBlock;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.Unit;
+import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class DryingRackEntity extends BlockEntity {
+public final class DryingRackEntity extends BlockEntity implements Container, Inspectable {
     public static final int SLOTS = 4;
     private static final int STEP_TICKS = 20;
     private static final double TICKS_AN_HOUR = 1000;
     private static final double HOURS_A_DAY = 24;
     private static final int FIRE_BELOW = 2;
+    private static final int PERCENT = 100;
     private NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
     private final double[] dried = new double[SLOTS];
     private long clock;
@@ -63,17 +72,108 @@ public final class DryingRackEntity extends BlockEntity {
         return false;
     }
 
-    public ItemStack take() {
-        for (int slot = SLOTS - 1; slot >= 0; slot--) {
-            if (!items.get(slot).isEmpty()) {
-                ItemStack taken = items.get(slot);
-                items.set(slot, ItemStack.EMPTY);
-                dried[slot] = 0;
-                changed();
-                return taken;
+    public double daysToDry(int slot) {
+        double perDay = (smoked() ? Balance.get().drying().smokeFactor() : 1) / Balance.get().drying().days();
+        return (1 - dried[slot]) / perDay;
+    }
+
+    public boolean spoilsFirst(int slot) {
+        ItemStack piece = items.get(slot);
+        if (level == null || piece.isEmpty() || piece.has(Things.DRIED.get())) {
+            return false;
+        }
+        if (rainedOn()) {
+            return true;
+        }
+        double perDay = (smoked() ? Balance.get().drying().smokeFactor() : 1) / Balance.get().drying().days();
+        double aged = Spoilage.rate(Spoilage.airC(level, worldPosition)) * Math.pow(1 - dried[slot], 2) / (2 * perDay);
+        return Spoilage.life(piece).map(life -> aged >= life - Spoilage.age(piece)).orElse(false);
+    }
+
+    @Override
+    public List<Component> inspect() {
+        List<Component> lines = new ArrayList<>();
+        for (int slot = 0; slot < SLOTS; slot++) {
+            ItemStack piece = items.get(slot);
+            if (!piece.isEmpty()) {
+                lines.add(line(piece, (int) Math.round(dried[slot] * PERCENT), daysToDry(slot), spoilsFirst(slot)));
             }
         }
-        return ItemStack.EMPTY;
+        if (rainedOn()) {
+            lines.add(Component.translatable("message.backcountry.rack_rained"));
+        }
+        return lines;
+    }
+
+    public static Component line(ItemStack piece, int percent, double days, boolean spoilsFirst) {
+        if (piece.has(Things.DRIED.get())) {
+            return Component.translatable("rack.backcountry.dried", piece.getHoverName());
+        }
+        if (Spoilage.spoiled(piece)) {
+            return Component.translatable("rack.backcountry.spoiled", piece.getHoverName());
+        }
+        if (spoilsFirst) {
+            return Component.translatable("rack.backcountry.spoils_first", piece.getHoverName(), percent);
+        }
+        return Component.translatable("rack.backcountry.drying", piece.getHoverName(), percent, Words.one(days));
+    }
+
+    @Override
+    public int getContainerSize() {
+        return SLOTS;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return items.stream().allMatch(ItemStack::isEmpty);
+    }
+
+    @Override
+    public ItemStack getItem(int slot) {
+        return items.get(slot);
+    }
+
+    @Override
+    public ItemStack removeItem(int slot, int count) {
+        return removeItemNoUpdate(slot);
+    }
+
+    @Override
+    public ItemStack removeItemNoUpdate(int slot) {
+        ItemStack taken = items.get(slot);
+        items.set(slot, ItemStack.EMPTY);
+        dried[slot] = 0;
+        changed();
+        return taken;
+    }
+
+    @Override
+    public void setItem(int slot, ItemStack stack) {
+        items.set(slot, stack);
+        dried[slot] = 0;
+        changed();
+    }
+
+    @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
+
+    @Override
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        return hangs(stack);
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return Container.stillValidBlockEntity(this, player);
+    }
+
+    @Override
+    public void clearContent() {
+        items.clear();
+        Arrays.fill(dried, 0);
+        changed();
     }
 
     public boolean rainedOn() {
@@ -106,7 +206,7 @@ public final class DryingRackEntity extends BlockEntity {
             if (piece.isEmpty() || piece.has(Things.DRIED.get())) {
                 continue;
             }
-            Spoilage.age(piece, hours / HOURS_A_DAY, air);
+            Spoilage.age(piece, hours / HOURS_A_DAY * (1 - dried[slot]), air);
             if (Spoilage.spoiled(piece)) {
                 continue;
             }

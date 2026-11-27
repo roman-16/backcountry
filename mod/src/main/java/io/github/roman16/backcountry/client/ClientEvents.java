@@ -8,6 +8,7 @@ import io.github.roman16.backcountry.fire.Lights;
 import io.github.roman16.backcountry.food.Fish;
 import io.github.roman16.backcountry.food.Spoilage;
 import io.github.roman16.backcountry.gear.Hotbar;
+import io.github.roman16.backcountry.guide.FieldNotes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -112,10 +113,14 @@ public final class ClientEvents {
     @SubscribeEvent
     static void hint(ItemTooltipEvent event) {
         ResourceLocation id = BuiltInRegistries.ITEM.getKey(event.getItemStack().getItem());
-        String key = "tooltip.backcountry.hint." + id.getPath();
-        if (id.getNamespace().equals(Backcountry.MODID) && I18n.exists(key)) {
+        String key = hintKey(id);
+        if (I18n.exists(key)) {
             event.getToolTip().add(Math.min(1, event.getToolTip().size()), Component.translatable(key).withStyle(ChatFormatting.GRAY));
         }
+    }
+
+    static String hintKey(ResourceLocation id) {
+        return "tooltip.backcountry.hint." + (id.getNamespace().equals(Backcountry.MODID) ? id.getPath() : id.getNamespace() + "." + id.getPath());
     }
 
     @SubscribeEvent
@@ -127,6 +132,11 @@ public final class ClientEvents {
                     : Component.translatable("tooltip.backcountry.food", Words.kcal(food.kcal()), Words.grams(food.fat()))).withStyle(ChatFormatting.GRAY));
             if (food.raw()) {
                 lines.add(Component.translatable("tooltip.backcountry.raw").withStyle(ChatFormatting.GRAY));
+            }
+            if (food.poisoning() > 0 && FieldNotes.plant(stack).filter(ClientState.notes::containsKey).isPresent()) {
+                lines.add(Component.translatable("tooltip.backcountry.poisonous").withStyle(ChatFormatting.RED));
+            } else if (ClientState.sickening.contains(BuiltInRegistries.ITEM.getKey(stack.getItem()).toString())) {
+                lines.add(Component.translatable("tooltip.backcountry.sickened").withStyle(ChatFormatting.RED));
             }
             if (stack.is(Things.ANIMAL_FAT.get())) {
                 lines.add(Component.translatable("tooltip.backcountry.render_fat").withStyle(ChatFormatting.GRAY));

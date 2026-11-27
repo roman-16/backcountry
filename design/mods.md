@@ -44,7 +44,7 @@ Every mod in the pack and why, and what was left out. "His" marks a mod in one o
 | Default Options, with Balm | The first launch's settings and every key of the pack (`pack/config/defaultoptions/`) |
 | More Darkness | Dark nights without the shader, stepping aside while it draws (`production.md`) |
 | Ping Wheel | Team marks on mouse button 5 |
-| Simple Voice Chat | Voice within 48 blocks, open from the first join; V opens its menu |
+| Simple Voice Chat | Voice within 48 blocks, open from the first join; V opens its menu; on exaroton it shares the game's port (`port=-1`, `scripts/exaroton/`), the one port exaroton opens |
 | What Are They Up To | A teammate typing, in a screen or idle |
 | Shoulder Surfing Reloaded | The over-the-shoulder view on F5; U swaps the shoulder |
 | Sit | Seats on slabs and stairs |
@@ -56,8 +56,8 @@ Every mod in the pack and why, and what was left out. "His" marks a mod in one o
 | Fowl Play | Raven, chickadee, Canada goose, gulls, mallard, hawk, robin, sparrow, crow; its bird feeder, registered with no recipe, name or look, is cut |
 | Animal Garden - Porcupine | The porcupine, whose quills punish a bare hand (`systems.md` S8); never tamed |
 | Curios API | The worn slots, back, neck and hands, in its own panel on G, drawn on the survivor; their drop rule keeps them on the survivor (`ALWAYS_KEEP`), since the left pack takes them at death or extraction (`systems.md` S1, S10) |
-| River Fishing | Fishing with Alaska's species and the tackle the island makes (`systems.md` S9) |
-| Sleeping Bags (his) | Sleeping out |
+| River Fishing | Fishing with Alaska's species and the tackle the island makes (`systems.md` S9); Game Guts are its meat bait, so the mod compiles against it |
+| Sleeping Bags (his) | The Sleeping Bag, sewn from hides; its other colours are cut (`systems.md` S1, S10) |
 
 Libraries they bring: Architectury, Cloth Config, CoroUtil, CreativeCore, Fzzy Config, GeckoLib, Kotlin for Forge, [Let's Do] Foundation, MezzConfig, MRU, Puzzles Lib, SmartBrainLib, YetAnotherConfigLib.
 

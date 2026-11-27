@@ -1,8 +1,10 @@
 package io.github.roman16.backcountry.food;
 
 import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.Inspectable;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Nutrition;
+import io.github.roman16.backcountry.client.Words;
 import io.github.roman16.backcountry.survivor.Team;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,7 @@ import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.Tags;
 
-public final class CacheEntity extends BaseContainerBlockEntity {
+public final class CacheEntity extends BaseContainerBlockEntity implements Inspectable {
     public static final int SLOTS = 18;
     private static final int STEP_TICKS = 20;
     long raidedAt = Long.MIN_VALUE / 2;
@@ -195,5 +197,21 @@ public final class CacheEntity extends BaseContainerBlockEntity {
         items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, items, provider);
         raidedAt = tag.contains("raided_at") ? tag.getLong("raided_at") : Long.MIN_VALUE / 2;
+    }
+
+    @Override
+    public List<Component> inspect() {
+        if (!(level instanceof ServerLevel server)) {
+            return List.of();
+        }
+        Team team = Team.get(server.getServer());
+        int survivors = Math.max(1, Team.living(server.getServer()));
+        Component reachLine = Component.translatable(switch (reach()) {
+            case TALL -> "cache.backcountry.tall";
+            case LADDER -> "cache.backcountry.ladder";
+            case GROUND -> "cache.backcountry.ground";
+        });
+        return List.of(Component.translatable("cache.backcountry.inspect", Words.kcal(usableKcal()), Words.one(usableKcal() / (team.ration().dayKcal() * survivors)),
+                team.ration().title(), survivors), reachLine);
     }
 }

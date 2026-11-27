@@ -2,7 +2,7 @@ package io.github.roman16.backcountry.food;
 
 import com.mojang.serialization.MapCodec;
 import io.github.roman16.backcountry.Things;
-import io.github.roman16.backcountry.client.Words;
+import io.github.roman16.backcountry.body.Nutrition;
 import io.github.roman16.backcountry.gear.Water;
 import io.github.roman16.backcountry.gear.WaterVesselItem;
 import io.github.roman16.backcountry.guide.Deed;
@@ -18,6 +18,7 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -118,29 +119,24 @@ public final class CookingPotBlock extends BaseEntityBlock {
             tell(player, pot);
             return ItemInteractionResult.SUCCESS;
         }
+        if (!level.isClientSide && Spoilage.spoiled(stack) && Nutrition.of(stack).isEmpty() && stack.is(Things.MOOSE_HEAD.get())) {
+            player.displayClientMessage(Component.translatable("message.backcountry.pot_spoiled"), true);
+            return ItemInteractionResult.CONSUME;
+        }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof CookingPotEntity pot) {
-            ItemStack taken = !pot.stew().isEmpty() && !pot.stew().has(DataComponents.FOOD) || !pot.stew().isEmpty()
-                    && pot.stew().get(DataComponents.FOOD).usingConvertsTo().isEmpty() ? pot.serve() : pot.takeFood();
-            if (!taken.isEmpty() && !player.getInventory().add(taken)) {
-                player.drop(taken, false);
-            }
-            tell(player, pot);
+            player.openMenu(new SimpleMenuProvider((id, inventory, opener) -> new CookingPotMenu(id, inventory, pot), Component.translatable("block.backcountry.cooking_pot")),
+                    buffer -> buffer.writeBlockPos(pos));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     private static void tell(Player player, CookingPotEntity pot) {
-        if (!pot.stew().isEmpty()) {
-            player.displayClientMessage(Component.translatable("message.backcountry.pot_ready", pot.stew().getHoverName(), pot.stew().getCount()), true);
-            return;
-        }
-        long foods = pot.foods().stream().filter(food -> !food.isEmpty()).count();
-        player.displayClientMessage(Component.translatable("message.backcountry.pot", Words.one(pot.waterL()), foods, CookingPotEntity.FOODS), true);
+        player.displayClientMessage(CookingPotEntity.status(player.level(), pot.foods(), pot.stew(), pot.waterL(), pot.cookedHours(), pot.lit()), true);
     }
 
     @Override

@@ -90,3 +90,4 @@ Dev runs have `/backcountry body <field> <value>` (core, energy, stomach, water,
 - A mod that reads vanilla's state where the pack has its own is hooked to the pack's or switched off: Subtle Effects' breath follows the mod's air and its growl the body's stomach, and its fireflies and Particular's stay off, since Alaska has none.
 - LambDynamicLights lights what is held and worn with the shader on too, and the shader's own held light is off (`generator/shader.toml`), since the Headlamp is worn and the shader lights only the hand.
 - Dynamic FPS is off in every dev instance (`scripts/instance.py`), since the drivers wait on drawn frames.
+- The exaroton deploy puts `scripts/exaroton/` over the server pack, so Simple Voice Chat shares the game's port there (`port=-1`): exaroton opens one port per server, while other hosts keep the mod's own.

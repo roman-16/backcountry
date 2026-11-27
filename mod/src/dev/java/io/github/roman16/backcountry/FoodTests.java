@@ -8,6 +8,7 @@ import io.github.roman16.backcountry.fire.FirewoodItem;
 import io.github.roman16.backcountry.food.Age;
 import io.github.roman16.backcountry.food.CacheEntity;
 import io.github.roman16.backcountry.food.CookingPotEntity;
+import io.github.roman16.backcountry.food.DryingRackEntity;
 import io.github.roman16.backcountry.food.Pantry;
 import io.github.roman16.backcountry.food.Rations;
 import io.github.roman16.backcountry.food.Seasons;
@@ -15,7 +16,9 @@ import io.github.roman16.backcountry.food.SmokerEntity;
 import io.github.roman16.backcountry.food.Spoilage;
 import io.github.roman16.backcountry.gear.Water;
 import io.github.roman16.backcountry.gear.WaterVesselItem;
+import io.github.roman16.backcountry.guide.FieldNotes;
 import io.github.roman16.backcountry.survivor.Team;
+import io.github.roman16.backcountry.trap.Kind;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -250,6 +253,86 @@ public final class FoodTests {
         check(helper, Seasons.ripest(may, Things.SALMONBERRY_BUSH.get()) == 1, "salmonberries were ripe in May");
         check(helper, Seasons.ripest(7, Blocks.SWEET_BERRY_BUSH) == 1, "lingonberries kept berries into July");
         check(helper, Seasons.ripest(8, Blocks.SWEET_BERRY_BUSH) == 3, "lingonberries were not ripe in August");
+        helper.succeed();
+    }
+    @GameTest(template = "empty")
+    public static void sixAnimalFatRenderThree(GameTestHelper helper) {
+        BlockPos fire = new BlockPos(2, 1, 2);
+        FireTests.burning(helper, fire);
+        helper.setBlock(fire.above(), Things.COOKING_POT_BLOCK.get().defaultBlockState());
+        if (!(helper.getLevel().getBlockEntity(helper.absolutePos(fire.above())) instanceof CookingPotEntity pot)) {
+            throw new IllegalStateException("the cooking pot has no block entity");
+        }
+        pot.pour(Balance.get().cooking().potL());
+        for (int i = 0; i < 5; i++) {
+            pot.add(new ItemStack(Things.ANIMAL_FAT.get()));
+        }
+        pot.advance(Balance.get().cooking().stewHours() + CLOSE, true);
+        check(helper, pot.stew().isEmpty(), "five fat rendered " + pot.stew());
+        pot.add(new ItemStack(Things.ANIMAL_FAT.get()));
+        pot.advance(Balance.get().cooking().stewHours() + CLOSE, true);
+        check(helper, pot.stew().is(Things.RENDERED_FAT.get()) && pot.stew().getCount() == 3, "six fat rendered " + pot.stew());
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void dryingSlowsSpoiling(GameTestHelper helper) {
+        BlockPos at = new BlockPos(2, 1, 2);
+        helper.setBlock(at, Things.DRYING_RACK.get().defaultBlockState());
+        if (!(helper.getLevel().getBlockEntity(helper.absolutePos(at)) instanceof DryingRackEntity rack)) {
+            throw new IllegalStateException("the drying rack has no block entity");
+        }
+        ItemStack hung = new ItemStack(Items.BEEF);
+        ItemStack lying = hung.copy();
+        rack.setItem(0, hung);
+        double air = Spoilage.airC(helper.getLevel(), helper.absolutePos(at));
+        for (int hour = 0; hour < 24; hour++) {
+            rack.advance(1);
+            Spoilage.age(lying, 1 / 24.0, air);
+        }
+        check(helper, rack.driedShare(0) > 0 && Spoilage.age(rack.getItem(0)) < Spoilage.age(lying), "drying did not slow the spoiling: " + Spoilage.age(rack.getItem(0))
+                + " against " + Spoilage.age(lying));
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void bearMeatIsMeatAndFatIsNot(GameTestHelper helper) {
+        check(helper, Pantry.meaty(new ItemStack(Items.COOKED_BEEF)) && SmokerEntity.hangs(new ItemStack(Items.COOKED_BEEF)), "cooked bear meat is no meat");
+        check(helper, !Pantry.meaty(new ItemStack(Things.ANIMAL_FAT.get())), "animal fat counts as meat");
+        check(helper, !SmokerEntity.hangs(new ItemStack(Things.MOOSE_HEAD.get())), "the moose head hangs in the smoker");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void aMooseHeadSpoils(GameTestHelper helper) {
+        ItemStack head = new ItemStack(Things.MOOSE_HEAD.get());
+        check(helper, Spoilage.life(head).isPresent(), "the moose head keeps forever");
+        Spoilage.age(head, Spoilage.life(head).orElseThrow() + 1, Balance.get().spoilage().referenceC());
+        check(helper, Spoilage.spoiled(head) && !CookingPotEntity.cooks(helper.getLevel(), head), "the pot takes a spoiled moose head");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void foodThatPoisonsIsRemembered(GameTestHelper helper) {
+        ServerPlayer player = BackcountryTests.survivor(helper);
+        check(helper, Metabolism.eat(player, new ItemStack(Things.BANEBERRIES.get())), "the survivor ate no baneberries");
+        check(helper, Metabolism.body(player).has(Condition.FOOD_POISONING), "baneberries did not poison");
+        check(helper, FieldNotes.get(player.server).sickening(player).contains("backcountry:baneberries"), "the poisoning was not remembered");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void meatAndFishStackToSixteen(GameTestHelper helper) {
+        for (Item food : List.of(Items.COOKED_BEEF, Items.BEEF, Items.RABBIT, Things.ANIMAL_FAT.get(), Things.HEART.get())) {
+            check(helper, new ItemStack(food).getMaxStackSize() == 16, food + " stacks to " + new ItemStack(food).getMaxStackSize());
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void gutsBaitTheTipUp(GameTestHelper helper) {
+        check(helper, Kind.TIP_UP.takes(new ItemStack(Things.GAME_GUTS.get())), "the tip-up takes no guts");
+        check(helper, !Kind.SMALL_SNARE.takes(new ItemStack(Things.GAME_GUTS.get())), "a snare takes guts");
         helper.succeed();
     }
 }

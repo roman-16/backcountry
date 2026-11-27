@@ -1,6 +1,7 @@
 package io.github.roman16.backcountry;
 
 import com.mojang.serialization.Codec;
+import com.riverfishing.item.BaitItem;
 import com.mojang.serialization.MapCodec;
 import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.Nutrition;
@@ -17,6 +18,7 @@ import io.github.roman16.backcountry.fire.Lights;
 import io.github.roman16.backcountry.fire.SmoulderingFungusItem;
 import io.github.roman16.backcountry.fire.WoodpileBlock;
 import io.github.roman16.backcountry.fire.WoodpileEntity;
+import io.github.roman16.backcountry.fire.WoodpileMenu;
 import io.github.roman16.backcountry.food.Age;
 import io.github.roman16.backcountry.food.Berry;
 import io.github.roman16.backcountry.food.BerryBushBlock;
@@ -26,8 +28,10 @@ import io.github.roman16.backcountry.food.CacheEntity;
 import io.github.roman16.backcountry.food.CacheMenu;
 import io.github.roman16.backcountry.food.CookingPotBlock;
 import io.github.roman16.backcountry.food.CookingPotEntity;
+import io.github.roman16.backcountry.food.CookingPotMenu;
 import io.github.roman16.backcountry.food.DryingRackBlock;
 import io.github.roman16.backcountry.food.DryingRackEntity;
+import io.github.roman16.backcountry.food.DryingRackMenu;
 import io.github.roman16.backcountry.food.SaltRecipe;
 import io.github.roman16.backcountry.food.SmokerBlock;
 import io.github.roman16.backcountry.food.SmokerEntity;
@@ -36,6 +40,7 @@ import io.github.roman16.backcountry.food.StewRecipe;
 import io.github.roman16.backcountry.gear.BarkMapItem;
 import io.github.roman16.backcountry.gear.BearSprayItem;
 import io.github.roman16.backcountry.gear.BinocularsItem;
+import io.github.roman16.backcountry.gear.Boiling;
 import io.github.roman16.backcountry.gear.BowSawItem;
 import io.github.roman16.backcountry.gear.CampPotBlock;
 import io.github.roman16.backcountry.gear.CampPotEntity;
@@ -49,6 +54,7 @@ import io.github.roman16.backcountry.gear.PackItem;
 import io.github.roman16.backcountry.gear.PlantFibreItem;
 import io.github.roman16.backcountry.gear.PlantFibreModifier;
 import io.github.roman16.backcountry.gear.SharpenRecipe;
+import io.github.roman16.backcountry.gear.SleepingPadItem;
 import io.github.roman16.backcountry.gear.SpruceNeedlesModifier;
 import io.github.roman16.backcountry.gear.SpruceRootsModifier;
 import io.github.roman16.backcountry.gear.SupplyCrateBlock;
@@ -141,6 +147,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.datamaps.DataMapType;
 
 public final class Things {
+    private static final String MEAT_BAIT = "chicken_liver";
     private static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, Backcountry.MODID);
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENTS = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Backcountry.MODID);
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Backcountry.MODID);
@@ -159,6 +166,7 @@ public final class Things {
     public static final DataMapType<EntityType<?>, Animal> ANIMAL = DataMapType.builder(Backcountry.id("animal"), Registries.ENTITY_TYPE, Animal.CODEC).synced(Animal.CODEC, false).build();
     public static final TagKey<Item> EDGED = TagKey.create(Registries.ITEM, Backcountry.id("edged"));
     public static final TagKey<Item> KNIVES = TagKey.create(Registries.ITEM, Backcountry.id("knives"));
+    public static final TagKey<Item> MEAT = TagKey.create(Registries.ITEM, Backcountry.id("meat"));
     public static final TagKey<Item> TINDER_FUNGI = TagKey.create(Registries.ITEM, Backcountry.id("tinder_fungi"));
     public static final TagKey<Item> SHELLFISH = TagKey.create(Registries.ITEM, Backcountry.id("shellfish"));
     public static final TagKey<Item> ROCKS = TagKey.create(Registries.ITEM, Backcountry.id("rocks"));
@@ -167,12 +175,15 @@ public final class Things {
     public static final TagKey<Fluid> MOVING_WATER = TagKey.create(Registries.FLUID, Backcountry.id("moving_water"));
     public static final TagKey<Block> TAKES_PRINTS = TagKey.create(Registries.BLOCK, Backcountry.id("takes_prints"));
     public static final DataMapType<Item, Nutrition> FOOD = DataMapType.builder(Backcountry.id("food"), Registries.ITEM, Nutrition.CODEC).synced(Nutrition.CODEC, true).build();
+    public static final DataMapType<Item, Double> PERISHABLE = DataMapType.builder(Backcountry.id("perishable"), Registries.ITEM, Codec.DOUBLE.fieldOf("days").codec())
+            .synced(Codec.DOUBLE.fieldOf("days").codec(), true).build();
 
     public static final Supplier<AttachmentType<Body>> BODY = ATTACHMENTS.register("body", () -> AttachmentType.serializable(Body::new).build());
     public static final Supplier<AttachmentType<Fire>> FIRE = ATTACHMENTS.register("fire", () -> AttachmentType.serializable(Fire::new).build());
     public static final Supplier<AttachmentType<Long>> FOOD_CLOCK = ATTACHMENTS.register("food_clock",
             () -> AttachmentType.builder(() -> Long.MIN_VALUE).serialize(Codec.LONG).build());
     public static final Supplier<AttachmentType<Wound>> WOUND = ATTACHMENTS.register("wound", () -> AttachmentType.builder(() -> Wound.NONE).serialize(Wound.CODEC).build());
+    public static final Supplier<AttachmentType<Boolean>> HEAVY_ARROW = ATTACHMENTS.register("heavy_arrow", () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());
     public static final Supplier<AttachmentType<Long>> FISHING_AT = ATTACHMENTS.register("fishing_at",
             () -> AttachmentType.builder(() -> Long.MIN_VALUE).serialize(Codec.LONG).build());
     public static final Supplier<AttachmentType<Long>> SPRAYED_UNTIL = ATTACHMENTS.register("sprayed_until", () -> AttachmentType.builder(() -> 0L).build());
@@ -218,6 +229,8 @@ public final class Things {
             builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> SEASONING = COMPONENTS.registerComponentType("seasoning",
             builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boiling>> BOILING = COMPONENTS.registerComponentType("boiling",
+            builder -> builder.persistent(Boiling.CODEC).networkSynchronized(Boiling.STREAM_CODEC));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Water>> WATER = COMPONENTS.registerComponentType("water",
             builder -> builder.persistent(Water.CODEC).networkSynchronized(Water.STREAM_CODEC));
 
@@ -393,7 +406,7 @@ public final class Things {
     public static final DeferredItem<Item> FUR_PARKA = ITEMS.registerItem("fur_parka", properties -> new ArmorItem(FUR, ArmorItem.Type.CHESTPLATE, properties),
             new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(8)));
     public static final DeferredItem<Item> FUR_MITTENS = ITEMS.registerSimpleItem("fur_mittens", new Item.Properties().stacksTo(1));
-    public static final DeferredItem<Item> GAME_GUTS = food("game_guts");
+    public static final DeferredItem<Item> GAME_GUTS = ITEMS.registerItem("game_guts", properties -> new BaitItem(MEAT_BAIT, false, properties), edible());
     public static final DeferredItem<BlockItem> GILL_NET_ITEM = ITEMS.registerSimpleBlockItem(GILL_NET);
     public static final DeferredItem<Item> HARDWOOD = ITEMS.registerItem("hardwood", properties -> new FirewoodItem(properties, true), new Item.Properties());
     public static final DeferredItem<Item> HEADLAMP = ITEMS.registerItem("headlamp", properties -> new HeadlampItem(HEADLAMP_STRAP, properties), new Item.Properties());
@@ -441,6 +454,7 @@ public final class Things {
     public static final DeferredItem<Item> PLANT_FIBRE = ITEMS.registerItem("plant_fibre", PlantFibreItem::new, new Item.Properties());
     public static final DeferredItem<Item> RAWHIDE_STRIPS = ITEMS.registerSimpleItem("rawhide_strips", new Item.Properties());
     public static final DeferredItem<Item> RENDERED_FAT = food("rendered_fat");
+    public static final DeferredItem<Item> ROASTED_FAT = food("roasted_fat");
     public static final DeferredItem<Item> ROPE = ITEMS.registerSimpleItem("rope", new Item.Properties());
     public static final DeferredItem<Item> SALT = ITEMS.registerSimpleItem("salt", new Item.Properties());
     public static final DeferredItem<Item> SATELLITE_MESSENGER = ITEMS.registerSimpleItem("satellite_messenger", new Item.Properties().stacksTo(1));
@@ -448,7 +462,7 @@ public final class Things {
     public static final DeferredItem<Item> SHARPENING_STONE = ITEMS.registerSimpleItem("sharpening_stone",
             new Item.Properties().durability(Balance.get().kit().sharpeningStoneUses()));
     public static final DeferredItem<Item> SEASONED_BOW_STAVE = ITEMS.registerSimpleItem("seasoned_bow_stave", new Item.Properties().stacksTo(16));
-    public static final DeferredItem<Item> SLEEPING_PAD = ITEMS.registerSimpleItem("sleeping_pad", new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> SLEEPING_PAD = ITEMS.registerItem("sleeping_pad", SleepingPadItem::new, new Item.Properties().stacksTo(1));
     public static final DeferredItem<BlockItem> SMALL_SNARE_ITEM = ITEMS.registerSimpleBlockItem(SMALL_SNARE);
     public static final DeferredItem<BlockItem> SMOKER_ITEM = ITEMS.registerSimpleBlockItem(SMOKER);
     public static final DeferredItem<Item> SNARE_WIRE = ITEMS.registerSimpleItem("snare_wire", new Item.Properties());
@@ -488,6 +502,9 @@ public final class Things {
     public static final Supplier<MenuType<FireMenu>> FIRE_MENU = MENUS.register("campfire", () -> IMenuTypeExtension.create(FireMenu::new));
     public static final Supplier<MenuType<CacheMenu>> FOOD_CACHE_MENU = MENUS.register("food_cache", () -> IMenuTypeExtension.create(CacheMenu::new));
     public static final Supplier<MenuType<SmokerMenu>> SMOKER_MENU = MENUS.register("smoker", () -> IMenuTypeExtension.create(SmokerMenu::new));
+    public static final Supplier<MenuType<CookingPotMenu>> COOKING_POT_MENU = MENUS.register("cooking_pot", () -> IMenuTypeExtension.create(CookingPotMenu::new));
+    public static final Supplier<MenuType<DryingRackMenu>> DRYING_RACK_MENU = MENUS.register("drying_rack", () -> IMenuTypeExtension.create(DryingRackMenu::new));
+    public static final Supplier<MenuType<WoodpileMenu>> WOODPILE_MENU = MENUS.register("woodpile", () -> IMenuTypeExtension.create(WoodpileMenu::new));
     public static final Supplier<RecipeType<StewRecipe>> STEWING = RECIPE_TYPES.register("stewing", () -> RecipeType.simple(Backcountry.id("stewing")));
     public static final Supplier<RecipeSerializer<MapCopyRecipe>> MAP_COPY = RECIPE_SERIALIZERS.register("map_copy", () -> new SimpleCraftingRecipeSerializer<>(MapCopyRecipe::new));
     public static final Supplier<RecipeSerializer<StewRecipe>> STEW = RECIPE_SERIALIZERS.register("stewing", StewRecipe.Serializer::new);
@@ -532,7 +549,11 @@ public final class Things {
     }
 
     private static DeferredItem<Item> food(String name) {
-        return ITEMS.registerSimpleItem(name, new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.1F).build()));
+        return ITEMS.registerSimpleItem(name, edible());
+    }
+
+    private static Item.Properties edible() {
+        return new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.1F).build());
     }
 
     static void register(IEventBus bus) {

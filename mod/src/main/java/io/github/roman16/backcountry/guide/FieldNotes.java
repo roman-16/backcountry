@@ -18,11 +18,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.UUID;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -46,10 +51,12 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 @EventBusSubscriber(modid = Backcountry.MODID)
 public final class FieldNotes extends SavedData {
     private static final String NAME = "backcountry_field_notes";
+    private static final String SICKENING = "sickening";
     public static final List<String> PLANTS = List.of("backcountry:salmonberries", "backcountry:blueberries", "minecraft:sweet_berries", "backcountry:highbush_cranberries",
             "backcountry:baneberries", "minecraft:brown_mushroom", "minecraft:red_mushroom", "projectvibrantjourneys:bark_mushroom");
 
     private final Map<UUID, Map<String, Note>> notes = new HashMap<>();
+    private final Map<UUID, Set<String>> sickening = new HashMap<>();
 
     public record Note(String id, int day, String biome) {
         public static final StreamCodec<ByteBuf, Note> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.STRING_UTF8, Note::id, ByteBufCodecs.VAR_INT, Note::day,
@@ -129,7 +136,7 @@ public final class FieldNotes extends SavedData {
         book.setDirty();
         Spirits.add(Metabolism.body(player), Balance.get().spirits().newFood() / 2);
         player.displayClientMessage(Component.translatable("message.backcountry.noted", name(id)), true);
-        Messages.notes(player, book.of(player));
+        book.send(player);
     }
 
     public static void note(ServerPlayer player, Entity entity) {
@@ -169,6 +176,22 @@ public final class FieldNotes extends SavedData {
         };
     }
 
+    public static void sickened(ServerPlayer player, Item food) {
+        FieldNotes book = get(player.server);
+        if (book.sickening.computeIfAbsent(player.getUUID(), uuid -> new TreeSet<>()).add(BuiltInRegistries.ITEM.getKey(food).toString())) {
+            book.setDirty();
+            book.send(player);
+        }
+    }
+
+    private void send(ServerPlayer player) {
+        Messages.notes(player, of(player), List.copyOf(sickening(player)));
+    }
+
+    public Set<String> sickening(ServerPlayer player) {
+        return sickening.getOrDefault(player.getUUID(), Set.of());
+    }
+
     public List<Note> of(ServerPlayer player) {
         return List.copyOf(notes.getOrDefault(player.getUUID(), Map.of()).values());
     }
@@ -176,7 +199,7 @@ public final class FieldNotes extends SavedData {
     @SubscribeEvent
     static void joined(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            Messages.notes(player, get(player.server).of(player));
+            get(player.server).send(player);
         }
     }
 
@@ -199,12 +222,28 @@ public final class FieldNotes extends SavedData {
             });
             tag.put(uuid.toString(), player);
         });
+        CompoundTag sick = new CompoundTag();
+        sickening.forEach((uuid, foods) -> {
+            ListTag list = new ListTag();
+            foods.forEach(food -> list.add(StringTag.valueOf(food)));
+            sick.put(uuid.toString(), list);
+        });
+        tag.put(SICKENING, sick);
         return tag;
     }
 
     private static FieldNotes load(CompoundTag tag, HolderLookup.Provider provider) {
         FieldNotes book = new FieldNotes();
+        CompoundTag sick = tag.getCompound(SICKENING);
+        for (String uuid : sick.getAllKeys()) {
+            Set<String> foods = new TreeSet<>();
+            sick.getList(uuid, Tag.TAG_STRING).forEach(food -> foods.add(food.getAsString()));
+            book.sickening.put(UUID.fromString(uuid), foods);
+        }
         for (String uuid : tag.getAllKeys()) {
+            if (uuid.equals(SICKENING)) {
+                continue;
+            }
             CompoundTag player = tag.getCompound(uuid);
             Map<String, Note> own = new TreeMap<>();
             for (String id : player.getAllKeys()) {

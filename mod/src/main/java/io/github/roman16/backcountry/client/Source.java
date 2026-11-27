@@ -15,7 +15,10 @@ public record Source(Page page, List<List<ItemStack>> inputs, List<ItemStack> ou
         CAMP_POT,
         BIRCH_TAP,
         WOODPILE,
-        TRAPS;
+        TRAPS,
+        SHARPENING,
+        MAPS,
+        LIGHTING;
 
         public String id() {
             return name().toLowerCase(java.util.Locale.ROOT);

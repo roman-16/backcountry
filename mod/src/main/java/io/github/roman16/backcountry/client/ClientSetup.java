@@ -41,6 +41,9 @@ public final class ClientSetup {
         event.register(Things.FIRE_MENU.get(), FireScreen::new);
         event.register(Things.FOOD_CACHE_MENU.get(), CacheScreen::new);
         event.register(Things.SMOKER_MENU.get(), SmokerScreen::new);
+        event.register(Things.COOKING_POT_MENU.get(), CookingPotScreen::new);
+        event.register(Things.DRYING_RACK_MENU.get(), DryingRackScreen::new);
+        event.register(Things.WOODPILE_MENU.get(), WoodpileScreen::new);
     }
 
     @SubscribeEvent

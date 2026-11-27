@@ -4,6 +4,7 @@ import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.body.Alert;
 import io.github.roman16.backcountry.body.Alerts;
 import io.github.roman16.backcountry.body.Metabolism;
+import io.github.roman16.backcountry.client.Words;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -37,7 +38,7 @@ public final class Raids {
             if (cache.raidedBy(raider.getType(), level.random)) {
                 cache.raidedAt = now;
                 cache.report();
-                String eaten = Math.round(Math.max(0, before - cache.usableKcal())) + " kcal";
+                String eaten = Words.kcal(Math.max(0, before - cache.usableKcal())) + " kcal";
                 for (ServerPlayer player : level.players()) {
                     if (Metabolism.lives(player)) {
                         Alerts.announce(player, fouls ? Alert.WOLVERINE_RAID : Alert.BEAR_AT_CACHE);

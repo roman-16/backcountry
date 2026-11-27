@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -29,6 +30,8 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 @EventBusSubscriber(modid = Backcountry.MODID, value = Dist.CLIENT)
 public final class Hud {
+    private static Rect2i panel = new Rect2i(0, 0, 0, 0);
+    private static final ResourceLocation SMOKY = Backcountry.id("hud/smoky");
     private static final ResourceLocation SPIRITS_HIGH = Backcountry.id("hud/spirits_high");
     private static final ResourceLocation SPIRITS_LOW = Backcountry.id("hud/spirits_low");
     private static final ResourceLocation ENERGY_FULL = Backcountry.id("hud/energy_full");
@@ -50,6 +53,7 @@ public final class Hud {
     private static final int PANEL_GAP = 8;
     private static final int OFFHAND_ROOM = 29;
     private static final int PANEL_ROW = 12;
+    private static final int JEI_SEARCH_ROOM = 24;
     private static final int PANEL_PAD = 2;
     private static final int FADE_TICKS = 20;
     private static final int TICKS_A_SECOND = 20;
@@ -206,6 +210,10 @@ public final class Hud {
             Component wet = Component.translatable("hud.backcountry.wet", Words.percent(view.wetness()));
             lines.add(new Line(WET, wet, Look.TEXT, () -> List.of(wet, Component.translatable("messenger.backcountry.help.wet").withStyle(ChatFormatting.GRAY))));
         }
+        if (view.smoky()) {
+            Component smoky = Component.translatable("hud.backcountry.smoky");
+            lines.add(new Line(SMOKY, smoky, Look.TEXT, () -> List.of(smoky, Component.translatable("messenger.backcountry.help.smoky").withStyle(ChatFormatting.GRAY))));
+        }
         for (Condition condition : view.conditions()) {
             lines.add(new Line(condition.icon(), condition.title(), condition.deadly() ? Look.DANGER : Look.TEXT, () -> List.of(condition.title(),
                     Component.translatable("hud.backcountry.hover.cure", Component.translatable("condition.backcountry." + condition.id() + ".cure"))
@@ -213,15 +221,24 @@ public final class Hud {
         }
         boolean offhandRight = minecraft.player.getMainArm() == HumanoidArm.LEFT && !minecraft.player.getOffhandItem().isEmpty();
         int x = graphics.guiWidth() / 2 + HOTBAR_HALF + PANEL_GAP + (offhandRight ? OFFHAND_ROOM : 0);
+        int widest = 0;
+        int lift = minecraft.screen instanceof AbstractContainerScreen<?> && JeiLink.listShown() ? JEI_SEARCH_ROOM : 0;
         for (int i = 0; i < lines.size(); i++) {
             Line line = lines.get(i);
-            int y = graphics.guiHeight() - ICON - PANEL_PAD - 1 - i * PANEL_ROW;
+            int y = graphics.guiHeight() - lift - ICON - PANEL_PAD - 1 - i * PANEL_ROW;
             int width = ICON + PANEL_PAD + font.width(line.text());
+            widest = Math.max(widest, width);
             graphics.fill(x - PANEL_PAD, y - PANEL_PAD, x + width + PANEL_PAD, y + ICON + PANEL_PAD - 1, Look.PLATE);
             graphics.blitSprite(line.icon(), x, y, ICON, ICON);
             graphics.drawString(font, line.text(), x + ICON + PANEL_PAD, y + 1, line.colour(), true);
             tip(x - PANEL_PAD, y - PANEL_PAD, width + 2 * PANEL_PAD, ICON + 2 * PANEL_PAD - 1, line.tip());
         }
+        int top = graphics.guiHeight() - lift - ICON - PANEL_PAD - 1 - (lines.size() - 1) * PANEL_ROW - PANEL_PAD;
+        panel = new Rect2i(x - PANEL_PAD, top, widest + 2 * PANEL_PAD, graphics.guiHeight() - top);
+    }
+
+    static Rect2i panel() {
+        return panel;
     }
 
     static List<Component> spiritsTip(Component title) {

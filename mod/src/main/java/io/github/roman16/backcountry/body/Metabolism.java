@@ -7,6 +7,7 @@ import io.github.roman16.backcountry.food.Seasons;
 import io.github.roman16.backcountry.food.Spoilage;
 import io.github.roman16.backcountry.gear.Water;
 import io.github.roman16.backcountry.guide.Deed;
+import io.github.roman16.backcountry.guide.FieldNotes;
 import io.github.roman16.backcountry.guide.Guide;
 import io.github.roman16.backcountry.hunt.Hunting;
 import io.github.roman16.backcountry.net.Messages;
@@ -227,7 +228,13 @@ public final class Metabolism {
         Balance balance = Balance.get();
         Balance.Energy energy = balance.energy();
         if (body.blackoutTicks == 0 && body.energy <= 0) {
+            if (!body.spent) {
+                body.spent = true;
+                player.sendSystemMessage(Component.translatable("message.backcountry.blacked_out_tired"));
+            }
             blackOut(player, body, "message.backcountry.blacked_out_tired");
+        } else if (body.energy > 0) {
+            body.spent = false;
         }
         if (body.waterL <= 0) {
             body.thirstSeconds += ticks / (double) TICKS_A_SECOND;
@@ -332,8 +339,15 @@ public final class Metabolism {
         if (food.isEmpty() || !eat(player, food.get())) {
             return false;
         }
-        if (Spoilage.spoiled(stack) || stack.has(Things.CONTAMINATED.get()) || stack.has(Things.FOULED.get())) {
-            poison(body(player));
+        if (Spoilage.spoiled(stack)) {
+            poison(player, Component.translatable("condition.backcountry.food_poisoning.spoiled", stack.getHoverName()));
+        } else if (stack.has(Things.CONTAMINATED.get())) {
+            poison(player, Component.translatable("condition.backcountry.food_poisoning.contaminated", stack.getHoverName()));
+        } else if (stack.has(Things.FOULED.get())) {
+            poison(player, Component.translatable("condition.backcountry.food_poisoning.fouled", stack.getHoverName()));
+        } else if (food.get().poisoning() > 0 && player.getRandom().nextDouble() < food.get().poisoning()) {
+            poison(player, stack.getHoverName());
+            FieldNotes.sickened(player, stack.getItem());
         }
         if (stack.is(Things.SHELLFISH)) {
             Balance.Conditions rules = Balance.get().conditions();
@@ -369,14 +383,14 @@ public final class Metabolism {
         if (food.raw() && player.getRandom().nextDouble() < balance.conditions().parasitesChance()) {
             body.afflict(Condition.PARASITES);
         }
-        if (food.poisoning() > 0 && player.getRandom().nextDouble() < food.poisoning()) {
-            poison(body);
-        }
         return true;
     }
 
-    public static void poison(Body body) {
+    public static void poison(ServerPlayer player, Component food) {
+        Body body = body(player);
         body.afflict(Condition.FOOD_POISONING);
+        body.conditions.get(Condition.FOOD_POISONING).told = true;
+        player.sendSystemMessage(Component.translatable("condition.backcountry.food_poisoning.from", food));
         body.stomachKcal = 0;
         body.stomachFat = 0;
         body.stomachProtein = 0;

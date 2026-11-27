@@ -15,11 +15,16 @@ import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
@@ -28,6 +33,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -41,6 +47,7 @@ public final class Hunting {
     private static final int TICKS_A_SECOND = 20;
     private static final int FULL_DRAW_TICKS = 20;
     private static final int CLIMB = 3;
+    private static final ResourceLocation TOUGH = Backcountry.id("tough");
 
     private Hunting() {}
 
@@ -142,8 +149,24 @@ public final class Hunting {
             double height = (arrow.getY() - target.getY()) / target.getBbHeight();
             vital = height >= animal.get().vital().get(0) && height <= animal.get().vital().get(1);
         }
+        Optional<Animal.Tough> tough = animal.get().tough();
+        if (vital && tough.isPresent()) {
+            boolean heavy = direct instanceof AbstractArrow arrow && arrow.getData(Things.HEAVY_ARROW);
+            Wound struck = target.getData(Things.WOUND).struckChest(heavy ? hunting.heavyChestHit() : 1);
+            if (struck.chestHits() >= tough.get().chestHits()) {
+                event.setAmount(Math.max(event.getAmount(), target.getHealth() + target.getAbsorptionAmount() + 1));
+                return;
+            }
+            target.setData(Things.WOUND, struck.bleed(target.level().getGameTime() + (long) (hunting.fatalHours() * TICKS_AN_HOUR), hunter));
+            provoke(target, source);
+            return;
+        }
         if (vital) {
             event.setAmount(Math.max(event.getAmount(), target.getHealth() + target.getAbsorptionAmount() + 1));
+            return;
+        }
+        if (tough.isPresent()) {
+            provoke(target, source);
             return;
         }
         event.setAmount(event.getAmount() * (float) hunting.woundShare());
@@ -152,6 +175,26 @@ public final class Hunting {
         if (source.getEntity() instanceof ServerPlayer player) {
             player.displayClientMessage(Component.translatable("message.backcountry.wounded"), true);
         }
+    }
+
+    private static void provoke(LivingEntity target, DamageSource source) {
+        if (target instanceof Mob bear && source.getEntity() instanceof Player player) {
+            Bears.provoke(bear, player);
+        }
+    }
+
+    @SubscribeEvent
+    static void toughened(EntityJoinLevelEvent event) {
+        if (event.getLevel().isClientSide() || !(event.getEntity() instanceof LivingEntity living)) {
+            return;
+        }
+        Animal.of(living.getType()).flatMap(Animal::tough).ifPresent(tough -> {
+            AttributeInstance health = living.getAttribute(Attributes.MAX_HEALTH);
+            if (health != null && !health.hasModifier(TOUGH)) {
+                health.addPermanentModifier(new AttributeModifier(TOUGH, tough.health() - 1, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+                living.setHealth(living.getMaxHealth());
+            }
+        });
     }
 
     @SubscribeEvent

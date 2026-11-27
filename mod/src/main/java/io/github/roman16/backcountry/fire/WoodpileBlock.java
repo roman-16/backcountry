@@ -6,12 +6,14 @@ import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.guide.Guide;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -120,13 +122,10 @@ public final class WoodpileBlock extends BaseEntityBlock {
         while (level.getBlockState(top.above()).is(this)) {
             top = top.above();
         }
+        BlockPos shown = top;
         if (!level.isClientSide && level.getBlockEntity(top) instanceof WoodpileEntity woodpile) {
-            ItemStack piece = woodpile.take();
-            level.playSound(null, top, SoundEvents.WOOD_HIT, SoundSource.BLOCKS, 1, 0.8F);
-            woodpile.tell(player);
-            if (!player.getInventory().add(piece)) {
-                player.drop(piece, false);
-            }
+            player.openMenu(new SimpleMenuProvider((id, inventory, opener) -> new WoodpileMenu(id, inventory, woodpile), Component.translatable("block.backcountry.woodpile")),
+                    buffer -> buffer.writeBlockPos(shown));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

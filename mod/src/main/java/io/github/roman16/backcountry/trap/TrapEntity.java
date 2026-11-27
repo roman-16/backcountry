@@ -1,6 +1,7 @@
 package io.github.roman16.backcountry.trap;
 
 import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.Inspectable;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.body.Calendar;
 import io.github.roman16.backcountry.food.Fish;
@@ -15,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
@@ -23,7 +25,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class TrapEntity extends BlockEntity {
+public final class TrapEntity extends BlockEntity implements Inspectable {
     private static final int STEP_TICKS = 20;
     private static final double TICKS_AN_HOUR = 1000;
     private static final double HOURS_A_DAY = 24;
@@ -80,8 +82,9 @@ public final class TrapEntity extends BlockEntity {
         Balance.Traps traps = Balance.get().traps();
         double share = hours / HOURS_A_DAY * (bait.isEmpty() ? 1 : traps.baitShare());
         if (kind().fish()) {
-            if (level.random.nextDouble() < traps.fishPerDay() * traps.fishShare() * hours / HOURS_A_DAY) {
+            if (level.random.nextDouble() < traps.fishPerDay() * traps.fishShare() * share) {
                 caught = fish(level);
+                bait = ItemStack.EMPTY;
                 show();
             }
             return;
@@ -153,5 +156,13 @@ public final class TrapEntity extends BlockEntity {
         super.loadAdditional(tag, provider);
         caught = ItemStack.parseOptional(provider, tag.getCompound("caught"));
         bait = ItemStack.parseOptional(provider, tag.getCompound("bait"));
+    }
+
+    @Override
+    public List<Component> inspect() {
+        if (!caught().isEmpty()) {
+            return List.of(Component.translatable("trap.backcountry.caught", caught().getHoverName()));
+        }
+        return List.of(Component.translatable(bait().isEmpty() ? "message.backcountry.trap_set" : "message.backcountry.trap_set_baited"));
     }
 }

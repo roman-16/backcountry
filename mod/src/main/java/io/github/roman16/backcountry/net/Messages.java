@@ -171,9 +171,10 @@ public final class Messages {
         }
     }
 
-    public record Notes(List<FieldNotes.Note> notes) implements CustomPacketPayload {
+    public record Notes(List<FieldNotes.Note> notes, List<String> sickening) implements CustomPacketPayload {
         public static final Type<Notes> TYPE = new Type<>(Backcountry.id("notes"));
-        static final StreamCodec<ByteBuf, Notes> STREAM_CODEC = StreamCodec.composite(FieldNotes.Note.STREAM_CODEC.apply(ByteBufCodecs.list()), Notes::notes, Notes::new);
+        static final StreamCodec<ByteBuf, Notes> STREAM_CODEC = StreamCodec.composite(FieldNotes.Note.STREAM_CODEC.apply(ByteBufCodecs.list()), Notes::notes,
+                ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list()), Notes::sickening, Notes::new);
 
         @Override
         public Type<Notes> type() {
@@ -221,7 +222,7 @@ public final class Messages {
         });
         registrar.playToClient(Choose.TYPE, Choose.STREAM_CODEC, (payload, context) -> ClientMessages.choose());
         registrar.playToClient(MapShown.TYPE, MapShown.STREAM_CODEC, (payload, context) -> ClientMessages.map(payload.centreX(), payload.centreZ(), payload.colours(), payload.crosses()));
-        registrar.playToClient(Notes.TYPE, Notes.STREAM_CODEC, (payload, context) -> ClientMessages.notes(payload.notes()));
+        registrar.playToClient(Notes.TYPE, Notes.STREAM_CODEC, (payload, context) -> ClientMessages.notes(payload.notes(), payload.sickening()));
         registrar.playToServer(Studied.TYPE, Studied.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player) {
                 FieldNotes.studied(player, payload.entity());
@@ -299,9 +300,9 @@ public final class Messages {
         }
     }
 
-    public static void notes(ServerPlayer player, List<FieldNotes.Note> notes) {
+    public static void notes(ServerPlayer player, List<FieldNotes.Note> notes, List<String> sickening) {
         if (!(player instanceof FakePlayer) && player.connection.hasChannel(Notes.TYPE)) {
-            PacketDistributor.sendToPlayer(player, new Notes(notes));
+            PacketDistributor.sendToPlayer(player, new Notes(notes, sickening));
         }
     }
 

@@ -4,6 +4,7 @@ import io.github.roman16.backcountry.body.Body;
 import io.github.roman16.backcountry.body.DeepSnow;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.hunt.Animal;
+import io.github.roman16.backcountry.hunt.Bears;
 import io.github.roman16.backcountry.hunt.CarcassBlock;
 import io.github.roman16.backcountry.hunt.CarcassEntity;
 import io.github.roman16.backcountry.hunt.CarcassItem;
@@ -58,6 +59,8 @@ public final class HuntTests {
     private static final float ARROW_DAMAGE = 2;
     private static final int SCAVENGE_STEP = 40;
 
+    private static final float GRIZZLY_HEALTH = 55;
+
     private HuntTests() {}
 
     private static void check(GameTestHelper helper, boolean condition, String message) {
@@ -76,9 +79,62 @@ public final class HuntTests {
     }
 
     private static void shoot(GameTestHelper helper, ServerPlayer hunter, LivingEntity animal, double heightShare) {
+        shoot(helper, hunter, animal, heightShare, false);
+    }
+
+    private static void shoot(GameTestHelper helper, ServerPlayer hunter, LivingEntity animal, double heightShare, boolean heavy) {
+        animal.invulnerableTime = 0;
         Arrow arrow = new Arrow(helper.getLevel(), hunter, new ItemStack(Things.BROADHEAD_ARROW.get()), new ItemStack(Things.LIGHT_HUNTING_BOW.get()));
+        arrow.setData(Things.HEAVY_ARROW, heavy);
         arrow.setPos(animal.getX() - 1, animal.getY() + animal.getBbHeight() * heightShare, animal.getZ());
         animal.hurt(helper.getLevel().damageSources().arrow(arrow, hunter), ARROW_DAMAGE);
+    }
+
+    private static Mob grizzly(GameTestHelper helper) {
+        helper.setBlock(new BlockPos(3, 0, 3), Blocks.STONE);
+        if (!(BuiltInRegistries.ENTITY_TYPE.get(Bears.GRIZZLY).spawn(helper.getLevel(), helper.absolutePos(new BlockPos(3, 1, 3)), MobSpawnType.EVENT) instanceof Mob bear)) {
+            throw new IllegalStateException("no grizzly");
+        }
+        bear.setNoAi(true);
+        return bear;
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void aGrizzlyTakesThreeChestArrows(GameTestHelper helper) {
+        Mob bear = grizzly(helper);
+        ServerPlayer hunter = BackcountryTests.survivor(helper);
+        check(helper, bear.getMaxHealth() >= 4 * GRIZZLY_HEALTH, "the grizzly has its mod's health, " + bear.getMaxHealth());
+        shoot(helper, hunter, bear, 0.6);
+        shoot(helper, hunter, bear, 0.6);
+        check(helper, bear.isAlive() && bear.getData(Things.WOUND).bleeding(), "two chest arrows did not leave the grizzly alive and bleeding");
+        check(helper, bear.getTarget() == hunter, "the shot grizzly does not go for its hunter");
+        shoot(helper, hunter, bear, 0.6);
+        helper.runAfterDelay(2, () -> {
+            check(helper, !bear.isAlive(), "a third chest arrow left the grizzly alive");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = "empty", timeoutTicks = 40)
+    public static void twoHeavyChestArrowsDropAGrizzly(GameTestHelper helper) {
+        Mob bear = grizzly(helper);
+        ServerPlayer hunter = BackcountryTests.survivor(helper);
+        shoot(helper, hunter, bear, 0.6, true);
+        shoot(helper, hunter, bear, 0.6, true);
+        helper.runAfterDelay(2, () -> {
+            check(helper, !bear.isAlive(), "two heavy chest arrows left the grizzly alive");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = "empty")
+    public static void anAxeOnlyAngersAGrizzly(GameTestHelper helper) {
+        Mob bear = grizzly(helper);
+        ServerPlayer hunter = BackcountryTests.survivor(helper);
+        bear.hurt(helper.getLevel().damageSources().playerAttack(hunter), ARROW_DAMAGE);
+        check(helper, bear.isAlive() && !bear.getData(Things.WOUND).bleeding(), "an axe blow set the grizzly bleeding out");
+        check(helper, bear.getTarget() == hunter, "the struck grizzly does not go for whoever hit it");
+        helper.succeed();
     }
 
     private static Optional<CarcassEntity> carcass(GameTestHelper helper) {
@@ -117,7 +173,7 @@ public final class HuntTests {
         ServerPlayer hunter = BackcountryTests.survivor(helper);
         shoot(helper, hunter, moose, 0.1);
         check(helper, moose.isAlive() && moose.getData(Things.WOUND).bleeding(), "a low shot did not wound the moose");
-        moose.setData(Things.WOUND, new Wound(helper.getLevel().getGameTime(), Optional.of(hunter.getUUID()), List.of()));
+        moose.setData(Things.WOUND, new Wound(helper.getLevel().getGameTime(), Optional.of(hunter.getUUID()), List.of(), 0));
         helper.runAfterDelay(40, () -> {
             check(helper, !moose.isAlive(), "the wounded moose never bled out");
             helper.succeed();

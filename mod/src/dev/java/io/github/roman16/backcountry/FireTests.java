@@ -313,8 +313,8 @@ public final class FireTests {
         woodpile.add(new ItemStack(Things.HARDWOOD.get()));
         woodpile.add(new ItemStack(Things.SOFTWOOD.get()));
         woodpile.dry(24);
-        ItemStack softwood = woodpile.take();
-        ItemStack hardwood = woodpile.take();
+        ItemStack softwood = woodpile.removeItemNoUpdate(1);
+        ItemStack hardwood = woodpile.removeItemNoUpdate(0);
         Balance.Firewood firewood = Balance.get().firewood();
         check(helper, FirewoodItem.seasoning(softwood) > firewood.freshSoftwood() && FirewoodItem.seasoning(hardwood) > firewood.freshHardwood(),
                 "a day laid out dried nothing: " + softwood + ", " + hardwood);
@@ -394,8 +394,11 @@ public final class FireTests {
         BlockPos at = helper.absolutePos(pos);
         wood.useOn(new UseOnContext(player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(at).add(0, 0.5, 0), Direction.UP, at, false)));
         check(helper, helper.getBlockState(pos.above()).is(Things.WOODPILE.get()), "a full woodpile took no pile on top");
-        helper.useBlock(pos, player);
-        check(helper, helper.getBlockState(pos.above()).isAir() && woodpile.pieces().size() == full, "a piece came from the lower pile, not the top one");
+        if (!(helper.getLevel().getBlockEntity(at.above()) instanceof WoodpileEntity top)) {
+            throw new IllegalStateException("the pile on top has no block entity");
+        }
+        top.removeItemNoUpdate(0);
+        check(helper, helper.getBlockState(pos.above()).isAir() && woodpile.pieces().size() == full, "taking the top pile's last piece left it standing or emptied the lower one");
         helper.succeed();
     }
 }

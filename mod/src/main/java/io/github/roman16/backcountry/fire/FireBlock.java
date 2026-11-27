@@ -9,6 +9,8 @@ import io.github.roman16.backcountry.gear.CampPotItem;
 import io.github.roman16.backcountry.guide.Deed;
 import io.github.roman16.backcountry.guide.Guide;
 import io.github.roman16.backcountry.net.Messages;
+import java.util.Map;
+import java.util.WeakHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -21,7 +23,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -43,9 +47,12 @@ public final class FireBlock extends CampfireBlock {
     public static final MapCodec<FireBlock> CODEC = simpleCodec(FireBlock::new);
     public static final BooleanProperty COALS = BooleanProperty.create("coals");
     private static final int FIRE_DAMAGE = 1;
+    private static final int TICKS_A_SECOND = 20;
     private static final int LIT_LIGHT = 15;
     private static final int COALS_LIGHT = 8;
     private static final int COALS_SMOKE_CHANCE = 8;
+
+    private static final Map<Entity, long[]> TOUCHING = new WeakHashMap<>();
 
     public FireBlock(Properties properties) {
         super(true, FIRE_DAMAGE, properties);
@@ -95,6 +102,26 @@ public final class FireBlock extends CampfireBlock {
             }
             Fire.tick(tickLevel, pos, tickState, campfire);
         });
+    }
+
+    @Override
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+        if (level.isClientSide || !state.getValue(LIT) || !(entity instanceof LivingEntity)) {
+            return;
+        }
+        long now = level.getGameTime();
+        long[] touch = TOUCHING.get(entity);
+        if (touch == null || now - touch[1] > 1) {
+            touch = new long[] {now, now};
+            TOUCHING.put(entity, touch);
+            if (entity instanceof ServerPlayer player) {
+                player.displayClientMessage(Component.translatable("message.backcountry.too_close_to_fire"), true);
+            }
+        }
+        touch[1] = now;
+        if (now - touch[0] >= Balance.get().fire().touchSeconds() * TICKS_A_SECOND) {
+            entity.hurt(level.damageSources().campfire(), FIRE_DAMAGE);
+        }
     }
 
     @Override

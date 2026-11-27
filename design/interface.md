@@ -6,7 +6,7 @@ Everything read off the screen outside the world. Units are metric: °C, kg, km/
 
 ### I1 The HUD
 
-The hearts stay and the energy bolts, drawn like vanilla's hunger icons over empty slots, take the hunger bar's place; they shake while the survivor is too tired to sprint. Water is a row of droplets drawn the same way above the bolts, and they shake below a quarter. There is no XP (`systems.md` S12), so neither bar nor level shows, and the hearts and bolts sit down in the XP bar's row; air bubbles stack above the droplets. Right of the hotbar, each line on a dark plate with its icon, the body panel shows the core temperature and how the air feels through the clothes ("Body 35.6 °C · feels very cold", blue when the core is cold, orange when hot), the wetness while wet (a wet shirt, so a drop means only water), spirits only while high or low ("High spirits", "Low spirits", and at the bottom "Low spirits: you keep thinking of home"), and above them the conditions by name.
+The hearts stay and the energy bolts, drawn like vanilla's hunger icons over empty slots, take the hunger bar's place; they shake while the survivor is too tired to sprint. Water is a row of droplets drawn the same way above the bolts, and they shake below a quarter. There is no XP (`systems.md` S12), so neither bar nor level shows, and the hearts and bolts sit down in the XP bar's row; air bubbles stack above the droplets. Right of the hotbar, each line on a dark plate with its icon, the body panel shows the core temperature and how the air feels through the clothes ("Body 35.6 °C · feels very cold", blue when the core is cold, orange when hot), the wetness while wet (a wet shirt, so a drop means only water), spirits only while high or low ("High spirits", "Low spirits", and at the bottom "Low spirits: you keep thinking of home"), "Smoky room" while the survivor stands in one, its tooltip naming the cure, and above them the conditions by name.
 
 ```text
                            💧💧💧💧💧💧💧💧░░
@@ -20,7 +20,7 @@ With the inventory or a container open, the HUD shows under it, and hovering ove
 
 As the core falls below 36.5 °C, vanilla's own freezing frost creeps in from the screen's edges, full at 35 °C, as deep in powder snow, and it fades as the survivor warms; in powder snow the thicker of the two shows. Only that survivor sees it, never while dead, extracted or in creative, and F1 and third person treat it as they treat vanilla's frost.
 
-No vanilla tutorial hint shows ("Punch a tree", "Craft wooden planks", "Move with W, A, S and D", "Open your inventory", "Social Interactions"), and no screen has the recipe book's button: recipes are JEI's and the tasks'.
+No vanilla tutorial hint shows ("Punch a tree", "Craft wooden planks", "Move with W, A, S and D", "Open your inventory", "Social Interactions"), and no screen has the recipe book's button: recipes are JEI's and the tasks'. The pack's JEI pages show every way the island gives or makes a thing that no recipe shows: gathering, each entry with its own tool, dressing with each animal's weight, months and where it lives, the pots, the smoker, the rack, salting, the birch tap, the woodpile, the traps with their bait, sharpening, copying a map and lighting a fire; every pack and kit item whose use is not a recipe has an Information page from its hint or a text of its own. JEI keeps its list and search box clear of the body panel.
 
 Everything the pack draws wears vanilla's own look: its panels, buttons, slots and font.
 
@@ -173,9 +173,9 @@ The bow-drill game is a small panel over the world, the friction bar first and t
 └──────────────────────────────────┘   └──────────────────────────────────┘
 ```
 
-### I5 The smoker and the food cache
+### I5 The working blocks
 
-Both stand on vanilla's panel above the survivor's inventory.
+Every block that works over time opens its screen with an empty hand, the campfire's (I4), the Smoker's, the Food Cache's, the Cooking Pot's, the Drying Rack's and the Woodpile's, each on vanilla's panel above the survivor's inventory, with its lines wrapped to the panel; a right-click with something the block takes puts it in, and things come out in the screen. The Camp Pot alone is lifted by an empty hand, a pot being carried. Sneaking and looking at any of them, the Camp Pot, the traps, the Birch Tap and the Fish Wheel too, shows the same lines in Jade's box ("Lake Trout · 62% dry · 0.8 days left", "Woodpile 16/16 · 84% seasoned · catches from 50%", "Rabbit Stew · 32 min left", "Smoking 4 pieces · 6 h left · smoke: Rising", "Caught: Snowshoe Hare Carcass").
 
 ```text
 ┌ Smoker ───────────────────────────┐
@@ -186,16 +186,37 @@ Both stand on vanilla's panel above the survivor's inventory.
 │ 5 h of 12 h                       │
 └───────────────────────────────────┘
 ┌ Food Cache ────────────────────────────────────┐
-│ Food 12,400 kcal · 6.1 days on Normal          │
+│ Food 12,400 kcal                               │
+│ 6.1 days on Normal for 2                       │
 │ Fat reserve 169,400 kcal                       │
-│ Spoils ×0.5 here (3 °C)                        │
+│ Spoils ×0.5 here (3 °C): a root cellar keeps   │
+│ it cooler                                      │
+│ Within raiders' reach: a tall cache stands on  │
+│ 3 stripped logs stacked as poles               │
 │ Scent attracts scavengers: keep it out of camp │
 │ [ Lean ] [Normal] [ Feast ]                    │
 │ [ 18 slots ]                                   │
 └────────────────────────────────────────────────┘
 ```
 
-The shown ration is the pressed button; the scent line is red and shows only with 1,024 kcal of meat or fish. On 3 stripped poles a line reads "Tall cache: out of reach of bears, wolverines and mice", or "A ladder against the poles lets climbers in" in amber while a ladder stands beside them. The Drying Rack shows its pieces hanging on the frame in the world, with no screen: a right-click hangs a piece or, with an empty hand, takes one back.
+The shown ration is the pressed button; the scent line is red and shows only with 1,024 kcal of meat or fish. On 3 stripped poles a line reads "Tall cache: out of reach of bears, wolverines and mice", or "A ladder against the poles lets climbers in" in amber while a ladder stands beside them. The Drying Rack shows its pieces hanging on the frame in the world too.
+
+```text
+┌ Cooking Pot ─────────────────────────┐   ┌ Drying Rack ──────────────────────────┐
+│ Foods  [  ][  ][  ][  ][  ][  ]      │   │ Hanging [  ][  ][  ][  ]              │
+│ Water 2.0 L            Ready [  ]    │   │ Lake Trout · 62% dry · 0.8 days left  │
+│ Rabbit Stew · 32 min left            │   │ Grayling · 10% dry · spoils before it │
+└──────────────────────────────────────┘   │ dries: hang it in the cool or over a  │
+┌ Woodpile ────────────────────────────┐   │ fire                                  │
+│ [16 pieces, each with its seasoning] │   └───────────────────────────────────────┘
+│ Woodpile 16/16 · 84% seasoned ·      │
+│ catches from 50%                     │
+│ Dries 13% a day while no rain or     │
+│ snow falls on it                     │
+└──────────────────────────────────────┘
+```
+
+A served stew stays in the Cooking Pot's Ready slot until a bowl takes it; Rendered Fat is taken out by hand.
 
 ### I6 Hunting
 

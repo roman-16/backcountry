@@ -12,6 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SERVER = ROOT / "build/server"
+HOSTED = Path(__file__).resolve().parent / "exaroton"
 API = "https://api.exaroton.com/v1/"
 AGENT = "roman-16/backcountry"
 FOLDERS = ("config", "libraries", "mods")
@@ -132,8 +133,13 @@ def remote(api, server, folder, files, folders):
             files[path] = child["size"]
 
 
+def source(path):
+    hosted = HOSTED / path
+    return hosted if hosted.is_file() else SERVER / path
+
+
 def stale(api, server, path, size):
-    local = SERVER / path
+    local = source(path)
     if size != local.stat().st_size:
         return True
     return size <= READ_BACK and api.data(f"servers/{server['id']}/files/data/{path}") != local.read_bytes()
@@ -192,6 +198,11 @@ def put(api, server):
         if path.is_file()
     ]
     local += list(FILES)
+    local += [
+        path.relative_to(HOSTED).as_posix()
+        for path in HOSTED.rglob("*")
+        if path.is_file() and path.relative_to(HOSTED).as_posix() not in local
+    ]
     wanted = set(local)
     needed = {parent.as_posix() for path in local for parent in Path(path).parents if parent != Path(".")}
     gone = sorted(folder for folder in folders - needed if Path(folder).parent.as_posix() in needed)
@@ -204,7 +215,7 @@ def put(api, server):
 
     def send(path):
         api.change(
-            "PUT", f"servers/{server['id']}/files/data/{path}", (SERVER / path).read_bytes(), "application/octet-stream"
+            "PUT", f"servers/{server['id']}/files/data/{path}", source(path).read_bytes(), "application/octet-stream"
         )
 
     def tried(path):
@@ -222,7 +233,7 @@ def put(api, server):
         api.change("DELETE", f"servers/{server['id']}/files/data/{path}")
     set_count = configure(api, server)
     say(
-        f"put the server pack on {server['name']}: {len(sent)} files up ({megabytes(sum((SERVER / path).stat().st_size for path in sent))})"
+        f"put the server pack on {server['name']}: {len(sent)} files up ({megabytes(sum(source(path).stat().st_size for path in sent))})"
         + (f": {listed(sent)}" if sent else "")
         + f", {len(dropped)} removed"
         + (f": {listed(dropped)}" if dropped else "")

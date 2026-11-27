@@ -33,6 +33,7 @@ public final class Backcountry {
         DENSITY_FUNCTIONS.register(bus);
         Things.register(bus);
         bus.addListener(RegisterDataMapTypesEvent.class, event -> event.register(Things.FOOD));
+        bus.addListener(RegisterDataMapTypesEvent.class, event -> event.register(Things.PERISHABLE));
         bus.addListener(Messages::register);
         bus.addListener(BlockEntityTypeAddBlocksEvent.class, event -> event.modify(BlockEntityType.CAMPFIRE, Things.CAMPFIRE.get(), Things.STONE_FIREPLACE.get()));
         bus.addListener(RegisterDataMapTypesEvent.class, event -> event.register(Things.ANIMAL));

@@ -8,10 +8,13 @@ import io.github.roman16.backcountry.gear.Hotbar;
 import io.github.roman16.backcountry.gear.Worn;
 import io.github.roman16.backcountry.fire.FireBlock;
 import io.github.roman16.backcountry.weather.Weather;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -43,15 +46,33 @@ public final class Warmth {
             body.roomC = outside;
             body.effectiveC = (body.sheltered ? outside + warmth.shelterC() : Climate.feelsC(outside, wind)) + heat;
         }
+        body.clo = clo(player, body, player.isSleeping());
+    }
+
+    public static double clo(Player player, Body body, boolean asleep) {
+        Balance.Warmth warmth = Balance.get().warmth();
         double clothing = 0;
         for (EquipmentSlot slot : new EquipmentSlot[] {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
             clothing += Balance.get().insulation().getOrDefault(BuiltInRegistries.ITEM.getKey(player.getItemBySlot(slot).getItem()).toString(), 0.0);
         }
         clothing += Balance.get().insulation().getOrDefault(BuiltInRegistries.ITEM.getKey(Worn.HANDS.get(player).getItem()).toString(), 0.0);
-        if (player.isSleeping() && Hotbar.carried(player).stream().anyMatch(stack -> stack.is(Things.SLEEPING_PAD.get()))) {
-            clothing += Balance.get().kit().sleepingPadClo();
+        if (asleep) {
+            clothing += bedding(player);
         }
-        body.clo = (warmth.baseClo() + clothing) * (1 - body.wetness * warmth.wetInsulationLoss());
+        return (warmth.baseClo() + clothing) * (1 - body.wetness * warmth.wetInsulationLoss());
+    }
+
+    public static double bedding(Player player) {
+        Balance.Kit kit = Balance.get().kit();
+        List<ItemStack> carried = Hotbar.carried(player);
+        double bag = carried.stream().anyMatch(Sleep::bag) ? kit.sleepingBagClo() : 0;
+        double pad = carried.stream().anyMatch(stack -> stack.is(Things.SLEEPING_PAD.get())) ? kit.sleepingPadClo() : 0;
+        return bag + pad;
+    }
+
+    public static boolean tooColdToSleep(Player player, Body body) {
+        Balance.Warmth warmth = Balance.get().warmth();
+        return body.effectiveC < warmth.comfortC() - clo(player, body, true) * warmth.warmCPerClo();
     }
 
     public static boolean bareHead(ServerPlayer player) {

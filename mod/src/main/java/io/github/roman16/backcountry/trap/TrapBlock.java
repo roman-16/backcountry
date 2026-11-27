@@ -131,7 +131,7 @@ public final class TrapBlock extends BaseEntityBlock implements SimpleWaterlogge
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!kind.baited() || !stack.is(Things.CRICKET.get()) || !(level.getBlockEntity(pos) instanceof TrapEntity trap) || !trap.bait().isEmpty()) {
+        if (!kind.takes(stack) || !(level.getBlockEntity(pos) instanceof TrapEntity trap) || !trap.bait().isEmpty()) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         if (!level.isClientSide) {

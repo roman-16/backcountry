@@ -18,12 +18,15 @@ import java.util.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.jade.api.Accessor;
@@ -52,6 +55,7 @@ public final class JadeLink implements IWailaPlugin {
         registration.registerBlockDataProvider(Inspect.CAMPFIRE_DATA, CampfireBlockEntity.class);
         registration.registerBlockDataProvider(Inspect.SIGN_DATA, TrackEntity.class);
         registration.registerBlockDataProvider(Inspect.CARCASS_DATA, CarcassEntity.class);
+        registration.registerBlockDataProvider(Inspect.LINES_DATA, BlockEntity.class);
     }
 
     @Override
@@ -61,6 +65,7 @@ public final class JadeLink implements IWailaPlugin {
         registration.registerBlockComponent(new Lines(Inspect.SIGN, JadeLink::sign), TrackBlock.class);
         registration.registerBlockComponent(new Lines(Inspect.CARCASS, JadeLink::carcass), CarcassBlock.class);
         registration.registerBlockComponent(new WaterName(), LiquidBlock.class);
+        registration.registerBlockComponent(new Lines(Inspect.LINES, JadeLink::lines), Block.class);
         registration.addBeforeRenderCallback((box, rect, graphics, accessor) -> {
             if (Minecraft.getInstance().player == null || !Minecraft.getInstance().player.isCrouching()) {
                 return true;
@@ -164,6 +169,16 @@ public final class JadeLink implements IWailaPlugin {
         @Override
         public ResourceLocation getUid() {
             return Inspect.WATER_KIND;
+        }
+    }
+
+    private static void lines(ITooltip tooltip, BlockAccessor accessor, CompoundTag data) {
+        ListTag lines = data.getList(Inspect.TEXT, Tag.TAG_STRING);
+        for (int i = 0; i < lines.size(); i++) {
+            Component line = Component.Serializer.fromJson(lines.getString(i), accessor.getLevel().registryAccess());
+            if (line != null) {
+                tooltip.add(line);
+            }
         }
     }
 

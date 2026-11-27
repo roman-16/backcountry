@@ -231,6 +231,25 @@ public final class BackcountryTests {
     }
 
     @GameTest(template = "empty")
+    public static void aLiftedCampPotKeepsItsBoil(GameTestHelper helper) {
+        BlockPos fire = new BlockPos(2, 1, 2);
+        FireTests.burning(helper, fire);
+        helper.setBlock(fire.above(), Things.CAMP_POT_BLOCK.get().defaultBlockState());
+        BlockPos at = helper.absolutePos(fire.above());
+        if (!(helper.getLevel().getBlockEntity(at) instanceof CampPotEntity pot)) {
+            throw new IllegalStateException("the camp pot has no block entity");
+        }
+        pot.hold(Water.drawn(Water.Source.LAKE, 2));
+        int full = pot.ticksLeft(1);
+        pot.slept(helper.getLevel(), at, full / 2, 1);
+        ItemStack lifted = pot.item();
+        pot.hold(Water.drawn(Water.Source.LAKE, 2));
+        pot.resume(lifted.get(Things.BOILING.get()));
+        check(helper, pot.ticksLeft(1) <= full / 2 + 1, "the pot set back down boils from the start again: " + pot.ticksLeft(1) + " of " + full);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void theCampPotBoilsOnALitFire(GameTestHelper helper) {
         BlockPos fire = new BlockPos(2, 1, 2);
         FireTests.burning(helper, fire);

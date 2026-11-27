@@ -4,6 +4,7 @@ import io.github.roman16.backcountry.Balance;
 import io.github.roman16.backcountry.food.Seasons;
 import io.github.roman16.backcountry.hunt.Hunting;
 import io.github.roman16.backcountry.weather.Weather;
+import java.util.List;
 import java.util.Locale;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -15,6 +16,8 @@ import net.minecraft.world.level.Level;
 
 public final class Spirits {
     private static final long TICKS_A_DAY = 24000;
+    private static final double HOURS_A_DAY = 24;
+    private static final List<Condition> ILLNESSES = List.of(Condition.FOOD_POISONING, Condition.GUT_INFECTION, Condition.INFECTED_WOUND, Condition.SHELLFISH_POISONING);
     private static final double EVENING_HOUR = 18;
     private static final double MORNING_HOUR = 6;
     private static final double CLEAR_CLOUD = 0.25;
@@ -36,6 +39,7 @@ public final class Spirits {
         HUNGER(false),
         DARK(false),
         SMOKE(false),
+        ILL(false),
         SAME_FOOD(false);
 
         public final boolean lifts;
@@ -75,23 +79,24 @@ public final class Spirits {
         boolean sky = level.canSeeSky(head);
         double cloud = Weather.cloud(level, day, hour);
         int causes = body.spiritCauses & (Cause.SAME_FOOD.bit() | Cause.VARIED_FOOD.bit());
+        double comfort = 0;
         double rate = 0;
         if (body.fire && !asleep) {
-            rate += rules.firePerHour();
+            comfort += rules.firePerHour();
             causes |= Cause.FIRE.bit();
         }
         if (body.room != Rooms.Kind.OPEN && body.roomC >= rules.warmRoomC() && body.wetness < WET) {
-            rate += rules.roomPerHour();
+            comfort += rules.roomPerHour();
             causes |= Cause.ROOM.bit();
         }
         boolean company = level.players().stream().anyMatch(other -> other != player && other instanceof ServerPlayer survivor && Metabolism.lives(survivor)
                 && other.distanceTo(player) <= rules.companyBlocks());
         if (company) {
-            rate += rules.companyPerHour();
+            comfort += rules.companyPerHour();
             causes |= Cause.COMPANY.bit();
         }
         if (!night && sky && !level.isRaining() && cloud < SUNNY_CLOUD && !asleep) {
-            rate += rules.sunPerHour();
+            comfort += rules.sunPerHour();
             causes |= Cause.SUN.bit();
         }
         if (night && sky && cloud < CLEAR_CLOUD && !asleep && Hunting.months(Seasons.month(level), rules.auroraMonths())) {
@@ -118,7 +123,17 @@ public final class Spirits {
             rate -= rules.smokyPerHour();
             causes |= Cause.SMOKE.bit();
         }
+        if (ILLNESSES.stream().anyMatch(body::has)) {
+            rate -= rules.illPerHour();
+            causes |= Cause.ILL.bit();
+        }
         body.spiritCauses = causes;
+        double ceiling = rules.comfortCeiling();
+        if (body.spirits < ceiling) {
+            add(body, Math.min(comfort * hours, ceiling - body.spirits));
+        } else {
+            add(body, -Math.min(rules.settlePerDay() * hours / HOURS_A_DAY, body.spirits - ceiling));
+        }
         add(body, rate * hours);
     }
 

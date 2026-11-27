@@ -896,6 +896,10 @@ rows = [".........", ".........", ".........", ".........", "..wyyyyo.", "....yy
 palette = { b = "000000", w = "e8e8e8", r = "e03030", R = "a01818" }
 rows = ["...bbb...", "...bwb...", "...bwb...", "...brb...", "...brb...", "..brrRb..", "..bRRRb..", "...bbb...", "........."]
 
+[hud.smoky]
+palette = { b = "000000", g = "8a8a8a", l = "c8c8c8", d = "5a5a5a" }
+rows = ["..bbb....", ".bllgb...", ".bgllbbb.", "..bbglllb", ".bbgggddb", "bllgddb..", "bgdddb...", ".bbbbb...", "........."]
+
 [hud.shelter]
 palette = { b = "000000", r = "a0522d", R = "6e3418", w = "d8c8a8" }
 rows = ["....b....", "...brb...", "..brrRb..", ".brrrrRb.", "bbbbbbbbb", ".bwwwwwb.", ".bwbbbwb.", ".bwb.bwb.", ".bbb.bbb."]
@@ -1391,6 +1395,10 @@ colour = "1a1410,6a5a48"
 [tinted.animal_fat]
 base = "item/slime_ball"
 colour = "8a8060,f8f0d8"
+
+[tinted.roasted_fat]
+base = "item/slime_ball"
+colour = "5a3a14,e8b868"
 
 [tinted.game_guts]
 base = "item/rotten_flesh"

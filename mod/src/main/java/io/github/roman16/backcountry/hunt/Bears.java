@@ -54,6 +54,7 @@ public final class Bears {
     private static final int GROAN_SECONDS = 3;
     private static final int TICKS_AN_HOUR = 1000;
     private static final Map<Mob, Player> BLUFFS = new WeakHashMap<>();
+    private static final Map<Mob, Player> PROVOKED = new WeakHashMap<>();
 
     private Bears() {}
 
@@ -125,7 +126,19 @@ public final class Bears {
         }
     }
 
+    public static void provoke(Mob bear, Player player) {
+        if (!is(bear.getType()) || bear.isBaby()) {
+            return;
+        }
+        BLUFFS.remove(bear);
+        PROVOKED.put(bear, player);
+        bear.setTarget(player);
+    }
+
     public static Optional<String> reason(Mob bear, ServerPlayer player) {
+        if (PROVOKED.get(bear) == player) {
+            return Optional.of("provoked");
+        }
         Balance.Bears bears = Balance.get().bears();
         double distance = bear.distanceTo(player);
         if (distance <= bears.cubBlocks() && cubNear(bear, player, bears.cubBlocks())) {
@@ -202,7 +215,7 @@ public final class Bears {
                 }
                 if (reason(mob, player).isPresent() || riled(mob, player)) {
                     targetMob = player;
-                    if (level.random.nextDouble() < Balance.get().bears().bluffShare()) {
+                    if (PROVOKED.get(mob) != player && level.random.nextDouble() < Balance.get().bears().bluffShare()) {
                         BLUFFS.put(mob, player);
                     }
                     return true;

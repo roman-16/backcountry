@@ -1,6 +1,7 @@
 package io.github.roman16.backcountry.trap;
 
 import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.Inspectable;
 import io.github.roman16.backcountry.Things;
 import io.github.roman16.backcountry.food.Fish;
 import io.github.roman16.backcountry.food.Seasons;
@@ -10,6 +11,7 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
@@ -18,7 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class FishWheelEntity extends BlockEntity {
+public final class FishWheelEntity extends BlockEntity implements Inspectable {
     private static final int STEP_TICKS = 100;
     private static final double TICKS_AN_HOUR = 1000;
     private static final double HOURS_A_DAY = 24;
@@ -86,5 +88,11 @@ public final class FishWheelEntity extends BlockEntity {
         }
         clock = tag.getLong("clock");
         awake = tag.getBoolean("awake");
+    }
+
+    @Override
+    public List<Component> inspect() {
+        int fish = caught().stream().mapToInt(ItemStack::getCount).sum();
+        return List.of(fish == 0 ? Component.translatable("message.backcountry.fish_wheel_empty") : Component.translatable("fish_wheel.backcountry.inspect", fish));
     }
 }

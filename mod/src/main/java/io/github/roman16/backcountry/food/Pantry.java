@@ -8,9 +8,6 @@ import java.util.Optional;
 import net.minecraft.world.item.ItemStack;
 
 public final class Pantry {
-    private static final double PROTEIN_KCAL_PER_GRAM = 4;
-    private static final double MEATY_SHARE = 0.5;
-
     private Pantry() {}
 
     public static boolean usable(ItemStack stack) {
@@ -24,11 +21,11 @@ public final class Pantry {
     }
 
     public static boolean cookedMeat(ItemStack stack) {
-        return Nutrition.of(stack).map(food -> !food.raw() && food.kcal() > 0 && food.protein() * PROTEIN_KCAL_PER_GRAM >= food.kcal() * MEATY_SHARE).orElse(false);
+        return meaty(stack) && Nutrition.of(stack).map(food -> !food.raw() && food.kcal() > 0).orElse(false);
     }
 
     public static boolean meaty(ItemStack stack) {
-        return Nutrition.of(stack).map(food -> food.raw() || food.protein() * PROTEIN_KCAL_PER_GRAM >= food.kcal() * MEATY_SHARE).orElse(false);
+        return stack.is(Things.MEAT);
     }
 
     public static double usableKcal(List<ItemStack> stacks) {

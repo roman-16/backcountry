@@ -212,9 +212,15 @@ farming = [
   "minecraft:stone_hoe",
   "minecraft:wheat",
   "minecraft:wheat_seeds",
+  "riverfishing:barley_seeds",
   "riverfishing:bread",
+  "riverfishing:corn",
+  "riverfishing:corn_seeds",
   "riverfishing:dough",
   "riverfishing:groundbait_powder",
+  "riverfishing:pea",
+  "riverfishing:pea_seeds",
+  "riverfishing:pearl_barley",
 ]
 fire = [
   "minecraft:arrow",
@@ -1049,4 +1055,5 @@ cnc = [
   "raw_waterfowl",
 ]
 eclipticseasons = []
+sleeping_bags = ["brown_sleeping_bag"]
 wildernature = []

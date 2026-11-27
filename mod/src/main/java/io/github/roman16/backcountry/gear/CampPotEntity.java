@@ -58,10 +58,22 @@ public class CampPotEntity extends BlockEntity {
     }
 
     public int ticksLeft(double heat) {
+        return (int) Math.ceil(Math.max(0, ticksNeeded(water) - boilTicks) / heat);
+    }
+
+    public static double ticksNeeded(Water water) {
         Balance balance = Balance.get();
         double seconds = water.drink() == Water.Drink.BIRCH_SAP ? balance.forage().syrupSeconds()
                 : water.drink() == Water.Drink.SEA_WATER ? balance.drying().saltSeconds() : balance.water().boilSeconds();
-        return (int) Math.ceil(Math.max(0, seconds * TICKS_A_SECOND - boilTicks) / heat);
+        return seconds * TICKS_A_SECOND;
+    }
+
+    public void resume(Boiling boiling) {
+        if (boiling.water().equals(water)) {
+            boilTicks = boiling.ticks();
+            needles = boiling.needles();
+            setChanged();
+        }
     }
 
     public static double heat(Level level, BlockPos pos) {
@@ -81,6 +93,9 @@ public class CampPotEntity extends BlockEntity {
     public ItemStack item() {
         ItemStack stack = new ItemStack(Things.CAMP_POT.get());
         stack.set(Things.WATER.get(), water);
+        if (boilTicks > 0 || needles) {
+            stack.set(Things.BOILING.get(), new Boiling(water, boilTicks, needles));
+        }
         return stack;
     }
 

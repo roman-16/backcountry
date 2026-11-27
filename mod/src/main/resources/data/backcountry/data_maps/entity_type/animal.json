@@ -77,7 +77,11 @@
         16,
         8,
         8
-      ]
+      ],
+      "tough": {
+        "chest_hits": 3,
+        "health": 4
+      }
     },
     "alexsmobs:moose": {
       "habitat": "#minecraft:is_taiga",
@@ -331,7 +335,11 @@
         8,
         4,
         4
-      ]
+      ],
+      "tough": {
+        "chest_hits": 3,
+        "health": 4
+      }
     },
     "cnc:caribou": {
       "habitat": "#c:is_snowy",

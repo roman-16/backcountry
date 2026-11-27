@@ -10,6 +10,7 @@ import io.github.roman16.backcountry.weather.Day;
 import io.github.roman16.backcountry.weather.Weather;
 import io.github.roman16.backcountry.weather.WeatherView;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import net.minecraft.client.Minecraft;
@@ -45,8 +46,9 @@ public final class ClientMessages {
         Minecraft.getInstance().setScreen(new MapScreen(centreX, centreZ, colours, crosses));
     }
 
-    public static void notes(List<FieldNotes.Note> notes) {
+    public static void notes(List<FieldNotes.Note> notes, List<String> sickening) {
         ClientState.notes = notes.stream().collect(Collectors.toMap(FieldNotes.Note::id, note -> note, (a, b) -> a, TreeMap::new));
+        ClientState.sickening = Set.copyOf(sickening);
     }
 
     public static void marks(boolean shown, List<Locator.Mark> marks) {

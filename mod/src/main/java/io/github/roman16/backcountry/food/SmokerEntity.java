@@ -1,8 +1,13 @@
 package io.github.roman16.backcountry.food;
 
 import io.github.roman16.backcountry.Balance;
+import io.github.roman16.backcountry.Inspectable;
 import io.github.roman16.backcountry.Things;
+import io.github.roman16.backcountry.body.Nutrition;
+import io.github.roman16.backcountry.client.Words;
 import io.github.roman16.backcountry.fire.FirewoodItem;
+import java.util.List;
+import java.util.Locale;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -19,8 +24,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class SmokerEntity extends BaseContainerBlockEntity {
+public final class SmokerEntity extends BaseContainerBlockEntity implements Inspectable {
     public static final int HANGING = 4;
+    private static final int MINUTES_AN_HOUR = 60;
     public static final int FIREWOOD = 2;
     public static final int SLOTS = HANGING + FIREWOOD;
     private static final int STEP_TICKS = 20;
@@ -44,7 +50,7 @@ public final class SmokerEntity extends BaseContainerBlockEntity {
     }
 
     public static boolean hangs(ItemStack stack) {
-        return Pantry.meaty(stack) && !stack.has(Things.SMOKED.get());
+        return Pantry.meaty(stack) && Nutrition.of(stack).isPresent() && !stack.has(Things.SMOKED.get());
     }
 
     public Smoke smoke() {
@@ -192,5 +198,18 @@ public final class SmokerEntity extends BaseContainerBlockEntity {
         burnHours = tag.getDouble("burn_hours");
         smokeHours = tag.getDouble("smoke_hours");
         batchHours = tag.getDouble("batch_hours");
+    }
+
+    @Override
+    public List<Component> inspect() {
+        int hung = 0;
+        for (int slot = 0; slot < HANGING; slot++) {
+            hung += getItem(slot).getCount();
+        }
+        Balance balance = Balance.get();
+        int left = (int) Math.round(Math.max(0, balance.smoker().batchHours() - batchHours()) * MINUTES_AN_HOUR);
+        Component smoke = Component.translatable("smoker.backcountry." + smoke().name().toLowerCase(Locale.ROOT));
+        return hung == 0 ? List.of(Component.translatable("smoker.backcountry.inspect_empty", smoke))
+                : List.of(Component.translatable("smoker.backcountry.inspect", hung, Words.duration(left), smoke));
     }
 }

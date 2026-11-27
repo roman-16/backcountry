@@ -10,17 +10,18 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 
 public final class CacheScreen extends AbstractContainerScreen<CacheMenu> {
     private static final ResourceLocation PANEL = ResourceLocation.withDefaultNamespace("popup/background");
     private static final ResourceLocation SLOT = ResourceLocation.withDefaultNamespace("container/slot");
-    private static final int HEIGHT = 232;
+    private static final int HEIGHT = 272;
     private static final int PAD = 8;
     private static final int LINE = 10;
     private static final int FIRST_LINE = 18;
-    private static final int BUTTONS_Y = 70;
+    private static final int BUTTONS_Y = 110;
     private static final int BUTTON_WIDTH = 52;
     private static final int BUTTON_HEIGHT = 16;
     private static final int BUTTON_GAP = 2;
@@ -71,21 +72,25 @@ public final class CacheScreen extends AbstractContainerScreen<CacheMenu> {
         graphics.drawString(font, title, titleLabelX, titleLabelY, Look.TEXT, false);
         graphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, Look.TEXT, false);
         int y = FIRST_LINE;
-        graphics.drawString(font, Component.translatable("cache.backcountry.food", Words.kcal(menu.kcal())), PAD, y, Look.TEXT, false);
-        y += LINE;
-        graphics.drawString(font, Component.translatable("cache.backcountry.days", Words.one(menu.days()), menu.ration().title()), PAD, y, Look.TEXT, false);
-        y += LINE;
-        graphics.drawString(font, Component.translatable("cache.backcountry.fat", Words.kcal(menu.fatKcal())), PAD, y, Look.TEXT_QUIET, false);
-        y += LINE;
-        graphics.drawString(font, Component.translatable("cache.backcountry.spoiling", Words.one(menu.spoiling()), Words.degrees(menu.airC())), PAD, y, Look.TEXT_QUIET,
-                false);
-        y += LINE;
-        if (menu.reach() == CacheEntity.Reach.TALL) {
-            graphics.drawString(font, Component.translatable("cache.backcountry.tall"), PAD, y, Look.GOOD, false);
-        } else if (menu.reach() == CacheEntity.Reach.LADDER) {
-            graphics.drawString(font, Component.translatable("cache.backcountry.ladder"), PAD, y, Look.DANGER, false);
-        } else if (menu.scented()) {
-            graphics.drawString(font, Component.translatable("cache.backcountry.scent"), PAD, y, Look.DANGER, false);
+        y = line(graphics, Component.translatable("cache.backcountry.food", Words.kcal(menu.kcal())), y, Look.TEXT);
+        y = line(graphics, Component.translatable("cache.backcountry.days", Words.one(menu.days()), menu.ration().title(), menu.survivors()), y, Look.TEXT);
+        y = line(graphics, Component.translatable("cache.backcountry.fat", Words.kcal(menu.fatKcal())), y, Look.TEXT_QUIET);
+        y = line(graphics, Component.translatable("cache.backcountry.spoiling", Words.one(menu.spoiling()), Words.degrees(menu.airC())), y, Look.TEXT_QUIET);
+        y = switch (menu.reach()) {
+            case TALL -> line(graphics, Component.translatable("cache.backcountry.tall"), y, Look.GOOD);
+            case LADDER -> line(graphics, Component.translatable("cache.backcountry.ladder"), y, Look.DANGER);
+            case GROUND -> line(graphics, Component.translatable("cache.backcountry.ground"), y, Look.DANGER);
+        };
+        if (menu.scented()) {
+            line(graphics, Component.translatable("cache.backcountry.scent"), y, Look.DANGER);
         }
+    }
+
+    private int line(GuiGraphics graphics, Component text, int y, int colour) {
+        for (FormattedCharSequence wrapped : font.split(text, imageWidth - 2 * PAD)) {
+            graphics.drawString(font, wrapped, PAD, y, colour, false);
+            y += LINE;
+        }
+        return y;
     }
 }

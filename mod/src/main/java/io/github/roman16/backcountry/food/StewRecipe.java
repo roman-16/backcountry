@@ -34,18 +34,29 @@ public record StewRecipe(List<Ingredient> ingredients, ItemStack result, int ser
 
     @Override
     public boolean matches(Pot pot, Level level) {
+        return batches(pot) > 0;
+    }
+
+    public int batches(Pot pot) {
         List<ItemStack> left = new ArrayList<>(pot.items().stream().filter(stack -> !stack.isEmpty()).toList());
-        if (left.size() != ingredients.size()) {
-            return false;
+        if (left.isEmpty() || left.size() % ingredients.size() != 0) {
+            return 0;
         }
-        for (Ingredient ingredient : ingredients) {
-            ItemStack found = left.stream().filter(ingredient).findFirst().orElse(null);
-            if (found == null) {
-                return false;
+        int batches = left.size() / ingredients.size();
+        for (int batch = 0; batch < batches; batch++) {
+            for (Ingredient ingredient : ingredients) {
+                ItemStack found = left.stream().filter(ingredient).findFirst().orElse(null);
+                if (found == null) {
+                    return 0;
+                }
+                left.remove(found);
             }
-            left.remove(found);
         }
-        return true;
+        return batches;
+    }
+
+    public boolean takesAll(Pot pot) {
+        return pot.items().stream().filter(stack -> !stack.isEmpty()).allMatch(this::takes);
     }
 
     public boolean takes(ItemStack stack) {

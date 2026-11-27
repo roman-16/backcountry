@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
 
 public record Animal(TagKey<Biome> habitat, List<Integer> months, List<Integer> group, double perDay, int cap, double kg, List<Double> vital, List<Cut> cuts,
-        boolean nearWater, boolean scavenger, Optional<Season> season, double restDays, Optional<Track> track, boolean scents, List<Integer> fat) {
+        boolean nearWater, boolean scavenger, Optional<Season> season, double restDays, Optional<Track> track, boolean scents, List<Integer> fat, Optional<Tough> tough) {
     private static final List<Integer> ALL_YEAR = List.of(1, 12);
     private static final List<Integer> ALONE = List.of(1, 1);
     private static final List<Double> CHEST = List.of(0.4, 0.8);
@@ -25,6 +25,12 @@ public record Animal(TagKey<Biome> habitat, List<Integer> months, List<Integer> 
 
         public static final Codec<Season> CODEC = Codec.STRING.xmap(name -> Season.valueOf(name.toUpperCase(java.util.Locale.ROOT)),
                 season -> season.name().toLowerCase(java.util.Locale.ROOT));
+    }
+
+    public record Tough(int chestHits, double health) {
+        public static final Codec<Tough> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.INT.fieldOf("chest_hits").forGetter(Tough::chestHits),
+                Codec.DOUBLE.fieldOf("health").forGetter(Tough::health)).apply(instance, Tough::new));
     }
 
     public record Cut(Item item, int count) {
@@ -54,7 +60,8 @@ public record Animal(TagKey<Biome> habitat, List<Integer> months, List<Integer> 
             Codec.DOUBLE.optionalFieldOf("rest_days", 0.0).forGetter(Animal::restDays),
             Track.CODEC.optionalFieldOf("track").forGetter(Animal::track),
             Codec.BOOL.optionalFieldOf("scents", false).forGetter(Animal::scents),
-            Codec.INT.listOf().optionalFieldOf("fat", List.of()).forGetter(Animal::fat)).apply(instance, Animal::new));
+            Codec.INT.listOf().optionalFieldOf("fat", List.of()).forGetter(Animal::fat),
+            Tough.CODEC.optionalFieldOf("tough").forGetter(Animal::tough)).apply(instance, Animal::new));
 
     public List<Cut> cutsIn(int month) {
         if (fat.size() < MONTHS) {

@@ -10,6 +10,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.CampfireBlock;
@@ -23,6 +25,7 @@ public final class Inspect {
     public static final ResourceLocation SIGN = Backcountry.id("sign");
     public static final ResourceLocation CARCASS = Backcountry.id("carcass");
     public static final ResourceLocation WATER_KIND = Backcountry.id("water");
+    public static final ResourceLocation LINES = Backcountry.id("lines");
     public static final String AGE = "age";
     public static final String WATER = "water";
     public static final String STARTED = "started";
@@ -34,6 +37,7 @@ public final class Inspect {
     public static final String COOKING = "cooking";
     public static final String ITEM = "item";
     public static final String TICKS_LEFT = "ticks_left";
+    public static final String TEXT = "text";
     private static final int MINUTES_AN_HOUR = 60;
 
     private Inspect() {}
@@ -113,6 +117,22 @@ public final class Inspect {
         @Override
         public ResourceLocation getUid() {
             return CARCASS;
+        }
+    };
+
+    public static final IServerDataProvider<BlockAccessor> LINES_DATA = new IServerDataProvider<>() {
+        @Override
+        public void appendServerData(CompoundTag data, BlockAccessor accessor) {
+            if (accessor.getBlockEntity() instanceof Inspectable inspectable) {
+                ListTag lines = new ListTag();
+                inspectable.inspect().forEach(line -> lines.add(StringTag.valueOf(Component.Serializer.toJson(line, accessor.getLevel().registryAccess()))));
+                data.put(TEXT, lines);
+            }
+        }
+
+        @Override
+        public ResourceLocation getUid() {
+            return LINES;
         }
     };
 

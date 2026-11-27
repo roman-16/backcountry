@@ -44,7 +44,8 @@ public final class Spoilage {
 
     public static Optional<Double> life(ItemStack stack) {
         Balance balance = Balance.get();
-        return Nutrition.of(stack).flatMap(Nutrition::days).map(days -> days * (stack.has(Things.SMOKED.get()) ? balance.spoilage().smokedLife() : 1)
+        Optional<Double> fresh = Nutrition.of(stack).flatMap(Nutrition::days).or(() -> Optional.ofNullable(stack.getItemHolder().getData(Things.PERISHABLE)));
+        return fresh.map(days -> days * (stack.has(Things.SMOKED.get()) ? balance.spoilage().smokedLife() : 1)
                 * (stack.has(Things.DRIED.get()) ? balance.drying().life() : 1) * (stack.has(Things.SALTED.get()) ? balance.drying().saltedLife() : 1));
     }
 

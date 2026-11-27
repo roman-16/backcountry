@@ -19,8 +19,8 @@ import net.minecraft.world.item.ItemStack;
 
 public final class CacheMenu extends AbstractContainerMenu {
     public static final int WIDTH = 176;
-    public static final int CACHE_Y = 92;
-    public static final int INVENTORY_Y = 148;
+    public static final int CACHE_Y = 132;
+    public static final int INVENTORY_Y = 188;
     public static final int SLOT = 18;
     private static final int COLUMNS = 9;
     private static final int ROWS = 3;
@@ -38,7 +38,8 @@ public final class CacheMenu extends AbstractContainerMenu {
     private static final int AIR = 7;
     private static final int SCENT = 8;
     private static final int REACH = 9;
-    private static final int VALUES = 10;
+    private static final int SURVIVORS = 10;
+    private static final int VALUES = 11;
 
     private final Container cache;
     private final ContainerData data;
@@ -103,6 +104,10 @@ public final class CacheMenu extends AbstractContainerMenu {
         return data.get(SCENT) != 0;
     }
 
+    public int survivors() {
+        return data.get(SURVIVORS);
+    }
+
     public CacheEntity.Reach reach() {
         return CacheEntity.Reach.values()[Math.floorMod(data.get(REACH), CacheEntity.Reach.values().length)];
     }
@@ -154,12 +159,13 @@ public final class CacheMenu extends AbstractContainerMenu {
             Ration ration = team == null ? Ration.NORMAL : team.ration();
             Body body = Metabolism.body(player);
             Balance.Body rules = Balance.get().body();
+            int survivors = player.level() instanceof ServerLevel level ? Math.max(1, Team.living(level.getServer())) : 1;
             int kcal = (int) Math.round(cache.usableKcal());
             int fat = (int) Math.max(0, Math.round((body.weightKg - rules.extractionBmi() * rules.heightM() * rules.heightM()) * rules.kcalPerKg()));
             return switch (index) {
                 case KCAL_HIGH -> kcal / SHORT;
                 case KCAL_LOW -> kcal % SHORT;
-                case DAYS -> (int) Math.round(cache.usableKcal() / ration.dayKcal() * TENTHS);
+                case DAYS -> (int) Math.round(cache.usableKcal() / (ration.dayKcal() * survivors) * TENTHS);
                 case RATION -> ration.ordinal();
                 case FAT_HIGH -> fat / SHORT;
                 case FAT_LOW -> fat % SHORT;
@@ -167,6 +173,7 @@ public final class CacheMenu extends AbstractContainerMenu {
                 case AIR -> (int) Math.round(cache.airC());
                 case SCENT -> cache.scented() ? 1 : 0;
                 case REACH -> cache.reach().ordinal();
+                case SURVIVORS -> survivors;
                 default -> 0;
             };
         }

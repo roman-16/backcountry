@@ -651,10 +651,40 @@ def food():
     )
     faces = ("down", "east", "north", "south", "up", "west")
     legs = [
-        {"from": [x, 0, z], "to": [x + 1, 2, z + 1], "faces": {face: {"texture": "#side"} for face in faces}}
+        {
+            "from": [x, -9, z],
+            "to": [x + 1, 2, z + 1],
+            "faces": {
+                face: {"texture": "#side", "uv": [0, 0, 1, 1] if face in ("up", "down") else [0, 5, 1, 16]}
+                for face in faces
+            },
+        }
         for x in (3, 12)
         for z in (3, 12)
     ]
+
+    def pot_faces(start, end, up, side):
+        across = {
+            "north": (start[0], end[0]),
+            "south": (start[0], end[0]),
+            "east": (start[2], end[2]),
+            "west": (start[2], end[2]),
+        }
+        made = {face: {"texture": side, "uv": [low, 9, high, 16]} for face, (low, high) in across.items()}
+        made["up"] = {"texture": up, "uv": [start[0], start[2], end[0], end[2]]}
+        made["down"] = {"texture": side, "uv": [start[0], start[2], end[0], end[2]]}
+        return made
+
+    walls = [
+        {"from": start, "to": end, "faces": pot_faces(start, end, "#top", "#side")}
+        for start, end in (
+            ([3, -7, 3], [13, 0, 4]),
+            ([3, -7, 12], [13, 0, 13]),
+            ([3, -7, 4], [4, 0, 12]),
+            ([12, -7, 4], [13, 0, 12]),
+        )
+    ]
+    bottom = {"from": [4, -7, 4], "to": [12, -6, 12], "faces": pot_faces([4, -7, 4], [12, -6, 12], "#inside", "#side")}
     write_json(
         ASSETS / "models/block/cooking_pot.json",
         {
@@ -665,21 +695,22 @@ def food():
                 "side": "minecraft:block/cauldron_side",
                 "top": "minecraft:block/cauldron_top",
             },
-            "elements": [
-                *legs,
-                {
-                    "from": [3, 2, 3],
-                    "to": [13, 9, 13],
-                    "faces": {
-                        face: {"texture": "#inside" if face == "down" else "#top" if face == "up" else "#side"}
-                        for face in faces
-                    },
-                },
-            ],
+            "elements": [*legs, *walls, bottom],
         },
     )
-    for name in ("cooking_pot", "food_cache", "smoker"):
+    for name in ("food_cache", "smoker"):
         write_json(ASSETS / f"models/item/{name}.json", {"parent": f"backcountry:block/{name}"})
+    write_json(
+        ASSETS / "models/item/cooking_pot.json",
+        {
+            "parent": "backcountry:block/cooking_pot",
+            "display": {
+                "gui": {"rotation": [30, 225, 0], "translation": [0, 4.5, 0], "scale": [0.625, 0.625, 0.625]},
+                "ground": {"translation": [0, 6, 0], "scale": [0.25, 0.25, 0.25]},
+                "fixed": {"translation": [0, 4.5, 0], "scale": [0.5, 0.5, 0.5]},
+            },
+        },
+    )
     write_json(ASSETS / "blockstates/cooking_pot.json", {"variants": {"": {"model": "backcountry:block/cooking_pot"}}})
     for name in ("food_cache", "smoker"):
         write_json(

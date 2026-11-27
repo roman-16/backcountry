@@ -1,0 +1,45 @@
+{
+  "values": [
+    "#backcountry:dryable",
+    {
+      "id": "alexsmobs:cooked_moose_ribs",
+      "required": false
+    },
+    "backcountry:cooked_heart",
+    "backcountry:cooked_kidney",
+    "backcountry:cooked_liver",
+    "backcountry:cooked_tongue",
+    "backcountry:game_guts",
+    "backcountry:heart",
+    "backcountry:kidney",
+    "backcountry:liver",
+    "backcountry:moose_head",
+    "backcountry:tongue",
+    {
+      "id": "cnc:cooked_game",
+      "required": false
+    },
+    {
+      "id": "cnc:cooked_venison",
+      "required": false
+    },
+    {
+      "id": "cnc:cooked_waterfowl",
+      "required": false
+    },
+    "minecraft:chicken",
+    "minecraft:cooked_beef",
+    "minecraft:cooked_chicken",
+    "minecraft:cooked_rabbit",
+    "minecraft:cooked_salmon",
+    "minecraft:salmon",
+    {
+      "id": "riverfishing:cooked_fillet",
+      "required": false
+    },
+    {
+      "id": "riverfishing:fish_strip",
+      "required": false
+    }
+  ]
+}

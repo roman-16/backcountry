@@ -20,6 +20,7 @@ static Provider<String> modrinth(Provider<String> packEntry) {
 
 def accessories = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/curios.pw.toml')).asText)
 def ecliptic = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/ecliptic-seasons.pw.toml')).asText)
+def fishing = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/river-fishing.pw.toml')).asText)
 def farView = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/distanthorizons.pw.toml')).asText)
 def lookedAt = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/jade.pw.toml')).asText)
 def recipeViewer = modrinth(providers.fileContents(layout.projectDirectory.file('../pack/mods/jei.pw.toml')).asText)
@@ -133,6 +134,7 @@ tasks.matching { it.name == 'runServer' }.configureEach {
 
 dependencies {
     compileOnly farView
+    compileOnly fishing
     compileOnly lookedAt
     compileOnly recipeViewer
     compileOnly renderer

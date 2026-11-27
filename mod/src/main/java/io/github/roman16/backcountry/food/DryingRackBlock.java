@@ -11,6 +11,7 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -81,21 +82,9 @@ public final class DryingRackBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof DryingRackEntity rack)) {
-            return InteractionResult.PASS;
-        }
-        if (!level.isClientSide) {
-            ItemStack taken = rack.take();
-            if (taken.isEmpty()) {
-                player.displayClientMessage(Component.translatable(rack.rainedOn() ? "message.backcountry.rack_rained" : "message.backcountry.rack_empty"), true);
-            } else {
-                if (player instanceof ServerPlayer server && taken.has(Things.DRIED.get()) && Fish.is(taken.getItem())) {
-                    Guide.did(server, Deed.DRIED_FISH);
-                }
-                if (!player.getInventory().add(taken)) {
-                    player.drop(taken, false);
-                }
-            }
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof DryingRackEntity rack) {
+            player.openMenu(new SimpleMenuProvider((id, inventory, opener) -> new DryingRackMenu(id, inventory, rack), Component.translatable("block.backcountry.drying_rack")),
+                    buffer -> buffer.writeBlockPos(pos));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

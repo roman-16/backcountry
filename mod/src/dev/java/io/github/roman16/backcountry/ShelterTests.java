@@ -6,6 +6,7 @@ import io.github.roman16.backcountry.body.Condition;
 import io.github.roman16.backcountry.body.Metabolism;
 import io.github.roman16.backcountry.body.Rooms;
 import io.github.roman16.backcountry.body.Spirits;
+import io.github.roman16.backcountry.body.Warmth;
 import io.github.roman16.backcountry.fire.FireBlock;
 import io.github.roman16.backcountry.food.CacheEntity;
 import io.github.roman16.backcountry.food.Spoilage;
@@ -14,8 +15,10 @@ import io.github.roman16.backcountry.survivor.Team;
 import io.github.roman16.backcountry.weather.Ice;
 import io.github.roman16.backcountry.weather.ThinIceBlock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.ItemStack;
@@ -200,7 +203,7 @@ public final class ShelterTests {
     public static void aFireLiftsSpirits(GameTestHelper helper) {
         ServerPlayer player = BackcountryTests.survivor(helper);
         Body body = Metabolism.body(player);
-        double start = Balance.get().spirits().arrivalShare();
+        double start = Balance.get().spirits().comfortCeiling() / 2;
         body.spirits = start;
         body.fire = false;
         Spirits.step(player, body, 1, false);
@@ -233,6 +236,51 @@ public final class ShelterTests {
             Metabolism.eat(player, new ItemStack(Things.MUSSELS.get()));
         }
         check(helper, body.has(Condition.SHELLFISH_POISONING), "512 meals of mussels poisoned no one");
+        helper.succeed();
+    }
+    @GameTest(template = "empty")
+    public static void comfortsHoldSpiritsAtTheMiddle(GameTestHelper helper) {
+        ServerPlayer player = BackcountryTests.survivor(helper);
+        Body body = Metabolism.body(player);
+        Balance.Spirits rules = Balance.get().spirits();
+        body.spirits = rules.comfortCeiling() - 1e-3;
+        body.fire = true;
+        Spirits.step(player, body, 4, false);
+        check(helper, body.spirits <= rules.comfortCeiling() + 1e-9, "a fire lifted spirits past the middle to " + body.spirits);
+        body.spirits = 0.99;
+        body.fire = true;
+        Spirits.step(player, body, 24, false);
+        check(helper, body.spirits <= 0.99 - rules.settlePerDay() + 1e-6, "a day by a fire left high spirits at " + body.spirits);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void illnessWearsSpiritsDown(GameTestHelper helper) {
+        ServerPlayer player = BackcountryTests.survivor(helper);
+        Body body = Metabolism.body(player);
+        body.spirits = Balance.get().spirits().comfortCeiling();
+        body.fire = false;
+        Spirits.step(player, body, 1, false);
+        double well = body.spirits;
+        body.spirits = Balance.get().spirits().comfortCeiling();
+        body.afflict(Condition.FOOD_POISONING);
+        Spirits.step(player, body, 1, false);
+        check(helper, Math.abs(well - body.spirits - Balance.get().spirits().illPerHour()) < 1e-6, "an hour of food poisoning took " + (well - body.spirits));
+        check(helper, (body.spiritCauses & Spirits.Cause.ILL.bit()) != 0, "illness was not named among the causes");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void tooColdToSleepWithoutTheBag(GameTestHelper helper) {
+        ServerPlayer player = BackcountryTests.survivor(helper);
+        Body body = Metabolism.body(player);
+        body.wetness = 0;
+        body.effectiveC = -10;
+        check(helper, Warmth.tooColdToSleep(player, body), "a survivor without a bag slept at -10 °C");
+        player.getInventory().add(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("sleeping_bags", "brown_sleeping_bag")).getDefaultInstance());
+        check(helper, !Warmth.tooColdToSleep(player, body), "the Sleeping Bag did not keep out -10 °C");
+        body.effectiveC = -40;
+        check(helper, Warmth.tooColdToSleep(player, body), "the Sleeping Bag kept out -40 °C");
         helper.succeed();
     }
 }

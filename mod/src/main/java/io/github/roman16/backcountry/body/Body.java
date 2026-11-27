@@ -27,6 +27,7 @@ public final class Body implements INBTSerializable<CompoundTag> {
     public double arrivedKg;
     public long awakeTicks;
     public int blackoutTicks;
+    public boolean spent;
     public final double[] burned = new double[Burn.values().length];
     public double carbsToday;
     public final EnumMap<Condition, Affliction> conditions = new EnumMap<>(Condition.class);

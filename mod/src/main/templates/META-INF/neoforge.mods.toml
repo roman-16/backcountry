@@ -68,6 +68,13 @@ side = "BOTH"
 
 [[dependencies.${mod_id}]]
 modId = "riverfishing"
+type = "required"
+versionRange = "*"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "sleeping_bags"
 type = "optional"
 versionRange = "*"
 ordering = "AFTER"
